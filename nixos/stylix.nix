@@ -50,6 +50,13 @@
         package = pkgs.nur.repos.nykma.font-apple-color-emoji;
         name = "Apple Color Emoji";
       };
+
+      sizes = {
+        applications = 13;
+        desktop = 13;
+        popups = 11;
+        terminal = 14;
+      };
     };
   };
 }
