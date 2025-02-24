@@ -16,6 +16,7 @@
     jq
     jd-diff-patch
     lsd
+    frink
 
     # networking tools
     mtr
