@@ -34,6 +34,12 @@
     options = ["zfsutil"];
   };
 
+  fileSystems."/var/games" = {
+    device = "zpool/games";
+    fsType = "zfs";
+    options = ["zfsutil" "X-mount.mkdir" "X-mount.group=games" "X-mount.mode=770"];
+  };
+
   fileSystems."/home" = {
     device = "zpool/home";
     fsType = "zfs";

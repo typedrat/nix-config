@@ -90,12 +90,21 @@
 
   time.timeZone = "America/Los_Angeles";
 
-  users.users = {
-    awilliams = {
-      uid = 1000;
-      isNormalUser = true;
-      extraGroups = ["wheel"];
-      shell = pkgs.zsh;
+  users = {
+    users = {
+      awilliams = {
+        uid = 1000;
+        isNormalUser = true;
+        extraGroups = ["games" "wheel"];
+        shell = pkgs.zsh;
+      };
+    };
+
+    groups = {
+      games = {
+        gid = 420;
+        name = "games";
+      };
     };
   };
 
