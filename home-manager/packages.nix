@@ -5,6 +5,7 @@
     vesktop
     spotify
     jellyfin-mpv-shim
+    pyvizio
 
     # archiving tools
     zip
