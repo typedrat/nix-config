@@ -83,6 +83,11 @@
 
   programs.mpv.enable = true;
 
+  programs.nix-index = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   programs.wezterm = {
     enable = true;
     enableZshIntegration = true;

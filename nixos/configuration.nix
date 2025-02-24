@@ -103,6 +103,7 @@
   ];
 
   programs.zsh.enable = true;
+  environment.pathsToLink = ["/share/zsh"];
 
   # Enable SDDM and KDE 6 with Wayland.
   services.displayManager.sddm = {
