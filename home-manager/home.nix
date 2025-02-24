@@ -50,6 +50,11 @@
   home = {
     username = "awilliams";
     homeDirectory = "/home/awilliams";
+
+    sessionVariables = {
+      VIZIO_IP = "viziocastdisplay.lan";
+      VIZIO_AUTH = "Zmge7tbkiz";
+    };
   };
 
   fonts.fontconfig = {
