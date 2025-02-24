@@ -78,13 +78,14 @@
 
   # use xanmod with ZFS
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  boot.extraModulePackages = with config.boot.kernelPackages; [ zfs ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [zfs];
 
   networking.hostName = "hyperion";
   networking.hostId = "0a2e777f";
 
   users.users = {
     awilliams = {
+      uid = 1000;
       isNormalUser = true;
       extraGroups = ["wheel"];
       shell = pkgs.zsh;

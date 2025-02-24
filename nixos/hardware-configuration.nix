@@ -47,6 +47,14 @@
     options = ["fmask=0022" "dmask=0022"];
   };
 
+  boot.supportedFilesystems = ["ntfs"];
+
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-uuid/5A8CF3318CF305F3";
+    fsType = "ntfs-3g";
+    options = ["rw" "uid=${toString config.users.users.awilliams.uid}"];
+  };
+
   swapDevices = [
     {
       device = "/dev/disk/by-id/nvme-Micron_7450_MTFDKCB960TFR_22323E51305F-part3";
