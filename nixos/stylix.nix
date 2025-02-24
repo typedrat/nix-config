@@ -28,6 +28,7 @@
       url = "https://cdn.donmai.us/original/16/a4/__yoshida_yuuko_and_chiyoda_momo_machikado_mazoku_drawn_by_akuruhi0__16a4e95a8eaa099f14be1de96e722cc7.jpg";
       hash = "sha256-CeD2/22GqoDOBLp9lhZNNR//EfQCMQeJpCvbCU1pCAQ=";
     };
+    polarity = "dark";
 
     fonts = {
       sansSerif = {
@@ -56,6 +57,10 @@
         popups = 11;
         terminal = 14;
       };
+    };
+
+    opacity = {
+      terminal = 0.75;
     };
   };
 }

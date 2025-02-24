@@ -7,6 +7,9 @@
     jellyfin-mpv-shim
     pyvizio
 
+    # icons
+    kora-icon-theme
+
     # archiving tools
     zip
     xz
