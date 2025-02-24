@@ -42,7 +42,7 @@
       };
 
       monospace = {
-        package = inputs.typedrat-fonts;
+        package = inputs.typedrat-fonts.packages.${pkgs.system}.berkeley-mono;
         name = "TX-02";
       };
 
