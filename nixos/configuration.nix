@@ -83,6 +83,8 @@
   networking.hostName = "hyperion";
   networking.hostId = "0a2e777f";
 
+  time.timeZone = "America/Los_Angeles";
+
   users.users = {
     awilliams = {
       uid = 1000;
