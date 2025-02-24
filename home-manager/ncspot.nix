@@ -5,7 +5,7 @@
 
   xdg.desktopEntries.ncspot = {
     name = "ncspot";
-    icon = "spotify";
+    icon = "ncspot";
     exec = "ncspot";
     terminal = true;
     type = "Application";
