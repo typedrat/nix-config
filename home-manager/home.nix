@@ -78,6 +78,11 @@
     userEmail = "alexis@typedr.at";
   };
 
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   programs.mpv.enable = true;
 
   programs.wezterm = {
