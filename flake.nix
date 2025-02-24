@@ -33,6 +33,12 @@
       url = "git+ssh://git@github.com/typedrat/nix-fonts.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # anime game launcher
+    aagl = {
+      url = "github:ezKEa/aagl-gtk-on-nix/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

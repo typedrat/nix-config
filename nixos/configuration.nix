@@ -21,6 +21,7 @@
     # ./users.nix
 
     # Import your generated (nixos-generate-config) hardware configuration
+    ./aagl.nix
     ./hardware-configuration.nix
     ./home-manager.nix
     ./stylix.nix
