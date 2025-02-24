@@ -51,7 +51,7 @@
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-uuid/5A8CF3318CF305F3";
     fsType = "ntfs-3g";
-    options = ["rw" "uid=${toString config.users.users.awilliams.uid}"];
+    options = ["rw" "uid=${toString config.users.users.awilliams.uid}" "nofail"];
   };
 
   swapDevices = [
