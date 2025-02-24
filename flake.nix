@@ -38,7 +38,6 @@
   outputs = {
     self,
     nixpkgs,
-    home-manager,
     nur,
     ...
   } @ inputs: let
