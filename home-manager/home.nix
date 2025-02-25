@@ -89,6 +89,17 @@
   programs.mpv.enable = true;
 
   programs.ncspot.enable = true;
+  xdg.desktopEntries.ncspot = {
+    name = "ncspot";
+    genericName = "TUI Spotify client";
+    icon = "spotify-client";
+    exec = "wezterm start --class ncspot --always-new-process -- ncspot";
+    terminal = false;
+    categories = ["AudioVideo" "Audio"];
+    settings = {
+      StartupWMClass = "ncspot";
+    };
+  };
 
   programs.nix-index = {
     enable = true;
