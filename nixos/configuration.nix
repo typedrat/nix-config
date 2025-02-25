@@ -24,6 +24,7 @@
     ./aagl.nix
     ./hardware-configuration.nix
     ./home-manager.nix
+    ./plymouth.nix
     ./stylix.nix
   ];
 
