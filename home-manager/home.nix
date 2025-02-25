@@ -86,7 +86,7 @@
     enable = true;
 
     settings = {
-      blur = true;
+      window.blur = true;
     };
   };
 
