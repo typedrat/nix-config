@@ -118,7 +118,12 @@
   # Enable SDDM and KDE 6 with Wayland.
   services.displayManager.sddm = {
     enable = true;
-    wayland.enable = true;
+    package = pkgs.kdePackages.sddm;
+
+    wayland = {
+      enable = true;
+      compositor = "kwin";
+    };
   };
 
   services.desktopManager.plasma6 = {
