@@ -85,6 +85,16 @@
 
   programs.alacritty = {
     enable = true;
+
+    settings = {
+      keyboard.bindings = [
+        {
+          key = "N";
+          mods = "Control | Shift";
+          action = "CreateNewWindow";
+        }
+      ];
+    };
   };
 
   programs.tmux = {
@@ -114,9 +124,9 @@
     };
 
     config = {
-      "osd-bar" = false;
-      "border" = false;
-      "video-sync" = "display-resample";
+      osd-bar = false;
+      border = false;
+      video-sync = "display-resample";
     };
   };
 
