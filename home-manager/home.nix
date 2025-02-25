@@ -82,7 +82,17 @@
     userEmail = "alexis@typedr.at";
   };
 
-  programs.alacritty.enable = true;
+  programs.alacritty = {
+    enable = true;
+
+    settings = {
+      blur = true;
+    };
+  };
+
+  programs.tmux = {
+    enable = true;
+  };
 
   programs.direnv = {
     enable = true;
@@ -155,11 +165,6 @@
   };
 
   programs.nix-index = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.wezterm = {
     enable = true;
     enableZshIntegration = true;
   };
