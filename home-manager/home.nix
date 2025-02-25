@@ -16,7 +16,6 @@
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ./firefox.nix
-    ./ncspot.nix
     ./packages.nix
     ./vscode.nix
     ./zsh.nix
@@ -88,6 +87,8 @@
   };
 
   programs.mpv.enable = true;
+
+  programs.ncspot.enable = true;
 
   programs.nix-index = {
     enable = true;
