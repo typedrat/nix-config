@@ -7,9 +7,28 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
-    # example = prev.example.overrideAttrs (oldAttrs: rec {
-    # ...
-    # });
+    nodejs_22 = prev.nodejs_22.overrideAttrs (oldAttrs: {
+      patches =
+        (oldAttrs.patches or [])
+        ++ [
+          (prev.writeTextFile {
+            name = "nodejs-fix-ucs2-detection.patch";
+            text = ''
+              --- a/test/parallel/test-fs-readdir-ucs2.js
+              +++ b/test/parallel/test-fs-readdir-ucs2.js
+              @@ -19,7 +19,7 @@
+               try {
+                 fs.closeSync(fs.openSync(fullpath, 'w+'));
+               } catch (e) {
+              -  if (e.code === 'EINVAL')
+              +  if (e.code === 'EINVAL' || e.code === 'EILSEQ')
+                   common.skip('test requires filesystem that supports UCS2');
+                 throw e;
+               }
+            '';
+          })
+        ];
+    });
   };
 
   # When applied, the unstable nixpkgs set (declared in the flake inputs) will
