@@ -1,14 +1,6 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    fastfetch
-    hyfetch
     vesktop
-    spotify
-    jellyfin-mpv-shim
-    pyvizio
-
-    # icons
-    kora-icon-theme
 
     # archiving tools
     zip
@@ -20,6 +12,7 @@
     jd-diff-patch
     lsd
     frink
+    bottom
 
     # networking tools
     mtr
@@ -29,6 +22,8 @@
     ipcalc
 
     # misc
+    fastfetch
+    hyfetch
     cowsay
     file
     which
@@ -37,6 +32,7 @@
     gnutar
     gawk
     zstd
+    pyvizio
 
     # monitoring
     strace

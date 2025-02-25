@@ -113,7 +113,10 @@
 
   environment.systemPackages = with pkgs; [
     ntfs3g
+    openrgb-with-all-plugins
   ];
+  services.hardware.openrgb.enable = true;
+  boot.kernelModules = ["i2c-dev"];
 
   programs.zsh.enable = true;
   environment.pathsToLink = ["/share/zsh"];
