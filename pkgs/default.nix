@@ -3,4 +3,7 @@
 pkgs: {
   # example = pkgs.callPackage ./example { };
   pyvizio = pkgs.callPackage ./pyvizio.nix {};
+  mpv-jellyfin = pkgs.callPackage ./mpv-jellyfin.nix {
+    buildLua = pkgs.mpvScripts.buildLua;
+  };
 }
