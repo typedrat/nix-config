@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   programs.neovim = {
     enable = true;
     vimAlias = true;
@@ -8,4 +8,6 @@
   programs.zed-editor = {
     enable = true;
   };
+
+  home.packages = [pkgs.jetbrains.rust-rover];
 }
