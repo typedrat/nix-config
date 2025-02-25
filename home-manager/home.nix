@@ -1,6 +1,7 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
+  lib,
   pkgs,
   inputs,
   outputs,
@@ -81,6 +82,8 @@
     userEmail = "alexis@typedr.at";
   };
 
+  programs.alacritty.enable = true;
+
   programs.direnv = {
     enable = true;
     enableZshIntegration = true;
@@ -139,11 +142,11 @@
       "hide_display_names" = true;
     };
   };
-  xdg.desktopEntries.ncspot = {
+  xdg.desktopEntries.ncspot = lib.mkForce {
     name = "ncspot";
     genericName = "TUI Spotify client";
     icon = "ncspot";
-    exec = "wezterm start --class ncspot --always-new-process -- ncspot";
+    exec = "alacritty --class ncspot --title ncspot --command ncspot";
     terminal = false;
     categories = ["AudioVideo" "Audio"];
     settings = {
