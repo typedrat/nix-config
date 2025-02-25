@@ -79,7 +79,9 @@
     enable = true;
     device = "nodev";
     efiSupport = true;
+    useOSProber = true;
   };
+  boot.loader.timeout = 1;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # use xanmod with ZFS
