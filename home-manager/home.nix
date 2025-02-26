@@ -93,6 +93,11 @@
           mods = "Control | Shift";
           action = "CreateNewWindow";
         }
+        {
+          key = "W";
+          mods = "Control | Shift";
+          action = "Quit";
+        }
       ];
     };
   };
