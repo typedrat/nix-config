@@ -2,6 +2,14 @@
   home.packages = with pkgs; [
     vesktop
 
+    # kubernetes stuff
+    kubectl
+    helm
+    fluxcd
+    cilium-cli
+    istioctl
+    opentofu
+
     # archiving tools
     zip
     xz
