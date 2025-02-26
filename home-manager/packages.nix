@@ -21,6 +21,7 @@
     lsd
     frink
     bottom
+    libguestfs-with-appliance
 
     # networking tools
     mtr
