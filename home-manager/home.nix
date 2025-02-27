@@ -83,24 +83,7 @@
     userEmail = "alexis@typedr.at";
   };
 
-  programs.alacritty = {
-    enable = true;
-
-    settings = {
-      keyboard.bindings = [
-        {
-          key = "N";
-          mods = "Control | Shift";
-          action = "CreateNewWindow";
-        }
-        {
-          key = "W";
-          mods = "Control | Shift";
-          action = "Quit";
-        }
-      ];
-    };
-  };
+  programs.alacritty.enable = true;
 
   programs.tmux = {
     enable = true;
@@ -138,6 +121,10 @@
   programs.nix-index = {
     enable = true;
     enableZshIntegration = true;
+  };
+
+  programs.wezterm = {
+    enable = true;
   };
 
   # Nicely reload system units when changing configs
