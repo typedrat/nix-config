@@ -39,6 +39,8 @@
         };
       };
 
+      base_keymap = "VSCode";
+      load_direnv = "shell_hook";
       format_on_save = "on";
 
       buffer_font_family = "TX-02";
