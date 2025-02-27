@@ -54,7 +54,13 @@
     ethtool
     pciutils
     usbutils
-    unstable.fastfetch
+    (unstable.fastfetch.overrideAttrs (oldAttrs: {
+      buildInputs =
+        (oldAttrs.buildInputs or [])
+        ++ [
+          zfs
+        ];
+    }))
     hyfetch
   ];
 }
