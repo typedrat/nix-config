@@ -34,8 +34,6 @@
     ipcalc
 
     # misc
-    fastfetch
-    hyfetch
     cowsay
     file
     which
@@ -44,6 +42,7 @@
     gnutar
     gawk
     zstd
+    wl-clipboard
     pyvizio
 
     # monitoring
@@ -55,5 +54,7 @@
     ethtool
     pciutils
     usbutils
+    unstable.fastfetch
+    hyfetch
   ];
 }
