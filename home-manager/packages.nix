@@ -7,7 +7,7 @@
 
     # kubernetes stuff
     kubectl
-    helm
+    kubernetes-helm
     fluxcd
     cilium-cli
     istioctl
