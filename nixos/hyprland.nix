@@ -77,6 +77,8 @@
     });
   '';
 
+  services.udisks2.enable = true;
+
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
