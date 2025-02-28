@@ -14,6 +14,7 @@
     enable = true;
 
     extensions = [
+      "catppuccin"
       "codebook"
       "dockerfile"
       "nix"
@@ -24,14 +25,11 @@
       languages = {
         Nix = {
           language_servers = ["nixd" "!nil"];
-        };
-      };
 
-      lsp = {
-        nixd = {
-          initialization_options = {
-            formatting = {
-              command = ["alejandra" "--quiet" "--"];
+          formatter = {
+            external = {
+              command = "alejandra";
+              arguments = ["--quiet" "--"];
             };
           };
         };
@@ -41,7 +39,7 @@
       load_direnv = "shell_hook";
       format_on_save = "on";
 
-      ui_font_size = lib.mkForce 16;
+      theme = lib.mkForce "Catppuccin Frappé";
     };
   };
 }

@@ -26,7 +26,9 @@
     ./home-manager.nix
     ./hyprland.nix
     ./plymouth.nix
-    ./stylix.nix
+    ./steam.nix
+
+    ../stylix
   ];
 
   nixpkgs = {
@@ -99,6 +101,10 @@
   networking.hostId = "0a2e777f";
 
   time.timeZone = "America/Los_Angeles";
+  i18n.supportedLocales = [
+    "en_US.UTF-8/UTF-8"
+    "ja_JP.UTF-8/UTF-8"
+  ];
 
   users = {
     users = {

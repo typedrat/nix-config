@@ -25,6 +25,10 @@
     frink
     bottom
     libguestfs-with-appliance
+    nix-diff
+    nix-tree
+    socat
+    wev
 
     # networking tools
     mtr

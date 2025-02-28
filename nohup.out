@@ -1,0 +1,201 @@
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+[2025-02-28 02:18:29.625] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:18:29.627] [info] Discovered appearance 'dark'
+[2025-02-28 02:18:29.627] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:18:29.632] [info] Hyprland IPC starting
+[2025-02-28 02:18:29.633] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:18:29.633] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:18:29.672] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:18:29.672] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:18:29.705] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:18:29.705] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:18:29.712] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+Gdk-Message: 02:18:36.052: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:18:39.608: Unable to load arrow from the cursor theme
+Gdk-Message: 02:18:39.869: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:18:40.982: Unable to load arrow from the cursor theme
+Gdk-Message: 02:18:41.181: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:18:42.288: Unable to load arrow from the cursor theme
+Gdk-Message: 02:18:45.277: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:18:46.699: Unable to load arrow from the cursor theme
+Gdk-Message: 02:18:47.232: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:18:48.120: Unable to load arrow from the cursor theme
+Gdk-Message: 02:18:48.209: Unable to load arrow from the cursor theme
+[2025-02-28 02:25:48.105] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:25:48.107] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:25:48.107] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:25:48.107] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:29:57.124] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:29:57.125] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:29:57.125] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:29:57.126] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:29:57.283] [info] Reloading...
+[2025-02-28 02:29:57.285] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:29:57.285] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:29:57.290] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:29:57.290] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:29:57.294] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:29:57.295] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:29:57.308] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:29:57.308] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:29:57.314] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[Parent 71064, Main Thread] WARNING: Server is missing xdg_foreign support: 'glib warning', file /builds/worker/checkouts/gecko/toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox:71064): Gdk-WARNING **: 02:30:02.734: Server is missing xdg_foreign support
+[Parent 71064, Main Thread] WARNING: Failed to export handle, could not set transient for: 'glib warning', file /builds/worker/checkouts/gecko/toolkit/xre/nsSigHandlers.cpp:201
+
+(firefox:71064): Gtk-WARNING **: 02:30:02.735: Failed to export handle, could not set transient for
+Gdk-Message: 02:31:04.091: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:31:05.184: Unable to load arrow from the cursor theme
+Gdk-Message: 02:31:05.583: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:31:06.587: Unable to load arrow from the cursor theme
+Gdk-Message: 02:31:27.147: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:31:27.829: Unable to load arrow from the cursor theme
+[2025-02-28 02:31:41.675] [info] Reloading...
+[2025-02-28 02:31:41.679] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:31:41.679] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:31:41.712] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:31:41.712] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:31:41.720] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:31:41.727] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:31:41.737] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:31:41.737] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:31:41.744] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+Gdk-Message: 02:31:42.839: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:31:44.600: Unable to load arrow from the cursor theme
+Gdk-Message: 02:31:45.088: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:31:45.120: Unable to load arrow from the cursor theme
+Gdk-Message: 02:32:04.288: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:32:07.679: Unable to load arrow from the cursor theme
+Gdk-Message: 02:32:08.254: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:32:08.276: Unable to load arrow from the cursor theme
+[2025-02-28 02:33:12.339] [warning] [wireplumber]: (onMixerChanged) - Object with id 78 not found
+[2025-02-28 02:33:12.339] [warning] [wireplumber]: (onMixerChanged) - Object with id 78 not found
+[2025-02-28 02:33:12.343] [warning] [wireplumber]: (onMixerChanged) - Object with id 78 not found
+[2025-02-28 02:33:12.343] [warning] [wireplumber]: (onMixerChanged) - Object with id 78 not found
+[2025-02-28 02:33:12.347] [warning] [wireplumber]: (onMixerChanged) - Object with id 78 not found
+[2025-02-28 02:33:12.347] [warning] [wireplumber]: (onMixerChanged) - Object with id 78 not found
+Gdk-Message: 02:33:22.134: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:33:23.186: Unable to load arrow from the cursor theme
+Gdk-Message: 02:33:23.982: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:33:24.000: Unable to load arrow from the cursor theme
+Gdk-Message: 02:33:30.592: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:33:31.029: Unable to load arrow from the cursor theme
+Gdk-Message: 02:33:31.029: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:33:33.017: Unable to load arrow from the cursor theme
+Gdk-Message: 02:34:06.312: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:34:06.831: Unable to load arrow from the cursor theme
+Gdk-Message: 02:34:06.831: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:34:09.581: Unable to load arrow from the cursor theme
+Gdk-Message: 02:34:09.724: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:34:10.271: Unable to load arrow from the cursor theme
+Gdk-Message: 02:34:11.531: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:34:12.964: Unable to load arrow from the cursor theme
+[2025-02-28 02:34:13.606] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:34:13.607] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:13.608] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:34:13.608] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:13.718] [info] Reloading...
+[2025-02-28 02:34:13.727] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:34:13.727] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:34:13.735] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:13.735] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:34:13.741] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:13.748] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:34:13.759] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:34:13.759] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:34:13.767] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:34:58.557] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:34:58.559] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:58.559] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:34:58.559] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:58.711] [info] Reloading...
+[2025-02-28 02:34:58.717] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:34:58.717] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:34:58.728] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:58.729] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:34:58.734] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:34:58.741] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:34:58.756] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:34:58.756] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:34:58.764] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+Gdk-Message: 02:35:17.828: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:35:17.841: Unable to load arrow from the cursor theme
+Gdk-Message: 02:35:18.162: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:35:22.020: Unable to load arrow from the cursor theme
+Gdk-Message: 02:36:25.029: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:36:25.358: Unable to load arrow from the cursor theme
+Gdk-Message: 02:36:25.731: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:36:25.782: Unable to load arrow from the cursor theme
+Gdk-Message: 02:36:27.608: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:36:27.621: Unable to load arrow from the cursor theme
+Gdk-Message: 02:36:27.906: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:36:29.050: Unable to load arrow from the cursor theme
+[2025-02-28 02:37:00.928] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:37:00.930] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:37:00.930] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:37:00.930] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:37:00.967] [info] Reloading...
+[2025-02-28 02:37:00.971] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:37:00.971] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:37:00.977] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:37:00.978] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:37:00.983] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:37:00.983] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:37:00.997] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:37:00.997] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:37:01.003] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+Gdk-Message: 02:37:03.556: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:37:05.121: Unable to load arrow from the cursor theme
+Gdk-Message: 02:37:05.249: Unable to load arrow from the cursor theme
+Gdk-Message: 02:37:05.383: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:37:08.501: Unable to load arrow from the cursor theme
+Gdk-Message: 02:37:08.590: Unable to load arrow from the cursor theme
+Gdk-Message: 02:37:08.938: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:37:11.229: Unable to load arrow from the cursor theme
+Gdk-Message: 02:37:11.348: Unable to load arrow from the cursor theme
+Gdk-Message: 02:38:56.036: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:39:02.034: Unable to load arrow from the cursor theme
+Gdk-Message: 02:39:02.163: Unable to load arrow from the cursor theme
+Gdk-Message: 02:39:02.466: Unable to load hand2 from the cursor theme
+Gdk-Message: 02:39:02.587: Unable to load arrow from the cursor theme
+[2025-02-28 02:40:04.685] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:40:04.687] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:04.687] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:40:04.687] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:04.731] [info] Reloading...
+[2025-02-28 02:40:04.735] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:40:04.735] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:40:04.742] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:04.742] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:40:04.756] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:04.759] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:40:04.773] [error] clock: chrono format error: invalid  specifier in chrono-specs
+[2025-02-28 02:40:04.775] [error] clock: chrono format error: invalid  specifier in chrono-specs
+[2025-02-28 02:40:04.776] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:40:04.776] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:40:04.782] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:40:57.670] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:40:57.672] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:57.672] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:40:57.672] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:57.761] [info] Reloading...
+[2025-02-28 02:40:57.765] [info] Using configuration file /home/awilliams/.config/waybar/config
+[2025-02-28 02:40:57.765] [info] Using CSS file /home/awilliams/.config/waybar/style.css
+[2025-02-28 02:40:57.773] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:57.773] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:40:57.789] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:40:57.789] [warning] module hyprland/mode: Unknown module: hyprland/mode
+[2025-02-28 02:40:57.808] [info] Bar configured (width: 3840, height: 36) for output: DP-2
+[2025-02-28 02:40:57.808] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:40:57.814] [info] Bar configured (width: 1920, height: 36) for output: HDMI-A-1
+[2025-02-28 02:44:34.229] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:44:34.231] [info] Loading persistent workspaces from Hyprland workspace rules
+[2025-02-28 02:44:34.231] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2025-02-28 02:44:34.232] [info] Loading persistent workspaces from Hyprland workspace rules

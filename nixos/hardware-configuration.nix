@@ -57,7 +57,13 @@
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-uuid/5A8CF3318CF305F3";
     fsType = "ntfs-3g";
-    options = ["rw" "uid=${toString config.users.users.awilliams.uid}" "nofail"];
+    options = ["rw" "X-mount.mkdir" "uid=${toString config.users.users.awilliams.uid}" "nofail"];
+  };
+
+  fileSystems."/mnt/genjuro" = {
+    device = "/dev/disk/by-uuid/4C240E88240E74EC";
+    fsType = "ntfs-3g";
+    options = ["rw" "X-mount.mkdir" "uid=${toString config.users.users.awilliams.uid}" "nofail"];
   };
 
   swapDevices = [

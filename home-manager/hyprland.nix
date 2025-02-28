@@ -3,20 +3,20 @@
   pkgs,
   ...
 }: {
+  imports = [
+    inputs.walker.homeManagerModules.default
+  ];
+
   home.packages = with pkgs; [
-    inputs.mcmojave-hyprcursor.packages.${pkgs.stdenv.hostPlatform.system}.default
     hyprpolkitagent
     mpvpaper
     waypaper
     nwg-look
-    nwg-dock-hyprland
-    nwg-drawer
-    (xfce.thunar.override {
-      thunarPlugins = with pkgs.xfce; [
-        thunar-volman
-      ];
-    })
-    flameshot
+    libsForQt5.qt5ct
+    kdePackages.qt6ct
+    nomacs-qt6
+    kdePackages.okular
+    kdePackages.dolphin
   ];
 
   wayland.windowManager.hyprland = {
@@ -31,9 +31,20 @@
         "DP-2,3840x2160@60.0,0x1080,1.0"
         "HDMI-A-1,3840x2160@60.0,960x0,2.0"
       ];
+
+      bind = [
+        "SUPER,space,exec,walker"
+      ];
+
+      bindm = [
+        "Alt,mouse:272,movewindow"
+      ];
+
       exec-once = [
         "systemctl --user start hyprpolkitagent"
         "waypaper --restore"
+        "waybar"
+        "walker --gapplication-service"
         "nwg-drawer -r -term wezterm -wm hyprland"
         "firefox"
         "wezterm"
@@ -41,7 +52,12 @@
     };
   };
 
-  home.sessionVariables.HYPRCURSOR_THEME = "McMojave";
+  home.pointerCursor.hyprcursor.enable = true;
+
+  stylix.targets = {
+    hyprland.hyprpaper.enable = false;
+  };
+
   home.sessionVariables.NIXOS_OZONE_WL = "1";
 
   services.mako = {
@@ -68,20 +84,41 @@
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
         }
-        {
-          timeout = 1800;
-          on-timeout = "systemctl suspend";
-        }
       ];
     };
   };
 
   programs.hyprlock.enable = true;
 
-  programs.eww = {
+  programs.waybar = {
     enable = true;
-    enableZshIntegration = true;
+
+    settings = [
+      {
+        "layer" = "top";
+        "modules-left" = ["hyprland/workspaces" "hyprland/mode"];
+        "modules-center" = ["hyprland/window"];
+        "modules-right" = ["tray" "wireplumber" "clock"];
+
+        "hyprland/window" = {
+          "max-length" = 50;
+        };
+
+        "wireplumber" = {
+          "format" = "{volume}% {icon}";
+          "format-muted" = "";
+          "format-icons" = ["" "" ""];
+        };
+
+        "clock" = {
+          "format" = "{:%I:%M %p}  ";
+          "tooltip-format" = "<tt><small>{calendar}</small></tt>";
+        };
+      }
+    ];
   };
 
-  programs.kitty.enable = true;
+  programs.walker = {
+    enable = true;
+  };
 }
