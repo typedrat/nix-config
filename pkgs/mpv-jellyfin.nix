@@ -24,7 +24,7 @@ buildLua {
     (lib.makeBinPath [mpv-unwrapped])
   ];
 
-  passthru.scriptName = "jellyfin";
+  passthru.scriptName = "jellyfin.lua";
   scriptPath = "scripts/jellyfin.lua";
 
   meta = {

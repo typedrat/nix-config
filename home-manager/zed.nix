@@ -1,9 +1,14 @@
-{pkgs, ...}: {
-  programs.neovim = {
-    enable = true;
-    vimAlias = true;
-    vimdiffAlias = true;
-  };
+{
+  inputs,
+  pkgs,
+  lib,
+  ...
+}: {
+  home.packages = with pkgs; [
+    nixd
+    alejandra
+    inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.rust-analyzer
+  ];
 
   programs.zed-editor = {
     enable = true;
@@ -12,17 +17,10 @@
       "codebook"
       "dockerfile"
       "nix"
-      "tokyo-night"
       "toml"
     ];
 
     userSettings = {
-      theme = {
-        mode = "system";
-        light = "Tokyo Night Light";
-        dark = "Tokyo Night Storm";
-      };
-
       languages = {
         Nix = {
           language_servers = ["nixd" "!nil"];
@@ -43,13 +41,7 @@
       load_direnv = "shell_hook";
       format_on_save = "on";
 
-      buffer_font_family = "TX-02";
-      buffer_font_size = 14;
-
-      ui_font_family = "SF Pro Display";
-      ui_font_size = 16;
+      ui_font_size = lib.mkForce 16;
     };
   };
-
-  home.packages = [pkgs.jetbrains.rust-rover];
 }

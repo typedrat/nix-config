@@ -24,6 +24,7 @@
     ./aagl.nix
     ./hardware-configuration.nix
     ./home-manager.nix
+    ./hyprland.nix
     ./plymouth.nix
     ./stylix.nix
   ];
@@ -50,6 +51,10 @@
     config = {
       # Disable if you don't want unfree packages
       allowUnfree = true;
+
+      permittedInsecurePackages = [
+        "olm-3.2.16"
+      ];
     };
   };
 
@@ -86,7 +91,9 @@
 
   # use xanmod with ZFS
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  boot.extraModulePackages = with config.boot.kernelPackages; [zfs];
+  boot.extraModulePackages = [
+    config.boot.kernelPackages.${pkgs.zfs.kernelModuleAttribute}
+  ];
 
   networking.hostName = "hyperion";
   networking.hostId = "0a2e777f";
@@ -120,26 +127,6 @@
 
   programs.zsh.enable = true;
   environment.pathsToLink = ["/share/zsh"];
-
-  # Enable SDDM and KDE 6 with Wayland.
-  services.displayManager.sddm = {
-    enable = true;
-
-    wayland = {
-      enable = true;
-      compositor = "kwin";
-    };
-  };
-
-  services.desktopManager.plasma6 = {
-    enable = true;
-  };
-
-  # Enable sound.
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-  };
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.

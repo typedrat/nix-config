@@ -9,9 +9,7 @@
 
   fonts.fontconfig.enable = true;
   fonts.packages = with pkgs; [
-    (nerdfonts.override {
-      fonts = ["NerdFontsSymbolsOnly"];
-    })
+    nerd-fonts.symbols-only
     julia-mono
     nur.repos.nykma.font-apple-color-emoji
     inputs.apple-fonts.packages.${pkgs.system}.sf-pro
