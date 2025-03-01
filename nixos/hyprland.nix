@@ -1,54 +1,56 @@
 {
+  inputs,
   pkgs,
   lib,
   config,
   ...
 }: {
+  nix.settings = {
+    substituters = ["https://hyprland.cachix.org"];
+    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+  };
+
   programs.hyprland = {
     enable = true;
     withUWSM = true;
+
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
 
-  services.greetd = {
+  services.displayManager.sddm = {
     enable = true;
+    package = pkgs.kdePackages.sddm;
+    wayland = {
+      enable = true;
+      compositor = "kwin"; # sweet, sweet lies
+    };
 
     settings = {
-      default_session = {
-        enable = true;
-        command = "${lib.getExe config.programs.hyprland.package} --config /etc/greetd/hyprland.conf";
-        user = "greeter";
+      Wayland = lib.mkForce {
+        CompositorCommand = "${lib.getExe config.programs.hyprland.package} --config /etc/sddm/hyprland.conf";
       };
     };
   };
 
-  environment.etc."greetd/hyprland.conf".text = ''
-    monitor = HDMI-A-1, disable
-    exec-once = ${lib.getExe config.programs.regreet.package}; hyprctl dispatch exit
-    env = GTK_USE_PORTAL,0
-    env = GDK_DEBUG,no-portals
+  environment.etc."sddm/hyprland.conf".text = ''
     misc {
         disable_hyprland_logo = true
         disable_splash_rendering = true
-        disable_hyprland_qtutils_check = true
+        force_default_wallpaper = 0
+        initial_workspace_tracking = 1
+    }
+
+    input {
+        numlock_by_default = true
+        kb_layout = us
+    }
+
+    cursor {
+        no_warps = 1
+        no_hardware_cursors = 1
     }
   '';
-
-  programs.regreet = {
-    enable = true;
-    settings = {
-      appearance.greeting_msg = "Welcome back!";
-
-      commands = {
-        reboot = ["systemctl" "reboot"];
-        poweroff = ["systemctl" "poweroff"];
-      };
-
-      widget.clock = {
-        format = "%a %H:%M";
-        resolution = "500ms";
-      };
-    };
-  };
 
   # Enable sound.
   security.rtkit.enable = true;

@@ -19,10 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    stylix = {
-      url = "github:danth/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    catppuccin.url = "github:catppuccin/nix";
 
     fenix = {
       url = "github:nix-community/fenix";
@@ -50,6 +47,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hyprland.url = "github:hyprwm/Hyprland";
+
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+
     walker = {
       url = "github:abenz1267/walker";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,7 +63,11 @@
   outputs = {
     self,
     nixpkgs,
+    home-manager,
     nur,
+    catppuccin,
+    spicetify-nix,
+    walker,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -97,10 +105,30 @@
       hyperion = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
-          nur.modules.nixos.default
-
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
+
+          nur.modules.nixos.default
+          catppuccin.nixosModules.catppuccin
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              extraSpecialArgs = {inherit inputs outputs;};
+              backupFileExtension = "backup";
+
+              users = {
+                awilliams = {
+                  imports = [
+                    ./home-manager/home.nix
+
+                    catppuccin.homeManagerModules.catppuccin
+                    spicetify-nix.homeManagerModules.default
+                    walker.homeManagerModules.default
+                  ];
+                };
+              };
+            };
+          }
         ];
       };
     };

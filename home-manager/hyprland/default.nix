@@ -4,8 +4,14 @@
   ...
 }: {
   imports = [
-    inputs.walker.homeManagerModules.default
+    ./smart-gaps.nix
+    ./xwaylandvideobridge.nix
   ];
+
+  nix.settings = {
+    substituters = ["https://hyprland.cachix.org"];
+    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+  };
 
   home.packages = with pkgs; [
     hyprpolkitagent
@@ -25,6 +31,10 @@
 
     package = null;
     portalPackage = null;
+
+    plugins = [
+      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
+    ];
 
     settings = {
       monitor = [
@@ -50,12 +60,6 @@
         "wezterm"
       ];
     };
-  };
-
-  home.pointerCursor.hyprcursor.enable = true;
-
-  stylix.targets = {
-    hyprland.hyprpaper.enable = false;
   };
 
   home.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -100,6 +104,12 @@
         "modules-center" = ["hyprland/window"];
         "modules-right" = ["tray" "wireplumber" "clock"];
 
+        "hyprhand/workspaces" = {
+          "persistent-workspaces" = {
+            "*" = 5;
+          };
+        };
+
         "hyprland/window" = {
           "max-length" = 50;
         };
@@ -119,6 +129,10 @@
   };
 
   programs.walker = {
+    enable = true;
+  };
+
+  programs.wlogout = {
     enable = true;
   };
 }

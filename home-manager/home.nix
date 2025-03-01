@@ -10,9 +10,10 @@
   imports = [
     ./fcitx5.nix
     ./firefox.nix
-    ./hyprland.nix
+    ./hyprland
     ./packages.nix
     ./spotify.nix
+    ./theming.nix
     ./zed.nix
     ./zsh.nix
   ];
@@ -37,17 +38,6 @@
     sessionVariables = {
       VIZIO_IP = "viziocastdisplay.lan";
       VIZIO_AUTH = "Zmge7tbkiz";
-    };
-  };
-
-  fonts.fontconfig = {
-    enable = true;
-
-    defaultFonts = {
-      monospace = [
-        "JuliaMono"
-        "Symbols Nerd Font"
-      ];
     };
   };
 
@@ -105,13 +95,6 @@
 
   programs.wezterm = {
     enable = true;
-  };
-
-  stylix.iconTheme = {
-    enable = true;
-    package = pkgs.catppuccin-papirus-folders;
-    light = "cat-latte-lavender";
-    dark = "cat-frappe-lavender";
   };
 
   # Nicely reload system units when changing configs

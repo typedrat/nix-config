@@ -23,12 +23,10 @@
     # Import your generated (nixos-generate-config) hardware configuration
     ./aagl.nix
     ./hardware-configuration.nix
-    ./home-manager.nix
     ./hyprland.nix
     ./plymouth.nix
     ./steam.nix
-
-    ../stylix
+    ./theming.nix
   ];
 
   nixpkgs = {

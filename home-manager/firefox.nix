@@ -1,7 +1,7 @@
 {pkgs, ...}: {
   programs.firefox = {
     enable = true;
-    package = pkgs.wrapFirefox pkgs.firefox-bin-unwrapped {
+    package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
       extraPolicies = {
         DisableFirefoxStudies = true;
         DisablePocket = true;
@@ -28,6 +28,7 @@
         settings = {
           "general.autoscroll" = true;
           "general.smoothScroll" = true;
+          "media.ffmpeg.vaapi.enabled" = true;
           "widget.use-xdg-desktop-portal.file-picker" = 1; # Use KDE File Picker
           "extensions.autoDisableScopes" = 0; # Don't auto-disable extensions
           "app.update.auto" = false;
