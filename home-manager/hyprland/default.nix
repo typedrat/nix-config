@@ -4,6 +4,10 @@
   ...
 }: {
   imports = [
+    inputs.catppuccin.homeManagerModules.catppuccin
+    inputs.spicetify-nix.homeManagerModules.default
+    inputs.walker.homeManagerModules.default
+
     ./smart-gaps.nix
     ./xwaylandvideobridge.nix
   ];
@@ -73,7 +77,7 @@
     enable = true;
     settings = {
       general = {
-        lock_cmd = "podif hyprlock || hyprlock";
+        lock_cmd = "pidof hyprlock || hyprlock";
         before_sleep_cmd = "loginctl lock-session";
         after_sleep_cmd = "hyprctl dispatch dpms on";
       };
@@ -99,12 +103,14 @@
 
     settings = [
       {
-        "layer" = "top";
-        "modules-left" = ["hyprland/workspaces" "hyprland/mode"];
-        "modules-center" = ["hyprland/window"];
-        "modules-right" = ["tray" "wireplumber" "clock"];
+        reload_style_on_change = true;
+        layer = "top";
+        output = "DP-2";
+        modules-left = ["hyprland/workspaces" "clock"];
+        modules-center = ["hyprland/window"];
+        modules-right = ["tray" "wireplumber"];
 
-        "hyprhand/workspaces" = {
+        "hyprland/workspaces" = {
           "persistent-workspaces" = {
             "*" = 5;
           };
@@ -114,18 +120,23 @@
           "max-length" = 50;
         };
 
-        "wireplumber" = {
-          "format" = "{volume}% {icon}";
-          "format-muted" = "";
-          "format-icons" = ["" "" ""];
+        wireplumber = {
+          format = "{icon}";
+          tooltip-format = "{node_name} — {volume}%";
+          format-muted = "";
+          format-icons = ["" "" ""];
         };
 
-        "clock" = {
-          "format" = "{:%I:%M %p}  ";
-          "tooltip-format" = "<tt><small>{calendar}</small></tt>";
+        clock = {
+          format = "{:%I:%M %p}  ";
+          tooltip-format = "<tt><small>{calendar}</small></tt>";
+          calendar = {
+          };
         };
       }
     ];
+
+    style = ./waybar.css;
   };
 
   programs.walker = {

@@ -33,6 +33,8 @@
       nerd-fonts.symbols-only
       julia-mono
       inputs.typedrat-fonts.packages.${pkgs.system}.berkeley-mono
+      inputs.typedrat-fonts.packages.${pkgs.system}.berkeley-mono-nerd-font
+      inputs.typedrat-fonts.packages.${pkgs.system}.berkeley-mono-nerd-font-mono
 
       inputs.apple-fonts.packages.${pkgs.system}.sf-pro
       inputs.apple-fonts.packages.${pkgs.system}.sf-compact
@@ -77,7 +79,7 @@
           "TX-02"
           "Miriam Mono CLM"
           "M PLUS 1 Code"
-          "Julia Mono"
+          "JuliaMono"
           "Symbols Nerd Font"
         ];
 

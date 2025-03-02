@@ -1,12 +1,15 @@
 {
   inputs,
   pkgs,
+  osConfig,
   ...
 }: {
   catppuccin = {
     enable = true;
-    flavor = "frappe";
-    accent = "lavender";
+    flavor = osConfig.catppuccin.flavor;
+    accent = osConfig.catppuccin.accent;
+
+    gtk.icon.enable = true;
     cursors.enable = true;
     waybar.mode = "createLink";
   };
@@ -22,6 +25,15 @@
 
     gtk2.extraConfig = "gtk-application-prefer-dark-theme = true";
     gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
+  };
+
+  dconf = {
+    enable = true;
+    settings = {
+      "org/gnome/desktop/interface" = {
+        color-scheme = "prefer-dark";
+      };
+    };
   };
 
   qt = {

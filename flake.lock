@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1740820344,
-        "narHash": "sha256-T63AXJbq4Z/FWEdi4Ep5rzbWhobWcXBjcm8uiDSwPAY=",
+        "lastModified": 1740876632,
+        "narHash": "sha256-u695YUS3R5HI1VQp7feCifWYOn3Gh6yGde1vp5rKqTg=",
         "owner": "ezKEa",
         "repo": "aagl-gtk-on-nix",
-        "rev": "48d711204bf48e0e47de7f3af08695ba7b1b6b80",
+        "rev": "5505af25160f16ad26f9107aebee9ea7713b59d9",
         "type": "github"
       },
       "original": {
@@ -308,11 +308,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1740854078,
-        "narHash": "sha256-h6VYKddkWC+Tmqr5ChEqBhIiQKANghDX9bq6cpnJnTc=",
+        "lastModified": 1740881975,
+        "narHash": "sha256-KBs8iEEzDG/eY+mp2t7t0hUvAQqbIsWJkQLUN3AKZZw=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "2acbb59bf218331a090f402982f22fd7f85ae50f",
+        "rev": "3a21dd84b3603691274af7c2c515a7c387b8f5a4",
         "type": "github"
       },
       "original": {
@@ -596,11 +596,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1740858475,
-        "narHash": "sha256-YIdIgnmg5AlArjennCIv5NqZUU54rGgHxm4lLWqMy3g=",
+        "lastModified": 1740881933,
+        "narHash": "sha256-H+ElulJTmyMM8qNABq8/oPqcMduXhvois0lpCItVDDA=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "efadff3f90fb07193808c0eff037addae42cfaa7",
+        "rev": "0c6545c22443e67b68b1f948c410618f15b09129",
         "type": "github"
       },
       "original": {
@@ -872,11 +872,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1740367569,
-        "narHash": "sha256-KNOhWOIbKyQSMkwMAlWN0JGlDiuPQW7M99qYSN9tMbg=",
+        "lastModified": 1740879109,
+        "narHash": "sha256-hfWC8GkXd7uMf1lcNre33bcukzLXpsr081EadjaGqM0=",
         "ref": "refs/heads/master",
-        "rev": "b7eda05234b4c2e13af3346af4a9d9e03c339272",
-        "revCount": 2,
+        "rev": "e77f9c1949b0adce5bc83d245e99c862383d1a65",
+        "revCount": 6,
         "type": "git",
         "url": "ssh://git@github.com/typedrat/nix-fonts.git"
       },

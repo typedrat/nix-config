@@ -84,6 +84,7 @@
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
+      config.programs.hyprland.portalPackage
       xdg-desktop-portal-gtk
     ];
   };

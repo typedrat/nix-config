@@ -110,6 +110,7 @@
 
           nur.modules.nixos.default
           catppuccin.nixosModules.catppuccin
+
           home-manager.nixosModules.home-manager
           {
             home-manager = {
@@ -117,15 +118,7 @@
               backupFileExtension = "backup";
 
               users = {
-                awilliams = {
-                  imports = [
-                    ./home-manager/home.nix
-
-                    catppuccin.homeManagerModules.catppuccin
-                    spicetify-nix.homeManagerModules.default
-                    walker.homeManagerModules.default
-                  ];
-                };
+                awilliams = import ./home-manager/home.nix;
               };
             };
           }

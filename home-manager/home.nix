@@ -14,6 +14,7 @@
     ./packages.nix
     ./spotify.nix
     ./theming.nix
+    ./wezterm
     ./zed.nix
     ./zsh.nix
   ];
@@ -91,10 +92,6 @@
   programs.nix-index = {
     enable = true;
     enableZshIntegration = true;
-  };
-
-  programs.wezterm = {
-    enable = true;
   };
 
   # Nicely reload system units when changing configs
