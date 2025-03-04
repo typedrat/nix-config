@@ -17,6 +17,7 @@
     ./discord
     ./hyprland
     ./packages.nix
+    ./podman.nix
     ./spotify.nix
     ./theming.nix
     ./wezterm

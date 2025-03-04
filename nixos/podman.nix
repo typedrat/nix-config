@@ -7,6 +7,14 @@
         "quay.io"
         "ghcr.io"
       ];
+
+      storage.settings = {
+        storage = rec {
+          runroot = "/var/lib/containers";
+          graphroot = "${runroot}/storage";
+          driver = "zfs";
+        };
+      };
     };
 
     podman = {
@@ -16,5 +24,11 @@
 
       defaultNetwork.settings.dns_enabled = true;
     };
+  };
+
+  fileSystems."/var/lib/containers" = {
+    device = "zpool/containers";
+    fsType = "zfs";
+    options = ["zfsutil" "X-mount.mkdir"];
   };
 }
