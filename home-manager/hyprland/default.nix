@@ -62,8 +62,8 @@
 
       bind = [
         "SUPER,space,exec,walker"
-        "CTRL,left,workspace,r-1"
-        "CTRL,right,workspace,r+1"
+        "SUPER_SHIFT,left,workspace,r-1"
+        "SUPER_SHIFT,right,workspace,r+1"
       ];
 
       exec-once = [
