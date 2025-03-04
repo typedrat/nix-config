@@ -23,12 +23,12 @@
     package = pkgs.kdePackages.sddm;
     wayland = {
       enable = true;
-      compositor = "kwin"; # sweet, sweet lies
+      compositorCommand = "${lib.getExe config.programs.hyprland.package} --config /etc/sddm/hyprland.conf";
     };
 
     settings = {
-      Wayland = lib.mkForce {
-        CompositorCommand = "${lib.getExe config.programs.hyprland.package} --config /etc/sddm/hyprland.conf";
+      General = {
+        GreeterEnvironment = "QT_WAYLAND_SHELL_INTEGRATION=layer-shell";
       };
     };
   };
@@ -50,6 +50,8 @@
         no_warps = 1
         no_hardware_cursors = 1
     }
+
+    monitor = , preferred, auto, 1
   '';
 
   # Enable sound.
