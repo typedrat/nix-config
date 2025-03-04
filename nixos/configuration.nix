@@ -25,6 +25,7 @@
     ./hardware-configuration.nix
     ./hyprland.nix
     ./plymouth.nix
+    ./podman.nix
     ./steam.nix
     ./theming.nix
   ];
@@ -109,7 +110,7 @@
       awilliams = {
         uid = 1000;
         isNormalUser = true;
-        extraGroups = ["games" "wheel"];
+        extraGroups = ["games" "podman" "wheel"];
         shell = pkgs.zsh;
       };
     };

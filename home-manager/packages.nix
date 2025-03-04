@@ -97,7 +97,7 @@
     fileWidgetCommand = "${lib.getExe config.programs.fd.package} --type f";
 
     defaultOptions = [
-      ''--preview "${lib.getExe config.programs.bat.package} --color=always --style=numbers --line-range=:500 {}"''
+      ''--preview \"${lib.getExe config.programs.bat.package} --color=always --style=numbers --line-range=:500 {}\"''
     ];
   };
 
