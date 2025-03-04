@@ -18,10 +18,6 @@
       source ~/.p10k.zsh
     '';
 
-    shellAliases = {
-      ls = "lsd";
-    };
-
     history.size = 10000;
   };
 }

@@ -1,20 +1,19 @@
 {
   inputs,
   pkgs,
+  osConfig,
   ...
 }: {
   imports = [
-    inputs.catppuccin.homeManagerModules.catppuccin
-    inputs.spicetify-nix.homeManagerModules.default
-    inputs.walker.homeManagerModules.default
-
+    ./firefox
     ./smart-gaps.nix
+    ./waybar
     ./xwaylandvideobridge.nix
   ];
 
   nix.settings = {
-    substituters = ["https://hyprland.cachix.org"];
-    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    extra-substituters = ["https://hyprland.cachix.org"];
+    extra-trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
   };
 
   home.packages = with pkgs; [
@@ -27,6 +26,8 @@
     nomacs-qt6
     kdePackages.okular
     kdePackages.dolphin
+    kdePackages.ark
+    xmage
   ];
 
   wayland.windowManager.hyprland = {
@@ -46,12 +47,24 @@
         "HDMI-A-1,3840x2160@60.0,960x0,2.0"
       ];
 
-      bind = [
-        "SUPER,space,exec,walker"
+      workspace = [
+        "1, monitor:DP-2, persistent=true"
+        "2, monitor:DP-2, persistent=true"
+        "3, monitor:DP-2, persistent=true"
+        "4, monitor:DP-2, persistent=true"
+        "5, monitor:DP-2, persistent=true"
+        "6, monitor:DP-2, persistent=true"
+        "name:tv, monitor:HDMI-A-1, persistent=true"
       ];
 
-      bindm = [
-        "Alt,mouse:272,movewindow"
+      windowrulev2 = [
+        "float, class:xdg-desktop-portal-gtk"
+      ];
+
+      bind = [
+        "SUPER,space,exec,walker"
+        "CTRL,left,workspace,r-1"
+        "CTRL,right,workspace,r+1"
       ];
 
       exec-once = [
@@ -59,7 +72,7 @@
         "waypaper --restore"
         "waybar"
         "walker --gapplication-service"
-        "nwg-drawer -r -term wezterm -wm hyprland"
+        "jellyfin-mpv-shim"
         "firefox"
         "wezterm"
       ];
@@ -70,7 +83,7 @@
 
   services.mako = {
     enable = true;
-    defaultTimeout = 30;
+    defaultTimeout = 5000;
   };
 
   services.hypridle = {
@@ -96,47 +109,20 @@
     };
   };
 
-  programs.hyprlock.enable = true;
-
-  programs.waybar = {
+  programs.hyprlock = {
     enable = true;
 
-    settings = [
-      {
-        reload_style_on_change = true;
-        layer = "top";
-        output = "DP-2";
-        modules-left = ["hyprland/workspaces" "clock"];
-        modules-center = ["hyprland/window"];
-        modules-right = ["tray" "wireplumber"];
+    settings = {
+      "$font" = "SF Pro Display";
 
-        "hyprland/workspaces" = {
-          "persistent-workspaces" = {
-            "*" = 5;
-          };
-        };
+      general = {
+        disable_loading_bar = true;
+        hide_cursor = true;
+      };
 
-        "hyprland/window" = {
-          "max-length" = 50;
-        };
-
-        wireplumber = {
-          format = "{icon}";
-          tooltip-format = "{node_name} — {volume}%";
-          format-muted = "";
-          format-icons = ["" "" ""];
-        };
-
-        clock = {
-          format = "{:%I:%M %p}  ";
-          tooltip-format = "<tt><small>{calendar}</small></tt>";
-          calendar = {
-          };
-        };
-      }
-    ];
-
-    style = ./waybar.css;
+      label = [
+      ];
+    };
   };
 
   programs.walker = {

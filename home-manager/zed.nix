@@ -5,16 +5,16 @@
   osConfig,
   ...
 }: {
-  home.packages = with pkgs; [
-    nixd
-    alejandra
-    package-version-server
-    vscode-langservers-extracted
-    inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.rust-analyzer
-  ];
-
   programs.zed-editor = {
     enable = true;
+
+    extraPackages = with pkgs; [
+      nixd
+      alejandra
+      package-version-server
+      vscode-langservers-extracted
+      inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.rust-analyzer
+    ];
 
     extensions = [
       "catppuccin"

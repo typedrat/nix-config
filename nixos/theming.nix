@@ -26,9 +26,7 @@
       vistafonts-chs
       vistafonts-cht
 
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-cjk-serif
+      google-fonts
 
       nerd-fonts.symbols-only
       julia-mono

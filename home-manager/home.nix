@@ -8,8 +8,13 @@
 }: {
   # You can import other home-manager modules here
   imports = [
+    inputs.catppuccin.homeManagerModules.catppuccin
+    inputs.spicetify-nix.homeManagerModules.default
+    inputs.walker.homeManagerModules.default
+
     ./fcitx5.nix
     ./firefox.nix
+    ./discord
     ./hyprland
     ./packages.nix
     ./spotify.nix

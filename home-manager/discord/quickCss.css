@@ -1,0 +1,11 @@
+@import url("https://catppuccin.github.io/discord/dist/catppuccin-frappe-lavender.theme.css")
+(prefers-color-scheme: dark);
+@import url("https://catppuccin.github.io/discord/dist/catppuccin-latte-lavender.theme.css")
+(prefers-color-scheme: light);
+
+:root {
+    --font-primary: sans-serif;
+    --font-display: sans-serif;
+    --font-headline: sans-serif;
+    --font-code: monospace;
+}

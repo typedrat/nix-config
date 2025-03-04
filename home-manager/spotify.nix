@@ -1,10 +1,17 @@
 {
   lib,
   pkgs,
+  inputs,
+  osConfig,
   ...
-}: {
+}: let
+  spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.system};
+in {
   programs.spicetify = {
     enable = true;
+
+    theme = spicePkgs.themes.catppuccin;
+    colorScheme = osConfig.catppuccin.flavor;
   };
 
   programs.ncspot = {

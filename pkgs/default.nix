@@ -7,4 +7,5 @@ pkgs: {
     buildLua = pkgs.mpvScripts.buildLua;
   };
   opensiddur-hebrew-fonts = pkgs.callPackage ./opensiddur-hebrew-fonts.nix {};
+  xmage = pkgs.callPackage ./xmage.nix {};
 }

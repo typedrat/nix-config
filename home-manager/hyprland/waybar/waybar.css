@@ -1,0 +1,78 @@
+@import url("./catppuccin.css");
+
+* {
+    font-size: 16px;
+}
+
+window#waybar {
+    all: unset;
+
+    background: @base;
+    color: @text;
+}
+
+.modules-left {
+    padding-left: 10px;
+}
+
+label.module {
+    padding: 0 7px;
+}
+
+/* idle inhibitor */
+#idle_inhibitor {
+    min-width: 20px;
+}
+
+/* system tray */
+#tray {
+    padding: 0 9px;
+
+    -gtk-icon-shadow:
+        -1px 0 @base,
+        0 1px @base,
+        1px 0 @base,
+        0 -1px @base;
+}
+
+#tray menu {
+    background: @base;
+    color: @text;
+}
+
+#tray menu *:disabled {
+    color: @overlay1;
+}
+
+/* right-side */
+.modules-right {
+    color: @base;
+}
+
+.modules-right label.module {
+    min-width: 20px;
+}
+
+.modules-right > :nth-last-child(6n - 5) {
+    background-color: @red;
+}
+
+.modules-right > :nth-last-child(6n - 4) {
+    background-color: @peach;
+}
+
+.modules-right > :nth-last-child(6n - 3) {
+    background-color: @yellow;
+}
+
+.modules-right > :nth-last-child(6n - 2) {
+    background-color: @green;
+}
+
+.modules-right > :nth-last-child(6n - 1) {
+    background-color: @sapphire;
+}
+
+.modules-right > :nth-last-child(6n - 0) {
+    background-color: @lavender;
+}
