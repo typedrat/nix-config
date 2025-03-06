@@ -8,7 +8,6 @@
   home.packages = with pkgs; [
     # GUI stuff to factor out
     jellyfin-mpv-shim
-    watershot
 
     # Rust
     inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.stable.defaultToolchain

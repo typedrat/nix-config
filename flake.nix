@@ -9,6 +9,11 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -36,6 +41,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    catppuccin-ncspot = {
+      url = "github:typedrat/catppuccin-ncspot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # anime game launcher
     aagl = {
       url = "github:ezKEa/aagl-gtk-on-nix";
@@ -56,6 +66,11 @@
 
     walker = {
       url = "github:abenz1267/walker";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

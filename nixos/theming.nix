@@ -8,7 +8,6 @@
     accent = "lavender";
 
     tty.enable = true;
-    grub.enable = true;
     plymouth.enable = true;
 
     sddm = {

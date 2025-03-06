@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./blur.nix
     ./firefox
     ./smart-gaps.nix
     ./waybar
@@ -20,6 +21,7 @@
     mpvpaper
     waypaper
     nwg-look
+    hyprshot
     libsForQt5.qt5ct
     kdePackages.qt6ct
     nomacs-qt6
@@ -58,12 +60,20 @@
 
       windowrulev2 = [
         "float, class:xdg-desktop-portal-gtk"
+        "float, class:steam, title:(Friends List|Steam Settings)"
+        "plugin:hyprbars:nobar, class:steam"
       ];
 
       bind = [
         "SUPER,space,exec,walker"
         "SUPER_SHIFT,left,workspace,r-1"
         "SUPER_SHIFT,right,workspace,r+1"
+        "SUPER,s,exec,hyprshot -m window"
+        "SUPER_SHIFT,s,exec,hyprshot -m region"
+      ];
+
+      bindm = [
+        "ALT, mouse:272, movewindow"
       ];
 
       exec-once = [
@@ -72,9 +82,21 @@
         "waybar"
         "walker --gapplication-service"
         "jellyfin-mpv-shim"
-        "firefox"
-        "wezterm"
       ];
+
+      plugin = {
+        hyprbars = {
+          bar_height = 30;
+          bar_text_font = "SF Pro Display";
+          bar_text_size = 10;
+
+          bar_buttons_alignment = "left";
+          hyprbars-button = [
+            "rgb(FF605C), 15, 󰖭, hyprctl dispatch killactive"
+            "rgb(00CA4E), 15, , hyprctl dispatch fullscreen 1"
+          ];
+        };
+      };
     };
   };
 

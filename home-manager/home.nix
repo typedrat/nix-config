@@ -11,9 +11,10 @@
     inputs.catppuccin.homeManagerModules.catppuccin
     inputs.spicetify-nix.homeManagerModules.default
     inputs.walker.homeManagerModules.default
+    outputs.homeManagerModules.zen-browser
 
     ./fcitx5.nix
-    ./firefox.nix
+    ./firefox
     ./discord
     ./hyprland
     ./packages.nix
@@ -58,6 +59,12 @@
     enable = true;
     userName = "Alexis Williams";
     userEmail = "alexis@typedr.at";
+
+    extraConfig = {
+      init = {
+        defaultBranch = "master";
+      };
+    };
   };
 
   programs.alacritty.enable = true;

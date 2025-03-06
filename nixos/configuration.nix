@@ -22,8 +22,10 @@
 
     # Import your generated (nixos-generate-config) hardware configuration
     ./aagl.nix
+    ./greetd.nix
     ./hardware-configuration.nix
     ./hyprland.nix
+    ./lanzaboote.nix
     ./plymouth.nix
     ./podman.nix
     ./steam.nix
@@ -81,12 +83,7 @@
   };
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.grub = {
-    enable = true;
-    device = "nodev";
-    efiSupport = true;
-    useOSProber = true;
-  };
+  boot.loader.systemd-boot.enable = true;
   boot.loader.timeout = 1;
   boot.loader.efi.canTouchEfiVariables = true;
 

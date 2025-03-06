@@ -1,7 +1,6 @@
 {
   inputs,
   pkgs,
-  lib,
   config,
   ...
 }: {
@@ -18,41 +17,9 @@
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
   };
 
-  services.displayManager.sddm = {
-    enable = true;
-    package = pkgs.kdePackages.sddm;
-    wayland = {
-      enable = true;
-      compositorCommand = "${lib.getExe config.programs.hyprland.package} --config /etc/sddm/hyprland.conf";
-    };
-
-    settings = {
-      General = {
-        GreeterEnvironment = "QT_WAYLAND_SHELL_INTEGRATION=layer-shell";
-      };
-    };
+  services.displayManager = {
+    defaultSession = "hyprland-uwsm";
   };
-
-  environment.etc."sddm/hyprland.conf".text = ''
-    misc {
-        disable_hyprland_logo = true
-        disable_splash_rendering = true
-        force_default_wallpaper = 0
-        initial_workspace_tracking = 1
-    }
-
-    input {
-        numlock_by_default = true
-        kb_layout = us
-    }
-
-    cursor {
-        no_warps = 1
-        no_hardware_cursors = 1
-    }
-
-    monitor = , preferred, auto, 1
-  '';
 
   # Enable sound.
   security.rtkit.enable = true;
