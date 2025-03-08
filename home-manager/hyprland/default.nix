@@ -4,10 +4,11 @@
   ...
 }: {
   imports = [
-    ./blur.nix
     ./firefox
-    ./smart-gaps.nix
+    ./hyprlock
     ./waybar
+    ./blur.nix
+    ./smart-gaps.nix
     ./xwaylandvideobridge.nix
   ];
 
@@ -20,8 +21,9 @@
     hyprpolkitagent
     mpvpaper
     waypaper
-    nwg-look
+    hyprpicker
     hyprshot
+    playerctl
     libsForQt5.qt5ct
     kdePackages.qt6ct
     nomacs-qt6
@@ -43,6 +45,8 @@
     ];
 
     settings = {
+      "$main_mod" = "SUPER";
+
       monitor = [
         "DP-2,3840x2160@60.0,0x1080,1.0"
         "HDMI-A-1,3840x2160@60.0,960x0,2.0"
@@ -60,16 +64,26 @@
 
       windowrulev2 = [
         "float, class:xdg-desktop-portal-gtk"
+        "float, class:com.saivert.pwvucontrol"
+        "size 1024 576, class:com.saivert.pwvucontrol"
         "float, class:steam, title:(Friends List|Steam Settings)"
-        "plugin:hyprbars:nobar, class:steam"
+        "float, class:.*blueman.*"
       ];
 
       bind = [
-        "SUPER,space,exec,walker"
-        "SUPER_SHIFT,left,workspace,r-1"
-        "SUPER_SHIFT,right,workspace,r+1"
-        "SUPER,s,exec,hyprshot -m window"
-        "SUPER_SHIFT,s,exec,hyprshot -m region"
+        "$main_mod,space,exec,walker"
+        "$main_mod&SHIFT,left,workspace,r-1"
+        "$main_mod&SHIFT,right,workspace,r+1"
+        "$main_mod,s,exec,hyprshot -m window"
+        "$main_mod&SHIFT,s,exec,hyprshot -m region"
+        "$main_mod,l,exec,loginctl lock-session"
+        "$main_mod,f,togglefloating"
+      ];
+
+      bindl = [
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioPrev, exec, playerctl previous"
+        ", XF86AudioNext, exec, playerctl next"
       ];
 
       bindm = [
@@ -81,19 +95,42 @@
         "waypaper --restore"
         "waybar"
         "walker --gapplication-service"
+        "STEAM_FRAME_FORCE_CLOSE=1 steam -silent"
+        "discord --start-minimized"
         "jellyfin-mpv-shim"
       ];
+
+      general = {
+        resize_on_border = true;
+        extend_border_grab_area = 30;
+        hover_icon_on_border = true;
+        "col.inactive_border" = "$crust";
+        "col.active_border" = "$overlay2";
+
+        snap = {
+          enabled = true;
+          border_overlap = true;
+        };
+      };
+
+      decoration = {
+        rounding = 10;
+      };
 
       plugin = {
         hyprbars = {
           bar_height = 30;
+          bar_precedence_over_border = true;
           bar_text_font = "SF Pro Display";
           bar_text_size = 10;
+          bar_color = "rgba($baseAlphaa0)";
+          bar_blur = true;
+          "col.text" = "$text";
 
-          bar_buttons_alignment = "left";
+          bar_buttons_alignment = "right";
           hyprbars-button = [
-            "rgb(FF605C), 15, 󰖭, hyprctl dispatch killactive"
-            "rgb(00CA4E), 15, , hyprctl dispatch fullscreen 1"
+            "$red, 20, 󰖭, hyprctl dispatch killactive, $base"
+            "$green, 20, 󰘖, hyprctl dispatch fullscreen 1, $base"
           ];
         };
       };
@@ -126,22 +163,6 @@
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
         }
-      ];
-    };
-  };
-
-  programs.hyprlock = {
-    enable = true;
-
-    settings = {
-      "$font" = "SF Pro Display";
-
-      general = {
-        disable_loading_bar = true;
-        hide_cursor = true;
-      };
-
-      label = [
       ];
     };
   };

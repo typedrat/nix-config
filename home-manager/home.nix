@@ -4,6 +4,7 @@
   pkgs,
   inputs,
   outputs,
+  osConfig,
   ...
 }: {
   # You can import other home-manager modules here
@@ -13,15 +14,15 @@
     inputs.walker.homeManagerModules.default
     outputs.homeManagerModules.zen-browser
 
-    ./fcitx5.nix
     ./firefox
     ./discord
     ./hyprland
+    ./theming
+    ./wezterm
+    ./fcitx5.nix
     ./packages.nix
     ./podman.nix
     ./spotify.nix
-    ./theming.nix
-    ./wezterm
     ./zed.nix
     ./zsh.nix
   ];
@@ -44,6 +45,7 @@
     homeDirectory = "/home/awilliams";
 
     sessionVariables = {
+      TZ = osConfig.time.timeZone;
       VIZIO_IP = "viziocastdisplay.lan";
       VIZIO_AUTH = "Zmge7tbkiz";
     };

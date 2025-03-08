@@ -1,4 +1,8 @@
 {
+  pkgs,
+  lib,
+  ...
+}: {
   programs.waybar = {
     enable = true;
 
@@ -17,7 +21,7 @@
         };
 
         clock = {
-          format = "{:%I:%M %p}  ";
+          format = "󰃶 {:%A, %B %d, %Y  %I:%M %p}";
           tooltip-format = "<tt><small>{calendar}</small></tt>";
           calendar = {
           };
@@ -30,17 +34,22 @@
         wireplumber = {
           format = "{icon}";
           tooltip-format = "{node_name} — {volume}%";
-          format-muted = "";
-          format-icons = ["" "" ""];
+          format-muted = " ";
+          format-icons = [" " " " " "];
+          on-click = "${lib.getExe pkgs.pwvucontrol}";
         };
 
         "custom/wlogout" = {
           format = "󰩈";
-          on-click = "wlogout";
+          on-click = "${lib.getExe pkgs.wlogout}";
         };
       }
     ];
 
     style = ./waybar.css;
   };
+
+  home.packages = [
+    pkgs.pwvucontrol
+  ];
 }

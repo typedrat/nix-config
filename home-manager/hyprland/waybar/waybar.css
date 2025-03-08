@@ -7,7 +7,17 @@
 window#waybar {
     all: unset;
 
-    background: @base;
+    font-family: "TX02 Nerd Font";
+    background: alpha(@base, 0.75);
+    color: @text;
+}
+
+tooltip {
+    background: alpha(@base, 0.75);
+    color: @text;
+}
+
+tooltip label {
     color: @text;
 }
 
@@ -35,8 +45,14 @@ label.module {
         0 -1px @base;
 }
 
+#tray image {
+    padding: 0 1px;
+}
+
 #tray menu {
     background: @base;
+    font-family: "SF Pro Display";
+    font-size: 13px;
     color: @text;
 }
 
@@ -54,25 +70,25 @@ label.module {
 }
 
 .modules-right > :nth-last-child(6n - 5) {
-    background-color: @red;
+    background-color: alpha(@red, 0.75);
 }
 
 .modules-right > :nth-last-child(6n - 4) {
-    background-color: @peach;
+    background-color: alpha(@peach, 0.75);
 }
 
 .modules-right > :nth-last-child(6n - 3) {
-    background-color: @yellow;
+    background-color: alpha(@yellow, 0.75);
 }
 
 .modules-right > :nth-last-child(6n - 2) {
-    background-color: @green;
+    background-color: alpha(@green, 0.75);
 }
 
 .modules-right > :nth-last-child(6n - 1) {
-    background-color: @sapphire;
+    background-color: alpha(@sapphire, 0.75);
 }
 
 .modules-right > :nth-last-child(6n - 0) {
-    background-color: @lavender;
+    background-color: alpha(@lavender, 0.75);
 }

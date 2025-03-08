@@ -9,6 +9,10 @@
         ignore_opacity = true;
         noise = 0;
         brightness = 0.90;
+
+        special = true;
+        popups = true;
+        input_methods = true;
       };
     };
   };

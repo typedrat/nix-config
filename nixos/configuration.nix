@@ -22,6 +22,7 @@
 
     # Import your generated (nixos-generate-config) hardware configuration
     ./aagl.nix
+    ./bluetooth.nix
     ./greetd.nix
     ./hardware-configuration.nix
     ./hyprland.nix

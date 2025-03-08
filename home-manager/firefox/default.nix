@@ -5,13 +5,6 @@
   osConfig,
   ...
 }: let
-  cascade = pkgs.fetchFromGitHub {
-    owner = "cascadefox";
-    repo = "cascade";
-    rev = "8239e304844beb854c068a273f1171f7fadd5212";
-    hash = "sha256-Ab9KPCt1bWRj2+yU3s5n0SVCctVxeIPuT6H+HQqheQQ=";
-  };
-
   catppuccin-zen = pkgs.fetchFromGitHub {
     owner = "catppuccin";
     repo = "zen-browser";
@@ -147,116 +140,28 @@
             ublock-origin
             bitwarden
             stylus
-            firefox-color
             metamask
           ];
         };
-
-        userChrome = let
-          flavor =
-            if osConfig.catppuccin.flavor == "latte"
-            then "mocha"
-            else osConfig.catppuccin.flavor;
-        in
-          lib.strings.concatLines [
-            (builtins.readFile "${cascade}/chrome/includes/cascade-config.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-layout.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-responsive.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-floating-panel.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-nav-bar.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-tabs.css")
-            (builtins.readFile "${cascade}/integrations/catppuccin/cascade-${flavor}.css")
-
-            ''
-              /*  Width of the URL Bar for the Oneline layout
-               *  If enabled the max-width is applied on focus
-               *  otherwise the URL Bar will always be it's min-width
-               */
-               --uc-urlbar-min-width: 0vw;
-               --uc-urlbar-max-width: 100vw;
-            ''
-          ];
       };
     };
   };
+
+  zen-browser = inputs.zen-browser.packages."${pkgs.stdenv.system}".default;
 in {
-  programs.firefox =
-    lib.attrsets.recursiveUpdate commonConfig
-    {
-      enable = true;
-      package = pkgs.wrapFirefox pkgs.firefox-unwrapped {
-        extraPolicies = {
-          DisableFirefoxStudies = true;
-          DisablePocket = true;
-          DisableTelemetry = true;
-          DisableFirefoxAccounts = false;
-          NoDefaultBookmarks = true;
+  programs.zen-browser = lib.attrsets.recursiveUpdate commonConfig {
+    enable = true;
+    package = zen-browser;
 
-          FirefoxHome = {
-            Search = true;
-            Pocket = false;
-            Snippets = false;
-            TopSites = false;
-            Highlights = false;
-          };
-        };
-      };
-
-      profiles = {
-        default = {
-          extensions = {
-            packages = with pkgs.nur.repos.rycee.firefox-addons; [
-              firefox-color
-            ];
-
-            settings = {
-              "FirefoxColor@mozilla.com" = {
-                settings = builtins.fromJSON (builtins.readFile ./color-theme.json);
-                force = true;
-              };
-            };
-          };
-
-          userChrome = lib.strings.concatLines [
-            (builtins.readFile "${cascade}/chrome/includes/cascade-config.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-layout.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-responsive.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-floating-panel.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-nav-bar.css")
-            (builtins.readFile "${cascade}/chrome/includes/cascade-tabs.css")
-            (builtins.readFile "${cascade}/integrations/catppuccin/cascade-${flavor}.css")
-
-            ''
-              /*  Width of the URL Bar for the Oneline layout
-               *  If enabled the max-width is applied on focus
-               *  otherwise the URL Bar will always be it's min-width
-               */
-               --uc-urlbar-min-width: 0vw;
-               --uc-urlbar-max-width: 100vw;
-            ''
-          ];
-        };
+    profiles = {
+      default = {
+        userChrome = lib.strings.concatLines [
+          (builtins.readFile "${catppuccin-zen}/themes/Latte/${zenRepoAccent}/userChrome.css")
+          (builtins.readFile "${catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userChrome.css")
+        ];
       };
     };
-
-  home.file.".mozilla/firefox/default/search.json.mozlz4".force = lib.mkForce true;
-
-  programs.zen-browser = let
-    zen-browser = inputs.zen-browser.packages."${pkgs.stdenv.system}".default;
-  in
-    lib.attrsets.recursiveUpdate commonConfig {
-      enable = true;
-      package = zen-browser;
-
-      profiles = {
-        default = {
-          userChrome = lib.strings.concatLines [
-            (builtins.readFile "${catppuccin-zen}/themes/Latte/${zenRepoAccent}/userChrome.css")
-            (builtins.readFile "${catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userChrome.css")
-          ];
-        };
-      };
-    };
+  };
 
   home.file.".zen/default/search.json.mozlz4".force = lib.mkForce true;
 

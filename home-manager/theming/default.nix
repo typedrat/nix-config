@@ -4,6 +4,10 @@
   osConfig,
   ...
 }: {
+  imports = [
+    ./steam.nix
+  ];
+
   catppuccin = {
     enable = true;
     flavor = osConfig.catppuccin.flavor;
@@ -23,15 +27,28 @@
       size = 13;
     };
 
+    theme = {
+      package = pkgs.adw-gtk3;
+      name = "adw-gtk3-dark";
+    };
+
     gtk2.extraConfig = "gtk-application-prefer-dark-theme = true";
     gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
+    gtk3.extraCss = builtins.readFile ./gtk3/gtk.css;
+    gtk4.extraCss = builtins.readFile ./gtk4/gtk.css;
   };
+
+  xdg.configFile."gtk-4.0/colors.css".source = ./gtk4/colors.css;
 
   dconf = {
     enable = true;
     settings = {
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
+      };
+
+      "org/gnome/desktop/wm/preferences" = {
+        button-layout = "";
       };
     };
   };

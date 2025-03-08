@@ -58,6 +58,7 @@
     };
 
     hyprland.url = "github:hyprwm/Hyprland";
+    hyprlock.url = "github:hyprwm/hyprlock/v0.7.0";
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
