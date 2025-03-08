@@ -9,13 +9,6 @@
 
     tty.enable = true;
     plymouth.enable = true;
-
-    sddm = {
-      enable = true;
-
-      font = "SF Pro Display";
-      fontSize = "13";
-    };
   };
 
   fonts = {
