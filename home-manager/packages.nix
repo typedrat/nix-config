@@ -17,6 +17,7 @@
     bottles
     lutris
     winetricks
+    cinny-desktop
 
     # Rust
     inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.stable.defaultToolchain
