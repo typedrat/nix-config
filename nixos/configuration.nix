@@ -23,12 +23,12 @@
     # Import your generated (nixos-generate-config) hardware configuration
     ./aagl.nix
     ./bluetooth.nix
+    ./docker.nix
     ./greetd.nix
     ./hardware-configuration.nix
     ./hyprland.nix
     ./lanzaboote.nix
     ./plymouth.nix
-    ./podman.nix
     ./steam.nix
     ./theming.nix
     ./virt-manager.nix

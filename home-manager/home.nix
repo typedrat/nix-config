@@ -14,9 +14,9 @@
     ./hyprland
     ./theming
     ./wezterm
+    ./docker.nix
     ./fcitx5.nix
     ./packages.nix
-    ./podman.nix
     ./spotify.nix
     ./windows-vm.nix
     ./zed.nix

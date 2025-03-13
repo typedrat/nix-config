@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   virtualisation = {
     containers = {
       enable = true;
@@ -17,12 +17,21 @@
       };
     };
 
-    podman = {
+    docker = {
       enable = true;
-      autoPrune.enable = true;
-      dockerCompat = true;
+      rootless = {
+        enable = true;
+        setSocketVariable = true;
+      };
+    };
+  };
 
-      defaultNetwork.settings.dns_enabled = true;
+  security.wrappers = {
+    docker-rootlesskit = {
+      owner = "root";
+      group = "root";
+      capabilities = "cap_net_bind_service+ep";
+      source = "${pkgs.rootlesskit}/bin/rootlesskit";
     };
   };
 
