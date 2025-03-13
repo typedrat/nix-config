@@ -40,6 +40,9 @@
           "extensions.autoDisableScopes" = 0; # Don't auto-disable extensions
           "app.update.auto" = false;
 
+          # Default to sans-serif font!
+          "font.default.x-western" = "sans-serif";
+
           # Emoji font config
           "font.name-list.emoji" = "Apple Color Emoji";
 
