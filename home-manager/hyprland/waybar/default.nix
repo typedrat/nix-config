@@ -3,6 +3,12 @@
   lib,
   ...
 }: {
+  wayland.windowManager.hyprland.settings = {
+    exec-once = [
+      "waybar"
+    ];
+  };
+
   programs.waybar = {
     enable = true;
 
@@ -11,7 +17,7 @@
         reload_style_on_change = true;
         layer = "top";
         output = "DP-2";
-        modules-left = ["hyprland/workspaces" "clock"];
+        modules-left = ["hyprland/workspaces" "custom/spotify" "clock"];
         modules-right = ["tray" "wireplumber" "custom/wlogout"];
 
         "hyprland/workspaces" = {
@@ -20,11 +26,15 @@
           };
         };
 
+        "custom/spotify" = {
+          format = "󰓇";
+          tooltip = false;
+          on-click = "pypr toggle spotify";
+        };
+
         clock = {
-          format = "󰃶 {:%A, %B %d, %Y  %I:%M %p}";
-          tooltip-format = "<tt><small>{calendar}</small></tt>";
-          calendar = {
-          };
+          format = "<span foreground='#babbf1'></span> {:%I:%M %p}";
+          tooltip-format = "<span foreground='#babbf1'>󰃶</span> {:%A, %B %d, %Y}";
         };
 
         tray = {
@@ -36,11 +46,12 @@
           tooltip-format = "{node_name} — {volume}%";
           format-muted = " ";
           format-icons = [" " " " " "];
-          on-click = "${lib.getExe pkgs.pwvucontrol}";
+          on-click = "pypr toggle pwvucontrol";
         };
 
         "custom/wlogout" = {
           format = "󰩈";
+          tooltip = false;
           on-click = "${lib.getExe pkgs.wlogout}";
         };
       }
@@ -48,8 +59,4 @@
 
     style = ./waybar.css;
   };
-
-  home.packages = [
-    pkgs.pwvucontrol
-  ];
 }

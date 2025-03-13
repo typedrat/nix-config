@@ -9,11 +9,6 @@
 }: {
   # You can import other home-manager modules here
   imports = [
-    inputs.catppuccin.homeManagerModules.catppuccin
-    inputs.spicetify-nix.homeManagerModules.default
-    inputs.walker.homeManagerModules.default
-    outputs.homeManagerModules.zen-browser
-
     ./firefox
     ./discord
     ./hyprland
@@ -23,6 +18,7 @@
     ./packages.nix
     ./podman.nix
     ./spotify.nix
+    ./windows-vm.nix
     ./zed.nix
     ./zsh.nix
   ];
@@ -81,6 +77,8 @@
     nix-direnv.enable = true;
   };
 
+  programs.mangohud.enable = true;
+
   programs.mpv = {
     enable = true;
 
@@ -90,9 +88,11 @@
       };
 
       scripts = with pkgs.mpvScripts; [
-        uosc
+        mpris
+        mpv-discord
+        sponsorblock
         thumbfast
-        pkgs.mpv-jellyfin
+        uosc
       ];
       youtubeSupport = true;
     };

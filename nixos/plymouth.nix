@@ -1,6 +1,11 @@
 {
   boot = {
-    plymouth.enable = true;
+    plymouth = {
+      enable = true;
+      extraConfig = ''
+        DeviceScale=1
+      '';
+    };
 
     consoleLogLevel = 0;
     initrd = {
@@ -16,5 +21,7 @@
       "udev.log_priority=3"
       "plymouth.use-simpledrm"
     ];
+
+    loader.systemd-boot.consoleMode = "auto";
   };
 }

@@ -24,8 +24,6 @@
 
       defaultNetwork.settings.dns_enabled = true;
     };
-
-    waydroid.enable = true;
   };
 
   fileSystems."/var/lib/containers" = {

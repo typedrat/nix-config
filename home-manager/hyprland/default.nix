@@ -1,13 +1,13 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./firefox
     ./hyprlock
+    ./kde
     ./waybar
     ./blur.nix
+    ./hyprbars.nix
+    ./pyprland.nix
+    ./rofi.nix
     ./smart-gaps.nix
     ./xwaylandvideobridge.nix
   ];
@@ -40,10 +40,6 @@
     package = null;
     portalPackage = null;
 
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
-    ];
-
     settings = {
       "$main_mod" = "SUPER";
 
@@ -64,14 +60,12 @@
 
       windowrulev2 = [
         "float, class:xdg-desktop-portal-gtk"
-        "float, class:com.saivert.pwvucontrol"
-        "size 1024 576, class:com.saivert.pwvucontrol"
-        "float, class:steam, title:(Friends List|Steam Settings)"
+        "float, class:[Ss]team, title:negative:Steam"
         "float, class:.*blueman.*"
+        "monitor HDMI-A-1, class:mpv"
       ];
 
       bind = [
-        "$main_mod,space,exec,walker"
         "$main_mod&SHIFT,left,workspace,r-1"
         "$main_mod&SHIFT,right,workspace,r+1"
         "$main_mod,s,exec,hyprshot -m window"
@@ -93,11 +87,10 @@
       exec-once = [
         "systemctl --user start hyprpolkitagent"
         "waypaper --restore"
-        "waybar"
-        "walker --gapplication-service"
         "STEAM_FRAME_FORCE_CLOSE=1 steam -silent"
         "discord --start-minimized"
         "jellyfin-mpv-shim"
+        "pyvizio power on"
       ];
 
       general = {
@@ -116,27 +109,10 @@
       decoration = {
         rounding = 10;
       };
-
-      plugin = {
-        hyprbars = {
-          bar_height = 30;
-          bar_precedence_over_border = true;
-          bar_text_font = "SF Pro Display";
-          bar_text_size = 10;
-          bar_color = "rgba($baseAlphaa0)";
-          bar_blur = true;
-          "col.text" = "$text";
-
-          bar_buttons_alignment = "right";
-          hyprbars-button = [
-            "$red, 20, 󰖭, hyprctl dispatch killactive, $base"
-            "$green, 20, 󰘖, hyprctl dispatch fullscreen 1, $base"
-          ];
-        };
-      };
     };
   };
 
+  home.sessionVariables.HYPRSHOT_DIR = "$HOME/Pictures/Screenshots";
   home.sessionVariables.NIXOS_OZONE_WL = "1";
 
   services.mako = {
@@ -165,10 +141,6 @@
         }
       ];
     };
-  };
-
-  programs.walker = {
-    enable = true;
   };
 
   programs.wlogout = {

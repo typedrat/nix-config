@@ -40,6 +40,9 @@
           "extensions.autoDisableScopes" = 0; # Don't auto-disable extensions
           "app.update.auto" = false;
 
+          # Emoji font config
+          "font.name-list.emoji" = "Apple Color Emoji";
+
           # Hebrew font config
           "font.name.sans-serif.he" = "SF Hebrew";
           "font.name.serif.he" = "Taamey Frank CLM";
@@ -137,10 +140,12 @@
           force = true;
 
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
-            ublock-origin
             bitwarden
-            stylus
+            greasemonkey
             metamask
+            sponsorblock
+            stylus
+            ublock-origin
           ];
         };
       };

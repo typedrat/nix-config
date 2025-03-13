@@ -8,7 +8,7 @@ window#waybar {
     all: unset;
 
     font-family: "TX02 Nerd Font";
-    background: alpha(@base, 0.75);
+    background: alpha(@base, 0.5);
     color: @text;
 }
 
@@ -62,33 +62,9 @@ label.module {
 
 /* right-side */
 .modules-right {
-    color: @base;
+    color: white;
 }
 
 .modules-right label.module {
     min-width: 20px;
-}
-
-.modules-right > :nth-last-child(6n - 5) {
-    background-color: alpha(@red, 0.75);
-}
-
-.modules-right > :nth-last-child(6n - 4) {
-    background-color: alpha(@peach, 0.75);
-}
-
-.modules-right > :nth-last-child(6n - 3) {
-    background-color: alpha(@yellow, 0.75);
-}
-
-.modules-right > :nth-last-child(6n - 2) {
-    background-color: alpha(@green, 0.75);
-}
-
-.modules-right > :nth-last-child(6n - 1) {
-    background-color: alpha(@sapphire, 0.75);
-}
-
-.modules-right > :nth-last-child(6n - 0) {
-    background-color: alpha(@lavender, 0.75);
 }

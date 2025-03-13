@@ -8,6 +8,15 @@
   home.packages = with pkgs; [
     # GUI stuff to factor out
     jellyfin-mpv-shim
+    jellyfin-media-player
+    wev
+    slack
+    wineWowPackages.stable
+    nur.repos.bandithedoge.sgdboop-bin
+    gamescope
+    bottles
+    lutris
+    winetricks
 
     # Rust
     inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.stable.defaultToolchain
@@ -34,7 +43,7 @@
     nix-tree
     nix-output-monitor
     socat
-    wev
+    gdu
 
     # networking tools
     mtr

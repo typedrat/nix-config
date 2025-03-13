@@ -31,6 +31,7 @@
     ./podman.nix
     ./steam.nix
     ./theming.nix
+    ./virt-manager.nix
   ];
 
   nixpkgs = {
@@ -93,6 +94,8 @@
   boot.extraModulePackages = [
     config.boot.kernelPackages.${pkgs.zfs.kernelModuleAttribute}
   ];
+
+  hardware.xpadneo.enable = true;
 
   networking.hostName = "hyperion";
   networking.hostId = "0a2e777f";

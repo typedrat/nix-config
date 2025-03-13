@@ -14,6 +14,7 @@
       package-version-server
       vscode-langservers-extracted
       inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.rust-analyzer
+      lua-language-server
     ];
 
     extensions = [

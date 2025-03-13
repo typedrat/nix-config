@@ -1,12 +1,17 @@
 {
-  lib,
   pkgs,
+  lib,
   inputs,
   osConfig,
   ...
 }: let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.system};
-  catppuccin-ncspot = inputs.catppuccin-ncspot.packages.${pkgs.stdenv.system}.default;
+  catppuccin-ncspot = pkgs.fetchFromGitHub {
+    owner = "typedrat";
+    repo = "catppuccin-ncspot";
+    rev = "main";
+    hash = "sha256-xtyJCTpJwMt3ylp6IpAvWODTMF+LNGHQrGgpDbDrtdY=";
+  };
 
   flavor = osConfig.catppuccin.flavor;
   accent = osConfig.catppuccin.accent;
@@ -36,7 +41,7 @@ in {
     };
     settings =
       (builtins.fromTOML (
-        builtins.readFile "${catppuccin-ncspot}/ncspot-${flavor}-${accent}.toml"
+        builtins.readFile "${catppuccin-ncspot}/themes/catppuccin-${flavor}-${accent}.toml"
       ))
       // {
         "use_nerdfont" = true;

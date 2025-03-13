@@ -24,6 +24,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixvirt = {
+      url = "github:AshleyYakeley/NixVirt";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     catppuccin.url = "github:catppuccin/nix";
 
     fenix = {
@@ -41,11 +46,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    catppuccin-ncspot = {
-      url = "github:typedrat/catppuccin-ncspot";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # anime game launcher
     aagl = {
       url = "github:ezKEa/aagl-gtk-on-nix";
@@ -58,12 +58,15 @@
     };
 
     hyprland.url = "github:hyprwm/Hyprland";
+
     hyprlock.url = "github:hyprwm/hyprlock/v0.7.0";
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
+
+    pyprland.url = "github:hyprland-community/pyprland";
 
     walker = {
       url = "github:abenz1267/walker";
@@ -81,6 +84,8 @@
     nixpkgs,
     home-manager,
     nur,
+    nixvirt,
+    nix-flatpak,
     catppuccin,
     spicetify-nix,
     walker,
@@ -132,6 +137,13 @@
             home-manager = {
               extraSpecialArgs = {inherit inputs outputs;};
               backupFileExtension = "backup";
+              sharedModules = [
+                nixvirt.homeModules.default
+                catppuccin.homeManagerModules.catppuccin
+                spicetify-nix.homeManagerModules.default
+                walker.homeManagerModules.default
+                outputs.homeManagerModules.zen-browser
+              ];
 
               users = {
                 awilliams = import ./home-manager/home.nix;
