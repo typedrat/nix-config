@@ -18,9 +18,11 @@
     lutris
     winetricks
     cinny-desktop
+    qbittorrent
+    inputs.catppuccin.packages.${pkgs.stdenv.system}.whiskers
 
     # Rust
-    inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.stable.defaultToolchain
+    inputs.fenix.packages.${pkgs.stdenv.system}.stable.defaultToolchain
 
     # kubernetes stuff
     kubectl
@@ -45,6 +47,7 @@
     nix-output-monitor
     socat
     gdu
+    pv
 
     # networking tools
     mtr
