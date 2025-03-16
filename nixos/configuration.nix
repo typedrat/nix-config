@@ -32,6 +32,7 @@
     ./steam.nix
     ./theming.nix
     ./virt-manager.nix
+    ./waydroid.nix
   ];
 
   nixpkgs = {
