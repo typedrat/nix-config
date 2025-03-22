@@ -1,13 +1,9 @@
-{pkgs, ...}: {
-  home.packages = with pkgs; [
-    kdePackages.xwaylandvideobridge
-  ];
-
+{
+  pkgs,
+  lib,
+  ...
+}: {
   wayland.windowManager.hyprland.settings = {
-    exec-once = [
-      "xwaylandvideobridge"
-    ];
-
     windowrulev2 = [
       "opacity 0.0 override, class:^(xwaylandvideobridge)$"
       "noanim, class:^(xwaylandvideobridge)$"
@@ -16,5 +12,23 @@
       "noblur, class:^(xwaylandvideobridge)$"
       "nofocus, class:^(xwaylandvideobridge)$"
     ];
+  };
+
+  systemd.user.services.xwaylandvideobridge = {
+    Unit = {
+      Description = "Xwayland Video Bridge";
+      PartOf = ["graphical-session.target"];
+      After = ["graphical-session.target"];
+    };
+
+    Service = {
+      ExecStart = lib.getExe pkgs.kdePackages.xwaylandvideobridge;
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+
+    Install = {
+      WantedBy = ["graphical-session.target"];
+    };
   };
 }

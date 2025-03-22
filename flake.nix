@@ -77,6 +77,11 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    wayland-pipewire-idle-inhibit = {
+      url = "github:rafaelrc7/wayland-pipewire-idle-inhibit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -89,6 +94,7 @@
     catppuccin,
     spicetify-nix,
     walker,
+    wayland-pipewire-idle-inhibit,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -142,6 +148,7 @@
                 catppuccin.homeManagerModules.catppuccin
                 spicetify-nix.homeManagerModules.default
                 walker.homeManagerModules.default
+                wayland-pipewire-idle-inhibit.homeModules.default
                 outputs.homeManagerModules.zen-browser
               ];
 

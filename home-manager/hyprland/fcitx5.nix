@@ -11,13 +11,8 @@
   };
 
   wayland.windowManager.hyprland.settings = {
-    windowrule = [
-      "pseudo,fcitx"
-    ];
-
-    exec-once = [
-      "fcitx5 -d -r"
-      "fcitx5-remote -r"
+    windowrulev2 = [
+      "pseudo, class:.*fcitx.*"
     ];
   };
 }

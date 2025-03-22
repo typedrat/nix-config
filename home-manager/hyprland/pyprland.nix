@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  lib,
   ...
 }: let
   pyprland = inputs.pyprland.packages.${pkgs.stdenv.system}.pyprland;
@@ -49,11 +50,25 @@ in {
     };
   };
 
-  wayland.windowManager.hyprland.settings = {
-    exec-once = [
-      "pypr"
-    ];
+  systemd.user.services.pyprland = {
+    Unit = {
+      Description = "Pyprland";
+      PartOf = ["graphical-session.target"];
+      After = ["graphical-session.target"];
+    };
 
+    Service = {
+      ExecStart = lib.getExe' pyprland "pypr";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+
+    Install = {
+      WantedBy = ["graphical-session.target"];
+    };
+  };
+
+  wayland.windowManager.hyprland.settings = {
     windowrulev2 = [
       "float, class:[Ss]potify"
       "float, class:ncspot"

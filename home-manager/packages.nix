@@ -17,9 +17,17 @@
     bottles
     lutris
     winetricks
+    telegram-desktop
     cinny-desktop
     qbittorrent
     inputs.catppuccin.packages.${pkgs.stdenv.system}.whiskers
+    (lmstudio.override {
+      version = "0.3.13";
+      rev = "2";
+      hash = "sha256-WgUhfk8FiOIuaqnE1h0+rNxPEQIxedF+D0g1fsMpSQg=";
+    })
+    remmina
+    freerdp3
 
     # Rust
     inputs.fenix.packages.${pkgs.stdenv.system}.stable.defaultToolchain

@@ -7,8 +7,8 @@
 }: let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.system};
   catppuccin-ncspot = pkgs.fetchFromGitHub {
-    owner = "typedrat";
-    repo = "catppuccin-ncspot";
+    owner = "catppuccin";
+    repo = "ncspot";
     rev = "main";
     hash = "sha256-xtyJCTpJwMt3ylp6IpAvWODTMF+LNGHQrGgpDbDrtdY=";
   };

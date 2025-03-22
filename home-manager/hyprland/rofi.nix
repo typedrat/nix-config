@@ -11,7 +11,7 @@
     ];
 
     extraConfig = {
-      font = "mono, Apple Color Emoji 12";
+      run-command = "uwsm app -- {cmd}";
       display-drun = "";
       display-run = "";
       display-ssh = "";

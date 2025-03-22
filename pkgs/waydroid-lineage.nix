@@ -25,6 +25,7 @@ stdenvNoCC.mkDerivation {
 
   sourceRoot = ".";
 
+  dontFixup = true;
   installPhase = ''
     runHook preInstall
     install -Dm644 -t $out vendor.img system.img

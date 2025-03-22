@@ -15,7 +15,6 @@
     ./theming
     ./wezterm
     ./docker.nix
-    ./fcitx5.nix
     ./packages.nix
     ./spotify.nix
     ./windows-vm.nix
@@ -39,12 +38,12 @@
   home = {
     username = "awilliams";
     homeDirectory = "/home/awilliams";
+  };
 
-    sessionVariables = {
-      TZ = osConfig.time.timeZone;
-      VIZIO_IP = "viziocastdisplay.lan";
-      VIZIO_AUTH = "Zmge7tbkiz";
-    };
+  systemd.user.sessionVariables = {
+    TZ = osConfig.time.timeZone;
+    VIZIO_IP = "viziocastdisplay.lan";
+    VIZIO_AUTH = "Zmge7tbkiz";
   };
 
   # Add stuff for your user as you see fit:

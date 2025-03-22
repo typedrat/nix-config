@@ -5,10 +5,13 @@
     ./kde
     ./waybar
     ./blur.nix
+    ./fcitx5.nix
     ./hyprbars.nix
     ./pyprland.nix
     ./rofi.nix
     ./smart-gaps.nix
+    ./waydroid.nix
+    ./wayland-pipewire-idle-inhibit.nix
     ./xwaylandvideobridge.nix
   ];
 
@@ -72,6 +75,8 @@
         "$main_mod&SHIFT,s,exec,hyprshot -m region"
         "$main_mod,l,exec,loginctl lock-session"
         "$main_mod,f,togglefloating"
+        "$main_mod,k,killactive"
+        "$main_mod&SHIFT,k,forcekillactive"
       ];
 
       bindl = [
@@ -85,12 +90,11 @@
       ];
 
       exec-once = [
-        "systemctl --user start hyprpolkitagent"
-        "waypaper --restore"
-        "STEAM_FRAME_FORCE_CLOSE=1 steam -silent"
-        "discord --start-minimized"
-        "jellyfin-mpv-shim"
-        "pyvizio power on"
+        "uwsm app -- waypaper --restore"
+        "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
+        "uwsm app -- discord --start-minimized"
+        "uwsm app -- jellyfin-mpv-shim"
+        "uwsm app -- zsh -c 'pyvizio power on'"
       ];
 
       general = {
@@ -112,8 +116,10 @@
     };
   };
 
-  home.sessionVariables.HYPRSHOT_DIR = "$HOME/Pictures/Screenshots";
-  home.sessionVariables.NIXOS_OZONE_WL = "1";
+  systemd.user.sessionVariables = {
+    HYPRSHOT_DIR = "$HOME/Pictures/Screenshots";
+    NIXOS_OZONE_WL = "1";
+  };
 
   services.mako = {
     enable = true;
