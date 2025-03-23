@@ -16,6 +16,7 @@
     ./wezterm
     ./docker.nix
     ./packages.nix
+    ./process-compose.nix
     ./spotify.nix
     ./windows-vm.nix
     ./zed.nix
