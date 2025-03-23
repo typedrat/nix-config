@@ -26,6 +26,7 @@
       rev = "2";
       hash = "sha256-WgUhfk8FiOIuaqnE1h0+rNxPEQIxedF+D0g1fsMpSQg=";
     })
+    cherry-studio
     remmina
     freerdp3
 
