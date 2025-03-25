@@ -22,8 +22,15 @@
       "catppuccin-icons"
       "codebook"
       "dockerfile"
+      "git-firefly"
+      "html"
+      "just"
       "nix"
+      "sql"
+      "tera"
+      "terraform"
       "toml"
+      "xml"
     ];
 
     userSettings = {
