@@ -10,7 +10,7 @@
     owner = "catppuccin";
     repo = "ncspot";
     rev = "main";
-    hash = "sha256-xtyJCTpJwMt3ylp6IpAvWODTMF+LNGHQrGgpDbDrtdY=";
+    hash = "sha256-SvB2gZNuMZMiL/KVQvykCKQAvPfou5/wVabt7vajios=";
   };
 
   flavor = osConfig.catppuccin.flavor;
