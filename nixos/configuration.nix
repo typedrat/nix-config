@@ -83,10 +83,21 @@
     # Opinionated: make flake registry and nix path match flake inputs
     registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
     nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+
+    # Trim old Nix generations to free up space.
+    gc = {
+      automatic = true;
+      persistent = true;
+      dates = "daily";
+      options = "--delete-older-than 7d";
+    };
   };
 
   # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot = {
+    enable = true;
+    configurationLimit = 10;
+  };
   boot.loader.timeout = 1;
   boot.loader.efi.canTouchEfiVariables = true;
 

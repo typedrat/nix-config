@@ -38,6 +38,14 @@
     };
   };
 
+  # Trim old Nix generations to free up space.
+  nix.gc = {
+    automatic = true;
+    persistent = true;
+    frequency = "daily";
+    options = "--delete-older-than 7d";
+  };
+
   home = {
     username = "awilliams";
     homeDirectory = "/home/awilliams";
