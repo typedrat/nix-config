@@ -18,6 +18,7 @@
     ./packages.nix
     ./process-compose.nix
     ./spotify.nix
+    ./vscode.nix
     ./windows-vm.nix
     ./zed.nix
     ./zsh.nix
@@ -29,6 +30,7 @@
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
       inputs.nur.overlays.default
+      inputs.nix-vscode-extensions.overlays.default
     ];
 
     config = {
