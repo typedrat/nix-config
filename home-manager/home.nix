@@ -2,8 +2,6 @@
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 {
   pkgs,
-  inputs,
-  outputs,
   osConfig,
   ...
 }: {
@@ -23,20 +21,6 @@
     ./zed.nix
     ./zsh.nix
   ];
-
-  nixpkgs = {
-    overlays = [
-      outputs.overlays.additions
-      outputs.overlays.modifications
-      outputs.overlays.unstable-packages
-      inputs.nur.overlays.default
-      inputs.nix-vscode-extensions.overlays.default
-    ];
-
-    config = {
-      allowUnfree = true;
-    };
-  };
 
   # Trim old Nix generations to free up space.
   nix.gc = {
