@@ -825,19 +825,6 @@
         "type": "github"
       }
     },
-    "nix-flatpak": {
-      "locked": {
-        "lastModified": 1739444422,
-        "narHash": "sha256-iAVVHi7X3kWORftY+LVbRiStRnQEob2TULWyjMS6dWg=",
-        "path": "/nix/store/mz7rv1v0dc2h8i78jz3kw705rkbh7gzy-source",
-        "rev": "5e54c3ca05a7c7d968ae1ddeabe01d2a9bc1e177",
-        "type": "path"
-      },
-      "original": {
-        "id": "nix-flatpak",
-        "type": "indirect"
-      }
-    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -1180,7 +1167,6 @@
         "hyprland-plugins": "hyprland-plugins",
         "hyprlock": "hyprlock",
         "lanzaboote": "lanzaboote",
-        "nix-flatpak": "nix-flatpak",
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixpkgs": "nixpkgs_5",
         "nixpkgs-unstable": "nixpkgs-unstable",
@@ -1189,7 +1175,6 @@
         "pyprland": "pyprland",
         "spicetify-nix": "spicetify-nix",
         "typedrat-fonts": "typedrat-fonts",
-        "walker": "walker",
         "wayland-pipewire-idle-inhibit": "wayland-pipewire-idle-inhibit",
         "zen-browser": "zen-browser"
       }
@@ -1338,21 +1323,6 @@
       }
     },
     "systems": {
-      "locked": {
-        "lastModified": 1689347949,
-        "narHash": "sha256-12tWmuL2zgBgZkdoB6qXZsgJEH9LR3oUgpaQq2RbI80=",
-        "owner": "nix-systems",
-        "repo": "default-linux",
-        "rev": "31732fcf5e8fea42e59c2488ad31a0e651500f68",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default-linux",
-        "type": "github"
-      }
-    },
-    "systems_10": {
       "locked": {
         "lastModified": 1689347949,
         "narHash": "sha256-12tWmuL2zgBgZkdoB6qXZsgJEH9LR3oUgpaQq2RbI80=",
@@ -1571,34 +1541,13 @@
         "url": "ssh://git@github.com/typedrat/nix-fonts.git"
       }
     },
-    "walker": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "systems": "systems_9"
-      },
-      "locked": {
-        "lastModified": 1742568003,
-        "narHash": "sha256-xd24h5CHAGJG3PdR++snVX2gE/SCc6mP659Xb1WlIfU=",
-        "owner": "abenz1267",
-        "repo": "walker",
-        "rev": "ee366f5e717183a01ad34807e95c8dfa285a7339",
-        "type": "github"
-      },
-      "original": {
-        "owner": "abenz1267",
-        "repo": "walker",
-        "type": "github"
-      }
-    },
     "wayland-pipewire-idle-inhibit": {
       "inputs": {
         "flake-parts": "flake-parts_3",
         "nixpkgs": [
           "nixpkgs"
         ],
-        "systems": "systems_10",
+        "systems": "systems_9",
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {

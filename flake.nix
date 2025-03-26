@@ -68,11 +68,6 @@
 
     pyprland.url = "github:hyprland-community/pyprland";
 
-    walker = {
-      url = "github:abenz1267/walker";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -92,10 +87,8 @@
     home-manager,
     nur,
     nixvirt,
-    nix-flatpak,
     catppuccin,
     spicetify-nix,
-    walker,
     wayland-pipewire-idle-inhibit,
     ...
   } @ inputs: let
@@ -149,7 +142,6 @@
                 nixvirt.homeModules.default
                 catppuccin.homeManagerModules.catppuccin
                 spicetify-nix.homeManagerModules.default
-                walker.homeManagerModules.default
                 wayland-pipewire-idle-inhibit.homeModules.default
                 outputs.homeManagerModules.zen-browser
               ];
