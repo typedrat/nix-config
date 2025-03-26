@@ -39,6 +39,7 @@ in {
       pwvucontrol = {
         command = "pwvucontrol";
         class = "com.saivert.pwvucontrol";
+        lazy = true;
 
         animation = "fromRight";
         size = "1024px 576px";
