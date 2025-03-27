@@ -150,6 +150,7 @@
             stylus
             ublock-origin
             pkgs.bypass-paywalls-clean
+            react-devtools
           ];
         };
       };
