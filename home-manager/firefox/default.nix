@@ -151,6 +151,7 @@
             ublock-origin
             pkgs.bypass-paywalls-clean
             react-devtools
+            catppuccin-gh-file-explorer
           ];
         };
       };

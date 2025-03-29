@@ -129,7 +129,9 @@
   };
 
   environment.systemPackages = with pkgs; [
+    just
     ntfs3g
+    nix-output-monitor
   ];
   services.hardware.openrgb = {
     enable = true;

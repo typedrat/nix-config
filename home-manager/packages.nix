@@ -29,6 +29,9 @@
     cherry-studio
     remmina
     freerdp3
+    turbo
+    bluemail
+    teams-for-linux
 
     # Rust
     inputs.fenix.packages.${pkgs.stdenv.system}.stable.defaultToolchain
@@ -53,7 +56,6 @@
     libguestfs-with-appliance
     nix-diff
     nix-tree
-    nix-output-monitor
     socat
     gdu
     pv
