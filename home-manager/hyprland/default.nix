@@ -124,6 +124,8 @@
   services.mako = {
     enable = true;
     defaultTimeout = 5000;
+    font = "SF Pro Display 14";
+    width = 600;
   };
 
   services.hypridle = {
