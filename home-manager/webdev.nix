@@ -48,7 +48,11 @@
 
   programs.chromium = {
     enable = true;
+    commandLineArgs = [
+      "-no-default-browser-check"
+    ];
     extensions = [
+      "nngceckbapebfimnlniiiahkandclblb" # Bitwarden Password Manager
       "ddkjiahejlhfcafbddmgiahcphecmpfh" # uBlock Origin Lite
       "mbniclmhobmnbdlbpiphghaielnnpgdp" # Lightshot
       "gcbommkclmclpchllfjekcdonpmejbdp" # HTTPS Everywhere

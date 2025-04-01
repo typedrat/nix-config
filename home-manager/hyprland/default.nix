@@ -22,8 +22,10 @@
 
   home.packages = with pkgs; [
     hyprpolkitagent
+    hyprpaper
+    swww
     mpvpaper
-    waypaper
+    waytrogen
     hyprpicker
     hyprshot
     playerctl
@@ -90,7 +92,7 @@
       ];
 
       exec-once = [
-        "uwsm app -- waypaper --restore"
+        "uwsm app -- waytrogen --restore"
         "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
         "uwsm app -- discord --start-minimized"
         "uwsm app -- jellyfin-mpv-shim"
