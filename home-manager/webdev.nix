@@ -4,6 +4,11 @@
   osConfig,
   ...
 }: {
+  home.packages = with pkgs; [
+    alejandra
+    nixd
+  ];
+
   programs.vscode = {
     enable = true;
 
@@ -12,12 +17,12 @@
         bradlc.vscode-tailwindcss
         catppuccin.catppuccin-vsc-icons
         dbaeumer.vscode-eslint
+        dejmedus.tailwind-sorter
         esbenp.prettier-vscode
         editorconfig.editorconfig
         firefox-devtools.vscode-firefox-debug
         jnoortheen.nix-ide
         mkhl.direnv
-        vercel.turbo-vsc
       ];
 
       userSettings = {
@@ -41,8 +46,14 @@
     };
   };
 
-  home.packages = with pkgs; [
-    alejandra
-    nixd
-  ];
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      "ddkjiahejlhfcafbddmgiahcphecmpfh" # uBlock Origin Lite
+      "mbniclmhobmnbdlbpiphghaielnnpgdp" # Lightshot
+      "gcbommkclmclpchllfjekcdonpmejbdp" # HTTPS Everywhere
+      "lnjaiaapbakfhlbjenjkhffcdpoompki" # Catppuccin for Web File Explorer Icons
+      "fmkadmapgofadopljbjfkapdkoienihi" # React Developer Tools
+    ];
+  };
 }

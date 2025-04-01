@@ -16,7 +16,7 @@
     ./packages.nix
     ./process-compose.nix
     ./spotify.nix
-    ./vscode.nix
+    ./webdev.nix
     ./windows-vm.nix
     ./zed.nix
     ./zsh.nix
