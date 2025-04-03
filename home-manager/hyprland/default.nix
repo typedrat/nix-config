@@ -36,6 +36,7 @@
     kdePackages.dolphin
     kdePackages.ark
     xmage
+    kdePackages.kwalletmanager
   ];
 
   wayland.windowManager.hyprland = {

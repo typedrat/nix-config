@@ -28,6 +28,7 @@
     ./greetd.nix
     ./hardware-configuration.nix
     ./hyprland.nix
+    ./kwallet.nix
     ./lanzaboote.nix
     ./plymouth.nix
     ./steam.nix

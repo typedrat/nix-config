@@ -17,4 +17,8 @@
   ];
 
   xdg.configFile."menus/applications.menu".text = builtins.readFile ./applications.menu;
+
+  wayland.windowManager.hyprland.settings.exec-once = [
+    "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init"
+  ];
 }
