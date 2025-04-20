@@ -10,6 +10,7 @@
     jellyfin-mpv-shim
     jellyfin-media-player
     wev
+    waypipe
     slack
     wineWowPackages.stable
     nur.repos.bandithedoge.sgdboop-bin
@@ -22,10 +23,11 @@
     qbittorrent
     inputs.catppuccin.packages.${pkgs.stdenv.system}.whiskers
     cherry-studio
-    turbo
-    bluemail
     gimp
-    goldwarden
+    inkscape
+    fontbase
+    lncrawl
+    qalculate-qt
 
     # Rust
     inputs.fenix.packages.${pkgs.stdenv.system}.stable.defaultToolchain
@@ -53,6 +55,8 @@
     socat
     gdu
     pv
+    imagemagickBig
+    tokei
 
     # networking tools
     mtr

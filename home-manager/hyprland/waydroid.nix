@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    cage-xtmapper
+    # cage-xtmapper
     wayland-getevent
     (waydroid-helper.overridePythonAttrs (prev: {
       nativeBuildInputs = (prev.nativeBuildInputs or []) ++ [pkgs.gobject-introspection];

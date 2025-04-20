@@ -6,7 +6,7 @@
         size = 10;
         passes = 3;
         new_optimizations = true;
-        ignore_opacity = true;
+        ignore_opacity = false;
         noise = 0;
         brightness = 0.90;
 

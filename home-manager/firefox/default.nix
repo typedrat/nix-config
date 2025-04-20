@@ -26,6 +26,10 @@
   zenRepoAccent = capitalizeFirst accent;
 
   commonConfig = {
+    nativeMessagingHosts = with pkgs; [
+      firefoxpwa
+    ];
+
     profiles = {
       default = {
         id = 0;
@@ -143,15 +147,16 @@
           force = true;
 
           packages = with pkgs.nur.repos.rycee.firefox-addons; [
+            pkgs.bypass-paywalls-clean
+            pwas-for-firefox
             bitwarden
             greasemonkey
             metamask
             sponsorblock
             stylus
             ublock-origin
-            pkgs.bypass-paywalls-clean
             react-devtools
-            catppuccin-gh-file-explorer
+            catppuccin-web-file-icons
           ];
         };
       };
@@ -160,6 +165,10 @@
 
   zen-browser = inputs.zen-browser.packages."${pkgs.stdenv.system}".default;
 in {
+  home.packages = with pkgs; [
+    firefoxpwa
+  ];
+
   programs.zen-browser = lib.attrsets.recursiveUpdate commonConfig {
     enable = true;
     package = zen-browser;

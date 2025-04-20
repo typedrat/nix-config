@@ -2,12 +2,27 @@
   pkgs,
   lib,
   osConfig,
+  config,
   ...
 }: {
   home.packages = with pkgs; [
     alejandra
     nixd
+    uv
+    playwright-driver.browsers
+    (jetbrains.datagrip.override {
+      vmopts = "-Dawt.toolkit.name=WLToolkit";
+    })
+    (jetbrains.webstorm.override {
+      vmopts = "-Dawt.toolkit.name=WLToolkit";
+    })
   ];
+
+  systemd.user.sessionVariables = {
+    PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+    PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+  };
 
   programs.vscode = {
     enable = true;
@@ -23,6 +38,11 @@
         firefox-devtools.vscode-firefox-debug
         jnoortheen.nix-ide
         mkhl.direnv
+        mtxr.sqltools
+        mtxr.sqltools-driver-pg
+        redhat.vscode-xml
+        saoudrizwan.claude-dev
+        tamasfe.even-better-toml
       ];
 
       userSettings = {
@@ -33,6 +53,7 @@
         "workbench.colorTheme" = lib.mkForce "Catppuccin Frappé";
         "workbench.iconTheme" = "catppuccin-frappe";
 
+        "cline.chromeExecutablePath" = lib.getExe config.programs.chromium.package;
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nixd";
         "nix.serverSettings" = {

@@ -21,6 +21,7 @@
       google-fonts
 
       nerd-fonts.symbols-only
+      nerd-fonts.victor-mono
       julia-mono
       inputs.typedrat-fonts.packages.${pkgs.system}.berkeley-mono
       inputs.typedrat-fonts.packages.${pkgs.system}.berkeley-mono-nerd-font

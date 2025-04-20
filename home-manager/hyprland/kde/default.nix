@@ -14,6 +14,13 @@
     kdePackages.qtsvg
     kdePackages.kservice
     shared-mime-info
+
+    kdePackages.akonadi
+    kdePackages.akonadi-search
+    kdePackages.akonadi-mime
+    kdePackages.akonadi-calendar
+    kdePackages.akonadi-import-wizard
+    kdePackages.merkuro
   ];
 
   xdg.configFile."menus/applications.menu".text = builtins.readFile ./applications.menu;

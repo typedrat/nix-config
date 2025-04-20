@@ -1,0 +1,14 @@
+{
+  "lsp": {
+    "nixd": {
+      "initialization_options": {
+        "nixos": {
+          "expr": "(builtins.getFlake \"/home/awilliams/nixos/config\").nixosConfigurations.hyperion.options"
+        },
+        "home-manager": {
+          "expr": "(builtins.getFlake \"/home/awilliams/nixos/config\").nixosConfigurations.hyperion.options.home-manager.users.type.getSubOptions []"
+        }
+      }
+    }
+  }
+}

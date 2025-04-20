@@ -9,6 +9,11 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -87,6 +92,7 @@
     self,
     nixpkgs,
     home-manager,
+    sops-nix,
     nur,
     nixvirt,
     catppuccin,
@@ -132,6 +138,7 @@
           # > Our main nixos configuration file <
           ./nixos/configuration.nix
 
+          sops-nix.nixosModules.sops
           nur.modules.nixos.default
           catppuccin.nixosModules.catppuccin
 
@@ -143,8 +150,9 @@
               extraSpecialArgs = {inherit inputs outputs;};
               backupFileExtension = "backup";
               sharedModules = [
+                inputs.sops-nix.homeManagerModules.sops
                 nixvirt.homeModules.default
-                catppuccin.homeManagerModules.catppuccin
+                catppuccin.homeModules.catppuccin
                 spicetify-nix.homeManagerModules.default
                 wayland-pipewire-idle-inhibit.homeModules.default
                 outputs.homeManagerModules.zen-browser

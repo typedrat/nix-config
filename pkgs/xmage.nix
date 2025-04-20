@@ -7,11 +7,11 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "xmage";
-  version = "1.4.56-dev_2025-02-09_16-07";
+  version = "1.4.57-dev_2025-04-11_13-57";
 
   src = fetchurl {
-    url = "http://xmage.today/files/mage-full_${finalAttrs.version}.zip";
-    sha256 = "sha256-zpCUDApYZXHDEjwFOtg+L/5Es4J96F4Z2ojFcrzYumo=";
+    url = "https://xmage.today/files/mage-full_${finalAttrs.version}.zip";
+    sha256 = "sha256-yPNeVXU6aXPResIZHC5/eYlxXZh4nGif1jrrgyqxF+Y=";
   };
 
   preferLocalBuild = true;
@@ -47,6 +47,6 @@ stdenv.mkDerivation (finalAttrs: {
       matthiasbeyer
       abueide
     ];
-    homepage = "http://xmage.today/";
+    homepage = "https://xmage.today/";
   };
 })

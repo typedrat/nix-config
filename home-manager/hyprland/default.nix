@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     ./firefox
     ./hyprlock
@@ -7,6 +11,7 @@
     ./blur.nix
     ./fcitx5.nix
     ./hyprbars.nix
+    ./polkit.nix
     ./pyprland.nix
     ./rofi.nix
     ./smart-gaps.nix
@@ -43,8 +48,8 @@
     enable = true;
     systemd.enable = false;
 
-    package = null;
-    portalPackage = null;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
 
     settings = {
       "$main_mod" = "SUPER";
@@ -97,7 +102,7 @@
         "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
         "uwsm app -- discord --start-minimized"
         "uwsm app -- jellyfin-mpv-shim"
-        "uwsm app -- zsh -c 'pyvizio power on'"
+        "uwsm app -- pyvizio power on"
       ];
 
       general = {
