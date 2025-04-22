@@ -157,6 +157,7 @@
             ublock-origin
             react-devtools
             catppuccin-web-file-icons
+            offline-qr-code-generator
           ];
         };
       };

@@ -25,13 +25,13 @@
     ./alien.nix
     ./bluetooth.nix
     ./docker.nix
-    ./goldwarden.nix
     ./greetd.nix
     ./hardware-configuration.nix
     ./hyprland.nix
     ./kwallet.nix
     ./lanzaboote.nix
     ./plymouth.nix
+    ./ssh.nix
     ./steam.nix
     ./theming.nix
     ./virt-manager.nix
@@ -118,7 +118,7 @@
       awilliams = {
         uid = 1000;
         isNormalUser = true;
-        extraGroups = ["games" "podman" "wheel"];
+        extraGroups = ["docker" "games" "wheel"];
         shell = pkgs.zsh;
       };
     };
@@ -144,19 +144,6 @@
 
   programs.zsh.enable = true;
   environment.pathsToLink = ["/share/zsh"];
-
-  # This setups a SSH server. Very important if you're setting up a headless system.
-  # Feel free to remove if you don't need it.
-  services.openssh = {
-    enable = true;
-    settings = {
-      # Opinionated: forbid root login through SSH.
-      PermitRootLogin = "no";
-      # Opinionated: use keys only.
-      # Remove if you want to SSH using passwords
-      PasswordAuthentication = false;
-    };
-  };
 
   security.sudo.extraConfig = ''
     Defaults        timestamp_timeout=30

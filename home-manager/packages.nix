@@ -46,6 +46,7 @@
     unzip
 
     # utilities
+    sops
     jq
     jd-diff-patch
     frink

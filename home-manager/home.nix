@@ -12,6 +12,7 @@
     ./hyprland
     ./theming
     ./wezterm
+    ./ai.nix
     ./docker.nix
     ./packages.nix
     ./process-compose.nix
@@ -65,6 +66,7 @@
       };
     };
   };
+  services.ssh-agent.enable = true;
 
   programs.alacritty.enable = true;
 

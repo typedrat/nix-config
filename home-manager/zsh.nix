@@ -1,4 +1,10 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
+  sops.secrets."miseGithubToken" = {};
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -16,6 +22,7 @@
 
     initExtraFirst = ''
       source ~/.p10k.zsh
+      export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
     '';
 
     history.size = 10000;
