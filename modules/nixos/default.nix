@@ -1,6 +1,31 @@
-# Add your reusable NixOS modules to this directory, on their own file (https://nixos.wiki/wiki/Module).
-# These should be stuff you would like to share with others, not your personal configurations.
 {
-  # List your module files here
-  # my-module = import ./my-module.nix;
+  imports = [
+    ./boot
+    ./games
+    ./gui
+    ./hardware
+    ./theming
+    ./alien.nix
+    ./docker.nix
+    ./java.nix
+    ./nix.nix
+    ./packages.nix
+    ./polkit.nix
+    ./sops.nix
+    ./ssh.nix
+    ./sudo.nix
+    ./zfs.nix
+  ];
+
+  config = {
+    time.timeZone = "America/Los_Angeles";
+    i18n.defaultLocale = "en_US.UTF-8";
+    i18n.supportedLocales = [
+      "en_US.UTF-8/UTF-8"
+      "ja_JP.UTF-8/UTF-8"
+    ];
+
+    programs.zsh.enable = true;
+    environment.pathsToLink = ["/share/zsh"];
+  };
 }

@@ -2,41 +2,56 @@
   description = "@typedrat's NixOS configuration.";
 
   inputs = {
+    #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    #endregion
+
+    #region `flake-parts`
+    flake-parts.url = "github:hercules-ci/flake-parts";
+
+    easy-hosts.url = "github:tgirlcloud/easy-hosts";
+
+    flake-root.url = "github:srid/flake-root";
+
+    pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    #endregion
+
+    #region NixOS Extensions
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-alien.url = "github:thiagokokada/nix-alien";
 
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
     nixvirt = {
       url = "github:AshleyYakeley/NixVirt";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    catppuccin.url = "github:catppuccin/nix";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    #endregion
 
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    #region Theming
+    apple-emoji = {
+      url = "github:samuelngs/apple-emoji-linux";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     apple-fonts = {
@@ -44,108 +59,117 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    apple-emoji.url = "github:samuelngs/apple-emoji-linux";
-
-    typedrat-fonts = {
-      url = "git+ssh://git@github.com/typedrat/nix-fonts.git";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # anime game launcher
-    aagl = {
-      url = "github:ezKEa/aagl-gtk-on-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    catppuccin.url = "github:catppuccin/nix";
 
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    typedrat-fonts = {
+      url = "git+ssh://git@github.com/typedrat/nix-fonts.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    #endregion
+
+    #region Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
+
     hyprlock.url = "github:hyprwm/hyprlock/v0.7.0";
+
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
     pyprland.url = "github:hyprland-community/pyprland";
+
     wayland-pipewire-idle-inhibit = {
       url = "github:rafaelrc7/wayland-pipewire-idle-inhibit";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    #endregion
+
+    #region Software Outside of Nixpkgs
+    anime-game-launcher = {
+      url = "github:ezKEa/aagl-gtk-on-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    #endregion
 
-    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    #region Extension Repositories
+    firefox-addons = {
+      url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    #endregion
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    sops-nix,
-    nur,
-    nixvirt,
-    catppuccin,
-    spicetify-nix,
-    wayland-pipewire-idle-inhibit,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
+  outputs = {flake-parts, ...} @ inputs:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      imports = [
+        inputs.flake-root.flakeModule
+        inputs.home-manager.flakeModules.home-manager
+        inputs.pkgs-by-name-for-flake-parts.flakeModule
+        inputs.treefmt-nix.flakeModule
 
-    systems = [
-      "aarch64-linux"
-      "i686-linux"
-      "x86_64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
-    ];
+        ./systems
+      ];
 
-    forAllSystems = nixpkgs.lib.genAttrs systems;
-  in {
-    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+      systems = [
+        "aarch64-darwin"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "x86_64-linux"
+      ];
 
-    overlays = import ./overlays {inherit inputs;};
-    nixosModules = import ./modules/nixos;
-    homeManagerModules = import ./modules/home-manager;
+      flake = {
+        lib = import ./lib {
+          inherit inputs;
+          inherit (inputs.nixpkgs) lib;
+        };
 
-    nixosConfigurations = {
-      hyperion = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        modules = [
-          ./nixos/configuration.nix
+        homeModules = {
+          zen-browser = {pkgs, ...}: {
+            imports = [
+              ./modules/extra/home-manager/zen-browser
+            ];
 
-          sops-nix.nixosModules.sops
-          nur.modules.nixos.default
-          catppuccin.nixosModules.catppuccin
+            programs.zen-browser.package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default;
+          };
+        };
+      };
 
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              extraSpecialArgs = {inherit inputs outputs;};
-              backupFileExtension = "backup";
-              sharedModules = [
-                inputs.sops-nix.homeManagerModules.sops
-                nixvirt.homeModules.default
-                catppuccin.homeModules.catppuccin
-                spicetify-nix.homeManagerModules.default
-                wayland-pipewire-idle-inhibit.homeModules.default
-                outputs.homeManagerModules.zen-browser
-              ];
+      perSystem = {
+        config,
+        pkgs,
+        ...
+      }: {
+        pkgsDirectory = ./pkgs;
 
-              users = {
-                awilliams = import ./home-manager/home.nix;
-              };
-            };
-          }
-        ];
+        treefmt.config = {
+          inherit (config.flake-root) projectRootFile;
+          package = pkgs.treefmt;
+
+          programs = {
+            alejandra.enable = true;
+            deadnix.enable = true;
+            statix.enable = true;
+          };
+        };
+
+        formatter = config.treefmt.build.wrapper;
       };
     };
-  };
 }
