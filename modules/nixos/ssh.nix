@@ -4,29 +4,46 @@
   ...
 }: let
   inherit (lib.options) mkEnableOption;
-  inherit (lib.modules) mkIf;
+  inherit (lib.modules) mkIf mkMerge;
+  cfg = config.rat.ssh;
+  impermanenceCfg = config.rat.impermanence;
 in {
-  options.rat.ssh.enable =
-    mkEnableOption "ssh"
-    // {
-      default = true;
-    };
+  options.rat.ssh = {
+    enable = mkEnableOption "ssh" // {default = true;};
+  };
 
-  config = mkIf config.rat.ssh.enable {
-    services.openssh = {
-      enable = true;
-      settings = {
-        PermitRootLogin = "no";
-        PasswordAuthentication = false;
+  config = mkMerge [
+    (mkIf cfg.enable {
+      services.openssh = {
+        enable = true;
+        settings = {
+          PermitRootLogin = "no";
+          PasswordAuthentication = false;
+        };
+
+        extraConfig = ''
+          AllowAgentForwarding = yes
+        '';
       };
 
-      extraConfig = ''
-        AllowAgentForwarding = yes
-      '';
-    };
-
-    programs.ssh = {
-      startAgent = true;
-    };
-  };
+      programs.ssh = {
+        startAgent = true;
+      };
+    })
+    (mkIf impermanenceCfg.enable {
+      services.openssh = {
+        hostKeys = [
+          {
+            type = "ed25519";
+            path = "${impermanenceCfg.persistDir}/etc/ssh/ssh_host_ed25519_key";
+          }
+          {
+            type = "rsa";
+            bits = 4096;
+            path = "${impermanenceCfg.persistDir}/etc/ssh/ssh_host_rsa_key";
+          }
+        ];
+      };
+    })
+  ];
 }

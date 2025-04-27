@@ -9,7 +9,7 @@
   inherit (lib.options) mkEnableOption mkOption;
 in {
   options.rat.virtualization.docker = {
-    enable = mkEnableOption "docker";
+    enable = mkEnableOption "Docker";
 
     dnsServers = mkOption {
       type = types.listOf types.str;

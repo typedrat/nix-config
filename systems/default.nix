@@ -44,6 +44,11 @@ in {
         arch = "x86_64";
         class = "nixos";
       };
+
+      iserlohn = {
+        arch = "x86_64";
+        class = "nixos";
+      };
     };
   };
 }

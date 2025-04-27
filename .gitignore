@@ -1,2 +1,4 @@
 result
 nohup.out
+terraform/*
+!terraform/.gitkeep

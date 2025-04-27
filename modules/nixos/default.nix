@@ -1,19 +1,23 @@
 {
   imports = [
+    ../../cachix.nix
+
     ./boot
     ./games
     ./gui
     ./hardware
+    ./security
+    ./services
     ./theming
     ./alien.nix
     ./docker.nix
+    ./impermanence.nix
     ./java.nix
     ./nix.nix
     ./packages.nix
     ./polkit.nix
     ./sops.nix
     ./ssh.nix
-    ./sudo.nix
     ./zfs.nix
   ];
 

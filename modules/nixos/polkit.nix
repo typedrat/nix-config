@@ -6,13 +6,10 @@
   inherit (lib.options) mkEnableOption;
   inherit (lib.modules) mkIf;
 in {
-  options.rat.polkit.enable =
-    mkEnableOption "polkit"
-    // {
-      default = true;
-    };
-
-  options.rat.polkit.unprivilegedPowerManagement = mkEnableOption "power management as user accounts";
+  options.rat.polkit = {
+    enable = mkEnableOption "polkit" // {default = true;};
+    unprivilegedPowerManagement = mkEnableOption "power management as user accounts";
+  };
 
   config = mkIf config.rat.polkit.enable {
     security.polkit.enable = true;

@@ -1,9 +1,9 @@
 keys:
-  - &admin_alexis age1pdsmvs22vq89pv0k6k9zfl3fk899cqehj2f7tx7j0tt6l66kuqssryqjlr
-  - &host_hyperion age179gy6lwjjw3xm7wq6qxk4g0fh9skzujst7lau6qaw3356t6rddrsackn6f
-  - &host_iserlohn age194seypvfeqj42g0zkzk4l56n4wcs843w5p3q46nkm0lgk6ldc39s6hrvw9
+  - &admin_alexis age179gy6lwjjw3xm7wq6qxk4g0fh9skzujst7lau6qaw3356t6rddrsackn6f
+  - &host_hyperion age1dln7w6394nl0rj63uq3slhp4l2v52mv75ty88xr8lgcrysxqqaeqkmkjd0
+  - &host_iserlohn age1rhes2qcdnl99udspqrl3qst9ru7qngnxavss8m3jlsl6a0v8s42q624cgc
 creation_rules:
-  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: secrets\/(?:[^\/]+\/)*[^\/]+\.(?:yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin_alexis

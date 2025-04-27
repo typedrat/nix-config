@@ -13,6 +13,7 @@
         allowUnfree = true;
 
         permittedInsecurePackages = [
+          "fluffychat-linux-1.25.1"
           "olm-3.2.16"
         ];
       };

@@ -4,7 +4,11 @@
   inputs = {
     #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -21,6 +25,8 @@
 
     pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
 
+    terranix.url = "github:terranix/terranix";
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -30,6 +36,13 @@
     #region NixOS Extensions
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    impermanence.url = "github:nix-community/impermanence";
+
+    microvm = {
+      url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -60,6 +73,16 @@
     };
 
     catppuccin.url = "github:catppuccin/nix";
+
+    catppuccin-process-compose = {
+      url = "github:catppuccin/process-compose";
+      flake = false;
+    };
+
+    catppuccin-zen = {
+      url = "github:catppuccin/zen-browser";
+      flake = false;
+    };
 
     spicetify-nix = {
       url = "github:Gerg-L/spicetify-nix";
@@ -95,10 +118,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    authentik-nix = {
+      url = "github:nix-community/authentik-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     fenix = {
       url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixpkgs-shoko.url = "github:/diniamo/nixpkgs/shokoanime";
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -122,6 +152,7 @@
         inputs.flake-root.flakeModule
         inputs.home-manager.flakeModules.home-manager
         inputs.pkgs-by-name-for-flake-parts.flakeModule
+        inputs.terranix.flakeModule
         inputs.treefmt-nix.flakeModule
 
         ./systems
@@ -138,6 +169,11 @@
         lib = import ./lib {
           inherit inputs;
           inherit (inputs.nixpkgs) lib;
+        };
+
+        nixosModules = {
+          ensure-pcr = {imports = [./modules/extra/nixos/ensure-pcr.nix];};
+          port-magic = {imports = [./modules/extra/nixos/port-magic];};
         };
 
         homeModules = {
@@ -170,6 +206,27 @@
         };
 
         formatter = config.treefmt.build.wrapper;
+
+        terranix = {
+          terranixConfigurations = {
+            terraform = {
+              terraformWrapper = {
+                package = pkgs.opentofu;
+                extraRuntimeInputs = [pkgs.sops];
+                prefixText = ''
+                  AWS_ACCESS_KEY_ID=$(sops decrypt ../secrets/default.yaml --extract '["b2"]["keyId"]')
+                  AWS_SECRET_ACCESS_KEY=$(sops decrypt ../secrets/default.yaml --extract '["b2"]["applicationKey"]')
+                  TF_VAR_passphrase=$(sops decrypt ../secrets/default.yaml --extract '["terraformPassphrase"]')
+                  export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY TF_VAR_passphrase
+                '';
+              };
+
+              modules = [
+                ./terranix
+              ];
+            };
+          };
+        };
       };
     };
 }

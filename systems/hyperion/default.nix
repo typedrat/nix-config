@@ -9,15 +9,12 @@
   networking.hostId = "0a2e777f";
 
   rat = {
-    boot = {
-      systemd-boot.enable = false;
-      lanzaboote.enable = true;
-    };
+    boot.loader = "lanzaboote";
 
     games = {
       enable = true;
-      animeGameLaunchers = true;
-      steam = true;
+      animeGameLaunchers.enable = true;
+      steam.enable = true;
     };
 
     gui.enable = true;
@@ -25,9 +22,14 @@
     java.enable = true;
     nix-ld.enable = true;
     polkit.unprivilegedPowerManagement = true;
-    sudo.extendedTimeout = true;
+    security.sudo.extendedTimeout.enable = true;
     virtualization.docker.enable = true;
-    zfs.enable = true;
+
+    zfs = {
+      enable = true;
+      rootPool = "zpool";
+      rootDataset = "root";
+    };
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

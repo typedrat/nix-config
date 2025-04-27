@@ -1,28 +1,15 @@
-# This is your home-manager configuration file
-# Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
-{
-  pkgs,
-  osConfig,
-  ...
-}: {
-  # You can import other home-manager modules here
+{osConfig, ...}: {
   imports = [
-    ./discord
-    ./hyprland
+    ./gui
     ./theming
-    ./wezterm
-    ./ai.nix
+    ./zsh
+    ./accounts.nix
+    ./cli.nix
+    ./devtools.nix
     ./docker.nix
-    ./firefox.nix
     ./packages.nix
-    ./process-compose.nix
-    ./productivity.nix
     ./rclone.nix
     ./sops.nix
-    ./spotify.nix
-    ./webdev.nix
-    ./zed.nix
-    ./zsh.nix
   ];
 
   # Trim old Nix generations to free up space.
@@ -34,16 +21,12 @@
   };
 
   systemd.user.sessionVariables = {
+    SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
     TZ = osConfig.time.timeZone;
     VIZIO_IP = "viziocastdisplay.lan";
     VIZIO_AUTH = "Zmge7tbkiz";
   };
 
-  # Add stuff for your user as you see fit:
-  # programs.neovim.enable = true;
-  # home.packages = with pkgs; [ steam ];
-
-  # Enable home-manager and git
   programs.home-manager.enable = true;
   programs.git = {
     enable = true;
@@ -61,50 +44,6 @@
     };
   };
   services.ssh-agent.enable = true;
-
-  programs.alacritty.enable = true;
-
-  programs.tmux = {
-    enable = true;
-  };
-
-  programs.direnv = {
-    enable = true;
-    enableZshIntegration = true;
-    nix-direnv.enable = true;
-  };
-
-  programs.mangohud.enable = true;
-
-  programs.mpv = {
-    enable = true;
-
-    package = pkgs.mpv-unwrapped.wrapper {
-      mpv = pkgs.mpv-unwrapped.override {
-        vapoursynthSupport = true;
-      };
-
-      scripts = with pkgs.mpvScripts; [
-        mpris
-        mpv-discord
-        sponsorblock
-        thumbfast
-        uosc
-      ];
-      youtubeSupport = true;
-    };
-
-    config = {
-      osd-bar = false;
-      border = false;
-      video-sync = "display-resample";
-    };
-  };
-
-  programs.nix-index = {
-    enable = true;
-    enableZshIntegration = true;
-  };
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
