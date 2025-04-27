@@ -14,9 +14,9 @@ in {
     };
 
   config = mkIf config.rat.nix-ld.enable {
-    environment.systemPackages = [
-      inputs'.nix-alien.packages.nix-alien
-    ];
+    # environment.systemPackages = [
+    #   inputs'.nix-alien.packages.nix-alien
+    # ];
 
     programs.nix-ld.enable = true;
   };
