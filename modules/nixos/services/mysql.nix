@@ -22,7 +22,7 @@ in {
             character_set_server = "utf8mb4";
             collation_server = "utf8mb4_unicode_ci";
             bind-address = config.links.mysql.ipv4;
-            port = config.links.mysql.port;
+            inherit (config.links.mysql) port;
           };
         };
       };

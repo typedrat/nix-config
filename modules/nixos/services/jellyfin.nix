@@ -29,15 +29,10 @@ in {
         port = 8096;
       };
 
-      rat.services.nginx.virtualHosts.${cfg.subdomain} = {
-        locations."/" = {
-          proxyPass = config.links.jellyfin.url;
-        };
-
-        locations."/socket" = {
-          proxyPass = config.links.jellyfin.url;
-          proxyWebsockets = true;
-        };
+      rat.services.traefik.routes.jellyfin = {
+        enable = true;
+        inherit (cfg) subdomain;
+        serviceUrl = config.links.jellyfin.url;
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

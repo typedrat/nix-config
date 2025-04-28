@@ -8,8 +8,8 @@ in {
   imports = [
     self.nixosModules.port-magic
 
-    ./nginx
     ./prometheus
+    ./traefik
     ./acme.nix
     ./authentik.nix
     ./grafana.nix

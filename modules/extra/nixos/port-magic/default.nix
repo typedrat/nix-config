@@ -18,7 +18,7 @@ with lib; {
           portAssignments =
             mapAttrsToList (name: link: {
               inherit name;
-              port = link.port;
+              inherit (link) port;
             })
             config.links;
 
@@ -26,7 +26,7 @@ with lib; {
           byPort = groupBy (x: toString x.port) portAssignments;
 
           # Filter to only the ports with multiple assignments
-          conflicts = filterAttrs (port: assignments: length assignments > 1) byPort;
+          conflicts = filterAttrs (_port: assignments: length assignments > 1) byPort;
         in
           conflicts == {};
 
@@ -36,12 +36,12 @@ with lib; {
             groupBy (x: toString x.port)
             (mapAttrsToList (name: link: {
                 inherit name;
-                port = link.port;
+                inherit (link) port;
               })
               config.links);
 
           # Filter to only the ports with multiple assignments
-          conflicts = filterAttrs (port: assignments: length assignments > 1) byPort;
+          conflicts = filterAttrs (_port: assignments: length assignments > 1) byPort;
 
           # Format each conflict as a string
           conflictStrings =

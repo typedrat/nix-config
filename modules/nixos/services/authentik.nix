@@ -7,7 +7,7 @@
   inherit (lib) modules options types;
 
   cfg = config.rat.services.authentik;
-  domainName = config.rat.services.domainName;
+  inherit (config.rat.services) domainName;
   certDir = config.security.acme.certs.${domainName}.directory;
 
   mkAuthentikSecrets = secrets:
@@ -44,7 +44,7 @@ in {
           disable_startup_analytics = true;
           avatars = "initials";
           redis = {
-            port = config.links.authentik-redis.port;
+            inherit (config.links.authentik-redis) port;
           };
           cert_discovery_dir = certDir;
         };
@@ -77,11 +77,10 @@ in {
         port = lib.mkForce config.links.authentik-redis.port;
       };
 
-      rat.services.nginx.virtualHosts."${cfg.subdomain}" = {
-        locations."/" = {
-          proxyPass = config.links.authentik-https.url;
-          proxyWebsockets = true;
-        };
+      rat.services.traefik.routes.authentik = {
+        enable = true;
+        inherit (cfg) subdomain;
+        serviceUrl = config.links.authentik.url;
       };
 
       sops.secrets = mkAuthentikSecrets [

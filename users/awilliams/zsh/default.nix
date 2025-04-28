@@ -1,6 +1,7 @@
 {
-  pkgs,
   config,
+  pkgs,
+  lib,
   ...
 }: {
   sops.secrets."miseGithubToken" = {};
@@ -20,7 +21,7 @@
       }
     ];
 
-    initExtraFirst = ''
+    initContent = lib.mkBefore ''
       source ~/.p10k.zsh
       export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
     '';

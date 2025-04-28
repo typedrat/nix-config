@@ -14,7 +14,7 @@ in {
   config = modules.mkMerge [
     (modules.mkIf cfg.enable {
       services.postgresql = {
-        enable = config.rat.services.postgres.enable;
+        inherit (config.rat.services.postgres) enable;
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

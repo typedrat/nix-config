@@ -33,7 +33,7 @@ in {
 
         port = 42069;
         openFirewall = true;
-        downloadDir = cfg.downloadDir;
+        inherit (cfg) downloadDir;
       };
 
       services.flood = {
@@ -54,11 +54,13 @@ in {
         protocol = "http";
       };
 
-      rat.services.nginx.virtualHosts.${cfg.subdomain} = {
-        authentik.enable = true;
-        locations."/" = {
-          proxyPass = config.links.flood.url;
-        };
+      rat.services.traefik.routes.flood = {
+        enable = true;
+        inherit (cfg) subdomain;
+        serviceUrl = config.links.flood.url;
+
+        authentik = true;
+        theme-park.app = "flood";
       };
     })
     (modules.mkIf (cfg.enable && cfg.optimizedSettings) {

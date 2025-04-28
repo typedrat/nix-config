@@ -1,0 +1,20 @@
+diff --git a/themes.py b/themes.py
+index 22fd45f3..4214ec1e 100644
+--- a/themes.py
++++ b/themes.py
+@@ -6,8 +6,6 @@ from json import dump, dumps, loads, load
+ import subprocess
+ from hashlib import md5
+ 
+-chdir(dirname(abspath(__file__))) # Set working dir
+-
+ def get_shas(output) -> dict[str, str]:
+     """Returns a dict of CSS files and SHAs"""
+     output_lines = output.splitlines() if output else []
+@@ -178,4 +176,4 @@ if __name__ == "__main__":
+     apps = loads(create_json(app_folders=app_folders, themes=themes, community_themes=community_themes, docker_mods=docker_mods))
+     with open("themes.json", "w") as outfile:
+         dump(apps, outfile, indent=2, sort_keys=True)
+-    create_theme_options()
+\ No newline at end of file
++    create_theme_options()

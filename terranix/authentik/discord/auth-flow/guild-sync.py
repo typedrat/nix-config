@@ -35,17 +35,13 @@ if "code" in guild_member_info:
 
 # Get all discord_groups
 discord_groups = Group.objects.filter(attributes__discord_role_id__isnull=False)
-ak_message("Discord groups in Authentik: " + str([f"{g.name} ({g.attributes.get('discord_role_id')})" for g in discord_groups]))
 
 # Split user groups into discord groups and non discord groups
 user_groups_non_discord = request.user.ak_groups.exclude(pk__in=discord_groups.values_list("pk", flat=True))
 user_groups_discord = list(request.user.ak_groups.filter(pk__in=discord_groups.values_list("pk", flat=True)))
-ak_message("User's current Discord groups: " + str([g.name for g in user_groups_discord]))
-ak_message("User's Discord roles from API: " + str(guild_member_info["roles"]))
 
 # Filter matching roles based on guild_member_info['roles']
 user_groups_discord_updated = discord_groups.filter(attributes__discord_role_id__in=guild_member_info["roles"])
-ak_message("Matching Discord groups after filtering: " + str([f"{g.name} ({g.attributes.get('discord_role_id')})" for g in user_groups_discord_updated]))
 
 # Filter out groups where the user has an excluded role
 for group in user_groups_discord_updated:

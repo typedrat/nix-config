@@ -38,12 +38,11 @@ in {
         protocol = "http";
       };
 
-      rat.services.nginx.virtualHosts."${cfg.subdomain}" = {
-        authentik.enable = true;
-
-        locations."/" = {
-          proxyPass = config.links.prometheus.url;
-        };
+      rat.services.traefik.routes.prometheus = {
+        enable = true;
+        inherit (cfg) subdomain;
+        serviceUrl = config.links.prometheus.url;
+        authentik = true;
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

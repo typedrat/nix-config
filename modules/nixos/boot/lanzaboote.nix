@@ -27,7 +27,7 @@ in {
 
       boot.lanzaboote = {
         enable = true;
-        pkiBundle = cfg.secureBoot.pkiBundle;
+        inherit (cfg.secureBoot) pkiBundle;
       };
     })
     (modules.mkIf (cfg.loader == "lanzaboote" && impermanenceCfg.enable) {

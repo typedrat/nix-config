@@ -6,7 +6,7 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.grafana;
   impermanenceCfg = config.rat.impermanence;
-  domainName = config.rat.services.domainName;
+  inherit (config.rat.services) domainName;
 in {
   options.rat.services.grafana = {
     enable = options.mkEnableOption "Grafana";
@@ -39,10 +39,10 @@ in {
         };
       };
 
-      rat.services.nginx.virtualHosts.${cfg.subdomain} = {
-        locations."/" = {
-          proxyPass = config.links.grafana.url;
-        };
+      rat.services.traefik.routes.grafana = {
+        enable = true;
+        inherit (cfg) subdomain;
+        serviceUrl = config.links.grafana.url;
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

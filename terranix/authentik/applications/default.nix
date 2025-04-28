@@ -9,9 +9,11 @@
     ./flood.nix
     ./grafana.nix
     ./jellyfin.nix
+    ./prometheus.nix
     ./prowlarr.nix
     ./radarr.nix
     ./sonarr.nix
+    ./traefik.nix
   ];
 
   commonAppOptions = {
@@ -325,7 +327,7 @@ in {
 
         # LDAP search access bindings
         (lib.mapAttrs' (
-          name: cfg:
+          name: _cfg:
             lib.nameValuePair "ldap-search-${name}" {
               target = "\${ authentik_application.${name}.uuid }";
               user = "\${ authentik_user.ldap-search.id }";

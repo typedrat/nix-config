@@ -57,10 +57,10 @@ in {
         port = 8111;
       };
 
-      rat.services.nginx.virtualHosts.${cfg.subdomain} = {
-        locations."/" = {
-          proxyPass = config.links.shoko.url;
-        };
+      rat.services.traefik.routes.shoko = {
+        enable = true;
+        inherit (cfg) subdomain;
+        serviceUrl = config.links.shoko.url;
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

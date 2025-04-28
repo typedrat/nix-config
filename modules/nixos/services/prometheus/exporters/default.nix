@@ -4,9 +4,9 @@ in {
   imports = [
     ./authentik.nix
     ./ipmi.nix
-    ./nginx.nix
     ./node.nix
     ./postgres.nix
+    ./traefik.nix
     ./zfs.nix
   ];
 

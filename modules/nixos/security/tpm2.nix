@@ -42,7 +42,7 @@ in {
     (mkIf cfg.systemIdentity.enable {
       systemIdentity = {
         enable = true;
-        pcr15 = cfg.systemIdentity.pcr15;
+        inherit (cfg.systemIdentity) pcr15;
       };
     })
   ];

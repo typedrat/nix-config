@@ -47,10 +47,7 @@
       jellyfin.enable = true;
       mysql.enable = true;
 
-      nginx = {
-        enable = true;
-        http3.enable = true;
-      };
+      traefik.enable = true;
 
       postgres.enable = true;
       prometheus.enable = true;
