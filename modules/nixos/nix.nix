@@ -25,9 +25,6 @@
       settings = {
         experimental-features = "nix-command flakes";
         trusted-users = ["awilliams"];
-
-        # Opinionated: disable global registry
-        flake-registry = "";
       };
       # Opinionated: disable channels
       channel.enable = false;

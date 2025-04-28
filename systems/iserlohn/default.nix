@@ -44,13 +44,19 @@
       };
 
       grafana.enable = true;
+      loki.enable = true;
       jellyfin.enable = true;
       mysql.enable = true;
 
       traefik.enable = true;
 
       postgres.enable = true;
-      prometheus.enable = true;
+
+      prometheus = {
+        enable = true;
+        exporters.ipmi.enable = true;
+      };
+
       shoko.enable = true;
 
       torrents = {

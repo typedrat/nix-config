@@ -14,6 +14,7 @@ in {
     ./authentik.nix
     ./grafana.nix
     ./jellyfin.nix
+    ./loki.nix
     ./monitor.nix
     ./mysql.nix
     ./postgres.nix

@@ -4,6 +4,7 @@ in {
   imports = [
     ./authentik.nix
     ./ipmi.nix
+    ./loki.nix
     ./node.nix
     ./postgres.nix
     ./traefik.nix
