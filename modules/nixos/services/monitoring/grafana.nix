@@ -102,6 +102,10 @@ in {
         };
       };
 
+      systemd.services.grafana = {
+        after = ["postgresql.service" "redis-grafana.service"];
+      };
+
       rat.services.traefik.routes.grafana = {
         enable = true;
         inherit (cfg) subdomain;
@@ -126,12 +130,12 @@ in {
 
       sops.secrets = {
         "grafana/oauth_client_id" = {
-          sopsFile = ../../../secrets/grafana.yaml;
+          sopsFile = ../../../../secrets/grafana.yaml;
           key = "clientId";
           owner = config.systemd.services.grafana.serviceConfig.User;
         };
         "grafana/oauth_client_secret" = {
-          sopsFile = ../../../secrets/grafana.yaml;
+          sopsFile = ../../../../secrets/grafana.yaml;
           key = "clientSecret";
           owner = config.systemd.services.grafana.serviceConfig.User;
         };

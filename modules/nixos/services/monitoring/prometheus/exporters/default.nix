@@ -7,6 +7,7 @@ in {
     ./loki.nix
     ./node.nix
     ./postgres.nix
+    ./rtorrent.nix
     ./traefik.nix
     ./zfs.nix
   ];

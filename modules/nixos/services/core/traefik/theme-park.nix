@@ -1,6 +1,7 @@
 {
   config,
   self',
+  pkgs,
   lib,
   ...
 }: let
@@ -12,6 +13,13 @@
   themeParkPkg = self'.packages.theme-park.override {
     themeParkScheme = "https";
     themeParkDomain = "${cfg.theme-park.subdomain}.${domainName}";
+  };
+
+  themeParkPlugin = pkgs.fetchFromGitHub {
+    owner = "packruler";
+    repo = "traefik-themepark";
+    rev = "v1.2.2";
+    sha256 = "sha256-pUSAKp0bwhAZhjfh4bByLg+CRyDwSoCHn19sPV/aqgE=";
   };
 in {
   options.rat.services.traefik.routes = lib.mkOption {
@@ -44,9 +52,8 @@ in {
 
   config = modules.mkIf cfg.enable {
     services.traefik.staticConfigOptions = {
-      experimental.plugins.themepark = {
+      experimental.localPlugins.themepark = {
         moduleName = "github.com/packruler/traefik-themepark";
-        version = "v1.2.2";
       };
     };
 
@@ -74,6 +81,11 @@ in {
       inherit (cfg.theme-park) subdomain;
       serviceUrl = config.links.theme-park.url;
     };
+
+    systemd.services.traefik.preStart = ''
+      mkdir -p ${config.services.traefik.dataDir}/plugins-local/src/github.com/packruler
+      ln -Tsf ${themeParkPlugin} ${config.services.traefik.dataDir}/plugins-local/src/github.com/packruler/traefik-themepark
+    '';
 
     services.traefik.dynamicConfigOptions.http.middlewares = lib.mapAttrs' (
       name: route:

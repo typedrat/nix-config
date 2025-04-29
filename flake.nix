@@ -41,19 +41,7 @@
 
     impermanence.url = "github:nix-community/impermanence";
 
-    microvm = {
-      url = "github:astro/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-alien.url = "github:thiagokokada/nix-alien";
-
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
-
-    nixvirt = {
-      url = "github:AshleyYakeley/NixVirt";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -76,6 +64,11 @@
 
     catppuccin-process-compose = {
       url = "github:catppuccin/process-compose";
+      flake = false;
+    };
+
+    catppuccin-shoko-webui = {
+      url = "github:typedrat/catppuccin-shoko-webui";
       flake = false;
     };
 
@@ -174,6 +167,7 @@
         nixosModules = {
           ensure-pcr = {imports = [./modules/extra/nixos/ensure-pcr.nix];};
           port-magic = {imports = [./modules/extra/nixos/port-magic];};
+          servarr-multitenant = {imports = [./modules/extra/nixos/servarr-multitenant];};
         };
 
         homeModules = {

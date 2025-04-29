@@ -19,7 +19,7 @@ in {
 
     sops.secrets."acme-env" = {
       format = "dotenv";
-      sopsFile = ../../../secrets/acme.env;
+      sopsFile = ../../../../secrets/acme.env;
     };
 
     environment.persistence.${impermanenceCfg.persistDir} =

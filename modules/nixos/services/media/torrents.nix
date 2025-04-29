@@ -36,6 +36,8 @@ in {
         inherit (cfg) downloadDir;
       };
 
+      users.users.rtorrent.uid = 990;
+
       services.flood = {
         enable = true;
         inherit (config.links.flood) port;

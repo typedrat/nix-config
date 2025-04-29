@@ -14,7 +14,7 @@
     builtins.listToAttrs (builtins.map (secret: {
         name = "authentik/${secret}";
         value = {
-          sopsFile = ../../../secrets/authentik.yaml;
+          sopsFile = ../../../../secrets/authentik.yaml;
           key = secret;
         };
       })

@@ -57,7 +57,12 @@
         exporters.ipmi.enable = true;
       };
 
+      prowlarr.enable = true;
+      radarr.enable = true;
+      radarr.anime.enable = true;
       shoko.enable = true;
+      sonarr.enable = true;
+      sonarr.anime.enable = true;
 
       torrents = {
         enable = true;

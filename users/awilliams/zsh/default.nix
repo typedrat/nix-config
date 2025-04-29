@@ -4,7 +4,10 @@
   lib,
   ...
 }: {
-  sops.secrets."miseGithubToken" = {};
+  sops.secrets = {
+    miseGithubToken = {};
+    openrouterApiKey = {};
+  };
 
   programs.zsh = {
     enable = true;
@@ -24,6 +27,9 @@
     initContent = lib.mkBefore ''
       source ~/.p10k.zsh
       export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
+      export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
+      export OPENAI_API_KEY=$OPENROUTER_API_KEY
+      export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
     '';
 
     history.size = 10000;

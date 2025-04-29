@@ -58,6 +58,12 @@ in {
           };
         };
 
+        language_models = {
+          openai = {
+            baseUrl = "https://openrouter.ai/api/v1";
+          };
+        };
+
         base_keymap = "VSCode";
         load_direnv = "shell_hook";
         format_on_save = "on";

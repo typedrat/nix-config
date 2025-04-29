@@ -35,7 +35,11 @@ in {
       };
 
       systemd.services.shoko = {
-        preStart = modules.mkForce "";
+        after = ["mysql.service"];
+        preStart = modules.mkForce ''
+          mkdir -p /var/lib/shoko/themes
+          ln -sf ${inputs.catppuccin-shoko-webui}/themes/*/* /var/lib/shoko/themes/
+        '';
         serviceConfig.ExtraGroups = ["media" persistentGroup];
       };
 
@@ -64,19 +68,33 @@ in {
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
-      users.groups.shoko-persist = {};
+      users = {
+        users.shoko = {
+          isSystemUser = true;
+          home = "/var/lib/shoko";
+          createHome = true;
+          group = "shoko";
+        };
+
+        groups.shoko = {};
+      };
 
       systemd.services.shoko = {
         serviceConfig = {
-          # Add the dynamic user to our static supplementary group and the `media` group
-          SupplementaryGroups = ["shoko-persist" "media"];
-
-          # Bind mount the persistent directory
-          BindPaths = [
-            "/persist/var/lib/shoko:/var/lib/private/shoko"
-          ];
+          DynamicUser = modules.mkForce false;
+          User = "shoko";
+          Group = "shoko";
+          SupplementaryGroups = ["media"];
         };
       };
+
+      environment.persistence.${impermanenceCfg.persistDir}.directories = [
+        {
+          directory = "/var/lib/shoko";
+          user = "shoko";
+          group = "shoko";
+        }
+      ];
     })
   ];
 }

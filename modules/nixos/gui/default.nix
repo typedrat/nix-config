@@ -2,6 +2,7 @@
   inherit (lib.options) mkEnableOption;
 in {
   imports = [
+    ./gnome-keyring.nix
     ./greetd.nix
     ./hyprland.nix
     ./plymouth.nix

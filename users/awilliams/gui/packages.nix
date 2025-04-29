@@ -22,7 +22,7 @@ in {
       gimp
       inkscape
       qalculate-qt
-      transmission_4-qt6
+      bitwarden-desktop
     ];
   };
 }

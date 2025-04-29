@@ -61,7 +61,6 @@ in {
 
       traefik-metrics = {
         protocol = "http";
-        port = 9100;
       };
     };
 
@@ -85,7 +84,7 @@ in {
           };
 
           metrics = {
-            address = ":${toString config.links.traefik-metrics.port}";
+            address = "127.0.0.1:${toString config.links.traefik-metrics.port}";
           };
         };
 
