@@ -6,7 +6,19 @@
         nvidia-vaapi-driver
       ];
     };
+
+    nvidia = {
+      datacenter.enable = true;
+      open = false;
+      nvidiaPersistenced = true;
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      nvidiaSettings = true;
+    };
   };
+
+  nixpkgs.config.nvidia.acceptLicense = true;
+  nixpkgs.config.cudaSupport = true;
 
   boot.blacklistedKernelModules = ["nouveau"];
 }

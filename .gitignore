@@ -1,4 +1,6 @@
 result
 nohup.out
-terraform/*
-!terraform/.gitkeep
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/.terraform_ssh_tunnel.pid
+terraform/config.tf.json

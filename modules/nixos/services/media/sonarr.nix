@@ -52,10 +52,9 @@ in {
 
       systemd.services.sonarr-default = {
         after = ["postgresql.service"];
-        serviceConfig = {
-          SupplementalGroups = ["media"];
-        };
       };
+
+      users.users.sonarr-default.extraGroups = ["media"];
 
       sops.secrets."sonarr/db/password" = {
         sopsFile = ../../../../secrets/arrs.yaml;

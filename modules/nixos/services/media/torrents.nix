@@ -1,11 +1,39 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }: let
   inherit (lib) modules options types;
   cfg = config.rat.services.torrents;
   impermanenceCfg = config.rat.impermanence;
+
+  # rtorrent "0.15.1" in nixpkgs is a broken commit from before the release was officially cut.
+  #
+  # This replaces it with... another somewhat broken commit from before 0.15.3 is officially cut,
+  # but it fixes the completely trashed XML-RPC output.
+  libtorrent = pkgs.libtorrent.overrideAttrs {
+    version = "0.15.3-dev.270e7dc";
+    src = pkgs.fetchFromGitHub {
+      owner = "rakshasa";
+      repo = "libtorrent";
+      rev = "270e7dc4150f283037653f91af3ccc6a19bc826b";
+      hash = "sha256-VZDByohyvwK5O1At+t4ll8ucWea+0a8Y0G4G/nw0hnw=";
+    };
+  };
+
+  rtorrent =
+    (pkgs.rtorrent.overrideAttrs {
+      version = "0.15.3-dev.3d9c083";
+      src = pkgs.fetchFromGitHub {
+        owner = "rakshasa";
+        repo = "rtorrent";
+        rev = "3d9c083032ad3201863079c5262838884f096b06";
+        hash = "sha256-uK/Xfs+avZn91Q1Gew6saMnRuJPrOBrgxHb/6MgdnNQ=";
+      };
+    }).override {
+      libtorrent = libtorrent;
+    };
 in {
   options.rat.services.torrents = {
     enable = options.mkEnableOption "Torrent services";
@@ -23,12 +51,18 @@ in {
       default = false;
       description = "Enable optimized settings for rTorrent";
     };
+    rpcExposed = options.mkOption {
+      type = types.bool;
+      default = false;
+      description = "Expose the rTorrent RPC interface over HTTP with authentication on `localhost`.";
+    };
   };
 
   config = modules.mkMerge [
     (modules.mkIf cfg.enable {
       services.rtorrent = {
         enable = true;
+        package = rtorrent;
         group = "media";
 
         port = 42069;
@@ -37,6 +71,86 @@ in {
       };
 
       users.users.rtorrent.uid = 990;
+
+      systemd.services.rtorrent-lighttpd = {
+        description = "Lighttpd SCGI service for rtorrent";
+        after = ["rtorrent.service"];
+
+        serviceConfig = {
+          ExecStart = let
+            lighttpdConfig = pkgs.writeText "lighttpd.conf" ''
+              server.bind = "${config.links.rtorrent.ipv4}"
+              server.port = ${builtins.toString config.links.rtorrent.port}
+              server.document-root = "/var/empty"
+
+              server.modules += (
+                "mod_authn_file"
+              )
+              auth.backend = "htpasswd"
+              auth.backend.htpasswd.userfile = "${config.sops.secrets."rtorrent/htpasswd".path}"
+
+              server.modules += (
+                "mod_auth"
+              )
+              auth.require = (
+                "/" => (
+                  "method" => "basic",
+                  "realm" => "rtorrent",
+                  "require" => "valid-user"
+                )
+              )
+
+              server.modules += (
+                "mod_scgi"
+              )
+              scgi.server = (
+                "/RPC2" => (
+                  "127.0.0.1" => (
+                    "socket" => "${config.services.rtorrent.rpcSocket}",
+                    "check-local" => "disable"
+                  )
+                )
+              )
+            '';
+          in "${pkgs.lighttpd}/bin/lighttpd -D -f ${lighttpdConfig}";
+          Restart = "on-failure";
+          RestartSec = "5s";
+
+          User = config.services.rtorrent.user;
+          Group = config.services.rtorrent.group;
+
+          ReadOnlyPaths = [config.sops.secrets."rtorrent/htpasswd".path];
+          CapabilityBoundingSet = "";
+          NoNewPrivileges = true;
+          PrivateTmp = true;
+          PrivateDevices = true;
+          ProtectSystem = "strict";
+          ProtectHome = true;
+          RestrictAddressFamilies = "AF_UNIX AF_INET AF_INET6";
+          RestrictNamespaces = true;
+          LockPersonality = true;
+          MemoryDenyWriteExecute = true;
+          RestrictRealtime = true;
+          RestrictSUIDSGID = true;
+          ProtectClock = true;
+          ProtectControlGroups = true;
+          ProtectKernelLogs = true;
+          ProtectKernelModules = true;
+          ProtectKernelTunables = true;
+          ProtectProc = "invisible";
+          ProcSubset = "pid";
+          SystemCallArchitectures = "native";
+          SystemCallFilter = ["@system-service" "~@privileged" "~@resources"];
+        };
+      };
+
+      sops.secrets."rtorrent/htpasswd" = {
+        sopsFile = ../../../../secrets/rtorrent.yaml;
+        key = "htpasswd";
+        owner = config.services.rtorrent.user;
+        group = config.services.rtorrent.group;
+        restartUnits = ["rtorrent-lighttpd.service"];
+      };
 
       services.flood = {
         enable = true;
@@ -52,8 +166,13 @@ in {
         config.services.rtorrent.group
       ];
 
-      links.flood = {
-        protocol = "http";
+      links = {
+        flood = {
+          protocol = "http";
+        };
+        rtorrent = {
+          protocol = "http";
+        };
       };
 
       rat.services.traefik.routes.flood = {

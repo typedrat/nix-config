@@ -2,6 +2,7 @@
   imports = [
     ./disko-config.nix
     ./hardware-configuration.nix
+    ./nvidia.nix
     ./service-user.nix
     ./zfspv-pool.nix
   ];
@@ -22,6 +23,8 @@
     };
 
     security = {
+      fail2ban.enable = true;
+
       sudo.sshAgentAuth.enable = true;
 
       tpm2 = {
@@ -57,13 +60,15 @@
         exporters.ipmi.enable = true;
       };
 
+      autobrr.enable = true;
+      configarr.enable = true;
+      cross-seed.enable = true;
       prowlarr.enable = true;
       radarr.enable = true;
       radarr.anime.enable = true;
       shoko.enable = true;
       sonarr.enable = true;
       sonarr.anime.enable = true;
-
       torrents = {
         enable = true;
         downloadDir = "/mnt/media/torrents";

@@ -6,6 +6,7 @@
   inherit (lib) mkOption types;
 
   imports = [
+    ./autobrr.nix
     ./flood.nix
     ./grafana.nix
     ./jellyfin.nix

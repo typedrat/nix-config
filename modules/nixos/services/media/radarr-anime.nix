@@ -52,10 +52,9 @@ in {
 
       systemd.services.radarr-anime = {
         after = ["postgresql.service"];
-        serviceConfig = {
-          SupplementalGroups = ["media"];
-        };
       };
+
+      users.users.radarr-anime.extraGroups = ["media"];
 
       sops.secrets."radarr-anime/db/password" = {
         sopsFile = ../../../../secrets/arrs.yaml;

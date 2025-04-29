@@ -52,10 +52,9 @@ in {
 
       systemd.services.radarr-default = {
         after = ["postgresql.service"];
-        serviceConfig = {
-          SupplementalGroups = ["media"];
-        };
       };
+
+      users.users.radarr-default.extraGroups = ["media"];
 
       sops.secrets."radarr/db/password" = {
         sopsFile = ../../../../secrets/arrs.yaml;

@@ -15,6 +15,7 @@
     jd-diff-patch
     frink
     nix-diff
+    nix-prefetch-github
     nix-tree
     cachix
     socat

@@ -52,10 +52,9 @@ in {
 
       systemd.services.sonarr-anime = {
         after = ["postgresql.service"];
-        serviceConfig = {
-          SupplementalGroups = ["media"];
-        };
       };
+
+      users.users.sonarr-anime.extraGroups = ["media"];
 
       sops.secrets."sonarr-anime/db/password" = {
         sopsFile = ../../../../secrets/arrs.yaml;

@@ -3,6 +3,7 @@
 in {
   imports = [
     ./authentik.nix
+    ./exportarr.nix
     ./ipmi.nix
     ./loki.nix
     ./node.nix

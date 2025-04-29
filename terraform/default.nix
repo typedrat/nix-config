@@ -1,5 +1,6 @@
 {
   imports = [
+    ./arrs
     ./authentik
     ./sops.nix
   ];

@@ -24,6 +24,9 @@ in {
     ./core/mysql.nix
     ./core/postgres.nix
 
+    ./media/autobrr.nix
+    ./media/configarr.nix
+    ./media/cross-seed.nix
     ./media/jellyfin.nix
     ./media/prowlarr.nix
     ./media/radarr.nix

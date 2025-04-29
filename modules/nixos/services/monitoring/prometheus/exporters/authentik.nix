@@ -8,22 +8,26 @@
 in {
   config = modules.mkIf (cfg.enable && config.rat.services.authentik.enable) {
     services.prometheus.scrapeConfigs = [
-      (lib.mkIf config.services.authentik.enable {
+      {
         job_name = "authentik";
         static_configs = [
           {
             targets = [config.links.prometheus-authentik.tuple];
+            labels = {
+              instance = "authentik";
+            };
           }
+          (
+            lib.mkIf config.services.authentik-ldap.enable
+            {
+              targets = [config.links.prometheus-authentik-ldap.tuple];
+              labels = {
+                instance = "authentik-ldap";
+              };
+            }
+          )
         ];
-      })
-      (lib.mkIf config.services.authentik-ldap.enable {
-        job_name = "authentik-ldap";
-        static_configs = [
-          {
-            targets = [config.links.prometheus-authentik-ldap.tuple];
-          }
-        ];
-      })
+      }
     ];
   };
 }

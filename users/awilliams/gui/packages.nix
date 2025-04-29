@@ -23,6 +23,7 @@ in {
       inkscape
       qalculate-qt
       bitwarden-desktop
+      transmission_4-qt6
     ];
   };
 }

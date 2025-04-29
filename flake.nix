@@ -14,6 +14,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-std.url = "github:chessai/nix-std";
     #endregion
 
     #region `flake-parts`
@@ -140,7 +142,7 @@
   };
 
   outputs = {flake-parts, ...} @ inputs:
-    flake-parts.lib.mkFlake {inherit inputs;} {
+    flake-parts.lib.mkFlake {inherit inputs;} ({self, ...}: {
       imports = [
         inputs.flake-root.flakeModule
         inputs.home-manager.flakeModules.home-manager
@@ -206,21 +208,64 @@
             terraform = {
               terraformWrapper = {
                 package = pkgs.opentofu;
-                extraRuntimeInputs = [pkgs.sops];
-                prefixText = ''
+                extraRuntimeInputs = [pkgs.sops pkgs.openssh];
+                prefixText = let
+                  target_host = "iserlohn.thisratis.gay";
+                  links_to_tunnel = [
+                    "prowlarr"
+                    "radarr"
+                    "radarr-anime"
+                    "sonarr"
+                    "sonarr-anime"
+                  ];
+
+                  mkPortForward = key: port: "-L ${toString port}:localhost:${toString port}";
+                  portForwards = builtins.concatStringsSep " " (
+                    builtins.map
+                    (key: mkPortForward key (self.nixosConfigurations.iserlohn.config.links.${key}.port or null))
+                    links_to_tunnel
+                  );
+                in ''
                   AWS_ACCESS_KEY_ID=$(sops decrypt ../secrets/default.yaml --extract '["b2"]["keyId"]')
                   AWS_SECRET_ACCESS_KEY=$(sops decrypt ../secrets/default.yaml --extract '["b2"]["applicationKey"]')
                   TF_VAR_passphrase=$(sops decrypt ../secrets/default.yaml --extract '["terraformPassphrase"]')
                   export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY TF_VAR_passphrase
+
+                  if [ ! -f .terraform_ssh_tunnel.pid ]; then
+                    echo "Setting up SSH tunnels to ${target_host}..."
+                    ssh -fNT ${portForwards} "${target_host}" &
+                    SSH_TUNNEL_PID=$!
+                    echo $SSH_TUNNEL_PID > .terraform_ssh_tunnel.pid
+                    echo "SSH tunnels established (PID: $SSH_TUNNEL_PID)"
+                  fi
+                '';
+
+                suffixText = ''
+                  if [ -f .terraform_ssh_tunnel.pid ]; then
+                    SSH_TUNNEL_PID=$(cat .terraform_ssh_tunnel.pid)
+                    echo "Cleaning up SSH tunnel (PID: $SSH_TUNNEL_PID)..."
+                    kill "$SSH_TUNNEL_PID" 2>/dev/null || true
+                    while kill -0 "$SSH_TUNNEL_PID"; do
+                        sleep 1
+                    done
+                    rm .terraform_ssh_tunnel.pid
+                    echo "SSH tunnel terminated."
+                  fi
                 '';
               };
 
               modules = [
-                ./terranix
+                {
+                  _module.args = {
+                    inherit (self.nixosConfigurations.iserlohn.config) links;
+                  };
+                }
+
+                ./terraform
               ];
             };
           };
         };
       };
-    };
+    });
 }
