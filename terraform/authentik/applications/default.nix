@@ -10,7 +10,6 @@
     ./flood.nix
     ./grafana.nix
     ./jellyfin.nix
-    ./loki.nix
     ./prometheus.nix
     ./prowlarr.nix
     ./radarr.nix

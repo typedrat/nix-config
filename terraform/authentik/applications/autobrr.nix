@@ -1,7 +1,7 @@
 {
   authentik.applications.autobrr = {
     name = "Autobrr";
-    group = "System";
+    group = "Torrents";
     icon = "https://raw.githubusercontent.com/loganmarchione/homelab-svg-assets/refs/heads/main/assets/autobrr.svg";
     description = "Automated torrent downloader";
     accessGroups = ["discord-sysop"];

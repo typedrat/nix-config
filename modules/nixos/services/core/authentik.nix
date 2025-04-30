@@ -8,7 +8,7 @@
 
   cfg = config.rat.services.authentik;
   inherit (config.rat.services) domainName;
-  certDir = config.security.acme.certs.${domainName}.directory;
+  certDir = config.security.acme.certs."${domainName}-rsa4096".directory;
 
   mkAuthentikSecrets = secrets:
     builtins.listToAttrs (builtins.map (secret: {

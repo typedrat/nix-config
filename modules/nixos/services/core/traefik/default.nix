@@ -105,10 +105,16 @@ in {
       };
 
       dynamicConfigOptions = {
-        tls.stores.default.defaultCertificate = {
-          certFile = "/var/lib/acme/${domainName}/fullchain.pem";
-          keyFile = "/var/lib/acme/${domainName}/key.pem";
-        };
+        tls.certificates = [
+          {
+            certFile = "/var/lib/acme/${domainName}-rsa8192/fullchain.pem";
+            keyFile = "/var/lib/acme/${domainName}-rsa8192/key.pem";
+          }
+          {
+            certFile = "/var/lib/acme/${domainName}-ec384/fullchain.pem";
+            keyFile = "/var/lib/acme/${domainName}-ec384/key.pem";
+          }
+        ];
 
         http = {
           middlewares.authentik = {
@@ -176,10 +182,21 @@ in {
       ];
     };
 
-    security.acme.certs.${domainName} = {
+    security.acme.certs."${domainName}-rsa4096" = {
+      domain = domainName;
       extraDomainNames = [
         "*.${domainName}"
       ];
+      extraLegoFlags = ["--key-type=rsa4096"];
+      group = "traefik";
+    };
+
+    security.acme.certs."${domainName}-ec256" = {
+      domain = domainName;
+      extraDomainNames = [
+        "*.${domainName}"
+      ];
+      extraLegoFlags = ["--key-type=ec256"];
       group = "traefik";
     };
 
