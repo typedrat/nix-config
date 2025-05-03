@@ -22,6 +22,7 @@
     cilium-cli
     istioctl
     opentofu
+    inputs'.talhelper.packages.default
   ];
 
   programs.mise = {

@@ -8,8 +8,8 @@ in {
     ./loki.nix
     ./node.nix
     ./postgres.nix
-    ./rtorrent.nix
     ./traefik.nix
+    ./qbittorrent.nix
     ./zfs.nix
   ];
 

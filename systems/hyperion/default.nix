@@ -23,7 +23,7 @@
     nix-ld.enable = true;
     polkit.unprivilegedPowerManagement = true;
     security.sudo.extendedTimeout.enable = true;
-    virtualization.docker.enable = true;
+    virtualisation.docker.enable = true;
 
     zfs = {
       enable = true;

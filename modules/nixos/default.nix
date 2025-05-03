@@ -9,8 +9,8 @@
     ./security
     ./services
     ./theming
+    ./virtualisation
     ./alien.nix
-    ./docker.nix
     ./impermanence.nix
     ./java.nix
     ./nix.nix

@@ -1,4 +1,5 @@
 {
+  config,
   osConfig,
   inputs',
   pkgs,
@@ -90,6 +91,10 @@ in {
         buffer_font_family = "TX02 Nerd Font Mono";
         buffer-font-size = 14 * (4.0 / 3.0);
       };
+    };
+
+    systemd.user.sessionVariables = {
+      EDITOR = "${lib.getExe config.programs.zed-editor.package} -w";
     };
   };
 }

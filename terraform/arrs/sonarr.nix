@@ -1,26 +1,32 @@
 {links, ...}: {
   resource = {
-    sonarr_download_client_flood = {
-      sonarr = {
+    sonarr_download_client_qbittorrent = {
+      "sonarr" = {
+        name = "qBittorrent";
         enable = true;
         priority = 1;
-        name = "Flood";
-        host = "localhost";
-        port = links.flood.port;
-        destination = "/mnt/media/torrents/tv-shows";
-        field_tags = ["sonarr"];
-        post_import_tags = ["imported"];
+
+        host = links.qbittorrent-webui.hostname;
+        port = links.qbittorrent-webui.port;
+
+        tv_category = "sonarr";
+        tv_imported_category = "sonarr-imported";
+        remove_completed_downloads = false;
+        remove_failed_downloads = true;
       };
       "sonarr-anime" = {
         provider = "sonarr.anime";
+        name = "qBittorrent";
         enable = true;
         priority = 1;
-        name = "Flood";
-        host = "localhost";
-        port = links.flood.port;
-        destination = "/mnt/media/torrents/anime";
-        field_tags = ["sonarr-anime"];
-        post_import_tags = ["imported"];
+
+        host = links.qbittorrent-webui.hostname;
+        port = links.qbittorrent-webui.port;
+
+        tv_category = "sonarr-anime";
+        tv_imported_category = "sonarr-anime-imported";
+        remove_completed_downloads = false;
+        remove_failed_downloads = true;
       };
     };
 

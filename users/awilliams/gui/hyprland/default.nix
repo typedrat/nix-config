@@ -71,6 +71,7 @@
         "float, class:xdg-desktop-portal-gtk"
         "float, class:[Ss]team, title:negative:Steam"
         "float, class:.*blueman.*"
+        "float, class:.*Qalculate.*"
         "monitor HDMI-A-1, class:mpv"
       ];
 

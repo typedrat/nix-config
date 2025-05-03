@@ -1,26 +1,32 @@
 {links, ...}: {
   resource = {
-    radarr_download_client_flood = {
-      radarr = {
+    radarr_download_client_qbittorrent = {
+      "radarr" = {
+        name = "qBittorrent";
         enable = true;
         priority = 1;
-        name = "Flood";
-        host = "localhost";
-        port = links.flood.port;
-        destination = "/mnt/media/torrents/movies";
-        field_tags = ["radarr"];
-        post_import_tags = ["imported"];
+
+        host = links.qbittorrent-webui.hostname;
+        port = links.qbittorrent-webui.port;
+
+        movie_category = "radarr";
+        movie_imported_category = "radarr-imported";
+        remove_completed_downloads = false;
+        remove_failed_downloads = true;
       };
       "radarr-anime" = {
         provider = "radarr.anime";
+        name = "qBittorrent";
         enable = true;
         priority = 1;
-        name = "Flood";
-        host = "localhost";
-        port = links.flood.port;
-        destination = "/mnt/media/torrents/anime-movies";
-        field_tags = ["radarr-anime"];
-        post_import_tags = ["imported"];
+
+        host = links.qbittorrent-webui.hostname;
+        port = links.qbittorrent-webui.port;
+
+        movie_category = "radarr-anime";
+        movie_imported_category = "radarr-anime-imported";
+        remove_completed_downloads = false;
+        remove_failed_downloads = true;
       };
     };
 

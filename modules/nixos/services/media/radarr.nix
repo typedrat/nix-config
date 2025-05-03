@@ -88,7 +88,10 @@ in {
         serviceUrl = config.links.radarr.url;
 
         authentik = true;
-        theme-park.app = "radarr";
+        theme-park = {
+          app = "radarr";
+          target = "</body>";
+        };
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

@@ -82,7 +82,10 @@ in {
         serviceUrl = config.links.prowlarr.url;
 
         authentik = true;
-        theme-park.app = "prowlarr";
+        theme-park = {
+          app = "prowlarr";
+          target = "</body>";
+        };
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

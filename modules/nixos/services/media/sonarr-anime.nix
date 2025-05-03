@@ -90,6 +90,7 @@ in {
         authentik = true;
         theme-park = {
           app = "sonarr";
+          target = "</body>";
           addons = [
             "sonarr-anime-text-logo"
             "sonarr-anime-favicon"

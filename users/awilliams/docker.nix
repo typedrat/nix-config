@@ -6,7 +6,7 @@
 }: let
   inherit (lib.modules) mkIf;
 in {
-  config = mkIf osConfig.rat.virtualization.docker.enable {
+  config = mkIf osConfig.rat.virtualisation.docker.enable {
     home.packages = with pkgs; [
       fuse-overlayfs
       passt

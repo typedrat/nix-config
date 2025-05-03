@@ -17,28 +17,9 @@ in {
     self.nixosModules.port-magic
     self.nixosModules.servarr-multitenant
 
-    ./core/traefik
-    ./core/acme.nix
-    ./core/authentik.nix
-    ./core/monitor.nix
-    ./core/mysql.nix
-    ./core/postgres.nix
-
-    ./media/autobrr.nix
-    ./media/configarr.nix
-    ./media/cross-seed.nix
-    ./media/jellyfin.nix
-    ./media/prowlarr.nix
-    ./media/radarr.nix
-    ./media/radarr-anime.nix
-    ./media/shoko.nix
-    ./media/sonarr.nix
-    ./media/sonarr-anime.nix
-    ./media/torrents.nix
-
-    ./monitoring/prometheus
-    ./monitoring/grafana.nix
-    ./monitoring/loki.nix
+    ./core
+    ./media
+    ./monitoring
   ];
 
   options.rat.services.domainName = options.mkOption {

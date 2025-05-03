@@ -107,12 +107,12 @@ in {
       dynamicConfigOptions = {
         tls.certificates = [
           {
-            certFile = "/var/lib/acme/${domainName}-rsa8192/fullchain.pem";
-            keyFile = "/var/lib/acme/${domainName}-rsa8192/key.pem";
+            certFile = "/var/lib/acme/${domainName}-rsa4096/fullchain.pem";
+            keyFile = "/var/lib/acme/${domainName}-rsa4096/key.pem";
           }
           {
-            certFile = "/var/lib/acme/${domainName}-ec384/fullchain.pem";
-            keyFile = "/var/lib/acme/${domainName}-ec384/key.pem";
+            certFile = "/var/lib/acme/${domainName}-ec256/fullchain.pem";
+            keyFile = "/var/lib/acme/${domainName}-ec256/key.pem";
           }
         ];
 

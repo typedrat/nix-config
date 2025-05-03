@@ -37,6 +37,12 @@ in {
             default = [];
             description = "Additional theme-park addons to apply (e.g. 4k-logo, darker)";
           };
+
+          target = lib.mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            description = "Target tag for theme-park injection";
+          };
         };
       };
     }));
@@ -94,6 +100,7 @@ in {
             inherit (route.theme-park) app;
             theme = themeParkTheme;
             baseUrl = "https://${cfg.theme-park.subdomain}.${domainName}";
+            target = modules.mkIf (route.theme-park.target != null) route.theme-park.target;
             inherit (route.theme-park) addons;
           };
         }

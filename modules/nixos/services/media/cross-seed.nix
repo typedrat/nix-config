@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  inherit (lib) lists modules options strings;
+  inherit (lib) lists modules options;
   cfg = config.rat.services.cross-seed;
   impermanenceCfg = config.rat.impermanence;
 
@@ -14,9 +14,9 @@
         value = {
           sopsFile = path;
           key = secret;
-          owner = "rtorrent";
-          group = "media";
-          mode = "0700";
+          owner = config.services.cross-seed.user;
+          group = config.services.cross-seed.group;
+          mode = "0740";
         };
       })
       secrets);
@@ -30,13 +30,12 @@ in {
       assertions = [
         {
           assertion = config.rat.services.torrents.enable;
-          message = "cross-seed requires rtorrent to be enabled";
+          message = "cross-seed requires torrents to be enabled";
         }
       ];
 
       services.cross-seed = {
         enable = true;
-        user = "rtorrent";
         group = "media";
 
         useGenConfigDefaults = true;
@@ -68,7 +67,9 @@ in {
         settingsFile = config.sops.templates."cross-seed.json".path;
       };
 
-      systemd.services.cross-seed.serviceConfig.ExecStart = lib.mkForce "${pkgs.cross-seed}/bin/cross-seed daemon --verbose";
+      systemd.services.cross-seed.serviceConfig = {
+        ExecStart = lib.mkForce "${pkgs.cross-seed}/bin/cross-seed daemon --verbose";
+      };
 
       sops.secrets = modules.mkMerge [
         (mkCrossSeedSecrets ../../../../secrets/cross-seed.yaml [
@@ -80,10 +81,6 @@ in {
           "sonarr-anime/apiKey"
           "radarr/apiKey"
           "radarr-anime/apiKey"
-        ])
-        (mkCrossSeedSecrets ../../../../secrets/rtorrent.yaml [
-          "rtorrent/username"
-          "rtorrent/password"
         ])
       ];
 
@@ -105,16 +102,11 @@ in {
             "${config.links.radarr-anime.url}/?apikey=${config.sops.placeholder."cross-seed/radarr-anime/apiKey"}"
           ];
 
-          rtorrentRpcUrl = strings.concatStrings [
-            "http://"
-            "${config.sops.placeholder."cross-seed/rtorrent/username"}:"
-            "${config.sops.placeholder."cross-seed/rtorrent/password"}@"
-            "${config.links.rtorrent.tuple}/RPC2"
-          ];
+          qbittorrentUrl = config.links.qbittorrent.url;
         };
 
-        owner = config.services.rtorrent.user;
-        group = config.services.rtorrent.group;
+        owner = config.services.cross-seed.user;
+        group = config.services.cross-seed.group;
         restartUnits = ["cross-seed.service"];
       };
 
@@ -122,22 +114,6 @@ in {
         protocol = "http";
         port = 2468;
       };
-
-      sops.templates."rtorrent-cross-seed.sh" = {
-        content = ''
-          #!${pkgs.bash}/bin/sh
-          curl -XPOST ${config.links.cross-seed.url}/api/webhook?apikey=${config.sops.placeholder."cross-seed/apiKey"} \
-            -d "infoHash=$2" -d "includeSingleEpisodes=true"
-        '';
-        owner = "rtorrent";
-        group = "media";
-        mode = "0700";
-      };
-
-      services.rtorrent.configText = ''
-        method.insert=d.data_path,simple,"if=(d.is_multi_file),(cat,(d.directory),/),(cat,(d.directory),/,(d.name))"
-        method.set_key=event.download.finished,cross_seed,"execute={'${config.sops.templates."rtorrent-cross-seed.sh".path}',$d.name=,$d.hash=,$d.data_path=}"
-      '';
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
       environment.persistence.${impermanenceCfg.persistDir} = {

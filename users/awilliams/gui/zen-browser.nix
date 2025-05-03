@@ -148,7 +148,7 @@
             self'.packages.bypass-paywalls-clean
             pwas-for-firefox
             bitwarden
-            greasemonkey
+            violentmonkey
             metamask
             sponsorblock
             stylus

@@ -90,6 +90,8 @@ in {
         authentik = true;
         theme-park = {
           app = "radarr";
+          target = "</body>";
+
           addons = [
             "radarr-anime-text-logo"
             "radarr-anime-favicon"

@@ -4,14 +4,13 @@
   lib,
   ...
 }: let
-  inherit (lib) types;
-  inherit (lib.modules) mkIf;
-  inherit (lib.options) mkEnableOption mkOption;
+  inherit (lib) modules options types;
+  cfg = config.rat.virtualisation.docker;
 in {
-  options.rat.virtualization.docker = {
-    enable = mkEnableOption "Docker";
+  options.rat.virtualisation.docker = {
+    enable = options.mkEnableOption "Docker";
 
-    dnsServers = mkOption {
+    dnsServers = options.mkOption {
       type = types.listOf types.str;
       default = ["8.8.8.8" "8.8.4.4"];
       example = ["8.8.8.8" "8.8.4.4"];
@@ -19,7 +18,7 @@ in {
     };
   };
 
-  config = mkIf config.rat.virtualization.docker.enable {
+  config = modules.mkIf cfg.enable {
     virtualisation = {
       containers = {
         enable = true;
@@ -44,7 +43,7 @@ in {
           enable = true;
           setSocketVariable = true;
           daemon.settings = {
-            dns = config.rat.virtualization.docker.dnsServers;
+            dns = cfg.dnsServers;
           };
         };
       };

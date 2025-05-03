@@ -24,6 +24,8 @@
     imagemagickBig
     tokei
     self'.packages.catbox-cli
+    waypipe
+    self'.packages.qbittorrent-cli
 
     # networking tools
     mtr

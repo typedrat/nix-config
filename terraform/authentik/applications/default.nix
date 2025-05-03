@@ -7,11 +7,12 @@
 
   imports = [
     ./autobrr.nix
-    ./flood.nix
     ./grafana.nix
+    ./lidarr.nix
     ./jellyfin.nix
     ./prometheus.nix
     ./prowlarr.nix
+    ./qbittorrent.nix
     ./radarr.nix
     ./sonarr.nix
     ./traefik.nix
@@ -140,6 +141,24 @@
         type = types.str;
         description = "External host URL for the proxy";
       };
+
+      basicAuth = {
+        enable = mkOption {
+          type = types.bool;
+          default = false;
+          description = "Enable passing basic authentication to the proxied application";
+        };
+        username = mkOption {
+          type = types.str;
+          default = "username";
+          description = "User/group attribute to use for username";
+        };
+        password = mkOption {
+          type = types.str;
+          default = "password";
+          description = "User/group attribute to use for password";
+        };
+      };
     };
   };
 in {
@@ -198,6 +217,9 @@ in {
           lib.nameValuePair "${name}-proxy" {
             name = "${cfg.name} (Proxy)";
             external_host = cfg.proxy.externalHost;
+            basic_auth_enabled = cfg.proxy.basicAuth.enable;
+            basic_auth_username_attribute = lib.mkIf cfg.proxy.basicAuth.enable cfg.proxy.basicAuth.username;
+            basic_auth_password_attribute = lib.mkIf cfg.proxy.basicAuth.enable cfg.proxy.basicAuth.password;
             mode = "forward_single";
             access_token_validity = "days=1";
             authorization_flow = "\${ data.authentik_flow.default-authorization-flow.id }";

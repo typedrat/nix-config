@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ./nvidia.nix
     ./service-user.nix
+    ./sr-iov.nix
     ./zfspv-pool.nix
   ];
 
@@ -63,6 +64,7 @@
       autobrr.enable = true;
       configarr.enable = true;
       cross-seed.enable = true;
+      lidarr.enable = true;
       prowlarr.enable = true;
       radarr.enable = true;
       radarr.anime.enable = true;
@@ -72,7 +74,6 @@
       torrents = {
         enable = true;
         downloadDir = "/mnt/media/torrents";
-        optimizedSettings = true;
       };
     };
 

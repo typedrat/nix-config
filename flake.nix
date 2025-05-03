@@ -43,7 +43,17 @@
 
     impermanence.url = "github:nix-community/impermanence";
 
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+
+    nixvirt = {
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/0.5.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -123,7 +133,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixpkgs-shoko.url = "github:/diniamo/nixpkgs/shokoanime";
+    mlnx-ofed-nixos = {
+      url = "github:codgician/mlnx-ofed-nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixpkgs-shoko.url = "github:diniamo/nixpkgs/shokoanime";
+
+    nixpkgs-qbittorrent.url = "github:undefined-landmark/nixpkgs/default-serverConfig";
+
+    talhelper = {
+      url = "github:budimanjojo/talhelper";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
 
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -212,6 +235,7 @@
                 prefixText = let
                   target_host = "iserlohn.thisratis.gay";
                   links_to_tunnel = [
+                    "lidarr"
                     "prowlarr"
                     "radarr"
                     "radarr-anime"
@@ -231,26 +255,21 @@
                   TF_VAR_passphrase=$(sops decrypt ../secrets/default.yaml --extract '["terraformPassphrase"]')
                   export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY TF_VAR_passphrase
 
-                  if [ ! -f .terraform_ssh_tunnel.pid ]; then
-                    echo "Setting up SSH tunnels to ${target_host}..."
-                    ssh -fNT ${portForwards} "${target_host}" &
-                    SSH_TUNNEL_PID=$!
-                    echo $SSH_TUNNEL_PID > .terraform_ssh_tunnel.pid
-                    echo "SSH tunnels established (PID: $SSH_TUNNEL_PID)"
-                  fi
-                '';
+                  SSH_CONTROL_PATH=$(mktemp -tu .ssh.sock.XXXXXX)
 
-                suffixText = ''
-                  if [ -f .terraform_ssh_tunnel.pid ]; then
-                    SSH_TUNNEL_PID=$(cat .terraform_ssh_tunnel.pid)
-                    echo "Cleaning up SSH tunnel (PID: $SSH_TUNNEL_PID)..."
-                    kill "$SSH_TUNNEL_PID" 2>/dev/null || true
-                    while kill -0 "$SSH_TUNNEL_PID"; do
-                        sleep 1
-                    done
-                    rm .terraform_ssh_tunnel.pid
-                    echo "SSH tunnel terminated."
-                  fi
+                  echo "Setting up SSH tunnels to ${target_host}..."
+                  ssh -M -S "$SSH_CONTROL_PATH" -fNT ${portForwards} "${target_host}"
+                  echo "SSH tunnels established using control socket: $SSH_CONTROL_PATH"
+
+                  function cleanup_ssh_tunnel() {
+                    if [ -S "$SSH_CONTROL_PATH" ]; then
+                      echo "Closing SSH tunnel control socket..."
+                      ssh -S "$SSH_CONTROL_PATH" -O exit "${target_host}" 2>/dev/null || true
+                      echo "SSH tunnel terminated."
+                    fi
+                  }
+
+                  trap cleanup_ssh_tunnel EXIT
                 '';
               };
 

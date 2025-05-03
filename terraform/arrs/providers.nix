@@ -1,5 +1,8 @@
 {links, ...}: {
   terraform.required_providers = {
+    lidarr = {
+      source = "devopsarr/lidarr";
+    };
     prowlarr = {
       source = "devopsarr/prowlarr";
     };
@@ -12,6 +15,10 @@
   };
 
   provider = {
+    lidarr = {
+      api_key = "\${ data.sops_file.arrs.data[\"lidarr.apiKey\"] }";
+      url = links.lidarr.url;
+    };
     radarr = [
       {
         api_key = "\${ data.sops_file.arrs.data[\"radarr.apiKey\"] }";
