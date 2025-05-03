@@ -102,7 +102,7 @@ in {
             "${config.links.radarr-anime.url}/?apikey=${config.sops.placeholder."cross-seed/radarr-anime/apiKey"}"
           ];
 
-          qbittorrentUrl = config.links.qbittorrent.url;
+          qbittorrentUrl = config.links.qbittorrent-webui.url;
         };
 
         owner = config.services.cross-seed.user;

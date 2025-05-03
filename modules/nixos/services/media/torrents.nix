@@ -43,7 +43,7 @@ in {
 
           AutoRun = {
             enabled = true;
-            program = "${lib.getExe pkgs.curl} -XPOST ${config.links.cross-seed.url}/api/webhook?apikey=${config.sops.secrets."cross-seed/apiKey".path} -d \"infoHash=%I\" -d \"includeSingleEpisodes=true\"";
+            program = "${config.sops.templates."trigger-cross-seed.sh".path} %I";
           };
 
           BitTorrent.Session = {
@@ -84,6 +84,16 @@ in {
             };
           };
         };
+      };
+
+      sops.templates."trigger-cross-seed.sh" = {
+        content = ''
+          #!${pkgs.bash}/bin/sh
+          ${lib.getExe pkgs.curl} -XPOST "${config.links.cross-seed.url}/api/webhook?apikey=${config.sops.placeholder."cross-seed/apiKey"}" -d "infoHash=$1" -d "includeSingleEpisodes=true"
+        '';
+        owner = config.services.qbittorrent.user;
+        group = config.services.qbittorrent.group;
+        mode = "0700";
       };
 
       links = {
