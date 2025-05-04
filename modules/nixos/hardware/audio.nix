@@ -20,6 +20,14 @@ in {
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
+
+      extraConfig.pipewire = {
+        "10-please-stop-stuttering" = {
+          "context.properties" = {
+            "default.min-quantum" = 512;
+          };
+        };
+      };
     };
   };
 }

@@ -2,6 +2,7 @@
   imports = [
     ./disko-config.nix
     ./hardware-configuration.nix
+    ./microvms.nix
     ./nvidia.nix
     ./service-user.nix
     ./sr-iov.nix
