@@ -173,7 +173,7 @@ in {
           lib.nameValuePair instance.user (
             lib.mkIf (instance.user == "exportarr-${name}") {
               isSystemUser = true;
-              group = instance.group;
+              inherit (instance) group;
             }
           )
       )

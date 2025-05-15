@@ -126,8 +126,8 @@ in {
           name: instance:
             lib.nameValuePair "10-lidarr-${name}" {
               ${instance.dataDir}.d = {
-                user = instance.user;
-                group = instance.group;
+                inherit (instance) user;
+                inherit (instance) group;
                 mode = "0700";
               };
             }
@@ -161,7 +161,7 @@ in {
           name: instance:
             lib.nameValuePair instance.user (
               lib.mkIf (instance.user == "lidarr-${name}") {
-                group = instance.group;
+                inherit (instance) group;
                 home = "/var/lib/lidarr-${name}";
                 isSystemUser = true;
               }

@@ -15,7 +15,7 @@
           sopsFile = path;
           key = secret;
           owner = config.services.cross-seed.user;
-          group = config.services.cross-seed.group;
+          inherit (config.services.cross-seed) group;
           mode = "0740";
         };
       })
@@ -41,7 +41,7 @@ in {
         useGenConfigDefaults = true;
         settings = {
           host = config.links.cross-seed.hostname;
-          port = config.links.cross-seed.port;
+          inherit (config.links.cross-seed) port;
 
           dataDirs = [
             "/mnt/media/torrents"
@@ -106,7 +106,7 @@ in {
         };
 
         owner = config.services.cross-seed.user;
-        group = config.services.cross-seed.group;
+        inherit (config.services.cross-seed) group;
         restartUnits = ["cross-seed.service"];
       };
 

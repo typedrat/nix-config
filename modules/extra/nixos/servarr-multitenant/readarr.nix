@@ -121,8 +121,8 @@ in {
           name: instance:
             lib.nameValuePair "10-readarr-${name}" {
               ${instance.dataDir}.d = {
-                user = instance.user;
-                group = instance.group;
+                inherit (instance) user;
+                inherit (instance) group;
                 mode = "0700";
               };
             }
@@ -157,7 +157,7 @@ in {
             lib.nameValuePair instance.user (
               lib.mkIf (instance.user == "readarr-${name}") {
                 description = "Readarr service (${name})";
-                group = instance.group;
+                inherit (instance) group;
                 home = instance.dataDir;
                 isSystemUser = true;
               }

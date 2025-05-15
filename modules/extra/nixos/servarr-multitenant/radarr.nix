@@ -115,8 +115,8 @@ in {
           name: instance:
             lib.nameValuePair "10-radarr-${name}" {
               ${instance.dataDir}.d = {
-                user = instance.user;
-                group = instance.group;
+                inherit (instance) user;
+                inherit (instance) group;
                 mode = "0700";
               };
             }
@@ -150,7 +150,7 @@ in {
           name: instance:
             lib.nameValuePair instance.user (
               lib.mkIf (instance.user == "radarr-${name}") {
-                group = instance.group;
+                inherit (instance) group;
                 home = instance.dataDir;
                 isSystemUser = true;
               }

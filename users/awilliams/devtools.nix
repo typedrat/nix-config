@@ -14,6 +14,13 @@
     process-compose
     inputs'.catppuccin.packages.whiskers
     inputs'.fenix.packages.stable.defaultToolchain
+    (python3.withPackages (ps:
+      with ps; [
+        ipython
+        numpy
+        scipy
+        pandas
+      ]))
 
     # kubernetes stuff
     kubectl
@@ -37,6 +44,7 @@
       settings = {
         experimental = true;
         disable_tools = ["node"];
+        idiomatic_version_file_enable_tools = [];
       };
     };
   };

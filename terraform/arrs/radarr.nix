@@ -7,7 +7,7 @@
         priority = 1;
 
         host = links.qbittorrent-webui.hostname;
-        port = links.qbittorrent-webui.port;
+        inherit (links.qbittorrent-webui) port;
 
         movie_category = "radarr";
         movie_imported_category = "radarr-imported";
@@ -21,7 +21,7 @@
         priority = 1;
 
         host = links.qbittorrent-webui.hostname;
-        port = links.qbittorrent-webui.port;
+        inherit (links.qbittorrent-webui) port;
 
         movie_category = "radarr-anime";
         movie_imported_category = "radarr-anime-imported";

@@ -4,6 +4,7 @@
   inputs = {
     #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-24_11.url = "github:nixos/nixpkgs/nixos-24.11";
 
     disko = {
       url = "github:nix-community/disko";
@@ -72,7 +73,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin = {
+      url = "github:catppuccin/nix";
+    };
+
+    catppuccin-element = {
+      url = "github:catppuccin/element";
+      flake = false;
+    };
 
     catppuccin-process-compose = {
       url = "github:catppuccin/process-compose";
@@ -81,6 +89,11 @@
 
     catppuccin-shoko-webui = {
       url = "github:typedrat/catppuccin-shoko-webui";
+      flake = false;
+    };
+
+    catppuccin-tauon-music-box = {
+      url = "github:typedrat/catppuccin-tauon-music-box";
       flake = false;
     };
 
@@ -148,6 +161,12 @@
       inputs.flake-parts.follows = "flake-parts";
     };
 
+    zed-editor = {
+      url = "github:HPsaucii/zed-editor-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -204,6 +223,12 @@
             programs.zen-browser.package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default;
           };
         };
+
+        overlays = {
+          nodejs-18 = _: prev: {
+            inherit (inputs.nixpkgs-24_11.legacyPackages.${prev.stdenv.hostPlatform.system}) nodejs_18;
+          };
+        };
       };
 
       perSystem = {
@@ -243,7 +268,7 @@
                     "sonarr-anime"
                   ];
 
-                  mkPortForward = key: port: "-L ${toString port}:localhost:${toString port}";
+                  mkPortForward = _key: port: "-L ${toString port}:localhost:${toString port}";
                   portForwards = builtins.concatStringsSep " " (
                     builtins.map
                     (key: mkPortForward key (self.nixosConfigurations.iserlohn.config.links.${key}.port or null))
@@ -285,6 +310,15 @@
             };
           };
         };
+
+        packages = builtins.listToAttrs (builtins.map
+          (
+            key: {
+              name = "${key}.tf.json";
+              value = config.terranix.terranixConfigurations.${key}.result.terraformConfiguration;
+            }
+          )
+          (builtins.attrNames config.terranix.terranixConfigurations));
       };
     });
 }

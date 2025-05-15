@@ -4,6 +4,7 @@
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   networking.hostName = "hyperion";
   networking.hostId = "0a2e777f";

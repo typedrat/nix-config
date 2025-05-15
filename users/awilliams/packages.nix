@@ -26,6 +26,7 @@
     self'.packages.catbox-cli
     waypipe
     self'.packages.qbittorrent-cli
+    llm
 
     # networking tools
     mtr

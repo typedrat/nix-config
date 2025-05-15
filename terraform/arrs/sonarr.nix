@@ -7,7 +7,7 @@
         priority = 1;
 
         host = links.qbittorrent-webui.hostname;
-        port = links.qbittorrent-webui.port;
+        inherit (links.qbittorrent-webui) port;
 
         tv_category = "sonarr";
         tv_imported_category = "sonarr-imported";
@@ -21,7 +21,7 @@
         priority = 1;
 
         host = links.qbittorrent-webui.hostname;
-        port = links.qbittorrent-webui.port;
+        inherit (links.qbittorrent-webui) port;
 
         tv_category = "sonarr-anime";
         tv_imported_category = "sonarr-anime-imported";

@@ -50,12 +50,12 @@ in {
              superuser_map      /^(.*)$   \1
         '';
 
-        ensureUsers = builtins.map (name: {name = name;}) (builtins.attrNames cfg.users);
+        ensureUsers = builtins.map (name: {inherit name;}) (builtins.attrNames cfg.users);
       };
 
       links.postgres = {
         protocol = "postgresql";
-        port = config.services.postgresql.settings.port;
+        inherit (config.services.postgresql.settings) port;
       };
 
       systemd.services.postgres-password-update = lib.mkIf (cfg.users != {}) {

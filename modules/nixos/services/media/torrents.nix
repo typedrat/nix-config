@@ -92,7 +92,7 @@ in {
           ${lib.getExe pkgs.curl} -XPOST "${config.links.cross-seed.url}/api/webhook?apikey=${config.sops.placeholder."cross-seed/apiKey"}" -d "infoHash=$1" -d "includeSingleEpisodes=true"
         '';
         owner = config.services.qbittorrent.user;
-        group = config.services.qbittorrent.group;
+        inherit (config.services.qbittorrent) group;
         mode = "0700";
       };
 
@@ -108,7 +108,7 @@ in {
 
       system.activationScripts.symlinkQbitCategories = let
         mkCategory = name: savePath: {
-          name = name;
+          inherit name;
           savePath = "/mnt/media/torrents/${savePath}";
         };
 

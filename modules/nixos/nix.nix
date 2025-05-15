@@ -1,12 +1,17 @@
 {
+  config,
+  self,
   inputs,
   lib,
   ...
 }: {
-  config = {
+  options.rat.nix-config.enable = lib.mkEnableOption "opinionated Nix configuration" // {default = true;};
+
+  config = lib.mkIf config.rat.nix-config.enable {
     nixpkgs = {
       overlays = [
         inputs.vscode-extensions.overlays.default
+        self.overlays.nodejs-18
       ];
 
       config = {
@@ -39,6 +44,25 @@
         persistent = true;
         dates = "daily";
         options = "--delete-older-than 7d";
+      };
+
+      extraOptions = ''
+        !include ${config.sops.templates.nix-access-tokens.path}
+      '';
+    };
+
+    sops = {
+      secrets.github-api-key = {
+        key = "miseGithubToken";
+      };
+
+      templates.nix-access-tokens = {
+        content =
+          "access-tokens = "
+          + (lib.strings.concatMapAttrsStringSep " " (name: value: "${name}=${value}") {
+            "github.com" = config.sops.placeholder.github-api-key;
+          });
+        mode = "0440";
       };
     };
   };

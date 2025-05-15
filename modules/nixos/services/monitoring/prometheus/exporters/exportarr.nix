@@ -19,38 +19,38 @@
       sonarr = {
         type = "sonarr";
         apiKeyFile = config.sops.secrets."sonarr/apiKey".path;
-        url = config.links.sonarr.url;
+        inherit (config.links.sonarr) url;
       };
       sonarr-anime = {
         type = "sonarr";
         apiKeyFile = config.sops.secrets."sonarr-anime/apiKey".path;
-        url = config.links.sonarr-anime.url;
+        inherit (config.links.sonarr-anime) url;
       };
       radarr = {
         type = "radarr";
         apiKeyFile = config.sops.secrets."radarr/apiKey".path;
-        url = config.links.radarr.url;
+        inherit (config.links.radarr) url;
       };
       radarr-anime = {
         type = "radarr";
         apiKeyFile = config.sops.secrets."radarr-anime/apiKey".path;
-        url = config.links.radarr-anime.url;
+        inherit (config.links.radarr-anime) url;
       };
       prowlarr = {
         type = "prowlarr";
         apiKeyFile = config.sops.secrets."prowlarr/apiKey".path;
-        url = config.links.prowlarr.url;
+        inherit (config.links.prowlarr) url;
       };
     };
   in
     baseConfig.${name};
 
-  exportarrConfigs = lib.filterAttrs (name: enabled: enabled) enabledServarr;
+  exportarrConfigs = lib.filterAttrs (_name: enabled: enabled) enabledServarr;
 in {
   config = modules.mkIf cfg.enable {
     links =
       lib.mapAttrs
-      (name: _: {
+      (_name: _: {
         protocol = "http";
       })
       (lib.mapAttrs' (name: _: lib.nameValuePair "exportarr-${name}" null) exportarrConfigs);
@@ -62,10 +62,10 @@ in {
           serviceConfig = getServarrConfig name;
         in {
           enable = true;
-          type = serviceConfig.type;
-          url = serviceConfig.url;
-          apiKeyFile = serviceConfig.apiKeyFile;
-          port = config.links."exportarr-${name}".port;
+          inherit (serviceConfig) type;
+          inherit (serviceConfig) url;
+          inherit (serviceConfig) apiKeyFile;
+          inherit (config.links."exportarr-${name}") port;
           openFirewall = true;
           user = "${name}-exporter";
           group = "${name}-exporter";

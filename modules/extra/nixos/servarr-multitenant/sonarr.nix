@@ -119,7 +119,7 @@ in {
     })
 
     {
-      systemd.tmpfiles.rules = lib.concatLists (lib.mapAttrsToList (name: instance: [
+      systemd.tmpfiles.rules = lib.concatLists (lib.mapAttrsToList (_name: instance: [
           "d '${instance.dataDir}' 0700 ${instance.user} ${instance.group} - -"
         ])
         enabledInstances);
@@ -152,10 +152,10 @@ in {
 
       users.users =
         lib.mapAttrs' (
-          name: instance:
+          _name: instance:
             lib.nameValuePair instance.user (
               lib.mkIf (lib.hasPrefix "sonarr-" instance.user) {
-                group = instance.group;
+                inherit (instance) group;
                 home = instance.dataDir;
                 isSystemUser = true;
               }
@@ -165,7 +165,7 @@ in {
 
       users.groups =
         lib.mapAttrs' (
-          name: instance:
+          _name: instance:
             lib.nameValuePair instance.group (
               lib.mkIf (lib.hasPrefix "sonarr-" instance.group) {}
             )

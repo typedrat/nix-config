@@ -18,6 +18,7 @@ in {
     self.nixosModules.servarr-multitenant
 
     ./core
+    ./communication
     ./media
     ./monitoring
   ];

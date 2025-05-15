@@ -91,12 +91,12 @@ in {
             {
               name = "Prometheus";
               type = "prometheus";
-              url = config.links.prometheus.url;
+              inherit (config.links.prometheus) url;
             }
             {
               name = "Loki";
               type = "loki";
-              url = config.links.loki.url;
+              inherit (config.links.loki) url;
             }
           ];
         };

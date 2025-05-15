@@ -1,0 +1,15 @@
+{
+  "nix.serverSettings": {
+    "nixd": {
+      "options": {
+        "nixos": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").nixosConfigurations.hyperion.options"
+        },
+        "home-manager": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").nixosConfigurations.hyperion.options.home-manager.users.type.getSubOptions []"
+        }
+
+      }
+    }
+  }
+}

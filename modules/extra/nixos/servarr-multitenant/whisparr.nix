@@ -115,7 +115,7 @@ in {
     })
 
     {
-      systemd.tmpfiles.rules = lib.concatLists (lib.mapAttrsToList (name: instance: [
+      systemd.tmpfiles.rules = lib.concatLists (lib.mapAttrsToList (_name: instance: [
           "d '${instance.dataDir}' 0700 ${instance.user} ${instance.group} - -"
         ])
         enabledInstances);
@@ -147,7 +147,7 @@ in {
           name: instance:
             lib.nameValuePair instance.user (
               lib.mkIf (instance.user == "whisparr-${name}") {
-                group = instance.group;
+                inherit (instance) group;
                 home = instance.dataDir;
                 isSystemUser = true;
               }

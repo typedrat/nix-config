@@ -27,7 +27,7 @@ in {
 
           postgres = {
             host = "localhost";
-            port = config.links.postgres.port;
+            inherit (config.links.postgres) port;
             user = "lidarr";
             maindb = "lidarr";
             logdb = "lidarr-log";

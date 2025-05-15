@@ -10,6 +10,7 @@
     ./grafana.nix
     ./lidarr.nix
     ./jellyfin.nix
+    ./matrix.nix
     ./prometheus.nix
     ./prowlarr.nix
     ./qbittorrent.nix

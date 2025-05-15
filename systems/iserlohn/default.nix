@@ -76,6 +76,13 @@
         enable = true;
         downloadDir = "/mnt/media/torrents";
       };
+
+      matrix-synapse.enable = true;
+      element.enable = true;
+      heisenbridge = {
+        enable = true;
+        owner = "@typedrat:thisratis.gay";
+      };
     };
 
     zfs = {

@@ -59,7 +59,7 @@ in {
       sops.templates."autobrr.toml" = {
         content = inputs.nix-std.lib.serde.toTOML {
           host = config.links.autobrr.ipv4;
-          port = config.links.autobrr.port;
+          inherit (config.links.autobrr) port;
           checkForUpdates = false;
           sessionSecret = config.sops.placeholder."autobrr/sessionSecret";
 

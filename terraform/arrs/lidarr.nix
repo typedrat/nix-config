@@ -6,7 +6,7 @@
       priority = 1;
 
       host = links.qbittorrent-webui.hostname;
-      port = links.qbittorrent-webui.port;
+      inherit (links.qbittorrent-webui) port;
 
       music_category = "lidarr";
       music_imported_category = "lidarr-imported";
