@@ -21,6 +21,7 @@
         scipy
         pandas
       ]))
+    devpod
 
     # kubernetes stuff
     kubectl
