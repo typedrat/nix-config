@@ -22,16 +22,6 @@ in {
         {
           withOpenASAR = true;
           withVencord = true;
-          # I can't wait for NixOS/nixpkgs#407053 to hit unstable
-          vencord = pkgs.vencord.overrideAttrs rec {
-            version = "1.12.1";
-            src = pkgs.fetchFromGitHub {
-              owner = "Vendicated";
-              repo = "Vencord";
-              rev = "v${version}";
-              hash = "sha256-Vs6S8N3q5JzXfeogfD0JrVIhMnYIio7+Dfy12gUJrlU=";
-            };
-          };
         }
       )
       krisp-patcher

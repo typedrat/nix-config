@@ -16,6 +16,8 @@ in {
   config = mkMerge [
     {
       nix.settings = inputs.anime-game-launcher.nixConfig;
+
+      aagl.enableNixpkgsReleaseBranchCheck = false;
     }
     (mkIf (config.rat.games.enable && config.rat.games.animeGameLaunchers.enable) {
       programs.anime-game-launcher.enable = true;

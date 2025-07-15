@@ -146,16 +146,18 @@
 
           packages = with inputs'.firefox-addons.packages; [
             self'.packages.bypass-paywalls-clean
-            pwas-for-firefox
+
             bitwarden
-            violentmonkey
+            catppuccin-web-file-icons
+            indie-wiki-buddy
             metamask
+            offline-qr-code-generator
+            pwas-for-firefox
+            react-devtools
             sponsorblock
             stylus
             ublock-origin
-            react-devtools
-            catppuccin-web-file-icons
-            offline-qr-code-generator
+            violentmonkey
           ];
         };
       };
@@ -176,10 +178,23 @@ in {
 
       profiles = {
         default = {
-          userChrome = lib.strings.concatLines [
-            (builtins.readFile "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userChrome.css")
-            (builtins.readFile "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userChrome.css")
-          ];
+          userChrome = let
+            patchCss = file:
+              pkgs.runCommand "patched-css" {} ''
+                ARROWPANEL_COLOR=''$(${pkgs.gnugrep}/bin/grep -o -- '--arrowpanel-color: [^;]*' ${file} | ${pkgs.coreutils}/bin/cut -d' ' -f2)
+                ARROWPANEL_BG=''$(${pkgs.gnugrep}/bin/grep -o -- '--arrowpanel-background: [^;]*' ${file} | ${pkgs.coreutils}/bin/cut -d' ' -f2)
+
+                ${pkgs.gnused}/bin/sed \
+                  -e '/--arrowpanel-color:/d' \
+                  -e '/--arrowpanel-background:/d' \
+                  -e '/^}$/i\\n  #mainPopupSet > menupopup, panel,tooltip {\n    --arrowpanel-color: '"$ARROWPANEL_COLOR"';\n    --arrowpanel-background: '"$ARROWPANEL_BG"';\n  }' \
+                  ${file} > $out
+              '';
+          in
+            lib.strings.concatLines [
+              (builtins.readFile (patchCss "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userChrome.css"))
+              (builtins.readFile (patchCss "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userChrome.css"))
+            ];
         };
       };
     };

@@ -28,6 +28,7 @@
     hyprpolkitagent
     hyprpaper
     swww
+    hyprpaper
     mpvpaper
     waytrogen
     hyprpicker
@@ -51,6 +52,10 @@
 
     settings = {
       "$main_mod" = "SUPER";
+
+      debug = {
+        disable_logs = false;
+      };
 
       monitor = [
         "DP-2,3840x2160@60.0,0x1080,1.0"
@@ -119,6 +124,10 @@
 
       decoration = {
         rounding = 10;
+      };
+
+      misc = {
+        enable_anr_dialog = false;
       };
     };
   };

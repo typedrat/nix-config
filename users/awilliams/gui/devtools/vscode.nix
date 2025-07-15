@@ -40,7 +40,7 @@ in {
           mtxr.sqltools-driver-pg
           pkl-vscode
           redhat.vscode-xml
-          saoudrizwan.claude-dev
+          rooveterinaryinc.roo-cline
           tamasfe.even-better-toml
         ];
 
@@ -54,6 +54,7 @@ in {
           "workbench.iconTheme" = "catppuccin-frappe";
 
           "cline.chromeExecutablePath" = lib.getExe config.programs.chromium.package;
+          "dev.containers.dockerSocketPath" = "/run/user/${builtins.toString osConfig.users.users.awilliams.uid}/docker.sock";
           "mise.checkForNewMiseVersion" = false;
           "nix.enableLanguageServer" = true;
           "nix.serverPath" = "nixd";

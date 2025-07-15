@@ -1,6 +1,5 @@
 {
   config,
-  self,
   inputs,
   lib,
   ...
@@ -11,14 +10,12 @@
     nixpkgs = {
       overlays = [
         inputs.vscode-extensions.overlays.default
-        self.overlays.nodejs-18
       ];
 
       config = {
         allowUnfree = true;
 
         permittedInsecurePackages = [
-          "fluffychat-linux-1.26.0"
           "olm-3.2.16"
         ];
       };

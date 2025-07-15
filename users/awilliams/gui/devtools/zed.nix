@@ -11,7 +11,6 @@ in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
     programs.zed-editor = {
       enable = true;
-      package = inputs'.zed-editor.packages.zed-editor;
 
       extraPackages = with pkgs; [
         nixd
@@ -27,10 +26,15 @@ in {
         "catppuccin-icons"
         "codebook"
         "dockerfile"
+        "env"
         "git-firefly"
         "html"
         "just"
+        "lua"
+        "make"
+        "mcp-server-context7"
         "nix"
+        "pkl"
         "sql"
         "tera"
         "terraform"
@@ -57,80 +61,6 @@ in {
             binary = {
               path = "package-version-server";
             };
-          };
-        };
-
-        agent = {
-          default_model = {
-            provider = "openai";
-            model = "anthropic/claude-3.7-sonnet";
-          };
-          editor_model = {
-            provider = "openai";
-            model = "anthropic/claude-3.7-sonnet";
-          };
-        };
-
-        language_models = {
-          openai = {
-            version = "1";
-            api_url = "https://openrouter.ai/api/v1";
-            available_models = [
-              {
-                name = "anthropic/claude-3.7-sonnet";
-                display_name = "Anthropic: Claude 3.7 Sonnet";
-                max_tokens = 200000;
-                max_output_tokens = 64000;
-              }
-              {
-                name = "anthropic/claude-3.7-sonnet:thinking";
-                display_name = "Anthropic: Claude 3.7 Sonnet (thinking)";
-                max_tokens = 200000;
-                max_output_tokens = 64000;
-              }
-              {
-                name = "deepseek/deepseek-r1";
-                display_name = "DeepSeek: DeepSeek R1";
-                max_tokens = 163840;
-                max_output_tokens = 163840;
-              }
-              {
-                name = "deepseek/deepseek-chat-v3-0324";
-                display_name = "DeepSeek: DeepSeek V3";
-                max_tokens = 163840;
-                max_output_tokens = 163840;
-              }
-              {
-                name = "google/gemini-2.5-pro-preview";
-                display_name = "Google: Gemini 2.5 Pro Preview";
-                max_tokens = 1048576;
-                max_output_tokens = 65535;
-              }
-              {
-                name = "google/gemini-2.5-flash-preview";
-                display_name = "Google: Gemini 2.5 Flash Preview";
-                max_tokens = 1048576;
-                max_output_tokens = 65535;
-              }
-              {
-                name = "google/gemini-2.5-flash-preview:thinking";
-                display_name = "Google: Gemini 2.5 Flash Preview (thinking)";
-                max_tokens = 1048576;
-                max_output_tokens = 65535;
-              }
-              {
-                name = "openai/gpt-4.1";
-                display_name = "OpenAI: GPT-4.1";
-                max_tokens = 1047576;
-                max_output_tokens = 32768;
-              }
-              {
-                name = "openai/o4-mini-high";
-                display_name = "OpenAI: o4 Mini High";
-                max_tokens = 200000;
-                max_output_tokens = 100000;
-              }
-            ];
           };
         };
 

@@ -92,6 +92,9 @@ in
       selenium
     ];
 
+    pyproject = true;
+    build-system = with python3Packages; [setuptools];
+
     doCheck = false;
 
     meta = {

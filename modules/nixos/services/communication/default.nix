@@ -1,5 +1,6 @@
 {
   imports = [
     ./matrix
+    ./sillytavern.nix
   ];
 }

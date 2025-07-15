@@ -15,6 +15,7 @@
     ./prowlarr.nix
     ./qbittorrent.nix
     ./radarr.nix
+    ./sillytavern.nix
     ./sonarr.nix
     ./traefik.nix
   ];

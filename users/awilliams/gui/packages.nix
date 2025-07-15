@@ -10,7 +10,6 @@ in {
   config = mkIf osConfig.rat.gui.enable {
     home.packages = with pkgs; [
       # GUI stuff to factor out
-      self'.packages.xmage
       jellyfin-mpv-shim
       jellyfin-media-player
       wev
@@ -24,6 +23,8 @@ in {
       qalculate-qt
       bitwarden-desktop
       transmission_4-qt6
+      self'.packages.xcursor-viewer
+      imgbrd-grabber
     ];
   };
 }

@@ -11,6 +11,10 @@
 
     # utilities
     sops
+    age
+    ssh-to-age
+    self'.packages.github-to-sops
+    github-cli
     jq
     jd-diff-patch
     frink
@@ -27,6 +31,7 @@
     waypipe
     self'.packages.qbittorrent-cli
     llm
+    self'.packages.stable-diffusion-cpp
 
     # networking tools
     mtr

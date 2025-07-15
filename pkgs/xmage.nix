@@ -7,32 +7,33 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "xmage";
-  version = "1.4.57-dev_2025-04-11_13-57";
+  version = "1.4.57-dev_2025-04-19_14-28";
 
   src = fetchurl {
-    url = "https://xmage.today/files/mage-full_${finalAttrs.version}.zip";
-    sha256 = "sha256-yPNeVXU6aXPResIZHC5/eYlxXZh4nGif1jrrgyqxF+Y=";
+    url = "http://xmage.today/files/mage-full_${finalAttrs.version}.zip";
+    sha256 = "sha256-EeaUd81fqiPDqHiMP86E9gtdFi545PIBfCgb1i5Z5i0=";
   };
 
   preferLocalBuild = true;
 
+  nativeBuildInputs = [unzrip];
+
+  sourceRoot = "source";
+
   unpackPhase = ''
-    ${unzrip}/bin/unzrip $src
+    runHook preUnpack
+    unzrip $src -d "$sourceRoot"
+    runHook postUnpack
   '';
 
   installPhase = let
-    # upstream maintainers forgot to update version, so manual override for now
-    # strVersion = lib.substring 0 6 finalAttrs.version;
-    strVersion = "1.4.56";
+    strVersion = lib.substring 0 6 finalAttrs.version;
   in ''
     mkdir -p $out/bin
     cp -rv ./* $out
 
     cat << EOS > $out/bin/xmage
-    exec ${jdk8}/bin/java \
-        -Xms256m -Xmx1024m -XX:MaxPermSize=384m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled \
-        -Dsun.java2d.opengl=true -Dsun.java2d.opengl.fbobject=false \
-        -jar $out/xmage/mage-client/lib/mage-client-${strVersion}.jar
+    exec ${jdk8}/bin/java -Dawt.toolkit.name=WLToolkit -Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -jar $out/xmage/mage-client/lib/mage-client-${strVersion}.jar
     EOS
 
     chmod +x $out/bin/xmage
@@ -47,6 +48,6 @@ stdenv.mkDerivation (finalAttrs: {
       matthiasbeyer
       abueide
     ];
-    homepage = "https://xmage.today/";
+    homepage = "http://xmage.de/";
   };
 })

@@ -4,7 +4,6 @@
   inputs = {
     #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-24_11.url = "github:nixos/nixpkgs/nixos-24.11";
 
     disko = {
       url = "github:nix-community/disko";
@@ -64,12 +63,17 @@
 
     #region Theming
     apple-emoji = {
-      url = "github:samuelngs/apple-emoji-linux";
+      url = "github:typedrat/apple-emoji-linux/fix-flake-on-unstable"; # samuelngs/apple-emoji-linux#68
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     apple-fonts = {
       url = "github:Lyndeno/apple-fonts.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    bentu404-cursors = {
+      url = "github:typedrat/bentu404-cursors";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -79,6 +83,11 @@
 
     catppuccin-element = {
       url = "github:catppuccin/element";
+      flake = false;
+    };
+
+    catppuccin-imhex = {
+      url = "github:catppuccin/imhex";
       flake = false;
     };
 
@@ -116,7 +125,7 @@
     #region Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
 
-    hyprlock.url = "github:hyprwm/hyprlock/v0.7.0";
+    hyprlock.url = "github:hyprwm/hyprlock/v0.8.2";
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
@@ -221,12 +230,6 @@
             ];
 
             programs.zen-browser.package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default;
-          };
-        };
-
-        overlays = {
-          nodejs-18 = _: prev: {
-            inherit (inputs.nixpkgs-24_11.legacyPackages.${prev.stdenv.hostPlatform.system}) nodejs_18;
           };
         };
       };

@@ -24,6 +24,9 @@ python3Packages.buildPythonPackage rec {
 
   doCheck = false;
 
+  pyproject = true;
+  build-system = with python3Packages; [setuptools];
+
   meta = with lib; {
     description = "Python client for Vizio SmartCast";
     homepage = "https://github.com/raman325/pyvizio";

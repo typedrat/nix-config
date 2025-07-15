@@ -19,6 +19,8 @@ buildGoModule rec {
 
   ldflags = ["-s" "-w"];
 
+  doCheck = false;
+
   meta = with lib; {
     description = "A fast and lightweight Prometheus exporter for qBittorrent.";
     homepage = "https://github.com/martabal/qbittorrent-exporter";

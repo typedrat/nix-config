@@ -7,9 +7,11 @@
     [
       ./chat
       ./devtools
+      ./games
       ./media
       ./productivity
       ./wezterm
+
       ./chromium.nix
       ./packages.nix
       ./zen-browser.nix
@@ -18,8 +20,4 @@
     ++ lib.optionals osConfig.rat.gui.enable [
       ./hyprland
     ];
-
-  config = lib.mkIf osConfig.rat.gui.enable {
-    programs.mangohud.enable = true;
-  };
 }

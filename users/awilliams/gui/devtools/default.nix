@@ -1,11 +1,21 @@
-{pkgs, ...}: {
+{
+  osConfig,
+  pkgs,
+  lib,
+  ...
+}: let
+  inherit (lib) mkIf;
+in {
   imports = [
+    ./imhex.nix
     ./jetbrains.nix
     ./vscode.nix
     ./zed.nix
   ];
 
-  home.packages = with pkgs; [
-    virt-manager-qt
-  ];
+  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
+    home.packages = with pkgs; [
+      virt-manager-qt
+    ];
+  };
 }
