@@ -14,11 +14,13 @@
     process-compose
     inputs'.catppuccin.packages.whiskers
     inputs'.fenix.packages.stable.defaultToolchain
+    gcc
     (python3.withPackages (ps:
       with ps; [
         ipython
         numpy
         scipy
+        sympy
         pandas
       ]))
     devpod
