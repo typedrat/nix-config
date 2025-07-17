@@ -18,7 +18,7 @@ in {
       gamescope
       bottles
       cherry-studio
-      gimp
+      gimp3
       inkscape
       qalculate-qt
       bitwarden-desktop

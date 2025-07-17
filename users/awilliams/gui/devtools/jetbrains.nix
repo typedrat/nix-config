@@ -12,9 +12,10 @@
     };
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
-    home.packages = builtins.map wrapJetbrains (with pkgs.jetbrains; [
-      datagrip
-      webstorm
-    ]);
+    # Disabled until NixOS/nixpkgs#425328 gets fixed
+    # home.packages = builtins.map wrapJetbrains (with pkgs.jetbrains; [
+    #   datagrip
+    #   webstorm
+    # ]);
   };
 }

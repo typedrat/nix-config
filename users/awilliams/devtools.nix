@@ -44,7 +44,7 @@
 
       settings = {
         experimental = true;
-        disable_tools = ["node"];
+        disable_tools = ["node" "rust"];
         idiomatic_version_file_enable_tools = [];
       };
     };

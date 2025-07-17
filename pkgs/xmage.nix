@@ -2,7 +2,7 @@
   lib,
   stdenv,
   fetchurl,
-  jdk8,
+  openjdk8-bootstrap,
   unzrip,
 }:
 stdenv.mkDerivation (finalAttrs: {
@@ -33,7 +33,7 @@ stdenv.mkDerivation (finalAttrs: {
     cp -rv ./* $out
 
     cat << EOS > $out/bin/xmage
-    exec ${jdk8}/bin/java -Dawt.toolkit.name=WLToolkit -Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -jar $out/xmage/mage-client/lib/mage-client-${strVersion}.jar
+    exec ${openjdk8-bootstrap}/bin/java -Dawt.toolkit.name=WLToolkit -Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -jar $out/xmage/mage-client/lib/mage-client-${strVersion}.jar
     EOS
 
     chmod +x $out/bin/xmage

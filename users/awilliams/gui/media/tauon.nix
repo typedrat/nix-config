@@ -10,9 +10,10 @@
     (file: lib.hasSuffix ".ttheme" file)
     (lib.filesystem.listFilesRecursive themesDir);
 in {
-  home.packages = with pkgs; [
-    tauon
-  ];
+  # Disabled, pending NixOS/nixpkgs#424658 landing in unstable
+  # home.packages = with pkgs; [
+  #   tauon
+  # ];
 
   xdg.dataFile = lib.listToAttrs (map
     (file: {
