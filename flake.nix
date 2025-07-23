@@ -170,12 +170,6 @@
       inputs.flake-parts.follows = "flake-parts";
     };
 
-    zed-editor = {
-      url = "github:HPsaucii/zed-editor-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-    };
-
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -221,16 +215,6 @@
           ensure-pcr = {imports = [./modules/extra/nixos/ensure-pcr.nix];};
           port-magic = {imports = [./modules/extra/nixos/port-magic];};
           servarr-multitenant = {imports = [./modules/extra/nixos/servarr-multitenant];};
-        };
-
-        homeModules = {
-          zen-browser = {pkgs, ...}: {
-            imports = [
-              ./modules/extra/home-manager/zen-browser
-            ];
-
-            programs.zen-browser.package = inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default;
-          };
         };
       };
 

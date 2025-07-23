@@ -33,6 +33,8 @@
     userName = "Alexis Williams";
     userEmail = "alexis@typedr.at";
 
+    lfs.enable = true;
+
     extraConfig = {
       init = {
         defaultBranch = "master";

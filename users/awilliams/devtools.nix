@@ -18,10 +18,12 @@
     (python3.withPackages (ps:
       with ps; [
         ipython
+        matplotlib
         numpy
+        pandas
+        pynput
         scipy
         sympy
-        pandas
       ]))
     devpod
 

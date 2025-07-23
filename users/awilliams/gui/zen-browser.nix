@@ -1,5 +1,4 @@
 {
-  self,
   self',
   inputs,
   inputs',
@@ -165,7 +164,7 @@
   };
 in {
   imports = [
-    self.homeModules.zen-browser
+    inputs.zen-browser.homeModules.default
   ];
 
   config = mkIf osConfig.rat.gui.enable {
