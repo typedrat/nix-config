@@ -7,14 +7,16 @@
 }: {
   home.packages = with pkgs; [
     alejandra
-    nixd
-    uv
-    nodejs
     corepack
-    process-compose
+    devpod
+    elan
+    gcc
+    lean4
     inputs'.catppuccin.packages.whiskers
     inputs'.fenix.packages.stable.defaultToolchain
-    gcc
+    nixd
+    nodejs
+    process-compose
     (python3.withPackages (ps:
       with ps; [
         ipython
@@ -25,7 +27,7 @@
         scipy
         sympy
       ]))
-    devpod
+    uv
 
     # kubernetes stuff
     kubectl

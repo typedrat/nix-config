@@ -30,11 +30,12 @@ in {
           catppuccin.catppuccin-vsc-icons
           dbaeumer.vscode-eslint
           dejmedus.tailwind-sorter
-          esbenp.prettier-vscode
           editorconfig.editorconfig
+          esbenp.prettier-vscode
           firefox-devtools.vscode-firefox-debug
           hverlin.mise-vscode
           jnoortheen.nix-ide
+          leanprover.lean4
           mkhl.direnv
           mtxr.sqltools
           mtxr.sqltools-driver-pg
