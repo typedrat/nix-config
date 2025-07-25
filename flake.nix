@@ -63,7 +63,7 @@
 
     #region Theming
     apple-emoji = {
-      url = "github:typedrat/apple-emoji-linux/fix-flake-on-unstable"; # samuelngs/apple-emoji-linux#68
+      url = "github:samuelngs/apple-emoji-linux";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -125,7 +125,7 @@
     #region Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
 
-    hyprlock.url = "github:hyprwm/hyprlock/v0.8.2";
+    hyprlock.url = "github:hyprwm/hyprlock/v0.9.0";
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
@@ -161,8 +161,6 @@
     };
 
     nixpkgs-shoko.url = "github:diniamo/nixpkgs/shokoanime";
-
-    nixpkgs-qbittorrent.url = "github:undefined-landmark/nixpkgs/default-serverConfig";
 
     talhelper = {
       url = "github:budimanjojo/talhelper";

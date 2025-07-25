@@ -29,16 +29,15 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1748462723,
+        "lastModified": 1749895878,
         "narHash": "sha256-IyzSEe62OXMydR8pk5cxxjVim7mQi+PXwD1FzxF18kE=",
-        "owner": "typedrat",
+        "owner": "samuelngs",
         "repo": "apple-emoji-linux",
-        "rev": "419b5b4ed32b8088214823dc5b79442a505ffceb",
+        "rev": "b22ae7fe82d3278da88fcc90bc83973ffce44f1d",
         "type": "github"
       },
       "original": {
-        "owner": "typedrat",
-        "ref": "fix-flake-on-unstable",
+        "owner": "samuelngs",
         "repo": "apple-emoji-linux",
         "type": "github"
       }
@@ -1106,16 +1105,16 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1746281087,
-        "narHash": "sha256-9amK5DEpueAD+aobmBmjbV+C16RO7lcDOdf5ucJtNvM=",
+        "lastModified": 1752743158,
+        "narHash": "sha256-YndFlXC9ZM7uiC75MfnYFk4S9s1Xqq3GTnW0xMBlG7g=",
         "owner": "hyprwm",
         "repo": "hyprlock",
-        "rev": "6c64630df81b52208b210f02476f55e4db56e6cf",
+        "rev": "31297a871b7b1aea35dcf8627c6bfecf33fe03db",
         "type": "github"
       },
       "original": {
         "owner": "hyprwm",
-        "ref": "v0.8.2",
+        "ref": "v0.9.0",
         "repo": "hyprlock",
         "type": "github"
       }
@@ -1472,22 +1471,6 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-qbittorrent": {
-      "locked": {
-        "lastModified": 1747651287,
-        "narHash": "sha256-mt0EZbtWM5BmXlffj16x0SyvU155V5wb8VjijwsuUpc=",
-        "owner": "undefined-landmark",
-        "repo": "nixpkgs",
-        "rev": "f1fde6c0613043168f83892be55aedd74e6178ae",
-        "type": "github"
-      },
-      "original": {
-        "owner": "undefined-landmark",
-        "ref": "default-serverConfig",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1909,7 +1892,6 @@
         "nix-std": "nix-std",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_5",
-        "nixpkgs-qbittorrent": "nixpkgs-qbittorrent",
         "nixpkgs-shoko": "nixpkgs-shoko",
         "nixvirt": "nixvirt",
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts",

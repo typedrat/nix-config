@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   pkgs,
   lib,
   ...
@@ -9,10 +8,6 @@
   cfg = config.rat.services.torrents;
   impermanenceCfg = config.rat.impermanence;
 in {
-  imports = [
-    "${inputs.nixpkgs-qbittorrent}/nixos/modules/services/torrent/qbittorrent.nix"
-  ];
-
   options.rat.services.torrents = {
     enable = options.mkEnableOption "Torrent services";
     downloadDir = options.mkOption {
