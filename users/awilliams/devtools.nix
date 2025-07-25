@@ -11,7 +11,6 @@
     devpod
     elan
     gcc
-    lean4
     inputs'.catppuccin.packages.whiskers
     inputs'.fenix.packages.stable.defaultToolchain
     nixd

@@ -125,7 +125,7 @@
     #region Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
 
-    hyprlock.url = "github:hyprwm/hyprlock/v0.9.0";
+    hyprlock.url = "github:hyprwm/hyprlock/v0.8.2";
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
