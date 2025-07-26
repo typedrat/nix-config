@@ -7,6 +7,7 @@
     [
       ./chat
       ./devtools
+      ./easyeffects
       ./games
       ./media
       ./productivity
