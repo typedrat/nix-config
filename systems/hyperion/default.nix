@@ -19,7 +19,7 @@
     };
 
     gui.enable = true;
-    theming.fonts.enableGoogleFonts = true;
+    theming.fonts.enableGoogleFonts = false;
     hardware.openrgb.enable = true;
     java.enable = true;
     nix-ld.enable = true;
