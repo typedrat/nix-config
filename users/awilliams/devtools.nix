@@ -13,6 +13,7 @@
     gcc
     google-cloud-sdk
     inputs'.catppuccin.packages.whiskers
+    inputs'.claude-desktop.packages.claude-desktop
     inputs'.fenix.packages.stable.defaultToolchain
     nixd
     nodejs
