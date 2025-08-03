@@ -3,6 +3,8 @@
   lib,
   ...
 }: {
+  programs.aria2.enable = true;
+
   programs.bat.enable = true;
   programs.zsh.shellAliases.cat = "bat";
 
