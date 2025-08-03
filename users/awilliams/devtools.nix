@@ -11,6 +11,7 @@
     devpod
     elan
     gcc
+    google-cloud-sdk
     inputs'.catppuccin.packages.whiskers
     inputs'.fenix.packages.stable.defaultToolchain
     nixd
@@ -22,8 +23,10 @@
         matplotlib
         numpy
         pandas
+        polars
         pynput
         scipy
+        seaborn
         sympy
       ]))
     uv
