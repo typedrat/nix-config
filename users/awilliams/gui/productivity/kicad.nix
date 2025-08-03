@@ -14,6 +14,7 @@ in {
           kikit-library
         ];
       })
+      gerbv
     ];
   };
 }
