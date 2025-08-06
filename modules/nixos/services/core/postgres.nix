@@ -87,8 +87,13 @@ in {
 
               # Ensure user owns each database from cfg.users.ownedDatabases
               ${builtins.concatStringsSep "\n" (map (database: ''
-                  $PSQL -c "CREATE DATABASE \"${database}\" OWNER \"${username}\"" ||
+                  if $PSQL -lqt | cut -d \| -f 1 | grep -qw "${database}"; then
+                    echo "Database '${database}' exists, updating owner..."
                     $PSQL -c "ALTER DATABASE \"${database}\" OWNER TO \"${username}\""
+                  else
+                    echo "Creating database '${database}' with owner '${username}'..."
+                    $PSQL -c "CREATE DATABASE \"${database}\" OWNER \"${username}\""
+                  fi
                 '')
                 userConfig.ownedDatabases)}
             '')

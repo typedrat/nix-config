@@ -8,7 +8,6 @@
     };
 
     nvidia = {
-      datacenter.enable = true;
       open = false;
       nvidiaPersistenced = true;
       modesetting.enable = true;

@@ -27,7 +27,6 @@ in {
       profiles.default = {
         extensions = with pkgs.vscode-marketplace; [
           bradlc.vscode-tailwindcss
-          catppuccin.catppuccin-vsc-icons
           dbaeumer.vscode-eslint
           dejmedus.tailwind-sorter
           editorconfig.editorconfig

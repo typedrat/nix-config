@@ -109,7 +109,6 @@ in {
         "systemd"
         "postgres"
         "url-preview"
-        "user-search"
         "oidc"
       ];
 
@@ -142,8 +141,8 @@ in {
           (
             let
               providers = pkgs.fetchurl {
-                url = "https://oembed.com/providers.json?2024-12-13";
-                hash = "sha256-s5zsZlsM77Wf+JZa/ZXdcytl7ov8FVFUsKM9eA+WUBo=";
+                url = "https://oembed.com/providers.json";
+                hash = "sha256-JUQD/mHAu0wA9Lh6Z8tlZ4F4/CPVs3kJ8aNS7CbP0uc=";
               };
             in
               pkgs.runCommand "providers.json"

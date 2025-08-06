@@ -8,13 +8,21 @@
   home.packages = with pkgs; [
     alejandra
     corepack
+    claude-code
     devpod
     elan
     gcc
     google-cloud-sdk
     inputs'.catppuccin.packages.whiskers
     inputs'.claude-desktop.packages.claude-desktop
-    inputs'.fenix.packages.stable.defaultToolchain
+    (inputs'.fenix.packages.combine [
+      inputs'.fenix.packages.stable.defaultToolchain
+      inputs'.fenix.packages.targets.x86_64-unknown-linux-gnu.stable.rust-std
+      inputs'.fenix.packages.targets.x86_64-unknown-linux-musl.stable.rust-std
+      inputs'.fenix.packages.targets.aarch64-unknown-linux-gnu.stable.rust-std
+      inputs'.fenix.packages.targets.aarch64-unknown-linux-musl.stable.rust-std
+      inputs'.fenix.packages.targets.wasm32-unknown-unknown.stable.rust-std
+    ])
     nixd
     nodejs
     process-compose

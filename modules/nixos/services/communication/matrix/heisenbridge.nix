@@ -59,6 +59,8 @@ in {
       inherit (cfg) owner;
     };
 
+    systemd.services.heisenbridge.after = ["matrix-synapse"];
+
     services.matrix-synapse.settings.app_service_config_files = [
       "/var/lib/heisenbridge/registration.yml"
     ];
