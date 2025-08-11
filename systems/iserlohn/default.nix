@@ -124,6 +124,13 @@
             hash = "sha256-PDacujugRYwWiFbul9bnHbe9OAuSMmkj4Z1yqWpys0s=";
           };
 
+          "SillyTavern-LALib" = pkgs.fetchFromGitHub {
+            owner = "LenAnderson";
+            repo = "SillyTavern-LALib";
+            rev = "6715da13bd27d53bab2eaf5a2eb2509825723718";
+            hash = "sha256-4mGruD1kJa2asKYOG76ZJtAaHJQ1+pjlts/eEtcEsCQ=";
+          };
+
           "SillyTavern-MessageSummarize" = pkgs.fetchFromGitHub {
             owner = "qvink";
             repo = "SillyTavern-MessageSummarize";
