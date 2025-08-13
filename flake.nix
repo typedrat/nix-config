@@ -5,6 +5,8 @@
     #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
