@@ -24,6 +24,7 @@
       inputs'.fenix.packages.targets.wasm32-unknown-unknown.stable.rust-std
     ])
     nixd
+    nixpkgs-review
     nodejs
     process-compose
     (python3.withPackages (ps:
