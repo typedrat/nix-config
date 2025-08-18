@@ -15,8 +15,8 @@ buildDotnetModule (finalAttrs: {
   src = fetchFromGitHub {
     owner = "ShokoAnime";
     repo = "ShokoServer";
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-ZO5S0zMwzr4giaO1bmQ4dLBIPrv6eZY7k9Os4GiO4C4=";
+    rev = "d72a4b4b3eefbc7928d8fdf1c6966982af96d106";
+    hash = "sha256-S4fzPCYjEaZqcMj/6TwpY0X/yl3s1tloN+LP4xEDcEg=";
     fetchSubmodules = true;
   };
 

@@ -61,6 +61,11 @@
         exporters.ipmi.enable = true;
       };
 
+      attic = {
+        enable = true;
+        bucket = "typedrat-nix-cache";
+      };
+
       autobrr.enable = true;
       configarr.enable = true;
       cross-seed.enable = true;

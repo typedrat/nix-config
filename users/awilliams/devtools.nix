@@ -7,6 +7,7 @@
 }: {
   home.packages = with pkgs; [
     alejandra
+    inputs'.attic.packages.attic-client
     corepack
     claude-code
     devpod

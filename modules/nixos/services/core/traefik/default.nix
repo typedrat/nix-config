@@ -100,6 +100,11 @@ in {
           websecure = {
             address = ":443";
             http3 = {};
+            transport = {
+              respondingTimeouts = {
+                readTimeout = 0;
+              };
+            };
           };
 
           metrics = {

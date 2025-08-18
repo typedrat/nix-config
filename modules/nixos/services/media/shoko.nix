@@ -44,7 +44,10 @@ in {
       };
 
       services.mysql = {
-        ensureDatabases = ["shoko"];
+        ensureDatabases = [
+          "shoko"
+          "shoko-quartz"
+        ];
 
         ensureUsers = [
           {
