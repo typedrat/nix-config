@@ -1,5 +1,6 @@
 {
   imports = [
+    ./3d-printing.nix
     ./freecad.nix
     ./kicad.nix
     ./libreoffice.nix
