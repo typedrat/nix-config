@@ -8,6 +8,7 @@
   imports = [
     ./autobrr.nix
     ./grafana.nix
+    ./hydra.nix
     ./lidarr.nix
     ./jellyfin.nix
     ./matrix.nix

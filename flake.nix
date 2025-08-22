@@ -226,6 +226,10 @@
           port-magic = {imports = [./modules/extra/nixos/port-magic];};
           servarr-multitenant = {imports = [./modules/extra/nixos/servarr-multitenant];};
         };
+
+        hydraJobs = {
+          nodes = builtins.mapAttrs (_: node: node.config.system.build.toplevel) self.nixosConfigurations;
+        };
       };
 
       perSystem = {

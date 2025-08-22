@@ -4,6 +4,7 @@ in {
   imports = [
     ./authentik.nix
     ./exportarr.nix
+    ./hydra.nix
     ./ipmi.nix
     ./loki.nix
     ./node.nix
