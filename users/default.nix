@@ -45,7 +45,7 @@
         uid = 1000;
         isNormalUser = true;
         home = "/home/awilliams";
-        extraGroups = ["games" "wheel"];
+        extraGroups = ["dialout" "games" "wheel"];
         shell = pkgs.zsh;
 
         openssh.authorizedKeys.keys = [

@@ -25,6 +25,7 @@ in {
       transmission_4-qt6
       self'.packages.xcursor-viewer
       imgbrd-grabber
+      self'.packages.zmk-studio
     ];
   };
 }
