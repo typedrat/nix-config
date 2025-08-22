@@ -27,6 +27,7 @@
       settings = {
         experimental-features = "nix-command flakes";
         trusted-users = ["awilliams"];
+        netrc-file = config.sops.templates.netrc.path;
       };
       # Opinionated: disable channels
       channel.enable = false;
@@ -49,17 +50,33 @@
     };
 
     sops = {
-      secrets.github-api-key = {
-        key = "miseGithubToken";
+      secrets = {
+        github-api-key = {
+          key = "miseGithubToken";
+        };
+        "attic/cacheToken" = {
+          sopsFile = ../../secrets/attic.yaml;
+          key = "cacheToken";
+        };
       };
 
-      templates.nix-access-tokens = {
-        content =
-          "access-tokens = "
-          + (lib.strings.concatMapAttrsStringSep " " (name: value: "${name}=${value}") {
-            "github.com" = config.sops.placeholder.github-api-key;
-          });
-        mode = "0440";
+      templates = {
+        nix-access-tokens = {
+          content =
+            "access-tokens = "
+            + (lib.strings.concatMapAttrsStringSep " " (name: value: "${name}=${value}") {
+              "github.com" = config.sops.placeholder.github-api-key;
+            });
+          mode = "0440";
+        };
+
+        netrc = {
+          content = ''
+            machine ${config.rat.services.attic.subdomain}.${config.rat.services.domainName}
+            password ${config.sops.placeholder."attic/cacheToken"}
+          '';
+          mode = "0440";
+        };
       };
     };
   };

@@ -14,7 +14,7 @@ in {
           command = let
             dmcfg = config.services.displayManager;
           in ''
-            ${pkgs.greetd.tuigreet}/bin/tuigreet \
+            ${pkgs.tuigreet}/bin/tuigreet \
               --debug \
               --time \
               --asterisks \

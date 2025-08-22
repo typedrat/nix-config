@@ -25,8 +25,8 @@ in {
   ];
 
   options.rat.services.domainName = options.mkOption {
-    type = types.nullOr types.str;
-    default = null;
+    type = types.str;
+    default = "thisratis.gay";
     description = "The domain name for services exposed by this host.";
   };
 }
