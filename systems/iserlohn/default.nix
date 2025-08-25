@@ -66,6 +66,16 @@
         bucket = "typedrat-nix-cache";
       };
 
+      github-runner = {
+        enable = true;
+
+        runners = {
+          typedrat-nix-config-iserlohn = {
+            url = "https://github.com/typedrat/nix-config";
+          };
+        };
+      };
+
       autobrr.enable = true;
       configarr.enable = true;
       cross-seed.enable = true;
