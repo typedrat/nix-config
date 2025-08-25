@@ -1,0 +1,88 @@
+name: Build NixOS Systems
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch: # allows manual triggering
+
+jobs:
+  # Individual build job for each machine - creates separate status checks
+  build:
+    name: Build ${{ matrix.machine.host }} (${{ matrix.machine.platform }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # Each matrix entry becomes a separate status check
+      matrix:
+        machine:
+          - host: hyperion
+            platform: x86-64-linux
+          - host: iserlohn
+            platform: x86-64-linux
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # We only run this if we are building an aarch64-linux system
+      - name: Setup QEMU for ARM64
+        if: matrix.machine.platform == 'aarch64-linux'
+        uses: docker/setup-qemu-action@v3
+
+      # Configure SSH key for Git operations
+      - name: Configure SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # We make our netrc file that is used to make authorized requests to Attic
+      - name: Configure Nix
+        run: |
+          sudo mkdir -p /etc/nix
+          echo "machine attic.thisratis.gay password ${{ secrets.ATTIC_TOKEN }}" | sudo tee /etc/nix/netrc > /dev/null
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          # We add all the config for extra platforms, other binary caches and to raise the number of connections that can be made
+          extra-conf: |
+            fallback = true
+            http-connections = 128
+            max-substitution-jobs = 128
+            extra-platforms = aarch64-linux
+            substituters = https://attic.thisratis.gay/system?priority=43 https://nix-community.cachix.org?priority=41 https://numtide.cachix.org?priority=42 https://cache.nixos.org/
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= ${{ secrets.ATTIC_PUBLIC_KEY }} nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE=
+
+      - name: Setup Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      # We build each system in a separate job, targeting the configuration using matrix.machine.host
+      # Once built, we login to Attic and push the built system to our `system` cache!
+      - name: Build and push ${{ matrix.machine.host }}
+        run: |
+          nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
+          nix run github:zhaofengli/attic#default login system https://attic.thisratis.gay ${{ secrets.ATTIC_TOKEN }}
+          nix run github:zhaofengli/attic#default push system result -j 2
+
+  # Optional: Summary job that depends on all builds
+  build-summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: build
+    if: always() # Run even if some builds fail
+
+    steps:
+      - name: Check build results
+        run: |
+          echo "Build results:"
+          echo "- hyperion: ${{ needs.build.outputs.hyperion-status || 'unknown' }}"
+          echo "- iserlohn: ${{ needs.build.outputs.iserlohn-status || 'unknown' }}"
+
+          if [[ "${{ needs.build.result }}" == "success" ]]; then
+            echo "✅ All systems built successfully!"
+          else
+            echo "❌ Some systems failed to build"
+            echo "Overall result: ${{ needs.build.result }}"
+            exit 1
+          fi
