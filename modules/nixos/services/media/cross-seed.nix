@@ -90,7 +90,7 @@ in {
 
           torznab =
             builtins.map (id: "${config.links.prowlarr.url}/${builtins.toString id}/api?apikey=${config.sops.placeholder."cross-seed/prowlarr/apiKey"}")
-            (lists.range 1 11);
+            (lists.range 1 12);
 
           sonarr = [
             "${config.links.sonarr.url}/?apikey=${config.sops.placeholder."cross-seed/sonarr/apiKey"}"
