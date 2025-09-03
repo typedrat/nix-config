@@ -12,7 +12,6 @@ in {
 
   hardware.mlnx-ofed = {
     enable = true;
-    fwctl.enable = true;
     nvme.enable = true;
     nfsrdma.enable = true;
     kernel-mft.enable = true;
