@@ -15,7 +15,7 @@ in {
 
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
     home.packages = with pkgs; [
-      virt-manager-qt
+      virt-manager
     ];
   };
 }
