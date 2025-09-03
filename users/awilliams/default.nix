@@ -16,7 +16,7 @@
   nix.gc = {
     automatic = true;
     persistent = true;
-    frequency = "daily";
+    dates = "daily";
     options = "--delete-older-than 7d";
   };
 
