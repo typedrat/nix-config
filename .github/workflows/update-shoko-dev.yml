@@ -82,9 +82,8 @@ jobs:
           
           # Regenerate NuGet dependencies
           cd pkgs/shoko-dev
-          nix build .#shoko-dev.fetch-deps --no-link
           nix build .#shoko-dev.fetch-deps -o deps-result
-          cp deps-result deps.json
+          ./deps-result ./deps.json
           rm deps-result
           cd ../..
           
