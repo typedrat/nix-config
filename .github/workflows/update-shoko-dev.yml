@@ -96,8 +96,8 @@ jobs:
           # Update version in package.nix
           sed -i 's/version = "[^"]*"/version = "${{ steps.check-webui.outputs.new_webui_version }}"/' pkgs/shoko-webui-dev/package.nix
           
-          # Calculate new source hash
-          source_hash=$(nix run nixpkgs#nix-prefetch-github -- ShokoAnime Shoko-WebUI --rev "v${{ steps.check-webui.outputs.new_webui_version }}" | jq -r '.hash')
+          # Calculate new source hash with Git context preserved
+          source_hash=$(nix run nixpkgs#nix-prefetch-github -- ShokoAnime Shoko-WebUI --rev "v${{ steps.check-webui.outputs.new_webui_version }}" --leave-dot-git | jq -r '.hash')
           
           # Update source hash (first occurrence only - the main source)
           sed -i "0,/hash = /{s|hash = \"[^\"]*\"|hash = \"$source_hash\"|}" pkgs/shoko-webui-dev/package.nix
