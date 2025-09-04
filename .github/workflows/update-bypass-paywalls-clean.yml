@@ -1,0 +1,92 @@
+name: Update bypass-paywalls-clean
+
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: "0 6 * * *" # runs daily at 6 AM UTC
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Install Determinate Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Clone upstream repository
+        run: |
+          git clone https://gitflic.ru/project/magnolia1234/bpc_uploads.git /tmp/bpc_uploads
+
+      - name: Check for updates
+        id: check
+        run: |
+          cd /tmp/bpc_uploads
+          
+          # Parse release-hashes.txt to find the latest XPI version
+          latest_version=$(grep -E "bypass_paywalls_clean-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.xpi" release-hashes.txt | \
+            sed -E 's/.*bypass_paywalls_clean-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.xpi.*/\1/' | \
+            sort -V | tail -1)
+          
+          # Get the SHA256 for the latest version
+          latest_sha256=$(grep -A 1 "bypass_paywalls_clean-${latest_version}.xpi" release-hashes.txt | \
+            grep "SHA-256" | awk '{print $3}')
+          
+          # Convert to SRI format
+          latest_sri=$(nix hash convert sha256:${latest_sha256})
+          
+          echo "Latest version: $latest_version"
+          echo "Latest SHA256: $latest_sha256"
+          echo "Latest SRI: $latest_sri"
+          
+          # Get current version and hash from Nix file
+          current_version=$(grep 'version = ' pkgs/bypass-paywalls-clean.nix | sed -E 's/.*"([^"]+)".*/\1/')
+          current_hash=$(grep 'sha256 = ' pkgs/bypass-paywalls-clean.nix | sed -E 's/.*"([^"]+)".*/\1/')
+          
+          echo "Current version: $current_version"
+          echo "Current hash: $current_hash"
+          
+          # Check if update is needed
+          if [[ "$latest_version" != "$current_version" ]] || [[ "$latest_sri" != "$current_hash" ]]; then
+            echo "Update needed!"
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+            echo "new_version=$latest_version" >> $GITHUB_OUTPUT
+            echo "new_hash=$latest_sri" >> $GITHUB_OUTPUT
+          else
+            echo "No update needed"
+            echo "update_needed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update package file
+        if: steps.check.outputs.update_needed == 'true'
+        run: |
+          # Update version
+          sed -i 's/version = "[^"]*"/version = "${{ steps.check.outputs.new_version }}"/' pkgs/bypass-paywalls-clean.nix
+          
+          # Update hash
+          sed -i 's/sha256 = "[^"]*"/sha256 = "${{ steps.check.outputs.new_hash }}"/' pkgs/bypass-paywalls-clean.nix
+          
+          echo "Updated bypass-paywalls-clean to version ${{ steps.check.outputs.new_version }}"
+
+      - name: Create Pull Request
+        if: steps.check.outputs.update_needed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
+          commit-message: "Update bypass-paywalls-clean to ${{ steps.check.outputs.new_version }}"
+          title: "Update bypass-paywalls-clean to ${{ steps.check.outputs.new_version }}"
+          body: |
+            Automated update of bypass-paywalls-clean Firefox extension.
+            
+            - **Version**: ${{ steps.check.outputs.new_version }}
+            - **Hash**: ${{ steps.check.outputs.new_hash }}
+            
+            This update was automatically detected from the upstream repository.
+          branch: update-bypass-paywalls-clean-${{ steps.check.outputs.new_version }}
+          labels: automerge

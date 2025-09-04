@@ -8,7 +8,7 @@ inputs.firefox-addons.lib.${stdenv.hostPlatform.system}.buildFirefoxXpiAddon rec
   version = "4.2.0.0";
   addonId = "magnolia@12.34";
   url = "https://gitflic.ru/project/magnolia1234/bpc_uploads/blob/raw?file=bypass_paywalls_clean-${version}.xpi";
-  sha256 = "sha256-8FFGG3nFWVVZm2VKp9gYw3cc3LkBo5MEJ5XUPkut1KE=";
+  sha256 = "sha256-hMMo27lBbVH5Buq3mIwXFIZPDaVUrvKygLctRpAElFc=";
   meta = with lib; {
     homepage = "https://twitter.com/Magnolia1234B";
     description = "Bypass Paywalls of (custom) news sites";
