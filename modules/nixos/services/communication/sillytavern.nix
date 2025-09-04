@@ -36,55 +36,55 @@
   configFile = pkgs.writeText "sillytavern-config.yaml" (lib.generators.toYAML {} {
     dataRoot = "${cfg.dataDir}/data";
     listen = true;
-    port = cfg.port;
+    inherit (cfg) port;
     protocol = {
       ipv4 = true;
       ipv6 = false;
     };
     autorun = false;
     autorunHostname = "auto";
-    allowKeysExposure = cfg.allowKeysExposure;
-    skipContentCheck = cfg.skipContentCheck;
-    enableDownloadableTokenizers = cfg.enableDownloadableTokenizers;
+    inherit (cfg) allowKeysExposure;
+    inherit (cfg) skipContentCheck;
+    inherit (cfg) enableDownloadableTokenizers;
     logging = {
-      enableAccessLog = cfg.logging.enableAccessLog;
-      minLogLevel = cfg.logging.minLogLevel;
+      inherit (cfg.logging) enableAccessLog;
+      inherit (cfg.logging) minLogLevel;
     };
     thumbnails = {
-      enabled = cfg.thumbnails.enabled;
-      quality = cfg.thumbnails.quality;
-      format = cfg.thumbnails.format;
-      dimensions = lib.mapAttrs (name: dim: [dim.width dim.height]) cfg.thumbnails.dimensions;
+      inherit (cfg.thumbnails) enabled;
+      inherit (cfg.thumbnails) quality;
+      inherit (cfg.thumbnails) format;
+      dimensions = lib.mapAttrs (_name: dim: [dim.width dim.height]) cfg.thumbnails.dimensions;
     };
     backups = {
       chat = {
-        enabled = cfg.backups.enabled;
-        checkIntegrity = cfg.backups.checkIntegrity;
+        inherit (cfg.backups) enabled;
+        inherit (cfg.backups) checkIntegrity;
       };
       common = {
-        numberOfBackups = cfg.backups.numberOfBackups;
+        inherit (cfg.backups) numberOfBackups;
       };
     };
     extensions = {
-      enabled = cfg.extensions.enabled;
-      autoUpdate = cfg.extensions.autoUpdate;
+      inherit (cfg.extensions) enabled;
+      inherit (cfg.extensions) autoUpdate;
       models = {
-        autoDownload = cfg.extensions.models.autoDownload;
-        classification = cfg.extensions.models.classification;
-        captioning = cfg.extensions.models.captioning;
-        embedding = cfg.extensions.models.embedding;
-        speechToText = cfg.extensions.models.speechToText;
-        textToSpeech = cfg.extensions.models.textToSpeech;
+        inherit (cfg.extensions.models) autoDownload;
+        inherit (cfg.extensions.models) classification;
+        inherit (cfg.extensions.models) captioning;
+        inherit (cfg.extensions.models) embedding;
+        inherit (cfg.extensions.models) speechToText;
+        inherit (cfg.extensions.models) textToSpeech;
       };
     };
-    enableServerPlugins = cfg.enableServerPlugins;
-    enableServerPluginsAutoUpdate = cfg.enableServerPluginsAutoUpdate;
+    inherit (cfg) enableServerPlugins;
+    inherit (cfg) enableServerPluginsAutoUpdate;
     # Configure for Authentik SSO
     autheliaAuth = true;
     basicAuthMode = false;
     securityOverride = true;
     enableUserAccounts = cfg.multiUser.enable;
-    enableDiscreetLogin = cfg.multiUser.enableDiscreetLogin;
+    inherit (cfg.multiUser) enableDiscreetLogin;
     whitelistMode = false;
     whitelist = ["127.0.0.1" "::1"];
     enableForwardedWhitelist = true;

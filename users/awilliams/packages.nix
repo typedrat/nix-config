@@ -13,7 +13,7 @@
     sops
     age
     ssh-to-age
-    self'.packages.github-to-sops
+    github-to-sops
     github-cli
     jq
     jd-diff-patch

@@ -46,7 +46,7 @@ in {
   };
 
   systemd.user.services =
-    lib.mapAttrs' (name: remote: {
+    lib.mapAttrs' (name: _remote: {
       name = "rclone-${name}-mount";
       value = {
         Unit = {

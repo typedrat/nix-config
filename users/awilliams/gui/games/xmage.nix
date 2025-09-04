@@ -1,7 +1,7 @@
 {
   config,
   osConfig,
-  self',
+  pkgs,
   lib,
   ...
 }: let
@@ -9,7 +9,7 @@
 in {
   config = mkIf osConfig.rat.games.enable {
     home.packages = [
-      self'.packages.xmage
+      pkgs.xmage
     ];
 
     xdg.dataFile."xmage/.keep".text = "";

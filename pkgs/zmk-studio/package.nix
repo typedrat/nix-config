@@ -4,19 +4,16 @@
   rustPlatform,
   fetchFromGitHub,
   fetchNpmDeps,
-
   cargo-tauri,
   makeBinaryWrapper,
   nodejs,
   npmHooks,
   pkg-config,
   wrapGAppsHook3,
-
   glib-networking,
   udev,
   webkitgtk_4_1,
 }:
-
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "zmk-studio";
   version = "0.3.1";
@@ -89,7 +86,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     changelog = "https://github.com/zmkfirmware/zmk-studio/blob/${finalAttrs.src.rev}/CHANGELOG.md";
     license = lib.licenses.asl20;
     mainProgram = "zmk-studio";
-    maintainers = with lib.maintainers; [ tomasajt ];
+    maintainers = with lib.maintainers; [tomasajt];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
 })

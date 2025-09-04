@@ -6,9 +6,9 @@
   ...
 }: let
   inherit (lib) mkIf;
-  
+
   themesDir = "${inputs.catppuccin-imhex}/themes";
-  themeFiles = 
+  themeFiles =
     builtins.filter
     (file: lib.hasSuffix ".json" file)
     (lib.filesystem.listFilesRecursive themesDir);
@@ -17,7 +17,7 @@ in {
     home.packages = with pkgs; [
       imhex
     ];
-    
+
     xdg.dataFile = lib.listToAttrs (map
       (file: {
         name = builtins.unsafeDiscardStringContext "imhex/themes/${baseNameOf file}";

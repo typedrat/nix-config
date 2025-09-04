@@ -53,7 +53,7 @@ in {
 
       services.hydra = {
         enable = true;
-        port = config.links.hydra.port;
+        inherit (config.links.hydra) port;
         hydraURL = "https://${cfg.subdomain}.${config.rat.services.traefik.domain}";
         notificationSender = cfg.adminEmail;
         buildMachinesFiles = [];

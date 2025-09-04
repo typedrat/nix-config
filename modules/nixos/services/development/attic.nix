@@ -46,8 +46,8 @@ in {
 
           storage = {
             type = "s3";
-            region = cfg.region;
-            bucket = cfg.bucket;
+            inherit (cfg) region;
+            inherit (cfg) bucket;
             endpoint = "https://s3.${cfg.region}.backblazeb2.com";
           };
 
