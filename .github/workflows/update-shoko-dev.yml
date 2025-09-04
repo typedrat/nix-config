@@ -78,7 +78,7 @@ jobs:
           new_hash=$(nix run nixpkgs#nix-prefetch-github -- ShokoAnime ShokoServer --rev "v${{ steps.check-server.outputs.new_server_version }}" | jq -r '.hash')
           
           # Update source hash
-          sed -i "s/hash = \"[^\"]*\"/hash = \"$new_hash\"/" pkgs/shoko-dev/package.nix
+          sed -i "s|hash = \"[^\"]*\"|hash = \"$new_hash\"|" pkgs/shoko-dev/package.nix
           
           # Regenerate NuGet dependencies
           cd pkgs/shoko-dev
@@ -100,8 +100,8 @@ jobs:
           source_hash=$(nix run nixpkgs#nix-prefetch-github -- ShokoAnime Shoko-WebUI --rev "v${{ steps.check-webui.outputs.new_webui_version }}" | jq -r '.hash')
           
           # Update source hash (first occurrence only - the main source)
-          sed -i "0,/hash = /{s/hash = \"[^\"]*\"/hash = \"$source_hash\"/}" pkgs/shoko-webui-dev/package.nix
-          sed -i "0,/hash = lib\.fakeHash/{s/hash = lib\.fakeHash/hash = \"$source_hash\"/}" pkgs/shoko-webui-dev/package.nix
+          sed -i "0,/hash = /{s|hash = \"[^\"]*\"|hash = \"$source_hash\"|}" pkgs/shoko-webui-dev/package.nix
+          sed -i "0,/hash = lib\.fakeHash/{s|hash = lib\.fakeHash|hash = \"$source_hash\"|}" pkgs/shoko-webui-dev/package.nix
           
           # Set pnpm deps hash to lib.fakeHash initially
           sed -i "/pnpmDeps = pnpm\.fetchDeps/,/};/ s/hash = \"[^\"]*\"/hash = lib.fakeHash/" pkgs/shoko-webui-dev/package.nix
@@ -116,7 +116,7 @@ jobs:
             if [[ -n "$correct_hash" ]]; then
               echo "Found correct pnpm deps hash: $correct_hash"
               # Update the pnpm deps hash with the correct value
-              sed -i "/pnpmDeps = pnpm\.fetchDeps/,/};/ s/hash = lib\.fakeHash/hash = \"$correct_hash\"/" pkgs/shoko-webui-dev/package.nix
+              sed -i "/pnpmDeps = pnpm\.fetchDeps/,/};/ s|hash = lib\.fakeHash|hash = \"$correct_hash\"|" pkgs/shoko-webui-dev/package.nix
               
               # Verify the fix by building again
               nix build .#shoko-webui-dev --no-link
