@@ -27,9 +27,8 @@ jobs:
       - name: Check for updates
         id: check
         run: |
+          # Parse release-hashes.txt to find the latest XPI version from upstream repo
           cd /tmp/bpc_uploads
-          
-          # Parse release-hashes.txt to find the latest XPI version
           latest_version=$(grep -E "bypass_paywalls_clean-[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.xpi" release-hashes.txt | \
             sed -E 's/.*bypass_paywalls_clean-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.xpi.*/\1/' | \
             sort -V | tail -1)
@@ -44,6 +43,9 @@ jobs:
           echo "Latest version: $latest_version"
           echo "Latest SHA256: $latest_sha256"
           echo "Latest SRI: $latest_sri"
+          
+          # Return to main repository to check current version
+          cd $GITHUB_WORKSPACE
           
           # Get current version and hash from Nix file
           current_version=$(grep 'version = ' pkgs/bypass-paywalls-clean.nix | sed -E 's/.*"([^"]+)".*/\1/')
