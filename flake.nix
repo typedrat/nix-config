@@ -70,8 +70,8 @@
     };
 
     apple-fonts = {
-      # pending resolution of Lyndeno/apple-fonts.nix#21
-      url = "github:typedrat/apple-fonts.nix/update-flake-lock";
+      # pending resolution of Lyndeno/apple-fonts.nix#22
+      url = "github:momo-p/apple-fonts.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

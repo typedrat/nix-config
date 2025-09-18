@@ -102,10 +102,12 @@
       ];
 
       exec-once = [
+        "uwsm app -- swww init"
         "uwsm app -- waytrogen --restore"
         "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
         "uwsm app -- discord --start-minimized"
         "uwsm app -- jellyfin-mpv-shim"
+        "uwsm app -- openrgb --startminimized"
         "uwsm app -- pyvizio power on"
       ];
 

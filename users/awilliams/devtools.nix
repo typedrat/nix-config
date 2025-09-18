@@ -15,7 +15,6 @@
     gcc
     google-cloud-sdk
     inputs'.catppuccin.packages.whiskers
-    inputs'.claude-desktop.packages.claude-desktop
     (inputs'.fenix.packages.combine [
       inputs'.fenix.packages.stable.defaultToolchain
       inputs'.fenix.packages.targets.x86_64-unknown-linux-gnu.stable.rust-std

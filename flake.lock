@@ -58,16 +58,15 @@
         "sf-pro": "sf-pro"
       },
       "locked": {
-        "lastModified": 1757486498,
-        "narHash": "sha256-w5NHaakGx6JwaSITGKhfITHc9hhzlhzu7ob6M4YJrZU=",
-        "owner": "typedrat",
+        "lastModified": 1758038670,
+        "narHash": "sha256-3mA9oFuhJ1EHyhPd17g/EuJi4jDYPGhyxkEitdh3Kmc=",
+        "owner": "momo-p",
         "repo": "apple-fonts.nix",
-        "rev": "6bde9c3f6c740a11c44e5fa1e05466a37d53c77b",
+        "rev": "6e93b85b563e00c828bff27fc6bb7ed3ed9efab8",
         "type": "github"
       },
       "original": {
-        "owner": "typedrat",
-        "ref": "update-flake-lock",
+        "owner": "momo-p",
         "repo": "apple-fonts.nix",
         "type": "github"
       }
@@ -322,11 +321,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1756649772,
-        "narHash": "sha256-YesaX4RhgNmB0tNBNMgHnW/CV+7o1jrHcpH60Z9KMgg=",
+        "lastModified": 1758203156,
+        "narHash": "sha256-uu+4NXy4y6y46zPL2MXDzh82DB8s/T2RAcekt1EbEEM=",
         "owner": "k3d3",
         "repo": "claude-desktop-linux-flake",
-        "rev": "bbf9abf395d0ec607a55dd9ddef1efee57883827",
+        "rev": "207bfe7a16a0e4406a60da8fd714424182d52994",
         "type": "github"
       },
       "original": {
@@ -2372,7 +2371,7 @@
     "sf-compact": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-GeODpgLiozMn0lTug420BD6stpt1ik/kycFSquwXs6o=",
+        "narHash": "sha256-WeqT80cdK/XzTLSaJs5DHodzxoeAzwL/xTgdq0YwQbM=",
         "type": "file",
         "url": "https://devimages-cdn.apple.com/design/resources/download/SF-Compact.dmg"
       },
@@ -2420,7 +2419,7 @@
     "sf-pro": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-jvXAmlHzrbYYMvc4Vk4bLW+RYe3XuQJ2qSXcasa72EU=",
+        "narHash": "sha256-vprahHpCUf9O8RualBrEuLEfuLfzI/2d8AQmwlCGPPk=",
         "type": "file",
         "url": "https://devimages-cdn.apple.com/design/resources/download/SF-Pro.dmg"
       },
