@@ -58,15 +58,15 @@
         "sf-pro": "sf-pro"
       },
       "locked": {
-        "lastModified": 1758038670,
+        "lastModified": 1758228441,
         "narHash": "sha256-3mA9oFuhJ1EHyhPd17g/EuJi4jDYPGhyxkEitdh3Kmc=",
-        "owner": "momo-p",
+        "owner": "Lyndeno",
         "repo": "apple-fonts.nix",
-        "rev": "6e93b85b563e00c828bff27fc6bb7ed3ed9efab8",
+        "rev": "aba9944f6606a69ebedf7bfb723316139eec3f72",
         "type": "github"
       },
       "original": {
-        "owner": "momo-p",
+        "owner": "Lyndeno",
         "repo": "apple-fonts.nix",
         "type": "github"
       }
@@ -1172,15 +1172,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1757721581,
-        "narHash": "sha256-tbNzBbtkTuoO89Pd0mETjLlZ1VSMCSEeAadOGu98PAA=",
-        "owner": "hyprwm",
+        "lastModified": 1758373183,
+        "narHash": "sha256-xSR423gE4CG9rPGdehvgxgg9hOG5CEQpL5t2P0xJSYI=",
+        "owner": "amadejkastelic",
         "repo": "hyprland-plugins",
-        "rev": "27e1ad9042ebc01700fb56350e62a75a7da37a83",
+        "rev": "bede66220c74cbb988f0681c2d629391a7d4dc28",
         "type": "github"
       },
       "original": {
-        "owner": "hyprwm",
+        "owner": "amadejkastelic",
+        "ref": "build-fix",
         "repo": "hyprland-plugins",
         "type": "github"
       }
