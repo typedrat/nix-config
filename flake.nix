@@ -70,8 +70,7 @@
     };
 
     apple-fonts = {
-      # pending resolution of Lyndeno/apple-fonts.nix#22
-      url = "github:momo-p/apple-fonts.nix";
+      url = "github:Lyndeno/apple-fonts.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -131,7 +130,8 @@
     hyprlock.url = "github:hyprwm/hyprlock/v0.8.2";
 
     hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
+      # Retargeted pending resolution of hyprwm/hyprland-plugins#483
+      url = "github:amadejkastelic/hyprland-plugins/build-fix";
       inputs.hyprland.follows = "hyprland";
     };
     pyprland.url = "github:hyprland-community/pyprland";

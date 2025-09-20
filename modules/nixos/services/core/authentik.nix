@@ -96,9 +96,9 @@ in {
           AUTHENTIK_BOOTSTRAP_EMAIL = config.sops.placeholder."authentik/bootstrap/email";
           AUTHENTIK_BOOTSTRAP_PASSWORD = config.sops.placeholder."authentik/bootstrap/password";
           AUTHENTIK_BOOTSTRAP_TOKEN = config.sops.placeholder."authentik/bootstrap/token";
-          AUTHENTIK_LISTEN__HTTP = config.links.authentik.tuple;
-          AUTHENTIK_LISTEN__HTTPS = config.links.authentik-https.tuple;
-          AUTHENTIK_LISTEN__METRICS = config.links.prometheus-authentik.tuple;
+          AUTHENTIK_LISTEN__HTTP = lib.mkForce config.links.authentik.tuple;
+          AUTHENTIK_LISTEN__HTTPS = lib.mkForce config.links.authentik-https.tuple;
+          AUTHENTIK_LISTEN__METRICS = lib.mkForce config.links.prometheus-authentik.tuple;
         };
 
         restartUnits = [
