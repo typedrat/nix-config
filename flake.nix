@@ -125,13 +125,13 @@
     #endregion
 
     #region Hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
+    # Retargeted pending resolution of hyprwm/hyprland-plugins#483
+    hyprland.url = "github:hyprwm/Hyprland/91f592a87509436dc6f6ea7b3d6705ed7c5af046";
 
     hyprlock.url = "github:hyprwm/hyprlock/v0.8.2";
 
     hyprland-plugins = {
-      # Retargeted pending resolution of hyprwm/hyprland-plugins#483
-      url = "github:amadejkastelic/hyprland-plugins/build-fix";
+      url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
     pyprland.url = "github:hyprland-community/pyprland";

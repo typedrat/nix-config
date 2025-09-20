@@ -1142,16 +1142,17 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1757718690,
-        "narHash": "sha256-mX8PurO19mvSee1Ecs+w+WC8y4UaTdgCDpxk4fTXNQ4=",
+        "lastModified": 1758224817,
+        "narHash": "sha256-BCKDIoFtIaz3Yrin5NgM3QpJGJFoAZCejtWvSqCh2bs=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "adbf7c8663cfbc91fca78d3504fa8f73ce4bd23a",
+        "rev": "91f592a87509436dc6f6ea7b3d6705ed7c5af046",
         "type": "github"
       },
       "original": {
         "owner": "hyprwm",
         "repo": "Hyprland",
+        "rev": "91f592a87509436dc6f6ea7b3d6705ed7c5af046",
         "type": "github"
       }
     },
@@ -1172,16 +1173,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1758373183,
-        "narHash": "sha256-xSR423gE4CG9rPGdehvgxgg9hOG5CEQpL5t2P0xJSYI=",
-        "owner": "amadejkastelic",
+        "lastModified": 1758382384,
+        "narHash": "sha256-tF9YAZlU8WrtLhEeB7p/TEwZrUM5P6JQ1q4giLh8YZ8=",
+        "owner": "hyprwm",
         "repo": "hyprland-plugins",
-        "rev": "bede66220c74cbb988f0681c2d629391a7d4dc28",
+        "rev": "c8b2be350290e77e5cb8d482cde6b4c7e7f62099",
         "type": "github"
       },
       "original": {
-        "owner": "amadejkastelic",
-        "ref": "build-fix",
+        "owner": "hyprwm",
         "repo": "hyprland-plugins",
         "type": "github"
       }

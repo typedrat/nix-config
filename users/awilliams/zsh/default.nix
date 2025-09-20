@@ -28,6 +28,9 @@
       source ~/.p10k.zsh
       export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
       export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
+
+      bindkey "^[[1;5C" forward-word
+      bindkey "^[[1;5D" backward-word
     '';
 
     history.size = 10000;
