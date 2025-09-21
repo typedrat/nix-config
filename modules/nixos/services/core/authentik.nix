@@ -142,9 +142,9 @@ in {
           AUTHENTIK_HOST = "https://${cfg.subdomain}.${domainName}";
           AUTHENTIK_INSECURE = "false";
           AUTHENTIK_TOKEN = config.sops.placeholder."authentik/ldap/token";
-          AUTHENTIK_LISTEN__LDAP = config.links.authentik-ldap.tuple;
-          AUTHENTIK_LISTEN__LDAPS = config.links.authentik-ldaps.tuple;
-          AUTHENTIK_LISTEN__METRICS = config.links.prometheus-authentik-ldap.tuple;
+          AUTHENTIK_LISTEN__LDAP = lib.mkForce config.links.authentik-ldap.tuple;
+          AUTHENTIK_LISTEN__LDAPS = lib.mkForce config.links.authentik-ldaps.tuple;
+          AUTHENTIK_LISTEN__METRICS = lib.mkForce config.links.prometheus-authentik-ldap.tuple;
         };
 
         restartUnits = ["authentik-ldap.service"];
