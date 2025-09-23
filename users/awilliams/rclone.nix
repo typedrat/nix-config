@@ -1,38 +1,52 @@
 {
+  config,
+  osConfig,
   pkgs,
   lib,
-  config,
   ...
 }: let
   inherit (lib.attrsets) recursiveUpdate;
+  hostname = osConfig.networking.hostName or "";
 in {
   programs.rclone = {
     enable = true;
 
-    remotes = rec {
-      b2 = {
-        config = {
-          type = "b2";
+    remotes =
+      rec {
+        b2 = {
+          config = {
+            type = "b2";
+          };
+          secrets = {
+            account = config.sops.secrets."b2/keyId".path;
+            key = config.sops.secrets."b2/applicationKey".path;
+          };
         };
-        secrets = {
-          account = config.sops.secrets."b2/keyId".path;
-          key = config.sops.secrets."b2/applicationKey".path;
-        };
-      };
 
-      workdrive = {
-        config = {
-          type = "drive";
-          service_account_file = config.sops.secrets.work-gdrive-sa-key.path;
-          impersonate = config.accounts.email.accounts.Work.address;
-          scope = "drive";
+        workdrive = {
+          config = {
+            type = "drive";
+            service_account_file = config.sops.secrets.work-gdrive-sa-key.path;
+            impersonate = config.accounts.email.accounts.Work.address;
+            scope = "drive";
+          };
         };
-      };
 
-      workdrive-shared = recursiveUpdate workdrive {
-        config.team_drive = "0AEjPQYC7XEWcUk9PVA";
-      };
-    };
+        workdrive-shared = recursiveUpdate workdrive {
+          config.team_drive = "0AEjPQYC7XEWcUk9PVA";
+        };
+      }
+      // (lib.optionalAttrs (hostname != "iserlohn") {
+        iserlohn-media = {
+          config = {
+            type = "sftp";
+            host = "iserlohn.lan";
+            user = "awilliams";
+            key_file = "${config.home.homeDirectory}/.ssh/id_rsa";
+            path = "/mnt/media";
+          };
+        };
+      });
   };
 
   sops.secrets = {
