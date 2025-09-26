@@ -5,64 +5,67 @@
 }: {
   home.packages = with pkgs; [
     # archiving tools
-    zip
-    xz
     unzip
+    xz
+    zip
 
     # utilities
-    sops
     age
-    ssh-to-age
-    github-to-sops
-    github-cli
-    jq
-    jd-diff-patch
+    cachix
+    ffmpeg-full
     frink
+    gdu
+    github-cli
+    github-to-sops
+    imagemagickBig
+    jd-diff-patch
+    jq
+    llm
     nix-diff
     nix-prefetch-github
     nix-tree
-    cachix
-    socat
-    gdu
     pv
-    imagemagickBig
-    tokei
     self'.packages.catbox-cli
-    waypipe
     self'.packages.qbittorrent-cli
-    llm
     self'.packages.stable-diffusion-cpp
+    socat
+    sops
+    ssh-to-age
+    tokei
+    waypipe
 
     # networking tools
-    mtr
-    iperf3
     dnsutils
-    nmap
     ipcalc
+    iperf3
+    mtr
+    nmap
 
     # misc
+    aws-vault
+    awscli2
     cowsay
     file
-    which
-    tree
+    gawk
     gnused
     gnutar
-    gawk
-    zstd
-    wl-clipboard
     self'.packages.pyvizio
-    awscli2
-    aws-vault
+    tree
+    which
+    wl-clipboard
+    zstd
 
     # monitoring
-    strace
-    ltrace
-    lsof
-    sysstat
-    lm_sensors
     ethtool
+    lm_sensors
+    lsof
+    ltrace
     pciutils
+    strace
+    sysstat
     usbutils
+
+    # fetch
     (fastfetch.overrideAttrs (oldAttrs: {
       buildInputs =
         (oldAttrs.buildInputs or [])
