@@ -1,7 +1,6 @@
 {
   osConfig,
   self',
-  inputs',
   pkgs,
   lib,
   ...

@@ -12,29 +12,7 @@
     lib.mapAttrsToList (name: path: {inherit name path;}) cfg.systemExtensions
   );
 
-  sillytavern' = pkgs.sillytavern.overrideAttrs (oldAttrs: {
-    buildInputs = (oldAttrs.buildInputs or []) ++ [pkgs.makeWrapper];
-
-    postFixup =
-      (oldAttrs.postFixup or "")
-      + ''
-        wrapProgram $out/bin/sillytavern \
-          --set PATH ${lib.makeBinPath [
-          pkgs.gitMinimal
-        ]}
-      '';
-    postInstall =
-      (oldAttrs.postInstall or "")
-      + lib.optionalString (cfg.systemExtensions != {}) ''
-        # Create third-party extensions directory and link extensions
-        mkdir -p $out/opt/sillytavern/public/scripts/extensions
-        rm -rf $out/opt/sillytavern/public/scripts/extensions/third-party
-        ln -sf ${sillytavernExtensions} $out/opt/sillytavern/public/scripts/extensions/third-party
-      '';
-  });
-
   configFile = pkgs.writeText "sillytavern-config.yaml" (lib.generators.toYAML {} {
-    dataRoot = "${cfg.dataDir}/data";
     listen = true;
     inherit (cfg) port;
     protocol = {
@@ -109,12 +87,6 @@ in {
       type = types.port;
       default = 8000;
       description = "Port for SillyTavern to listen on.";
-    };
-
-    dataDir = options.mkOption {
-      type = types.str;
-      default = "/var/lib/sillytavern";
-      description = "Directory for SillyTavern data storage.";
     };
 
     allowKeysExposure = options.mkOption {
@@ -312,43 +284,23 @@ in {
 
   config = modules.mkMerge [
     (modules.mkIf cfg.enable {
-      systemd.services.sillytavern = {
-        description = "SillyTavern AI Chat Interface";
-        after = ["network.target"];
-        wantedBy = ["multi-user.target"];
+      # Enable upstream NixOS module
+      services.sillytavern = {
+        enable = true;
+        inherit (cfg) port;
+        listen = true;
+        whitelist = false;
+        configFile = toString configFile;
+      };
 
-        serviceConfig = {
-          Type = "simple";
-          User = "sillytavern";
-          Group = "sillytavern";
-          WorkingDirectory = cfg.dataDir;
-          ExecStart = "${sillytavern'}/bin/sillytavern --dataRoot=${cfg.dataDir}/data --configPath=${configFile}";
-          Restart = "always";
-          RestartSec = "10";
-
-          # Security settings
-          NoNewPrivileges = true;
-          PrivateTmp = true;
-          ProtectSystem = "strict";
-          ProtectHome = true;
-          ReadWritePaths = [cfg.dataDir];
+      # Install system extensions if configured
+      systemd.tmpfiles.settings.sillytavern-extensions = lib.mkIf (cfg.systemExtensions != {}) {
+        "/var/lib/SillyTavern/extensions/third-party".L = {
+          argument = toString sillytavernExtensions;
+          user = "sillytavern";
+          group = "sillytavern";
         };
-
-        preStart = ''
-          # Ensure data directory exists
-          mkdir -p ${cfg.dataDir}/data
-          chown -R sillytavern:sillytavern ${cfg.dataDir}
-        '';
       };
-
-      users.users.sillytavern = {
-        isSystemUser = true;
-        group = "sillytavern";
-        home = cfg.dataDir;
-        createHome = true;
-      };
-
-      users.groups.sillytavern = {};
 
       links.sillytavern = {
         protocol = "http";
@@ -361,14 +313,12 @@ in {
         serviceUrl = config.links.sillytavern.url;
         authentik = true;
       };
-
-      # No need to open firewall ports since Traefik handles external access
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
       environment.persistence.${impermanenceCfg.persistDir} = {
         directories = [
           {
-            directory = cfg.dataDir;
+            directory = "/var/lib/SillyTavern";
             user = "sillytavern";
             group = "sillytavern";
           }
