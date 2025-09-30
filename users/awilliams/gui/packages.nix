@@ -18,7 +18,6 @@ in {
       gimp3
       imgbrd-grabber
       inkscape
-      inputs'.claude-desktop.packages.claude-desktop
       jellyfin-media-player
       jellyfin-mpv-shim
       qalculate-qt
