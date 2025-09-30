@@ -130,7 +130,7 @@ in {
       };
 
       systemd.services.authentik-ldap.environment = {
-        AUTHENTIK_LISTEN__METRICS = builtins.toString config.links.prometheus-authentik-ldap.tuple;
+        AUTHENTIK_LISTEN__METRICS = lib.mkForce (builtins.toString config.links.prometheus-authentik-ldap.tuple);
       };
 
       sops.secrets = mkAuthentikSecrets [
