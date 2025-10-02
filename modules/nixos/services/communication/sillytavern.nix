@@ -282,7 +282,7 @@ in {
       # Enable upstream NixOS module
       services.sillytavern = {
         enable = true;
-        inherit (cfg) port;
+        inherit port;
         listen = true;
         whitelist = false;
         configFile = toString configFile;
