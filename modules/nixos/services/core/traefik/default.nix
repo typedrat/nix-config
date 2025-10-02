@@ -158,13 +158,17 @@ in {
               };
             }
             (
-              lib.mapAttrs (
-                _name: route:
-                  modules.mkIf (route.enable && route.stripPrefix && route.path != null) {
-                    stripPrefix = {
-                      prefixes = [route.path];
+              lib.concatMapAttrs (
+                name: route:
+                  if (route.enable && route.stripPrefix && route.path != null)
+                  then {
+                    "${name}-stripprefix" = {
+                      stripPrefix = {
+                        prefixes = [route.path];
+                      };
                     };
                   }
+                  else {}
               )
               cfg.routes
             )

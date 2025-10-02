@@ -7,6 +7,7 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.sillytavern;
   impermanenceCfg = config.rat.impermanence;
+  port = config.links.sillytavern.port;
 
   sillytavernExtensions = pkgs.linkFarm "sillytavern-extensions" (
     lib.mapAttrsToList (name: path: {inherit name path;}) cfg.systemExtensions
@@ -14,7 +15,7 @@
 
   configFile = pkgs.writeText "sillytavern-config.yaml" (lib.generators.toYAML {} {
     listen = true;
-    inherit (cfg) port;
+    inherit port;
     protocol = {
       ipv4 = true;
       ipv6 = false;
@@ -81,12 +82,6 @@ in {
       type = types.str;
       default = "sillytavern";
       description = "The subdomain for SillyTavern.";
-    };
-
-    port = options.mkOption {
-      type = types.port;
-      default = 8000;
-      description = "Port for SillyTavern to listen on.";
     };
 
     allowKeysExposure = options.mkOption {
@@ -304,7 +299,6 @@ in {
 
       links.sillytavern = {
         protocol = "http";
-        inherit (cfg) port;
       };
 
       rat.services.traefik.routes.sillytavern = {
