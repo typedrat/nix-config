@@ -14,36 +14,132 @@
   );
 
   configFile = pkgs.writeText "sillytavern-config.yaml" (lib.generators.toYAML {} {
+    # Data configuration
+    dataRoot = "/var/lib/SillyTavern/data";
+
+    # Server configuration
     listen = true;
     inherit port;
+    listenAddress = {
+      ipv4 = "0.0.0.0";
+      ipv6 = "[::]";
+    };
     protocol = {
       ipv4 = true;
       ipv6 = false;
     };
-    autorun = false;
-    autorunHostname = "auto";
+    dnsPreferIPv6 = false;
+
+    # Browser launch configuration
+    browserLaunch = {
+      enabled = false;
+      browser = "default";
+      hostname = "auto";
+      port = -1;
+      avoidLocalhost = false;
+    };
+
+    # SSL configuration
+    ssl = {
+      enabled = false;
+      certPath = "./certs/cert.pem";
+      keyPath = "./certs/privkey.pem";
+      keyPassphrase = "";
+    };
+
+    # Security configuration
     inherit (cfg) allowKeysExposure;
     inherit (cfg) skipContentCheck;
-    inherit (cfg) enableDownloadableTokenizers;
+    whitelistImportDomains = [
+      "localhost"
+      "cdn.discordapp.com"
+      "files.catbox.moe"
+      "raw.githubusercontent.com"
+      "char-archive.evulid.cc"
+    ];
+    requestOverrides = [];
+
+    # Authentication and access control
+    autheliaAuth = true;
+    basicAuthMode = false;
+    basicAuthUser = {
+      username = "user";
+      password = "password";
+    };
+    perUserBasicAuth = false;
+    enableCorsProxy = false;
+
+    # Request proxy configuration
+    requestProxy = {
+      enabled = false;
+      url = "socks5://username:password@example.com:1080";
+      bypass = ["localhost" "127.0.0.1"];
+    };
+
+    # Host whitelist configuration
+    hostWhitelist = {
+      enabled = false;
+      scan = true;
+      hosts = [];
+    };
+
+    # Security settings
+    securityOverride = true;
+    disableCsrfProtection = false;
+    enableUserAccounts = cfg.multiUser.enable;
+    inherit (cfg.multiUser) enableDiscreetLogin;
+    whitelistMode = false;
+    whitelist = ["127.0.0.1" "::1"];
+    enableForwardedWhitelist = true;
+    whitelistDockerHosts = false;
+    sessionTimeout = -1;
+
+    # Logging configuration
     logging = {
       inherit (cfg.logging) enableAccessLog;
       inherit (cfg.logging) minLogLevel;
     };
+
+    # Rate limiting configuration
+    rateLimiting = {
+      preferRealIpHeader = true;
+    };
+
+    # Backup configuration
+    backups = {
+      chat = {
+        inherit (cfg.backups) enabled;
+        inherit (cfg.backups) checkIntegrity;
+        maxTotalBackups = cfg.backups.maxTotalBackups;
+        throttleInterval = cfg.backups.throttleInterval;
+      };
+      common = {
+        inherit (cfg.backups) numberOfBackups;
+      };
+    };
+
+    # Thumbnail configuration
     thumbnails = {
       inherit (cfg.thumbnails) enabled;
       inherit (cfg.thumbnails) quality;
       inherit (cfg.thumbnails) format;
       dimensions = lib.mapAttrs (_name: dim: [dim.width dim.height]) cfg.thumbnails.dimensions;
     };
-    backups = {
-      chat = {
-        inherit (cfg.backups) enabled;
-        inherit (cfg.backups) checkIntegrity;
-      };
-      common = {
-        inherit (cfg.backups) numberOfBackups;
-      };
+
+    # Performance configuration
+    performance = {
+      lazyLoadCharacters = cfg.performance.lazyLoadCharacters;
+      memoryCacheCapacity = cfg.performance.memoryCacheCapacity;
+      useDiskCache = cfg.performance.useDiskCache;
     };
+
+    # Cache buster configuration
+    cacheBuster = {
+      enabled = cfg.cacheBuster.enabled;
+      userAgentPattern = cfg.cacheBuster.userAgentPattern;
+    };
+
+    # Extensions configuration
     extensions = {
       inherit (cfg.extensions) enabled;
       inherit (cfg.extensions) autoUpdate;
@@ -56,22 +152,35 @@
         inherit (cfg.extensions.models) textToSpeech;
       };
     };
+
+    # Additional configuration
+    inherit (cfg) enableDownloadableTokenizers;
     inherit (cfg) enableServerPlugins;
     inherit (cfg) enableServerPluginsAutoUpdate;
-    # Configure for Authentik SSO
-    autheliaAuth = true;
-    basicAuthMode = false;
-    securityOverride = true;
-    enableUserAccounts = cfg.multiUser.enable;
-    inherit (cfg.multiUser) enableDiscreetLogin;
-    whitelistMode = false;
-    whitelist = ["127.0.0.1" "::1"];
-    enableForwardedWhitelist = true;
-    whitelistDockerHosts = false;
-    sessionTimeout = -1;
-    # Rate limiting configuration for authenticated users
-    rateLimiting = {
-      preferRealIpHeader = true;
+
+    # API-specific configurations
+    promptPlaceholder = cfg.promptPlaceholder;
+    openai = {
+      randomizeUserId = cfg.openai.randomizeUserId;
+      captionSystemPrompt = cfg.openai.captionSystemPrompt;
+    };
+    deepl = {
+      formality = cfg.deepl.formality;
+    };
+    mistral = {
+      enablePrefix = cfg.mistral.enablePrefix;
+    };
+    ollama = {
+      keepAlive = cfg.ollama.keepAlive;
+      batchSize = cfg.ollama.batchSize;
+    };
+    claude = {
+      enableSystemPromptCache = cfg.claude.enableSystemPromptCache;
+      cachingAtDepth = cfg.claude.cachingAtDepth;
+      extendedTTL = cfg.claude.extendedTTL;
+    };
+    gemini = {
+      apiVersion = cfg.gemini.apiVersion;
     };
   });
 in {
@@ -183,6 +292,10 @@ in {
             width = 96;
             height = 144;
           };
+          persona = {
+            width = 96;
+            height = 144;
+          };
         };
         description = "Thumbnail dimensions for different types.";
       };
@@ -205,6 +318,18 @@ in {
         type = types.int;
         default = 50;
         description = "Number of backups to keep.";
+      };
+
+      maxTotalBackups = options.mkOption {
+        type = types.int;
+        default = -1;
+        description = "Maximum number of chat backups to keep per user. Set to -1 to keep all backups.";
+      };
+
+      throttleInterval = options.mkOption {
+        type = types.int;
+        default = 10000;
+        description = "Interval in milliseconds to throttle chat backups per user.";
       };
     };
 
@@ -273,6 +398,118 @@ in {
           default = "Xenova/speecht5_tts";
           description = "HuggingFace model ID for text-to-speech.";
         };
+      };
+    };
+
+    performance = {
+      lazyLoadCharacters = options.mkOption {
+        type = types.bool;
+        default = false;
+        description = "Enables lazy loading of character cards. Improves performances with large card libraries.";
+      };
+
+      memoryCacheCapacity = options.mkOption {
+        type = types.str;
+        default = "100mb";
+        description = "The maximum amount of memory that parsed character cards can use. Set to 0 to disable memory caching.";
+      };
+
+      useDiskCache = options.mkOption {
+        type = types.bool;
+        default = true;
+        description = "Enables disk caching for character cards. Improves performances with large card libraries.";
+      };
+    };
+
+    cacheBuster = {
+      enabled = options.mkOption {
+        type = types.bool;
+        default = false;
+        description = "Clear browser cache on first load or after uploading image files.";
+      };
+
+      userAgentPattern = options.mkOption {
+        type = types.str;
+        default = "";
+        description = "Only clear cache for the specified user agent regex pattern.";
+      };
+    };
+
+    promptPlaceholder = options.mkOption {
+      type = types.str;
+      default = "[Start a new chat]";
+      description = "A placeholder message to use in strict prompt post-processing mode.";
+    };
+
+    openai = {
+      randomizeUserId = options.mkOption {
+        type = types.bool;
+        default = false;
+        description = "Will send a random user ID to OpenAI completion API.";
+      };
+
+      captionSystemPrompt = options.mkOption {
+        type = types.str;
+        default = "";
+        description = "System message to add to the start of every caption completion prompt.";
+      };
+    };
+
+    deepl = {
+      formality = options.mkOption {
+        type = types.enum ["default" "more" "less" "prefer_more" "prefer_less"];
+        default = "default";
+        description = "DeepL translation formality setting.";
+      };
+    };
+
+    mistral = {
+      enablePrefix = options.mkOption {
+        type = types.bool;
+        default = false;
+        description = "Enables prefilling of the reply with the last assistant message in the prompt.";
+      };
+    };
+
+    ollama = {
+      keepAlive = options.mkOption {
+        type = types.int;
+        default = -1;
+        description = "Controls how long the model will stay loaded into memory following the request.";
+      };
+
+      batchSize = options.mkOption {
+        type = types.int;
+        default = -1;
+        description = "Controls the batch size parameter of the generation request.";
+      };
+    };
+
+    claude = {
+      enableSystemPromptCache = options.mkOption {
+        type = types.bool;
+        default = false;
+        description = "Enables caching of the system prompt (if supported).";
+      };
+
+      cachingAtDepth = options.mkOption {
+        type = types.int;
+        default = -1;
+        description = "Enables caching of the message history at depth (if supported).";
+      };
+
+      extendedTTL = options.mkOption {
+        type = types.bool;
+        default = false;
+        description = "Use 1h TTL instead of the default 5m.";
+      };
+    };
+
+    gemini = {
+      apiVersion = options.mkOption {
+        type = types.str;
+        default = "v1beta";
+        description = "API endpoint version.";
       };
     };
   };
