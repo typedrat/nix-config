@@ -1,5 +1,6 @@
 {
   config,
+  self',
   inputs,
   inputs',
   pkgs,
@@ -10,6 +11,7 @@
     inputs'.attic.packages.attic-client
     corepack
     claude-code
+    self'.packages.claude-powerline
     devpod
     elan
     gcc
@@ -24,6 +26,7 @@
       inputs'.fenix.packages.targets.wasm32-unknown-unknown.stable.rust-std
     ])
     nixd
+    nixfmt-rfc-style
     nixpkgs-review
     nodejs
     process-compose
