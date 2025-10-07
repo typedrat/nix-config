@@ -25,6 +25,8 @@
       inputs'.fenix.packages.targets.aarch64-unknown-linux-musl.stable.rust-std
       inputs'.fenix.packages.targets.wasm32-unknown-unknown.stable.rust-std
     ])
+    jdk
+    maven
     nixd
     nixfmt-rfc-style
     nixpkgs-review
