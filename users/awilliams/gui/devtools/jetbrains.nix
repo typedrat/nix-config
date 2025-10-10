@@ -12,9 +12,10 @@
     };
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
-    home.packages = builtins.map wrapJetbrains (with pkgs.jetbrains; [
-      datagrip
-      webstorm
-    ]);
+    # pending NixOS/nixpkgs#449437 hitting nixos-unstable
+    # home.packages = builtins.map wrapJetbrains (with pkgs.jetbrains; [
+    #   datagrip
+    #   webstorm
+    # ]);
   };
 }
