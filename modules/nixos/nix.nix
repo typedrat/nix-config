@@ -10,6 +10,13 @@
     nixpkgs = {
       overlays = [
         inputs.vscode-extensions.overlays.default
+
+        # TODO: Remove after https://github.com/NixOS/nixpkgs/issues/449414 is closed
+        (final: prev: {
+          ltrace = prev.ltrace.overrideAttrs (oldAttrs: {
+            doCheck = false;
+          });
+        })
       ];
 
       config = {
