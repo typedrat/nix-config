@@ -10,13 +10,13 @@
 }:
 buildDotnetModule (finalAttrs: {
   pname = "shoko-dev";
-  version = "5.1.0-dev.132";
+  version = "5.1.0-dev.133";
 
   src = fetchFromGitHub {
     owner = "ShokoAnime";
     repo = "ShokoServer";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-SB8ZvwXpeHUgAEkl1Da5YReyHDIxJa31g4zoCsP7xqA=";
+    hash = "sha256-CCE84nq4UB5Mpxtcf3hU7Vd4nzceYcJVU6u73Xrl2vs=";
     fetchSubmodules = true;
   };
 
