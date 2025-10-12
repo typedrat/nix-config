@@ -27,6 +27,11 @@ stdenv.mkDerivation rec {
     libsForQt5.qt5.qtbase
   ];
 
+  postPatch = ''
+    substituteInPlace CMakeLists.txt \
+      --replace-fail "cmake_minimum_required(VERSION 3.0)" "cmake_minimum_required(VERSION 3.10)"
+  '';
+
   meta = with lib; {
     description = "View XCursor files in list";
     homepage = "https://github.com/drizt/xcursor-viewer";

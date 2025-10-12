@@ -8,10 +8,12 @@
 in {
   config = mkIf osConfig.rat.virtualisation.docker.enable {
     home.packages = with pkgs; [
-      fuse-overlayfs
-      passt
       dive
+      docker-buildx
+      docker-compose
+      fuse-overlayfs
       lazydocker
+      passt
     ];
   };
 }

@@ -43,7 +43,8 @@
 
     # misc
     aws-vault
-    awscli2
+    # For some reason, NixOS/nixpkgs#450333 is taking *forever* to hit `nixos-unstable`, so I'm just disabling it for now.
+    # awscli2
     cowsay
     file
     gawk
