@@ -20,6 +20,7 @@ in {
     ./core
     ./communication
     ./development
+    ./home-assistant.nix
     ./media
     ./monitoring
   ];

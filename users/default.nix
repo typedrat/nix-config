@@ -34,18 +34,21 @@
     users = {
       # mutableUsers = false;
 
-      users.root = {
-        openssh.authorizedKeys.keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFCm+qnsWUuTDU6IgvxPAkfe6dnwwomGQXlM9c2yUqlJ"
-        ];
-        hashedPasswordFile = config.sops.secrets."users/root/hashedPassword".path;
-      };
-
       users.awilliams = {
         uid = 1000;
         isNormalUser = true;
         home = "/home/awilliams";
-        extraGroups = ["dialout" "games" "wheel"];
+        extraGroups =
+          [
+            "dialout"
+            "games"
+            "wheel"
+          ]
+          ++ (
+            if config.rat.virtualisation.libvirt.enable
+            then ["libvirtd"]
+            else []
+          );
         shell = pkgs.zsh;
 
         openssh.authorizedKeys.keys = [

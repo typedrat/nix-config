@@ -53,7 +53,7 @@
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
     nixvirt = {
-      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/0.5.0";
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/0.6.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -149,7 +149,8 @@
 
     attic = {
       url = "github:zhaofengli/attic";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # `attic` doesn't build against current Nix, so we have to use an old `nixpkgs` for it.
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     authentik-nix = {

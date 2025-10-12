@@ -38,6 +38,8 @@
       };
     };
 
+    virtualisation.libvirt.enable = true;
+
     serviceMonitor.enable = true;
     services = {
       domainName = "thisratis.gay";
@@ -175,6 +177,8 @@
           };
         };
       };
+
+      home-assistant.enable = true;
     };
 
     zfs = {
