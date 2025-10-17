@@ -10,45 +10,6 @@
     nixpkgs = {
       overlays = [
         inputs.vscode-extensions.overlays.default
-
-        # TODO: Remove after https://github.com/NixOS/nixpkgs/issues/449414 is closed
-        (final: prev: {
-          ltrace = prev.ltrace.overrideAttrs (oldAttrs: {
-            doCheck = false;
-          });
-        })
-
-        # TODO: Remove after CMake 4 compatibility is fixed upstream (NixOS/nixpkgs#450523)
-        (final: prev: {
-          imgbrd-grabber = prev.imgbrd-grabber.overrideAttrs (oldAttrs: {
-            patches =
-              (oldAttrs.patches or [])
-              ++ [
-                (builtins.toFile "imgbrd-grabber-cmake4-compat.patch" ''
-                  diff --git a/CMakeLists.txt b/CMakeLists.txt
-                  index 1111111..2222222 100644
-                  --- a/CMakeLists.txt
-                  +++ b/CMakeLists.txt
-                  @@ -1,4 +1,4 @@
-                  -cmake_minimum_required(VERSION 3.2)
-                  +cmake_minimum_required(VERSION 3.10)
-
-                   project(Grabber)
-
-                  diff --git a/lib/vendor/lexbor/CMakeLists.txt b/lib/vendor/lexbor/CMakeLists.txt
-                  index 1111111..2222222 100644
-                  --- a/lib/vendor/lexbor/CMakeLists.txt
-                  +++ b/lib/vendor/lexbor/CMakeLists.txt
-                  @@ -1,4 +1,4 @@
-                  -cmake_minimum_required(VERSION 2.8.12)
-                  +cmake_minimum_required(VERSION 3.10)
-
-                   project(lexbor C)
-
-                '')
-              ];
-          });
-        })
       ];
 
       config = {
