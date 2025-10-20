@@ -8,7 +8,6 @@
 in {
   imports = [
     ./imhex.nix
-    ./jetbrains.nix
     ./vscode.nix
     ./zed.nix
   ];
