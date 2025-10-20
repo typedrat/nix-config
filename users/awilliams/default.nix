@@ -30,12 +30,14 @@
   programs.home-manager.enable = true;
   programs.git = {
     enable = true;
-    userName = "Alexis Williams";
-    userEmail = "alexis@typedr.at";
-
     lfs.enable = true;
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Alexis Williams";
+        email = "alexis@typedr.at";
+      };
+
       init = {
         defaultBranch = "master";
       };
