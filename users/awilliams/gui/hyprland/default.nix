@@ -16,7 +16,6 @@
     ./rofi.nix
     ./smart-gaps.nix
     ./wayland-pipewire-idle-inhibit.nix
-    ./xwaylandvideobridge.nix
   ];
 
   nix.settings = {
