@@ -44,6 +44,7 @@
         seaborn
         sympy
       ]))
+    rainfrog
     uv
 
     # kubernetes stuff
