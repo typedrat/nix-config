@@ -10,13 +10,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "shoko-webui-dev";
-  version = "2.3.0-dev.18";
+  version = "2.3.0-dev.19";
 
   src = fetchFromGitHub {
     owner = "ShokoAnime";
     repo = "Shoko-WebUI";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-YUnilm3cIwRkhrHkCFuQXO/d4uhs/UVCMZTSAGh/HlM=";
+    hash = "sha256-EuGApreRIqlCC5tla4qjSOD7fWv92oyn415Vh8uQYYk=";
     leaveDotGit = true;
   };
 
