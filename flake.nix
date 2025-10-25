@@ -19,12 +19,20 @@
     };
 
     nix-std.url = "github:chessai/nix-std";
+
+    nixpkgs-patcher.url = "github:gepbird/nixpkgs-patcher";
+    #endregion
+
+    #region nixpkgs patches
+    # Add patches by creating inputs prefixed with "nixpkgs-patch-"
+    nixpkgs-patch-shoko = {
+      url = "https://github.com/NixOS/nixpkgs/pull/350065.diff";
+      flake = false;
+    };
     #endregion
 
     #region `flake-parts`
     flake-parts.url = "github:hercules-ci/flake-parts";
-
-    easy-hosts.url = "github:tgirlcloud/easy-hosts";
 
     flake-root.url = "github:srid/flake-root";
 
@@ -169,8 +177,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixpkgs-shoko.url = "github:diniamo/nixpkgs/shokoanime";
-
     talhelper = {
       url = "github:budimanjojo/talhelper";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -201,6 +207,10 @@
         inputs.pkgs-by-name-for-flake-parts.flakeModule
         inputs.terranix.flakeModule
         inputs.treefmt-nix.flakeModule
+
+        (import ./modules/extra/flake-parts/nixos-hosts.nix {
+          nixpkgs-patcher = inputs.nixpkgs-patcher;
+        })
 
         ./systems
       ];

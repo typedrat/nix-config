@@ -11,9 +11,7 @@
 
   persistentGroup = "shoko-persist";
 in {
-  imports = [
-    "${inputs.nixpkgs-shoko}/nixos/modules/services/misc/shoko.nix"
-  ];
+  # The shoko module is available via nixpkgs patch (PR #350065)
 
   options.rat.services.shoko = {
     enable = options.mkEnableOption "Shoko";

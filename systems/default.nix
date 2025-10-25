@@ -1,54 +1,23 @@
-{
-  lib,
-  self,
-  inputs,
-  ...
-}: let
-  additionalClasses = {
-    wsl = "nixos";
-  };
-
-  normaliseClass = class: additionalClasses.${class} or class;
-in {
-  imports = [
-    inputs.easy-hosts.flakeModule
-  ];
-
-  easy-hosts = {
-    shared.modules = [
+{self, inputs, ...}: {
+  nixos-hosts = {
+    # Shared modules across all NixOS systems
+    sharedModules = [
       ../users
+      "${self}/modules/nixos"
+      inputs.determinate.nixosModules.default
+      inputs.home-manager.nixosModules.home-manager
     ];
 
-    inherit additionalClasses;
-
-    perClass = class: let
-      normalisedClass = normaliseClass class;
-    in {
-      modules = builtins.concatLists [
-        [
-          "${self}/modules/${normalisedClass}"
-        ]
-
-        (lib.optionals (normalisedClass == "nixos") [
-          inputs.determinate.nixosModules.default
-          inputs.home-manager.nixosModules.home-manager
-        ])
-
-        (lib.optionals (class == "wsl") [
-          inputs.nixos-wsl.nixosModules.default
-        ])
-      ];
-    };
-
+    # Host configurations
     hosts = {
       hyperion = {
-        arch = "x86_64";
-        class = "nixos";
+        system = "x86_64-linux";
+        modules = [./hyperion];
       };
 
       iserlohn = {
-        arch = "x86_64";
-        class = "nixos";
+        system = "x86_64-linux";
+        modules = [./iserlohn];
       };
     };
   };

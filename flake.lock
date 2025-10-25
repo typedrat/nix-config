@@ -422,21 +422,6 @@
         "type": "github"
       }
     },
-    "easy-hosts": {
-      "locked": {
-        "lastModified": 1755470564,
-        "narHash": "sha256-KB1ZryVDoQcbIsItOf4WtxkHhh3ppj+XwMpSnt/2QHc=",
-        "owner": "tgirlcloud",
-        "repo": "easy-hosts",
-        "rev": "d0422bc7b3db26268982aa15d07e60370e76ee1d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tgirlcloud",
-        "repo": "easy-hosts",
-        "type": "github"
-      }
-    },
     "fenix": {
       "inputs": {
         "nixpkgs": [
@@ -1702,6 +1687,33 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-shoko": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-56lB/BTMQHVP2dYkZEGUYzzGcTXt6XaYDTVidT4Tw70=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/350065.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/350065.diff"
+      }
+    },
+    "nixpkgs-patcher": {
+      "locked": {
+        "lastModified": 1759655918,
+        "narHash": "sha256-UBxtzgeSan7K186nYyokjIUIgMEqg1JM9yR0Lk6+ifQ=",
+        "owner": "gepbird",
+        "repo": "nixpkgs-patcher",
+        "rev": "385ea045e492ec62b2c9c571b4311f75dd5342d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gepbird",
+        "repo": "nixpkgs-patcher",
+        "type": "github"
+      }
+    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -1715,22 +1727,6 @@
         "owner": "NixOS",
         "repo": "nixpkgs",
         "rev": "215d4d0fd80ca5163643b03a33fde804a29cc1e2",
-        "type": "github"
-      }
-    },
-    "nixpkgs-shoko": {
-      "locked": {
-        "lastModified": 1754105476,
-        "narHash": "sha256-8zE/x5yvZ2MAtROHyM1Co2Af1G4XpNlesD63CpbqouE=",
-        "owner": "diniamo",
-        "repo": "nixpkgs",
-        "rev": "68835b06378a799c94f9c27290df9b131c2455f1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "diniamo",
-        "ref": "shokoanime",
-        "repo": "nixpkgs",
         "type": "github"
       }
     },
@@ -2196,7 +2192,6 @@
         "catppuccin-zen": "catppuccin-zen",
         "determinate": "determinate",
         "disko": "disko",
-        "easy-hosts": "easy-hosts",
         "fenix": "fenix",
         "firefox-addons": "firefox-addons",
         "flake-parts": "flake-parts_5",
@@ -2216,7 +2211,8 @@
         "nix-std": "nix-std",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_9",
-        "nixpkgs-shoko": "nixpkgs-shoko",
+        "nixpkgs-patch-shoko": "nixpkgs-patch-shoko",
+        "nixpkgs-patcher": "nixpkgs-patcher",
         "nixvirt": "nixvirt",
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts",
         "pyprland": "pyprland",
