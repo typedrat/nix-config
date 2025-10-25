@@ -5,6 +5,7 @@
     #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    nix.follows = "determinate/nix";
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     disko = {
@@ -230,7 +231,9 @@
 
       perSystem = {
         config,
+        system,
         pkgs,
+        lib,
         ...
       }: {
         pkgsDirectory = ./pkgs;
@@ -316,6 +319,55 @@
             }
           )
           (builtins.attrNames config.terranix.terranixConfigurations));
+
+        apps = let
+          nixos-rebuild = pkgs.nixos-rebuild-ng.override {
+            withNgSuffix = false;
+            nix = inputs.nix.packages.${system}.default;
+          };
+
+          mkRebuildApp = action: {
+            type = "app";
+            program = toString (pkgs.writeShellScript "nixos-rebuild-${action}" ''
+              current_host=$(${pkgs.nettools}/bin/hostname)
+              target_host=""
+              flags=()
+
+              # Scan through arguments to find non-flag arguments
+              for arg in "$@"; do
+                if [[ "$arg" != -* ]]; then
+                  if [ -n "$target_host" ]; then
+                    echo "Error: Multiple hostnames specified" >&2
+                    exit 1
+                  fi
+                  target_host="$arg"
+                else
+                  flags+=("$arg")
+                fi
+              done
+
+              # Default to current host if no hostname specified
+              if [ -z "$target_host" ]; then
+                target_host="$current_host"
+              fi
+
+              # Add --target-host if building for a different host
+              if [ "$current_host" != "$target_host" ]; then
+                flags+=(--target-host "$target_host")
+              fi
+
+              ${lib.getExe nixos-rebuild} ${action} \
+                --flake .#"$target_host" \
+                --log-format internal-json \
+                --sudo \
+                "''${flags[@]}" \
+                |& ${lib.getExe pkgs.nix-output-monitor} --json
+            '');
+          };
+        in {
+          switch = mkRebuildApp "switch";
+          boot = mkRebuildApp "boot";
+        };
       };
     });
 }

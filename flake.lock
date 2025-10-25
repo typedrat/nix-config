@@ -2209,6 +2209,10 @@
         "lanzaboote": "lanzaboote",
         "microvm": "microvm",
         "mlnx-ofed-nixos": "mlnx-ofed-nixos",
+        "nix": [
+          "determinate",
+          "nix"
+        ],
         "nix-std": "nix-std",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_9",
