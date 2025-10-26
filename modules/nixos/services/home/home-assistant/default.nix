@@ -9,6 +9,7 @@
   impermanenceCfg = config.rat.impermanence;
 in {
   imports = [
+    ./authentik.nix
     ./mqtt.nix
   ];
   options.rat.services.home-assistant = {

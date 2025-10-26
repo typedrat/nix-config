@@ -8,6 +8,7 @@
   imports = [
     ./autobrr.nix
     ./grafana.nix
+    ./home-assistant.nix
     ./hydra.nix
     ./lidarr.nix
     ./jellyfin.nix
