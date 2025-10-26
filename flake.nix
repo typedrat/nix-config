@@ -29,6 +29,11 @@
       url = "https://github.com/NixOS/nixpkgs/pull/350065.diff";
       flake = false;
     };
+
+    nixpkgs-patch-fix-fcitx-build = {
+      url = "https://github.com/NixOS/nixpkgs/pull/454184.diff";
+      flake = false;
+    };
     #endregion
 
     #region `flake-parts`
@@ -164,7 +169,6 @@
 
     authentik-nix = {
       url = "github:nix-community/authentik-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     fenix = {
