@@ -347,18 +347,15 @@
               target_host=""
               flags=()
 
-              # Scan through arguments to find non-flag arguments
-              for arg in "$@"; do
-                if [[ "$arg" != -* ]]; then
-                  if [ -n "$target_host" ]; then
-                    echo "Error: Multiple hostnames specified" >&2
-                    exit 1
-                  fi
-                  target_host="$arg"
-                else
-                  flags+=("$arg")
-                fi
-              done
+              # If first argument doesn't start with -, treat it as hostname
+              if [ $# -gt 0 ] && [[ "$1" != -* ]]; then
+                target_host="$1"
+                shift
+                flags=("$@")
+              else
+                # All arguments are flags
+                flags=("$@")
+              fi
 
               # Default to current host if no hostname specified
               if [ -z "$target_host" ]; then
