@@ -6,6 +6,7 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.home-assistant;
   mqttCfg = cfg.mqtt;
+  haCfg = config.services.home-assistant;
 in {
   options.rat.services.home-assistant.mqtt = {
     enable = options.mkEnableOption "MQTT integration for Home Assistant";
@@ -14,11 +15,6 @@ in {
       type = types.str;
       default = "homeassistant";
       description = "Username for Home Assistant MQTT authentication.";
-    };
-
-    passwordFile = options.mkOption {
-      type = types.path;
-      description = "Path to file containing the MQTT password for Home Assistant.";
     };
 
     aclRules = options.mkOption {
@@ -48,11 +44,18 @@ in {
   };
 
   config = modules.mkIf (cfg.enable && mqttCfg.enable) {
+    # Define SOPS secret for MQTT password
+    # This reads the mqtt_password key from secrets/home-assistant.yaml
+    sops.secrets."home-assistant/mqtt_password" = {
+      sopsFile = ../../../../secrets/home-assistant.yaml;
+      key = "mqtt_password";
+    };
+
     # Automatically enable and configure Mosquitto
     rat.services.mosquitto = {
       enable = true;
       users.${mqttCfg.username} = {
-        inherit (mqttCfg) passwordFile;
+        passwordFile = config.sops.secrets."home-assistant/mqtt_password".path;
         acl = mqttCfg.aclRules ++ mqttCfg.extraAclRules;
       };
     };
@@ -62,6 +65,7 @@ in {
 
     # Add MQTT configuration to Home Assistant when declaratively configured
     # When cfg.config is null (UI-managed), MQTT should be configured through the UI
+    # Note: The mqtt_password secret must be defined in secrets/home-assistant.yaml
     rat.services.home-assistant.config = lib.mkIf (cfg.config != null) {
       mqtt = {
         broker = "127.0.0.1";
@@ -79,9 +83,5 @@ in {
         };
       };
     };
-
-    # Note: When using declarative configuration (cfg.config != null),
-    # the mqtt_password secret needs to be added to Home Assistant's secrets.yaml:
-    # mqtt_password: <contents of mqttCfg.passwordFile>
   };
 }

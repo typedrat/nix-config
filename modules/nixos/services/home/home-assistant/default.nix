@@ -142,5 +142,25 @@ in {
         ];
       };
     })
+
+    (modules.mkIf cfg.enable {
+      # Define SOPS secret for Home Assistant secrets.yaml
+      # The entire decrypted YAML file is placed as secrets.yaml
+      sops.secrets."home-assistant/secrets.yaml" = {
+        sopsFile = ../../../../secrets/home-assistant.yaml;
+        format = "binary";
+        owner = "hass";
+        group = "hass";
+        mode = "0440";
+        path = "${config.services.home-assistant.configDir}/secrets.yaml";
+      };
+
+      # Ensure home-assistant service restarts when secrets change
+      systemd.services.home-assistant = {
+        restartTriggers = [
+          config.sops.secrets."home-assistant/secrets.yaml".path
+        ];
+      };
+    })
   ];
 }
