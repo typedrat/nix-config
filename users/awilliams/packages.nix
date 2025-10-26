@@ -13,7 +13,6 @@
     age
     cachix
     ffmpeg-full
-    frink
     gdu
     github-cli
     github-to-sops
