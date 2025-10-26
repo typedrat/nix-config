@@ -213,7 +213,7 @@
         inputs.treefmt-nix.flakeModule
 
         (import ./modules/extra/flake-parts/nixos-hosts.nix {
-          nixpkgs-patcher = inputs.nixpkgs-patcher;
+          inherit (inputs) nixpkgs-patcher;
         })
 
         ./systems

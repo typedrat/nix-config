@@ -7,7 +7,7 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.sillytavern;
   impermanenceCfg = config.rat.impermanence;
-  port = config.links.sillytavern.port;
+  inherit (config.links.sillytavern) port;
 
   sillytavernExtensions = pkgs.linkFarm "sillytavern-extensions" (
     lib.mapAttrsToList (name: path: {inherit name path;}) cfg.systemExtensions
@@ -110,8 +110,8 @@
       chat = {
         inherit (cfg.backups) enabled;
         inherit (cfg.backups) checkIntegrity;
-        maxTotalBackups = cfg.backups.maxTotalBackups;
-        throttleInterval = cfg.backups.throttleInterval;
+        inherit (cfg.backups) maxTotalBackups;
+        inherit (cfg.backups) throttleInterval;
       };
       common = {
         inherit (cfg.backups) numberOfBackups;
@@ -128,15 +128,15 @@
 
     # Performance configuration
     performance = {
-      lazyLoadCharacters = cfg.performance.lazyLoadCharacters;
-      memoryCacheCapacity = cfg.performance.memoryCacheCapacity;
-      useDiskCache = cfg.performance.useDiskCache;
+      inherit (cfg.performance) lazyLoadCharacters;
+      inherit (cfg.performance) memoryCacheCapacity;
+      inherit (cfg.performance) useDiskCache;
     };
 
     # Cache buster configuration
     cacheBuster = {
-      enabled = cfg.cacheBuster.enabled;
-      userAgentPattern = cfg.cacheBuster.userAgentPattern;
+      inherit (cfg.cacheBuster) enabled;
+      inherit (cfg.cacheBuster) userAgentPattern;
     };
 
     # Extensions configuration
@@ -159,28 +159,28 @@
     inherit (cfg) enableServerPluginsAutoUpdate;
 
     # API-specific configurations
-    promptPlaceholder = cfg.promptPlaceholder;
+    inherit (cfg) promptPlaceholder;
     openai = {
-      randomizeUserId = cfg.openai.randomizeUserId;
-      captionSystemPrompt = cfg.openai.captionSystemPrompt;
+      inherit (cfg.openai) randomizeUserId;
+      inherit (cfg.openai) captionSystemPrompt;
     };
     deepl = {
-      formality = cfg.deepl.formality;
+      inherit (cfg.deepl) formality;
     };
     mistral = {
-      enablePrefix = cfg.mistral.enablePrefix;
+      inherit (cfg.mistral) enablePrefix;
     };
     ollama = {
-      keepAlive = cfg.ollama.keepAlive;
-      batchSize = cfg.ollama.batchSize;
+      inherit (cfg.ollama) keepAlive;
+      inherit (cfg.ollama) batchSize;
     };
     claude = {
-      enableSystemPromptCache = cfg.claude.enableSystemPromptCache;
-      cachingAtDepth = cfg.claude.cachingAtDepth;
-      extendedTTL = cfg.claude.extendedTTL;
+      inherit (cfg.claude) enableSystemPromptCache;
+      inherit (cfg.claude) cachingAtDepth;
+      inherit (cfg.claude) extendedTTL;
     };
     gemini = {
-      apiVersion = cfg.gemini.apiVersion;
+      inherit (cfg.gemini) apiVersion;
     };
   });
 in {

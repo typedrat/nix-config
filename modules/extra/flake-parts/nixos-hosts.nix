@@ -39,7 +39,7 @@
     cfg = config.nixos-hosts;
 
     # Helper function to create a NixOS configuration with nixpkgs-patcher
-    mkNixosSystem = hostname: hostConfig:
+    mkNixosSystem = _hostname: hostConfig:
       nixpkgs-patcher.lib.nixosSystem {
         inherit (hostConfig) system;
 

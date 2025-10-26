@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ./disko-config.nix
     ./hardware-configuration.nix
@@ -185,6 +189,13 @@
       enable = true;
       rootPool = "rpool";
       rootDataset = "local/root";
+    };
+
+    # User configuration (system-specific overrides)
+    users.awilliams = {
+      enable = true;
+      extraGroups = lib.mkAfter ["libvirtd"];
+      gui.enable = false;
     };
   };
 

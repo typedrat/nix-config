@@ -32,6 +32,12 @@
       rootPool = "zpool";
       rootDataset = "root";
     };
+
+    # User configuration (system-specific overrides)
+    users.awilliams = {
+      enable = true;
+      gui.enable = true;
+    };
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
