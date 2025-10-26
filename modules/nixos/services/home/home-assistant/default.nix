@@ -8,6 +8,9 @@
   cfg = config.rat.services.home-assistant;
   impermanenceCfg = config.rat.impermanence;
 in {
+  imports = [
+    ./mqtt.nix
+  ];
   options.rat.services.home-assistant = {
     enable = options.mkEnableOption "Home Assistant";
 
