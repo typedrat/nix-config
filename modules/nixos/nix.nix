@@ -23,20 +23,12 @@
       };
     };
 
-    nix = let
-      flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
-    in {
+    nix = {
       settings = {
         experimental-features = "nix-command flakes";
         trusted-users = ["awilliams"];
         netrc-file = config.sops.templates.netrc.path;
       };
-      # Opinionated: disable channels
-      channel.enable = false;
-
-      # Opinionated: make flake registry and nix path match flake inputs
-      registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
-      nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
 
       # Trim old Nix generations to free up space.
       gc = {
