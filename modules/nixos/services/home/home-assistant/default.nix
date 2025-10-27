@@ -86,6 +86,15 @@ in {
       default = false;
       description = "Whether to open the firewall for Home Assistant.";
     };
+
+    usePostgres = options.mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Use PostgreSQL as the database backend for Home Assistant.
+        When enabled, automatically configures PostgreSQL with a hass database and user.
+      '';
+    };
   };
 
   config = modules.mkMerge [
@@ -160,6 +169,30 @@ in {
       systemd.services.home-assistant = {
         restartTriggers = [
           config.sops.secrets."home-assistant/secrets.yaml".path
+        ];
+      };
+    })
+
+    (modules.mkIf (cfg.enable && cfg.usePostgres) {
+      # Add PostgreSQL support
+      rat.services.home-assistant.extraPackages = lib.mkAfter (ps: with ps; [psycopg2]);
+
+      # Configure recorder to use PostgreSQL
+      rat.services.home-assistant.config = lib.mkIf (cfg.config != null) {
+        recorder = {
+          db_url = "postgresql://@/hass";
+        };
+      };
+
+      # Enable and configure PostgreSQL
+      services.postgresql = {
+        enable = true;
+        ensureDatabases = ["hass"];
+        ensureUsers = [
+          {
+            name = "hass";
+            ensureDBOwnership = true;
+          }
         ];
       };
     })
