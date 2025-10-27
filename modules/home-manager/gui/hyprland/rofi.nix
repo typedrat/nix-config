@@ -18,8 +18,6 @@ in {
         rofi-games
       ];
 
-      catppuccin.enable = true;
-
       terminal = "${pkgs.wezterm}/bin/wezterm";
       extraConfig = {
         modi = "drun";
@@ -29,6 +27,8 @@ in {
         sidebar-mode = false;
       };
     };
+
+    catppuccin.rofi.enable = true;
 
     wayland.windowManager.hyprland.settings = {
       "$ROFI_CMD" = "rofi -show drun";
