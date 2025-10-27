@@ -182,7 +182,10 @@
         };
       };
 
-      home-assistant.enable = true;
+      home-assistant = {
+        enable = true;
+        mqtt.enable = true;
+      };
     };
 
     zfs = {
