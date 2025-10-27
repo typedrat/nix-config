@@ -4,6 +4,7 @@
   inputs = {
     #region Core
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
 
     nix.follows = "determinate/nix";
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
@@ -269,7 +270,7 @@
           terranixConfigurations = {
             terraform = {
               terraformWrapper = {
-                package = pkgs.opentofu;
+                package = inputs.nixpkgs-stable.legacyPackages.${system}.opentofu;
                 extraRuntimeInputs = [pkgs.sops pkgs.openssh];
                 prefixText = let
                   target_host = "iserlohn.thisratis.gay";

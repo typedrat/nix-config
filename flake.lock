@@ -1772,6 +1772,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-stable_3": {
+      "locked": {
+        "lastModified": 1761173472,
+        "narHash": "sha256-m9W0dYXflzeGgKNravKJvTMR4Qqa2MVD11AwlGMufeE=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "c8aa8cc00a5cb57fada0851a038d35c08a36a2bb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1761373498,
@@ -2240,6 +2256,7 @@
         "nixpkgs-patch-shoko": "nixpkgs-patch-shoko",
         "nixpkgs-patch-update-claude-code": "nixpkgs-patch-update-claude-code",
         "nixpkgs-patcher": "nixpkgs-patcher",
+        "nixpkgs-stable": "nixpkgs-stable_3",
         "nixvirt": "nixvirt",
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts",
         "pyprland": "pyprland",
