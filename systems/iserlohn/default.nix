@@ -186,6 +186,23 @@
         enable = true;
         mqtt.enable = true;
 
+        customComponents = with pkgs.home-assistant-custom-components; [
+          localtuya
+        ];
+
+        extraComponents = [
+          # Components required to complete the onboarding
+          "analytics"
+          "google_translate"
+          "met"
+          "radio_browser"
+          "shopping_list"
+
+          # Recommended for fast zlib compression
+          # https://www.home-assistant.io/integrations/isal
+          "isal"
+        ];
+
         config = {
           default_config = {};
         };
