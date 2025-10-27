@@ -158,7 +158,10 @@ in {
         owner = "hass";
         group = "hass";
         mode = "0440";
-        path = "${config.services.home-assistant.configDir}/secrets.yaml";
+        path =
+          if impermanenceCfg.enable
+          then "/persist/var/lib/hass/secrets.yaml"
+          else "/var/lib/hass/secrets.yaml";
       };
 
       # Ensure home-assistant service restarts when secrets change
