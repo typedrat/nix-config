@@ -63,23 +63,15 @@ in {
     # Add MQTT component to Home Assistant
     rat.services.home-assistant.extraComponents = lib.mkAfter ["mqtt"];
 
-    # Add MQTT configuration to Home Assistant
-    # Note: The mqtt_password secret must be defined in secrets/home-assistant.yaml
-    # Enabling MQTT integration will add declarative MQTT config
-    rat.services.home-assistant.config.mqtt = {
-      broker = "127.0.0.1";
-      port = config.links.mosquitto.port;
-      username = mqttCfg.username;
-      password = "!secret mqtt_password";
-      discovery = true;
-      birth_message = {
-        topic = "homeassistant/status";
-        payload = "online";
-      };
-      will_message = {
-        topic = "homeassistant/status";
-        payload = "offline";
-      };
-    };
+    # Note: MQTT broker configuration must be done through the Home Assistant UI:
+    # 1. Navigate to Settings > Devices & services
+    # 2. Add MQTT integration
+    # 3. Configure broker: 127.0.0.1, port: ${toString config.links.mosquitto.port}
+    # 4. Username: ${mqttCfg.username}
+    # 5. Password: Use the mqtt_password from secrets/home-assistant.yaml
+    # 6. Enable discovery and configure birth/will messages as needed
+    #
+    # The MQTT integration no longer supports declarative YAML configuration
+    # for broker settings in modern Home Assistant versions.
   };
 }

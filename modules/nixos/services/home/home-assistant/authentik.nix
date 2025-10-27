@@ -38,10 +38,10 @@ in {
       display_name = authentikCfg.displayName;
 
       # Map Authentik claims to Home Assistant user attributes
+      # Valid options: username, display_name, groups
       claims = {
         username = "preferred_username";
-        name = "name";
-        email = "email";
+        display_name = "name";
       };
     };
   };
