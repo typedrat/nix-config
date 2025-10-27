@@ -185,6 +185,10 @@
       home-assistant = {
         enable = true;
         mqtt.enable = true;
+
+        config = {
+          default_config = {};
+        };
       };
     };
 
