@@ -1,51 +1,93 @@
 {
   config,
   osConfig,
-  inputs,
+  inputs',
   pkgs,
   lib,
   ...
 }: let
   inherit (lib) modules;
-  inherit (inputs.pyprland.packages.${pkgs.stdenv.system}) pyprland;
+  inherit (inputs'.hyprland.packages) hyprland;
+  inherit (inputs'.pyprland.packages) pyprland;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
 in {
   config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false)) {
-    home.packages = [
+    home.packages = with pkgs; [
       pyprland
+      pwvucontrol
     ];
 
-    xdg.configFile."hypr/pyprland.toml".text = ''
-      [pyprland]
-      plugins = ["scratchpads", "monitors"]
+    xdg.configFile."hypr/pyprland.toml".source = (pkgs.formats.toml {}).generate "pyprland.toml" {
+      pyprland = {
+        hyprland_version = hyprland.version;
+        plugins = [
+          "fetch_client_menu"
+          "scratchpads"
+        ];
+      };
 
-      [scratchpads.term]
-      animation = "fromTop"
-      command = "wezterm start --always-new-process"
-      class = "scratchpad"
-      size = "75% 60%"
-      max_size = "1920px 100%"
-      margin = 50
+      fetch_client_menu = {
+        engine = "rofi";
+      };
 
-      [scratchpads.btop]
-      animation = "fromTop"
-      command = "wezterm start --always-new-process --class scratchpad-btop btop"
-      class = "scratchpad-btop"
-      lazy = true
-      size = "75% 60%"
-      max_size = "1920px 100%"
-      margin = 50
-    '';
+      scratchpads = {
+        spotify = {
+          command = "spotify";
+          class = "Spotify";
+
+          animation = "fromLeft";
+          size = "50% 50%";
+
+          alt_toggle = true;
+          hysteresis = 0.75;
+          unfocus = "hide";
+        };
+
+        pwvucontrol = {
+          command = "pwvucontrol";
+          class = "com.saivert.pwvucontrol";
+          lazy = true;
+
+          animation = "fromRight";
+          size = "1024px 576px";
+
+          alt_toggle = true;
+          hysteresis = 0.75;
+          unfocus = "hide";
+        };
+      };
+    };
+
+    systemd.user.services.pyprland = {
+      Unit = {
+        Description = "Pyprland";
+        PartOf = ["graphical-session.target"];
+        After = ["graphical-session.target"];
+      };
+
+      Service = {
+        ExecStart = lib.getExe' pyprland "pypr";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+
+      Install = {
+        WantedBy = ["graphical-session.target"];
+      };
+    };
 
     wayland.windowManager.hyprland.settings = {
-      exec-once = ["uwsm app -- pypr"];
+      windowrulev2 = [
+        "float, class:[Ss]potify"
+        "float, class:ncspot"
+        "float, class:com.saivert.pwvucontrol"
+      ];
 
       bind = [
-        "$main_mod,grave,exec,pypr toggle term"
-        "$main_mod,backtick,exec,pypr toggle btop"
+        "$main_mod,b,exec,pypr fetch-client-menu"
       ];
     };
   };
