@@ -47,7 +47,7 @@ in {
     # Define SOPS secret for MQTT password
     # This reads the mqtt_password key from secrets/home-assistant.yaml
     sops.secrets."home-assistant/mqtt_password" = {
-      sopsFile = ../../../../secrets/home-assistant.yaml;
+      sopsFile = ../../../../../secrets/home-assistant.yaml;
       key = "mqtt_password";
     };
 
@@ -63,24 +63,22 @@ in {
     # Add MQTT component to Home Assistant
     rat.services.home-assistant.extraComponents = lib.mkAfter ["mqtt"];
 
-    # Add MQTT configuration to Home Assistant when declaratively configured
-    # When cfg.config is null (UI-managed), MQTT should be configured through the UI
+    # Add MQTT configuration to Home Assistant
     # Note: The mqtt_password secret must be defined in secrets/home-assistant.yaml
-    rat.services.home-assistant.config = lib.mkIf (cfg.config != null) {
-      mqtt = {
-        broker = "127.0.0.1";
-        port = config.links.mosquitto.port;
-        username = mqttCfg.username;
-        password = "!secret mqtt_password";
-        discovery = true;
-        birth_message = {
-          topic = "homeassistant/status";
-          payload = "online";
-        };
-        will_message = {
-          topic = "homeassistant/status";
-          payload = "offline";
-        };
+    # Enabling MQTT integration will add declarative MQTT config
+    rat.services.home-assistant.config.mqtt = {
+      broker = "127.0.0.1";
+      port = config.links.mosquitto.port;
+      username = mqttCfg.username;
+      password = "!secret mqtt_password";
+      discovery = true;
+      birth_message = {
+        topic = "homeassistant/status";
+        payload = "online";
+      };
+      will_message = {
+        topic = "homeassistant/status";
+        payload = "offline";
       };
     };
   };

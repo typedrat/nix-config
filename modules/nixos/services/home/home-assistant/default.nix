@@ -106,31 +106,27 @@ in {
       services.home-assistant = {
         enable = true;
         inherit (cfg) extraComponents extraPackages customComponents customLovelaceModules;
-
-        config =
-          if cfg.config != null
-          then
-            cfg.config
-            // {
-              http = {
-                server_host = "127.0.0.1";
-                server_port = config.links.home-assistant.port;
-                use_x_forwarded_for = cfg.enableTraefik;
-                trusted_proxies = lib.optionals cfg.enableTraefik ["127.0.0.1" "::1"];
-              };
-            }
-          else {
-            default_config = {};
-            http = {
-              server_host = "127.0.0.1";
-              server_port = config.links.home-assistant.port;
-              use_x_forwarded_for = cfg.enableTraefik;
-              trusted_proxies = lib.optionals cfg.enableTraefik ["127.0.0.1" "::1"];
-            };
-          };
+        config = cfg.config;
       };
 
       networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [config.links.home-assistant.port];
+    })
+
+    # Set default config structure if user doesn't provide one
+    (modules.mkIf cfg.enable {
+      rat.services.home-assistant.config = lib.mkDefault {
+        default_config = {};
+      };
+    })
+
+    # Always add http configuration
+    (modules.mkIf cfg.enable {
+      rat.services.home-assistant.config.http = {
+        server_host = "127.0.0.1";
+        server_port = config.links.home-assistant.port;
+        use_x_forwarded_for = cfg.enableTraefik;
+        trusted_proxies = lib.optionals cfg.enableTraefik ["127.0.0.1" "::1"];
+      };
     })
 
     (modules.mkIf (cfg.enable && cfg.enableTraefik) {
@@ -157,8 +153,9 @@ in {
       # Define SOPS secret for Home Assistant secrets.yaml
       # The entire decrypted YAML file is placed as secrets.yaml
       sops.secrets."home-assistant/secrets.yaml" = {
-        sopsFile = ../../../../secrets/home-assistant.yaml;
-        format = "binary";
+        sopsFile = ../../../../../secrets/home-assistant.yaml;
+        format = "yaml";
+        key = "";
         owner = "hass";
         group = "hass";
         mode = "0440";
@@ -178,10 +175,8 @@ in {
       rat.services.home-assistant.extraPackages = lib.mkAfter (ps: with ps; [psycopg2]);
 
       # Configure recorder to use PostgreSQL
-      rat.services.home-assistant.config = lib.mkIf (cfg.config != null) {
-        recorder = {
-          db_url = "postgresql://@/hass";
-        };
+      rat.services.home-assistant.config.recorder = {
+        db_url = "postgresql://@/hass";
       };
 
       # Enable and configure PostgreSQL
