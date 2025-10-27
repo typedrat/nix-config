@@ -1685,6 +1685,18 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-elegoo-homeassistant": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-NIzdWZzLPpbUuwU9YXIDKzHIznqIvm7wV0nQid3m/RA=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/456064.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/456064.diff"
+      }
+    },
     "nixpkgs-patch-shoko": {
       "flake": false,
       "locked": {
@@ -2253,6 +2265,7 @@
         "nix-std": "nix-std",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_10",
+        "nixpkgs-patch-elegoo-homeassistant": "nixpkgs-patch-elegoo-homeassistant",
         "nixpkgs-patch-shoko": "nixpkgs-patch-shoko",
         "nixpkgs-patch-update-claude-code": "nixpkgs-patch-update-claude-code",
         "nixpkgs-patcher": "nixpkgs-patcher",

@@ -187,6 +187,7 @@
         mqtt.enable = true;
 
         customComponents = with pkgs.home-assistant-custom-components; [
+          elegoo_printer
           localtuya
           waste_collection_schedule
         ];

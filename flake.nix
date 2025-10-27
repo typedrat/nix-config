@@ -26,6 +26,11 @@
 
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
+    nixpkgs-patch-elegoo-homeassistant = {
+      url = "https://github.com/NixOS/nixpkgs/pull/456064.diff";
+      flake = false;
+    };
+
     nixpkgs-patch-shoko = {
       url = "https://github.com/NixOS/nixpkgs/pull/350065.diff";
       flake = false;
