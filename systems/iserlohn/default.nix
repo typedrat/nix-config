@@ -188,6 +188,7 @@
 
         customComponents = with pkgs.home-assistant-custom-components; [
           localtuya
+          waste_collection_schedule
         ];
 
         extraComponents = [
@@ -205,6 +206,17 @@
 
         config = {
           default_config = {};
+
+          waste_collection_schedule = {
+            sources = [
+              {
+                name = "ics";
+                args = {
+                  url = "!secret waste_collection_schedule_url";
+                };
+              }
+            ];
+          };
         };
       };
     };
