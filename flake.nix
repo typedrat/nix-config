@@ -34,6 +34,11 @@
       url = "https://github.com/NixOS/nixpkgs/pull/454184.diff";
       flake = false;
     };
+
+    nixpkgs-patch-update-claude-code = {
+      url = "https://github.com/NixOS/nixpkgs/pull/455484.diff";
+      flake = false;
+    };
     #endregion
 
     #region `flake-parts`

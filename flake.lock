@@ -1709,6 +1709,18 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/350065.diff"
       }
     },
+    "nixpkgs-patch-update-claude-code": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-N3nq7yWRmt9MWtIbm+aBNgbZMWRexdMOt42AuDNPObg=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/455484.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/455484.diff"
+      }
+    },
     "nixpkgs-patcher": {
       "locked": {
         "lastModified": 1759655918,
@@ -2239,6 +2251,7 @@
         "nixpkgs": "nixpkgs_10",
         "nixpkgs-patch-fix-fcitx-build": "nixpkgs-patch-fix-fcitx-build",
         "nixpkgs-patch-shoko": "nixpkgs-patch-shoko",
+        "nixpkgs-patch-update-claude-code": "nixpkgs-patch-update-claude-code",
         "nixpkgs-patcher": "nixpkgs-patcher",
         "nixvirt": "nixvirt",
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts",
