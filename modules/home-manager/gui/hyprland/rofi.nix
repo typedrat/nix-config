@@ -20,10 +20,10 @@ in {
 
       extraConfig = {
         run-command = "uwsm app -- {cmd}";
-        display-drun = "";
-        display-run = "";
-        display-ssh = "";
-        display-window = "";
+        display-drun = "";
+        display-run = "";
+        display-ssh = "";
+        display-window = "";
       };
 
       theme = let
