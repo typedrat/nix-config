@@ -202,6 +202,33 @@
           # Recommended for fast zlib compression
           # https://www.home-assistant.io/integrations/isal
           "isal"
+
+          # Apple TV
+          "apple_tv"
+
+          # Denon AVR
+          "denonavr"
+
+          # Electricity Maps
+          "co2signal"
+
+          # Enphase
+          "enphase_envoy"
+
+          # ESPHome
+          "esphome"
+
+          # Jellyfin
+          "jellyfin"
+
+          # NWS
+          "nws"
+
+          # SMUD
+          "opower"
+
+          # Vizio TV
+          "vizio"
         ];
 
         config = {
