@@ -22,7 +22,7 @@ in {
 
     xdg.configFile."hypr/pyprland.toml".source = (pkgs.formats.toml {}).generate "pyprland.toml" {
       pyprland = {
-        hyprland_version = hyprland.version;
+        hyprland_version = builtins.head (builtins.split "\\+" hyprland.version);
         plugins = [
           "fetch_client_menu"
           "scratchpads"

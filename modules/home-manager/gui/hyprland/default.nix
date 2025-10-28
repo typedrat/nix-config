@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  inputs,
   pkgs,
   lib,
   ...
@@ -55,8 +54,8 @@ in {
       enable = true;
       systemd.enable = false;
 
-      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      package = null;
+      portalPackage = null;
 
       settings = {
         "$main_mod" = "SUPER";
