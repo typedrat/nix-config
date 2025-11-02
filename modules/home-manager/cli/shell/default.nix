@@ -14,6 +14,8 @@ in {
     sops.secrets = {
       miseGithubToken = {};
       openrouterApiKey = {};
+      vizioAuth = {};
+      vizioIp = {};
     };
 
     programs.zsh = {
@@ -35,6 +37,8 @@ in {
         source ~/.p10k.zsh
         export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
         export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
+        export VIZO_IP=$(cat ${config.sops.secrets.vizioIp.path})
+        export VIZIO_AUTH=$(cat ${config.sops.secrets.vizioAuth.path})
 
         bindkey "^[[1;5C" forward-word
         bindkey "^[[1;5D" backward-word
