@@ -104,6 +104,7 @@ in {
               nix
               nixfmt-classic
               # Add user-specified packages
+              openssh
             ]
             ++ runnerCfg.extraPackages;
           workDir = "/var/lib/github-runners/${name}";
