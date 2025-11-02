@@ -16,7 +16,7 @@ in {
   config = mkIf config.rat.java.enable {
     programs.java = {
       enable = true;
-      package = pkgs.graalvm-ce;
+      package = pkgs.graalvmPackages.graalvm-ce;
     };
   };
 }

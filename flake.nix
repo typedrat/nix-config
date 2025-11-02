@@ -30,11 +30,6 @@
       url = "https://github.com/NixOS/nixpkgs/pull/350065.diff";
       flake = false;
     };
-
-    nixpkgs-patch-update-claude-code = {
-      url = "https://github.com/NixOS/nixpkgs/pull/455484.diff";
-      flake = false;
-    };
     #endregion
 
     #region `flake-parts`
@@ -55,6 +50,13 @@
     #region NixOS Extensions
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+      # Temporary fix, remove pending nix-community/lanzaboote#485, nix-community/lanzaboote#487
+      inputs.rust-overlay.follows = "lanzaboote-rust-overlay";
+    };
+
+    lanzaboote-rust-overlay = {
+      url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

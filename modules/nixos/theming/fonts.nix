@@ -25,9 +25,9 @@ in {
         packages = with pkgs; [
           # Microsoft fonts that get used everywhere:
           corefonts
-          vistafonts
-          vistafonts-chs
-          vistafonts-cht
+          vista-fonts
+          vista-fonts-chs
+          vista-fonts-cht
 
           # Primary system fonts, stolen from a company with design sense:
           self'.packages.apple-fonts
