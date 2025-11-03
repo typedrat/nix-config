@@ -46,13 +46,13 @@
   },
   {
     "pname": "Magick.NET-Q8-AnyCPU",
-    "version": "13.6.0",
-    "hash": "sha256-LzHv4Acau5YKP3mnqHY3S9b4TL/xZAr+LqlJkzictPA="
+    "version": "14.9.1",
+    "hash": "sha256-4svX77hA0bfAo9Lbbks6RfAwB4DbUI8mwduMbmyaEfQ="
   },
   {
     "pname": "Magick.NET.Core",
-    "version": "13.6.0",
-    "hash": "sha256-9y7fLtgmWc830XbH6Vfj61H9W/DGqBqv+tIrg1L9U2c="
+    "version": "14.9.1",
+    "hash": "sha256-FkFcEeK08Jrp9y1znQzy4uyW6sMU1bVi3s5e5em2of4="
   },
   {
     "pname": "MessagePack",
