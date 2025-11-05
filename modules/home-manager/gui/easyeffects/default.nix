@@ -12,6 +12,7 @@
   easyeffectsCfg = guiCfg.easyeffects or {};
 in {
   imports = [
+    ./jlab-go-pop.nix
     ./meze-99-eq.nix
     ./neutral.nix
     ./voice-calls.nix
