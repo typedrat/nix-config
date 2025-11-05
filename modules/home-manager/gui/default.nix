@@ -15,6 +15,7 @@ in {
     ./easyeffects
     ./firefox
     ./games
+    ./ghostty
     ./graphics.nix
     ./hyprland
     ./media

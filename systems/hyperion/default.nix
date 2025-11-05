@@ -36,7 +36,10 @@
     # User configuration (system-specific overrides)
     users.awilliams = {
       enable = true;
-      gui.enable = true;
+      gui = {
+        enable = true;
+        terminal.ghostty.enable = true;
+      };
     };
   };
 

@@ -54,6 +54,7 @@
 
       terminal = {
         wezterm.enable = options.mkEnableOption "WezTerm" // {default = true;};
+        ghostty.enable = options.mkEnableOption "Ghostty";
       };
 
       easyeffects = {
