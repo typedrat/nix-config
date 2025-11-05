@@ -61,7 +61,7 @@
             + (lib.strings.concatMapAttrsStringSep " " (name: value: "${name}=${value}") {
               "github.com" = config.sops.placeholder.github-api-key;
             });
-          mode = "0440";
+          mode = "0444";
         };
 
         netrc = {

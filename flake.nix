@@ -136,7 +136,7 @@
     };
 
     typedrat-fonts = {
-      url = "git+ssh://git@github.com/typedrat/nix-fonts.git";
+      url = "github:typedrat/nix-fonts/cdee4ed0085ddffeb17827b8d5d9f919736141db";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #endregion

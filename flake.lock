@@ -2758,15 +2758,16 @@
       "locked": {
         "lastModified": 1747625350,
         "narHash": "sha256-z4CoN1pWPf40cdcLSpmMBq420X0EqMCPOOA5MwhLOK8=",
-        "ref": "refs/heads/master",
+        "owner": "typedrat",
+        "repo": "nix-fonts",
         "rev": "cdee4ed0085ddffeb17827b8d5d9f919736141db",
-        "revCount": 7,
-        "type": "git",
-        "url": "ssh://git@github.com/typedrat/nix-fonts.git"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/typedrat/nix-fonts.git"
+        "owner": "typedrat",
+        "repo": "nix-fonts",
+        "rev": "cdee4ed0085ddffeb17827b8d5d9f919736141db",
+        "type": "github"
       }
     },
     "uv2nix": {
