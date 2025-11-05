@@ -19,7 +19,7 @@ in {
 
   config = modules.mkIf ((guiCfg.enable or false) && (mediaCfg.enable or false)) {
     home.packages = with pkgs; [
-      jellyfin-media-player
+      # jellyfin-media-player # Disabled: requires insecure qtwebengine - see NixOS/nixpkgs#437865 and jellyfin/jellyfin-media-player#282
       jellyfin-mpv-shim
     ];
   };

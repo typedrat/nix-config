@@ -17,8 +17,6 @@
 
         permittedInsecurePackages = [
           "olm-3.2.16"
-          # Required for Jellyfin -- see NixOS/nixpkgs#437865 and jellyfin/jellyfin-media-player#282
-          "qtwebengine-5.15.19"
         ];
       };
     };
