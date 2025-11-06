@@ -37,8 +37,15 @@
         "text/markdown" = "dev.zed.Zed.desktop";
         "text/x-markdown" = "dev.zed.Zed.desktop";
 
+        # Web browser
+        "text/html" = "zen-beta.desktop";
+        "application/xhtml+xml" = "zen-beta.desktop";
+        "x-scheme-handler/http" = "zen-beta.desktop";
+        "x-scheme-handler/https" = "zen-beta.desktop";
+        "x-scheme-handler/about" = "zen-beta.desktop";
+        "x-scheme-handler/unknown" = "zen-beta.desktop";
+
         # Web languages
-        "text/html" = "dev.zed.Zed.desktop";
         "text/css" = "dev.zed.Zed.desktop";
         "text/javascript" = "dev.zed.Zed.desktop";
         "application/javascript" = "dev.zed.Zed.desktop";

@@ -15,9 +15,10 @@ in {
 
   config = mkMerge [
     (mkIf cfg.enable {
-      # Ensure SSH is globally available
+      # Ensure SSH and mosh are globally available
       environment.systemPackages = with pkgs; [
         openssh
+        mosh
       ];
 
       services.openssh = {
@@ -31,6 +32,11 @@ in {
         extraConfig = ''
           AllowAgentForwarding = yes
         '';
+      };
+
+      programs.mosh = {
+        enable = true;
+        openFirewall = true;
       };
 
       programs.ssh = {

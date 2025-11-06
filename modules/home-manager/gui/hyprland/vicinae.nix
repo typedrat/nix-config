@@ -57,7 +57,7 @@ in {
       ];
 
       windowrulev2 = [
-        "plugin:hyprbars:nobar, title:Vicina\sLauncher"
+        "plugin:hyprbars:nobar, title:^Vicinae Launcher$"
       ];
 
       bind = [
