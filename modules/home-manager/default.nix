@@ -1,12 +1,10 @@
-{
-  osConfig,
-  ...
-}: {
+{osConfig, ...}: {
   imports = [
     ./cli
     ./gui
     ./theming
     ./accounts.nix
+    ./mime.nix
     ./packages.nix
     ./rclone.nix
     ./sops.nix
