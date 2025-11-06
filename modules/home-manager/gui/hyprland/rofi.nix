@@ -11,7 +11,7 @@
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false)) {
+  config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false) && (hyprlandCfg.launcher or "rofi") == "rofi") {
     programs.rofi = {
       enable = true;
       plugins = with pkgs; [

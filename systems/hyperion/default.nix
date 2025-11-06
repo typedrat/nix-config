@@ -38,6 +38,7 @@
       enable = true;
       gui = {
         enable = true;
+        hyprland.launcher = "vicinae";
         terminal.ghostty.enable = true;
       };
     };

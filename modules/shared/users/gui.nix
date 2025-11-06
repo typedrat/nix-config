@@ -7,6 +7,11 @@
 
       hyprland = {
         enable = options.mkEnableOption "Hyprland window manager configuration" // {default = true;};
+        launcher = options.mkOption {
+          type = types.enum ["rofi" "vicinae"];
+          default = "rofi";
+          description = "Application launcher to use with Hyprland";
+        };
       };
 
       chat = {

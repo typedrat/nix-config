@@ -22,6 +22,7 @@ in {
     ./pyprland.nix
     ./rofi.nix
     ./smart-gaps.nix
+    ./vicinae.nix
     ./wayland-pipewire-idle-inhibit.nix
   ];
 
