@@ -206,7 +206,6 @@ The configuration uses several important flake inputs:
   - `authentik-nix` - Authentik SSO
   - `anime-game-launcher` - Game launcher
   - `zen-browser` - Zen browser
-  - `talhelper` - Talos Kubernetes helper
 
 - **Development Tools**:
   - `terranix` - Terraform configuration in Nix

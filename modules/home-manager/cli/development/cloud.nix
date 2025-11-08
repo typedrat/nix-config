@@ -24,7 +24,6 @@ in {
       fluxcd
       cilium-cli
       istioctl
-      inputs'.talhelper.packages.default
 
       # Infrastructure as Code
       opentofu

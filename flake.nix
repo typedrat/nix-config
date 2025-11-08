@@ -186,12 +186,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    talhelper = {
-      url = "github:budimanjojo/talhelper";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-    };
-
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
