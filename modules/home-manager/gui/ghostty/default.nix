@@ -28,7 +28,6 @@ in {
         window-padding-y = 8;
         background-opacity = 0.625;
         keybind = "shift+enter=text:\\x1b\\r";
-        shell-integration-features = "ssh-terminfo,ssh-env";
       };
     };
   };

@@ -18,8 +18,9 @@ in {
       # Ensure SSH and mosh are globally available
       environment.systemPackages = with pkgs; [
         openssh
-        mosh
       ];
+
+      environment.enableAllTerminfo = true;
 
       services.openssh = {
         enable = true;
