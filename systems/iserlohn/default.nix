@@ -261,6 +261,11 @@
       extraGroups = lib.mkAfter ["libvirtd"];
       gui.enable = false;
     };
+
+    users.sioned = {
+      enable = true;
+      gui.enable = false;
+    };
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

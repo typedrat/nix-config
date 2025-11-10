@@ -13,12 +13,15 @@ in {
     users.users = modules.mkMerge (
       lib.mapAttrsToList (
         username: userCfg: {
-          ${username} = {
-            inherit (userCfg) uid isNormalUser home extraGroups shell;
-            openssh.authorizedKeys.keys = userCfg.sshKeys;
-            # Use SOPS secret for hashed password
-            hashedPasswordFile = config.sops.secrets."users/${username}/hashedPassword".path;
-          };
+          ${username} =
+            {
+              inherit (userCfg) uid isNormalUser home extraGroups shell;
+              openssh.authorizedKeys.keys = userCfg.sshKeys;
+            }
+            // lib.optionalAttrs (config.sops.secrets ? "users/${username}/hashedPassword") {
+              # Use SOPS secret for hashed password if it exists
+              hashedPasswordFile = config.sops.secrets."users/${username}/hashedPassword".path;
+            };
         }
       )
       enabledUsers
