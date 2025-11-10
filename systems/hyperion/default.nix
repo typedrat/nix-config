@@ -18,7 +18,24 @@
       steam.enable = true;
     };
 
-    gui.enable = true;
+    gui = {
+      enable = true;
+      hyprland = {
+        monitors = [
+          "DP-2,3840x2160@60.0,0x1080,1.0"
+          "HDMI-A-1,3840x2160@60.0,960x0,2.0"
+        ];
+        workspaces = [
+          "1, monitor:DP-2, persistent=true"
+          "2, monitor:DP-2, persistent=true"
+          "3, monitor:DP-2, persistent=true"
+          "4, monitor:DP-2, persistent=true"
+          "5, monitor:DP-2, persistent=true"
+          "6, monitor:DP-2, persistent=true"
+          "name:tv, monitor:HDMI-A-1, persistent=true"
+        ];
+      };
+    };
     theming.fonts.enableGoogleFonts = false;
     hardware.openrgb.enable = true;
     java.enable = true;

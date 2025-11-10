@@ -32,17 +32,19 @@
           };
         }
       )
-      # Auto-configure home-manager for all rat.users
+      # Auto-configure home-manager for enabled rat.users only
       (
         {
           lib,
           config,
           ...
-        }: {
+        }: let
+          enabledUsers = lib.filterAttrs (_: userCfg: userCfg.enable) config.rat.users;
+        in {
           config.home-manager.users = lib.mkMerge (
             lib.mapAttrsToList
             (username: _: {${username} = {imports = [];};})
-            config.rat.users
+            enabledUsers
           );
         }
       )

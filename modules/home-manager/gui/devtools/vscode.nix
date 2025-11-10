@@ -54,7 +54,7 @@ in {
           "workbench.iconTheme" = "catppuccin-frappe";
 
           "cline.chromeExecutablePath" = lib.getExe config.programs.chromium.package;
-          "dev.containers.dockerSocketPath" = "/run/user/${builtins.toString osConfig.users.users.awilliams.uid}/docker.sock";
+          "dev.containers.dockerSocketPath" = "/run/user/${builtins.toString osConfig.users.users.${config.home.username}.uid}/docker.sock";
           "mise.checkForNewMiseVersion" = false;
           "nix.enableLanguageServer" = true;
           "nix.serverPath" = "nixd";

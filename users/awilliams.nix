@@ -18,6 +18,86 @@
     cli.enable = true;
     theming.enable = true;
 
+    # Git configuration
+    git = {
+      name = "Alexis Williams";
+      email = "alexis@typedr.at";
+    };
+
+    # Email accounts
+    email.accounts = {
+      Personal = {
+        address = "alexis@typedr.at";
+        realName = "Alexis Williams";
+        primary = true;
+        flavor = "gmail.com";
+      };
+
+      Backup = {
+        address = "typedrat@gmail.com";
+        realName = "Alexis Williams";
+        flavor = "gmail.com";
+      };
+
+      Work = {
+        address = "alexis@synapdeck.com";
+        realName = "Alexis Williams";
+        flavor = "gmail.com";
+      };
+    };
+
+    # Rclone remotes
+    rclone.remotes = {
+      b2 = {
+        type = "b2";
+        config = {};
+        secrets = {
+          # Secret names that will be resolved to paths by the home-manager module
+          account = "b2/keyId";
+          key = "b2/applicationKey";
+        };
+      };
+
+      workdrive = {
+        type = "drive";
+        config = {
+          service_account_file = "work-gdrive-sa-key";
+          impersonate = "alexis@synapdeck.com";
+          scope = "drive";
+        };
+      };
+
+      workdrive-shared = {
+        type = "drive";
+        config = {
+          service_account_file = "work-gdrive-sa-key";
+          impersonate = "alexis@synapdeck.com";
+          scope = "drive";
+          team_drive = "0AEjPQYC7XEWcUk9PVA";
+        };
+      };
+
+      iserlohn-media = {
+        type = "sftp";
+        config = {
+          host = "iserlohn.lan";
+          user = "awilliams";
+          key_file = "id_rsa";
+          path = "/mnt/media";
+        };
+        mount = {
+          enable = true;
+          path = "mnt/iserlohn-media";
+        };
+      };
+    };
+
+    # Environment variables
+    environment.variables = {
+      VIZIO_IP = "viziocastdisplay.lan";
+      VIZIO_AUTH = "Zmge7tbkiz";
+    };
+
     mime = {
       enable = true;
       defaultApplications = {

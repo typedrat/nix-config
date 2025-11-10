@@ -12,6 +12,32 @@
           default = "rofi";
           description = "Application launcher to use with Hyprland";
         };
+
+        monitors = options.mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Monitor configuration strings for Hyprland";
+          example = [
+            "DP-2,3840x2160@60.0,0x1080,1.0"
+            "HDMI-A-1,3840x2160@60.0,960x0,2.0"
+          ];
+        };
+
+        workspaces = options.mkOption {
+          type = types.listOf types.str;
+          default = [];
+          description = "Workspace configuration strings for Hyprland";
+          example = [
+            "1, monitor:DP-2, persistent=true"
+            "2, monitor:DP-2, persistent=true"
+          ];
+        };
+
+        useHostDefaults = options.mkOption {
+          type = types.bool;
+          default = true;
+          description = "Whether to use host default monitor/workspace configuration when user config is empty";
+        };
       };
 
       chat = {

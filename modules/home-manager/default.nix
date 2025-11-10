@@ -1,4 +1,15 @@
-{osConfig, ...}: {
+{
+  config,
+  osConfig,
+  lib,
+  ...
+}: let
+  inherit (lib.modules) mkIf mkMerge;
+  inherit (config.home) username;
+  userCfg = osConfig.rat.users.${username} or {};
+  gitCfg = userCfg.git or {};
+  envCfg = userCfg.environment or {};
+in {
   imports = [
     ./cli
     ./gui
@@ -8,49 +19,63 @@
     ./packages.nix
     ./rclone.nix
     ./sops.nix
+    ./user-sops-secrets.nix
   ];
 
-  config = {
-    # Trim old Nix generations to free up space.
-    nix.gc = {
-      automatic = true;
-      persistent = true;
-      dates = "daily";
-      options = "--delete-older-than 30d";
-    };
+  config = mkMerge [
+    {
+      # Trim old Nix generations to free up space.
+      nix.gc = {
+        automatic = true;
+        persistent = true;
+        dates = "daily";
+        options = "--delete-older-than 30d";
+      };
 
-    systemd.user.sessionVariables = {
-      SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-      TZ = osConfig.time.timeZone;
-      VIZIO_IP = "viziocastdisplay.lan";
-      VIZIO_AUTH = "Zmge7tbkiz";
-    };
+      systemd.user.sessionVariables = mkMerge [
+        {
+          SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+          TZ = osConfig.time.timeZone;
+        }
+        # User-specific environment variables
+        (mkIf (envCfg.variables or {} != {}) envCfg.variables)
+      ];
 
-    programs.home-manager.enable = true;
-    programs.git = {
-      enable = true;
-      lfs.enable = true;
+      programs.home-manager.enable = true;
+      services.ssh-agent.enable = true;
 
-      settings = {
-        user = {
-          name = "Alexis Williams";
-          email = "alexis@typedr.at";
+      # Nicely reload system units when changing configs
+      systemd.user.startServices = "sd-switch";
+
+      home.stateVersion = "25.05";
+    }
+
+    # Git configuration (only if user has configured it)
+    (mkIf (gitCfg.name != null && gitCfg.email != null) {
+      programs.git = {
+        enable = true;
+        lfs.enable = true;
+
+        signing = mkIf (gitCfg.signing.key != null) {
+          key = gitCfg.signing.key;
+          signByDefault = gitCfg.signing.signByDefault;
         };
 
-        init = {
-          defaultBranch = "master";
-        };
+        settings = {
+          user = {
+            name = gitCfg.name;
+            email = gitCfg.email;
+          };
 
-        push = {
-          autoSetupRemote = true;
+          init = {
+            defaultBranch = "master";
+          };
+
+          push = {
+            autoSetupRemote = true;
+          };
         };
       };
-    };
-    services.ssh-agent.enable = true;
-
-    # Nicely reload system units when changing configs
-    systemd.user.startServices = "sd-switch";
-
-    home.stateVersion = "25.05";
-  };
+    })
+  ];
 }
