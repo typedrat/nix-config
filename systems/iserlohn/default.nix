@@ -219,6 +219,9 @@
           # ESPHome
           "esphome"
 
+          # Magic Home
+          "flux_led"
+
           # Jellyfin
           "jellyfin"
 
