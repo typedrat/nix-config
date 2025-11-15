@@ -14,6 +14,7 @@
 in {
   imports = [
     ./cloud.nix
+    ./git-spice.nix
     ./languages.nix
     ./nix-tools.nix
   ];
