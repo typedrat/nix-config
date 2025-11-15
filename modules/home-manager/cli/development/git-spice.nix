@@ -18,10 +18,17 @@ in {
     programs.zsh.plugins = [
       {
         name = "git-spice-completions";
-        src = pkgs.runCommand "git-spice-zsh-completion" {} ''
-          mkdir -p $out
-          ${lib.getExe pkgs.git-spice} shell completion zsh > $out/_gs
-        '';
+
+        src =
+          pkgs.runCommandWith {
+            name = "git-spice-zsh-completion";
+            derivationArgs = {
+              nativeBuildInputs = [pkgs.gitMinimal];
+            };
+          } ''
+            mkdir -p $out
+            ${lib.getExe pkgs.git-spice} shell completion zsh > $out/_gs
+          '';
       }
     ];
   };

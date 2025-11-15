@@ -30,6 +30,12 @@
       url = "https://github.com/NixOS/nixpkgs/pull/350065.diff";
       flake = false;
     };
+
+    # remove when NixOS/nixpkgs#461461 is merged
+    nixpkgs-patch-fix-461452 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/461461.diff";
+      flake = false;
+    };
     #endregion
 
     #region `flake-parts`
