@@ -17,6 +17,11 @@ in {
 
     programs.bottom.enable = true;
 
+    programs.difftastic = {
+      enable = true;
+      git.enable = true;
+    };
+
     programs.direnv = {
       enable = true;
       enableZshIntegration = true;
@@ -47,6 +52,8 @@ in {
     programs.jq.enable = true;
 
     programs.lazygit.enable = true;
+
+    programs.mergiraf.enable = true;
 
     programs.nix-index = {
       enable = true;
