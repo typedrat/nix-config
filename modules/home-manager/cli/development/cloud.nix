@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  inputs',
   pkgs,
   lib,
   ...
@@ -17,6 +16,7 @@ in {
       google-cloud-sdk
       aws-vault
       awscli2
+      ssm-session-manager-plugin
 
       # Kubernetes tools
       kubectl
