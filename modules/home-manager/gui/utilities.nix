@@ -18,7 +18,6 @@ in {
       waypipe
       wev
       self'.packages.xcursor-viewer
-      self'.packages.zmk-studio
     ];
   };
 }
