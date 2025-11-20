@@ -39,6 +39,9 @@
       # Magic Home
       "flux_led"
 
+      # Homekit
+      "homekit"
+
       # Jellyfin
       "jellyfin"
 
