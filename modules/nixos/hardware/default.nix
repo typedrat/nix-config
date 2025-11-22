@@ -6,6 +6,7 @@ in {
     ./bluetooth.nix
     ./openrgb.nix
     ./udisks2.nix
+    ./usbmuxd.nix
   ];
 
   options.rat.hardware.network.mainInterface = options.mkOption {

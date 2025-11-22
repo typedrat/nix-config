@@ -38,6 +38,7 @@
     };
     theming.fonts.enableGoogleFonts = false;
     hardware.openrgb.enable = true;
+    hardware.usbmuxd.enable = true;
     java.enable = true;
     nix-ld.enable = true;
     polkit.unprivilegedPowerManagement = true;
