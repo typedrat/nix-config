@@ -58,7 +58,7 @@
               - name: TRaSH+ 4K
                 score: 500
           - trash_ids:
-              - 9b27ab6498ec0f31a3353992e19434ca # DV (WEBDL)
+              - 9b27ab6498ec0f31a3353992e19434ca # DV (w/o HDR fallback)
             assign_scores_to:
               - name: TRaSH+ 4K
                 score: -10000
@@ -102,6 +102,12 @@
             assign_scores_to:
               - name: TRaSH+ 4K
                 score: 80
+          - trash_ids:
+              - d9e511921c8cedc7282e291b0209cdc5 # ATV
+              - da393fd4e2c0cce7c9dc2669c43e0593 # ROKU
+            assign_scores_to:
+              - name: TRaSH+ 4K
+                score: 75
           - trash_ids:
               - d660701077794679fd59e8bdf4ce3a29 # AMZN
             assign_scores_to:
@@ -251,37 +257,122 @@
           - template: radarr-quality-definition-movie
           - template: radarr-quality-profile-remux-web-2160p
           - template: radarr-custom-formats-remux-web-2160p
+          # SQP-3 Audio Profile Templates
+          - template: radarr-quality-definition-sqp-uhd
+          - template: radarr-quality-profile-sqp-3
+          - template: radarr-custom-formats-sqp-3
 
         custom_formats:
           - trash_ids:
+              - 9adef5f5c226e71a25b909872d5eb6c2 # Sing-Along Versions
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+                score: -10000
+          # Audio Formats - scored differently for each profile
+          - trash_ids:
               - 496f355514737f7d83bf7aa4d24f8169 # TrueHD Atmos
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 5000
+          - trash_ids:
               - 2f22d89048b01681dde8afe203bf2e95 # DTS X
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 4500
+          - trash_ids:
               - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
               - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 3000
+          - trash_ids:
               - 3cafb66171b47f226146a0770576870f # TrueHD
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 2750
+          - trash_ids:
               - dcf3ec6938fa32445f590a4da84256cd # DTS-HD MA
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 2500
+          - trash_ids:
               - a570d4a0e56a2874b64e5bfa55202a1b # FLAC
               - e7c2fcae07cbada050a0af3357491d7b # PCM
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 2250
+          - trash_ids:
               - 8e109e50e0a0b83a5098b056e13bf6db # DTS-HD HRA
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 2000
+          - trash_ids:
               - 185f1dd7264c4562b9022d963ac37424 # DD+
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 1750
+          - trash_ids:
               - f9f847ac70a0af62ea4a08280b859636 # DTS-ES
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 1500
+          - trash_ids:
               - 1c1a4c5e823891c75bc50380a6866f73 # DTS
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 1250
+          - trash_ids:
               - 240770601cc226190c367ef59aba7463 # AAC
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 1000
+          - trash_ids:
               - c2998bd0d90ed5621d8df281e839436e # DD
             assign_scores_to:
               - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 750
+          # Movie Versions - SQP-3 scores are commented out (optional)
           - trash_ids:
               - 0f12c086e289cf966fa5948eac571f44 # Hybrid
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 100
+          - trash_ids:
               - 570bc9ebecd92723d2d21500f4be314c # Remaster
               - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
               - e0c07d59beb37348e975a930d5e50319 # Criterion Collection
               - 9d27d9d2181838f76dee150882bdc58c # Masters of Cinema
               - db9b4c4b53d312a3ca5f1378f6440fc9 # Vinegar Syndrome
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 25
+          - trash_ids:
               - 957d0f44b592285f26449575e8b1167e # Special Edition
+            assign_scores_to:
+              - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 125
+          - trash_ids:
               - eecf3a857724171f968a66cb5719e152 # IMAX
               - 9f6cbff8cfe4ebbc1bde14c7b7bec0de # IMAX Enhanced
             assign_scores_to:
               - name: Remux + WEB 2160p
+              - name: SQP-3
+                score: 800
           - trash_ids:
               - b6832f586342ef70d9c128d40c07b872 # Bad Dual Groups
               - cc444569854e9de0b084ab2b8b1532b2 # Black and White Editions
@@ -314,7 +405,7 @@
         api_key: ${config.sops.placeholder."configarr/radarr-anime/apiKey"}
 
         include:
-          - template: radarr-quality-definition-movie
+          - template: radarr-quality-definition-anime
           - template: radarr-quality-profile-anime
           - template: radarr-custom-formats-anime
 
