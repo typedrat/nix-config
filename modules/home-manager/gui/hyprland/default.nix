@@ -16,13 +16,17 @@
   monitorConfig =
     if (hyprlandCfg.monitors or []) != []
     then hyprlandCfg.monitors
-    else if (hyprlandCfg.useHostDefaults or true) then hostHyprlandCfg.monitors or [] else [];
+    else if (hyprlandCfg.useHostDefaults or true)
+    then hostHyprlandCfg.monitors or []
+    else [];
 
   # Determine workspace configuration: user config if set, else host defaults if enabled
   workspaceConfig =
     if (hyprlandCfg.workspaces or []) != []
     then hyprlandCfg.workspaces
-    else if (hyprlandCfg.useHostDefaults or true) then hostHyprlandCfg.workspaces or [] else [];
+    else if (hyprlandCfg.useHostDefaults or true)
+    then hostHyprlandCfg.workspaces or []
+    else [];
 in {
   imports = [
     ./hyprlock

@@ -6,7 +6,6 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.home-assistant;
   mqttCfg = cfg.mqtt;
-  haCfg = config.services.home-assistant;
 in {
   options.rat.services.home-assistant.mqtt = {
     enable = options.mkEnableOption "MQTT integration for Home Assistant";

@@ -11,15 +11,18 @@
   emailCfg = userCfg.email or {};
   emailAccounts = emailCfg.accounts or {};
 
-  makeEmailAccount = name: accountCfg: let
+  makeEmailAccount = _name: accountCfg: let
     # Compute userName, defaulting to address if userName is null or not set
-    finalUserName = if (accountCfg.userName or null) != null then accountCfg.userName else accountCfg.address;
+    finalUserName =
+      if (accountCfg.userName or null) != null
+      then accountCfg.userName
+      else accountCfg.address;
   in {
-    address = accountCfg.address;
-    realName = accountCfg.realName;
-    primary = accountCfg.primary;
+    inherit (accountCfg) address;
+    inherit (accountCfg) realName;
+    inherit (accountCfg) primary;
     userName = finalUserName;
-    flavor = accountCfg.flavor;
+    inherit (accountCfg) flavor;
 
     # Set smtp configuration to prevent git sendemail from using null values
     smtp = {

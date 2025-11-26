@@ -80,12 +80,12 @@ in {
 
         listeners = [
           {
-            port = config.links.mosquitto.port;
+            inherit (config.links.mosquitto) port;
             address = "127.0.0.1";
 
             users =
               lib.mapAttrs (
-                name: userCfg: {
+                _name: userCfg: {
                   inherit (userCfg) passwordFile acl;
                 }
               )

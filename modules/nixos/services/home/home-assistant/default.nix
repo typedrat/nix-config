@@ -36,7 +36,7 @@ in {
 
     extraPackages = options.mkOption {
       type = types.functionTo (types.listOf types.package);
-      default = ps: [];
+      default = _ps: [];
       defaultText = "ps: []";
       description = ''
         Extra Python packages to make available to Home Assistant.
@@ -105,7 +105,7 @@ in {
       services.home-assistant = {
         enable = true;
         inherit (cfg) extraComponents extraPackages customComponents customLovelaceModules;
-        config = cfg.config;
+        inherit (cfg) config;
       };
 
       networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [config.links.home-assistant.port];

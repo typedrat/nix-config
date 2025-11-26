@@ -57,14 +57,14 @@ in {
         lfs.enable = true;
 
         signing = mkIf (gitCfg.signing.key != null) {
-          key = gitCfg.signing.key;
-          signByDefault = gitCfg.signing.signByDefault;
+          inherit (gitCfg.signing) key;
+          inherit (gitCfg.signing) signByDefault;
         };
 
         settings = {
           user = {
-            name = gitCfg.name;
-            email = gitCfg.email;
+            inherit (gitCfg) name;
+            inherit (gitCfg) email;
           };
 
           init = {

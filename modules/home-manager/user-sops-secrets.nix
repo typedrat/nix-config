@@ -6,7 +6,6 @@
 }: let
   inherit (lib.modules) mkIf;
   inherit (config.home) username;
-  userCfg = osConfig.rat.users.${username} or {};
 
   # Check if user needs B2 secrets
   needsB2Secrets = username == "awilliams";

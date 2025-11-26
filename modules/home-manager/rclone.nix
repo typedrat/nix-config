@@ -14,36 +14,42 @@
 
   # Resolve secret names to actual sops secret paths
   resolveSecrets = secrets:
-    lib.attrsets.mapAttrs (name: secretName:
-      config.sops.secrets.${secretName}.path
-    ) secrets;
+    lib.attrsets.mapAttrs (
+      _name: secretName:
+        config.sops.secrets.${secretName}.path
+    )
+    secrets;
 
   # Resolve file paths in config (e.g., key_file, service_account_file)
   resolveConfigPaths = cfg:
-    lib.attrsets.mapAttrs (name: value:
-      if name == "key_file" && !lib.strings.hasPrefix "/" value
-      then "${config.home.homeDirectory}/.ssh/${value}"
-      else if name == "service_account_file" && !lib.strings.hasPrefix "/" value && !lib.strings.hasPrefix "config." value
-      then config.sops.secrets.${value}.path
-      else value
-    ) cfg;
+    lib.attrsets.mapAttrs (
+      name: value:
+        if name == "key_file" && !lib.strings.hasPrefix "/" value
+        then "${config.home.homeDirectory}/.ssh/${value}"
+        else if name == "service_account_file" && !lib.strings.hasPrefix "/" value && !lib.strings.hasPrefix "config." value
+        then config.sops.secrets.${value}.path
+        else value
+    )
+    cfg;
 
   # Transform user-configured remotes to rclone format
-  makeRcloneRemote = name: remoteCfg: {
-    config = (resolveConfigPaths remoteCfg.config) // {type = remoteCfg.type;};
+  makeRcloneRemote = _name: remoteCfg: {
+    config = (resolveConfigPaths remoteCfg.config) // {inherit (remoteCfg) type;};
     secrets = resolveSecrets remoteCfg.secrets;
   };
 
   # Filter remotes that should be mounted
-  mountedRemotes = filterAttrs (name: remote: remote.mount.enable) rcloneRemotes;
+  mountedRemotes = filterAttrs (_name: remote: remote.mount.enable) rcloneRemotes;
 in {
   config = mkIf (rcloneRemotes != {}) {
     programs.rclone = {
       enable = true;
-      remotes = mapAttrs' (name: remoteCfg: {
-        name = name;
-        value = makeRcloneRemote name remoteCfg;
-      }) rcloneRemotes;
+      remotes =
+        mapAttrs' (name: remoteCfg: {
+          inherit name;
+          value = makeRcloneRemote name remoteCfg;
+        })
+        rcloneRemotes;
     };
 
     systemd.user.services =
