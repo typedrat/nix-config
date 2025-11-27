@@ -85,14 +85,6 @@ in {
         monitor = monitorConfig;
         workspace = workspaceConfig;
 
-        windowrulev2 = [
-          "float, class:xdg-desktop-portal-gtk"
-          "float, class:[Ss]team, title:negative:Steam"
-          "float, class:.*blueman.*"
-          "float, class:.*Qalculate.*"
-          "monitor HDMI-A-1, class:mpv"
-        ];
-
         bind = [
           "$main_mod&SHIFT,left,workspace,r-1"
           "$main_mod&SHIFT,right,workspace,r+1"
@@ -145,6 +137,39 @@ in {
           enable_anr_dialog = false;
         };
       };
+
+      extraConfig = ''
+        windowrule {
+          name = float-xdg-desktop-portal-gtk
+          match:class = xdg-desktop-portal-gtk
+          float = on
+        }
+
+        windowrule {
+          name = float-blueman
+          match:class = .*blueman.*
+          float = on
+        }
+
+        windowrule {
+          name = float-qalculate
+          match:class = .*Qalculate.*
+          float = on
+        }
+
+        windowrule {
+          name = float-steam-windows
+          match:class = [Ss]team
+          match:title = ^((?!Steam).)*$
+          float = on
+        }
+
+        windowrule {
+          name = mpv-to-hdmi
+          match:class = mpv
+          monitor = HDMI-A-1
+        }
+      '';
     };
 
     systemd.user.sessionVariables = {

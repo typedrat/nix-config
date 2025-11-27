@@ -23,10 +23,12 @@ in {
       };
     };
 
-    wayland.windowManager.hyprland.settings = {
-      windowrulev2 = [
-        "pseudo, class:.*fcitx.*"
-      ];
-    };
+    wayland.windowManager.hyprland.extraConfig = ''
+      windowrule {
+        name = fcitx-pseudo
+        match:class = .*fcitx.*
+        pseudo = on
+      }
+    '';
   };
 }

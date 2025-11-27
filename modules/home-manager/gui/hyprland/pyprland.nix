@@ -87,13 +87,25 @@ in {
         };
       };
 
-      wayland.windowManager.hyprland.settings = {
-        windowrulev2 = [
-          "float, class:[Ss]potify"
-          "float, class:ncspot"
-          "float, class:com.saivert.pwvucontrol"
-        ];
-      };
+      wayland.windowManager.hyprland.extraConfig = ''
+        windowrule {
+          name = float-spotify
+          match:class = [Ss]potify
+          float = on
+        }
+
+        windowrule {
+          name = float-ncspot
+          match:class = ncspot
+          float = on
+        }
+
+        windowrule {
+          name = float-pwvucontrol
+          match:class = com.saivert.pwvucontrol
+          float = on
+        }
+      '';
     })
 
     (modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false) && (hyprlandCfg.launcher or "rofi") == "rofi") {

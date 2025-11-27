@@ -42,23 +42,41 @@ in {
       };
     };
 
-    wayland.windowManager.hyprland.settings = {
-      layerrule = [
-        "blur, vicinae"
-        "ignorealpha 0, vicinae"
-        "noanim, vicinae"
-      ];
+    wayland.windowManager.hyprland = {
+      settings = {
+        bind = [
+          "$main_mod, space, exec, vicinae toggle"
+          "$main_mod, b, exec, vicinae vicinae://extensions/vicinae/wm/switch-windows"
+          "$main_mod, v, exec, vicinae vicinae://extensions/vicinae/clipboard/history"
+          "$main_mod&SHIFT, period, exec, vicinae vicinae://extensions/vicinae/vicinae/search-emojis"
+        ];
+      };
 
-      windowrulev2 = [
-        "plugin:hyprbars:nobar, title:^Vicinae Launcher$"
-      ];
+      extraConfig = ''
+        layerrule {
+          name = vicinae-blur
+          match:namespace = vicinae
+          blur = on
+        }
 
-      bind = [
-        "$main_mod, space, exec, vicinae toggle"
-        "$main_mod, b, exec, vicinae vicinae://extensions/vicinae/wm/switch-windows"
-        "$main_mod, v, exec, vicinae vicinae://extensions/vicinae/clipboard/history"
-        "$main_mod&SHIFT, period, exec, vicinae vicinae://extensions/vicinae/vicinae/search-emojis"
-      ];
+        layerrule {
+          name = vicinae-ignorealpha
+          match:namespace = vicinae
+          ignore_alpha = 0
+        }
+
+        layerrule {
+          name = vicinae-noanim
+          match:namespace = vicinae
+          no_anim = on
+        }
+
+        windowrule {
+          name = vicinae-no-hyprbars
+          match:title = ^Vicinae Launcher$
+          hyprbars:no_bar = 1
+        }
+      '';
     };
   };
 }
