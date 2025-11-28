@@ -11,6 +11,7 @@
     ./theming
     ./virtualisation
     ./alien.nix
+    ./appimage.nix
     ./impermanence.nix
     ./java.nix
     ./nix.nix

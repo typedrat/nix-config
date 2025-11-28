@@ -36,6 +36,7 @@
         ];
       };
     };
+
     theming.fonts.enableGoogleFonts = false;
     hardware.openrgb.enable = true;
     hardware.usbmuxd.enable = true;
@@ -58,6 +59,48 @@
         enable = true;
         hyprland.launcher = "vicinae";
         terminal.ghostty.enable = true;
+
+        games.retroarch = {
+          enable = true;
+          cores = libretro:
+            with libretro; [
+              atari800
+              beetle-lynx
+              beetle-ngp
+              beetle-pce
+              beetle-pcfx
+              beetle-psx-hw
+              beetle-saturn
+              beetle-supergrafx
+              beetle-vb
+              blastem
+              bluemsx
+              bsnes-hd
+              dolphin
+              fbneo
+              flycast
+              freeintv
+              fuse
+              genesis-plus-gx
+              hatari
+              melonds
+              mesen
+              mgba
+              np2kai
+              opera
+              pcsx2
+              ppsspp
+              puae
+              sameboy
+              vice-xvic
+              vice-xcbm2
+              vice-x64sc
+              vice-x128
+              vice-xpet
+              same_cdi
+              stella
+            ];
+        };
       };
     };
   };

@@ -57,6 +57,25 @@
         enable = options.mkEnableOption "gaming applications" // {default = true;};
         xmage.enable = options.mkEnableOption "XMage" // {default = true;};
         sgdboop.enable = options.mkEnableOption "SGDBoop" // {default = true;};
+        retroarch = {
+          enable = options.mkEnableOption "RetroArch emulator frontend";
+          cores = options.mkOption {
+            type = types.functionTo (types.listOf types.package);
+            default = _: [];
+            example = options.literalExpression ''
+              libretro: with libretro; [
+                beetle-psx-hw
+                mgba
+                snes9x
+                mupen64plus
+              ]
+            '';
+            description = ''
+              Function that takes the libretro attribute set and returns a list of cores to install.
+              Available cores can be found in pkgs.libretro.
+            '';
+          };
+        };
       };
 
       media = {

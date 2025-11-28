@@ -137,6 +137,7 @@
 
             bitwarden
             catppuccin-web-file-icons
+            downthemall
             indie-wiki-buddy
             metamask
             offline-qr-code-generator

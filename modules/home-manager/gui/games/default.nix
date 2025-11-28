@@ -12,6 +12,7 @@
   gamesCfg = guiCfg.games or {};
 in {
   imports = [
+    ./retroarch.nix
     ./sgdboop.nix
     ./xmage.nix
   ];
@@ -20,10 +21,9 @@ in {
     home.packages = with pkgs; [
       bottles
       gamescope
-      legendary-gl
-      r2modman
+      igir
+      pegasus-frontend
       wineWowPackages.stable
-      # heroic  # broken
     ];
   };
 }
