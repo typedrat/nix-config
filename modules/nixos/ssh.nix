@@ -17,10 +17,10 @@ in {
     (mkIf cfg.enable {
       # Ensure SSH and mosh are globally available
       environment.systemPackages = with pkgs; [
+        ghostty.terminfo
+        wezterm.terminfo
         openssh
       ];
-
-      environment.enableAllTerminfo = true;
 
       services.openssh = {
         enable = true;
