@@ -34,6 +34,7 @@ in {
       jd-diff-patch
       jq
       llm
+      openssl
       pv
       waypipe
       wl-clipboard

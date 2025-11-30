@@ -74,6 +74,7 @@ in {
       };
 
       services.redis.servers.authentik = {
+        enable = true;
         port = lib.mkForce config.links.authentik-redis.port;
       };
 

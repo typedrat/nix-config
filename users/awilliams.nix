@@ -77,14 +77,21 @@
         };
       };
 
-      iserlohn-media = {
+      iserlohn = {
         type = "sftp";
         config = {
-          host = "iserlohn.lan";
+          host = "iserlohn.thisratis.gay";
           user = "awilliams";
-          key_file = "id_rsa";
-          path = "/mnt/media";
+          key_file = "id_ed25519";
         };
+      };
+
+      iserlohn-media = {
+        type = "alias";
+        config = {
+          remote = "iserlohn:/mnt/media";
+        };
+
         mount = {
           enable = true;
           path = "mnt/iserlohn-media";

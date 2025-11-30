@@ -8,6 +8,7 @@
     ./prowlarr.nix
     ./radarr.nix
     ./radarr-anime.nix
+    ./romm.nix
     ./shoko.nix
     ./sonarr.nix
     ./sonarr-anime.nix

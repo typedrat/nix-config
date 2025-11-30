@@ -91,6 +91,28 @@
       prowlarr.enable = true;
       radarr.enable = true;
       radarr.anime.enable = true;
+
+      romm = {
+        enable = true;
+
+        storageDir = "/mnt/media/games";
+        igir = {
+          enable = true;
+          patchesDir = "/mnt/media/games/patches";
+        };
+
+        metadataProviders = {
+          hasheous.enable = true;
+          igdb.enable = true;
+          screenscraper.enable = true;
+          steamgriddb.enable = true;
+          retroachievements.enable = true;
+
+          flashpoint.enable = true;
+          hltb.enable = true;
+        };
+      };
+
       shoko.enable = true;
       sonarr.enable = true;
       sonarr.anime.enable = true;

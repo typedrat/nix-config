@@ -51,7 +51,7 @@
     options = ["fmask=0022" "dmask=0022"];
   };
 
-  boot.supportedFilesystems = ["ntfs"];
+  boot.supportedFilesystems = ["ntfs" "zfs"];
 
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-uuid/5A8CF3318CF305F3";
