@@ -10,13 +10,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "shoko-webui-dev";
-  version = "2.3.0-dev.19";
+  version = "2.4.0-dev.2";
 
   src = fetchFromGitHub {
     owner = "ShokoAnime";
     repo = "Shoko-WebUI";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-EuGApreRIqlCC5tla4qjSOD7fWv92oyn415Vh8uQYYk=";
+    hash = "sha256-jaRuH087pxHFAGYjzatPylo7bXFz8T0/Bn0MwXBBKro=";
     leaveDotGit = true;
   };
 
@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
     fetcherVersion = 2;
-    hash = "sha256-kek68gwwVdH+GdG8aUSW1oUSmmBChpJ8v5Kcr8TXV9o=";
+    hash = "sha256-lSLD2CLUojDs6TnDr4915kpyQKKYHJxjk/42av1hqVI=";
   };
 
   buildPhase = ''
