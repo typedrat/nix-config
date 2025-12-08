@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dispatcharr"
+version = "0.12.0"
+description = "IPTV stream management and dispatching application"
+requires-python = ">=3.11"
+
+[project.scripts]
+dispatcharr = "dispatcharr.manage:main"
+
+[tool.setuptools]
+py-modules = ["version"]
+
+[tool.setuptools.packages.find]
+include = ["apps*", "core*", "dispatcharr*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.html", "*.css", "*.js", "*.json", "*.png", "*.ico", "*.svg"]

@@ -17,6 +17,7 @@ in {
       unzip
       xz
       zip
+      p7zip
 
       # Crypto and secrets
       age
@@ -29,6 +30,7 @@ in {
       tokei
 
       # CLI utilities
+      aria2
       cachix
       gdu
       jd-diff-patch
@@ -36,6 +38,7 @@ in {
       llm
       openssl
       pv
+      rename
       waypipe
       wl-clipboard
 

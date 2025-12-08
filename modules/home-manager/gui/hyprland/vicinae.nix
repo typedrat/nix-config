@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  inputs,
   lib,
   ...
 }: let
@@ -11,10 +10,6 @@
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
 in {
-  imports = [
-    inputs.vicinae.homeManagerModules.default
-  ];
-
   config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false) && (hyprlandCfg.launcher or "rofi") == "vicinae") {
     services.vicinae = {
       enable = true;

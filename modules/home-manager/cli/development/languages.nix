@@ -39,7 +39,6 @@ in {
 
       # JavaScript/Node.js
       nodejs
-      corepack
 
       # Java
       jdk

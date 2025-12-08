@@ -87,6 +87,7 @@
       autobrr.enable = true;
       configarr.enable = true;
       cross-seed.enable = true;
+      dispatcharr.enable = true;
       lidarr.enable = true;
       prowlarr.enable = true;
       radarr.enable = true;
@@ -94,12 +95,7 @@
 
       romm = {
         enable = true;
-
-        storageDir = "/mnt/media/games";
-        igir = {
-          enable = true;
-          patchesDir = "/mnt/media/games/patches";
-        };
+        storageDir = "/mnt/media/games/library";
 
         metadataProviders = {
           hasheous.enable = true;
@@ -139,6 +135,11 @@
     users.awilliams = {
       enable = true;
       extraGroups = lib.mkAfter ["libvirtd"];
+      gui.enable = false;
+    };
+
+    users.boldingd = {
+      enable = true;
       gui.enable = false;
     };
 

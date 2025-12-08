@@ -80,7 +80,7 @@
       iserlohn = {
         type = "sftp";
         config = {
-          host = "iserlohn.thisratis.gay";
+          host = "iserlohn.lan";
           user = "awilliams";
           key_file = "id_ed25519";
         };

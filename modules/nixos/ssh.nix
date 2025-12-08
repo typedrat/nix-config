@@ -4,13 +4,24 @@
   pkgs,
   ...
 }: let
-  inherit (lib.options) mkEnableOption;
+  inherit (lib.options) mkEnableOption mkOption;
+  inherit (lib.types) str;
   inherit (lib.modules) mkIf mkMerge;
   cfg = config.rat.ssh;
   impermanenceCfg = config.rat.impermanence;
 in {
   options.rat.ssh = {
     enable = mkEnableOption "ssh" // {default = true;};
+
+    tmux = {
+      enable = mkEnableOption "automatic tmux session attachment for SSH connections" // {default = true;};
+
+      sessionName = mkOption {
+        type = str;
+        default = "main";
+        description = "Name of the tmux session to create or attach to.";
+      };
+    };
   };
 
   config = mkMerge [
@@ -74,6 +85,23 @@ in {
           }
         ];
       };
+    })
+    (mkIf cfg.tmux.enable {
+      environment.systemPackages = [pkgs.tmux];
+
+      programs.bash.interactiveShellInit = ''
+        # Auto-attach to tmux for SSH sessions
+        if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
+          exec ${pkgs.tmux}/bin/tmux new-session -A -s ${cfg.tmux.sessionName}
+        fi
+      '';
+
+      programs.zsh.interactiveShellInit = ''
+        # Auto-attach to tmux for SSH sessions
+        if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
+          exec ${pkgs.tmux}/bin/tmux new-session -A -s ${cfg.tmux.sessionName}
+        fi
+      '';
     })
   ];
 }
