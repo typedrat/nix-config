@@ -151,7 +151,10 @@
       inputs.hyprland.follows = "hyprland";
     };
 
-    pyprland.url = "github:hyprland-community/pyprland";
+    pyprland = {
+      # Workaround for hyprland-community/pyprland#195
+      url = "github:hyprland-community/pyprland/e82637d73207abd634a96ea21fa937455374d131";
+    };
 
     wayland-pipewire-idle-inhibit = {
       url = "github:rafaelrc7/wayland-pipewire-idle-inhibit";

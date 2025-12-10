@@ -128,6 +128,8 @@ in {
         inherit (config.links.grafana-redis) port;
       };
 
+      users.users.redis-grafana.group = lib.mkForce "grafana";
+
       sops.secrets = {
         "grafana/oauth_client_id" = {
           sopsFile = ../../../../secrets/grafana.yaml;

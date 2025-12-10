@@ -11,15 +11,14 @@
   hyprlandCfg = guiCfg.hyprland or {};
 in {
   config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false) && (hyprlandCfg.launcher or "rofi") == "vicinae") {
-    services.vicinae = {
+    programs.vicinae = {
       enable = true;
-      autoStart = true;
-      settings = {
-        theme = {
-          name = "catppuccin-frappe";
-          iconTheme = "Catppuccin Frappé Lavender";
-        };
+      systemd = {
+        enable = true;
+        autoStart = true;
+      };
 
+      settings = {
         font = {
           size = 10.5;
         };

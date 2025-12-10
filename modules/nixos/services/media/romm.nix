@@ -99,6 +99,11 @@ in {
 
   config = modules.mkMerge [
     (modules.mkIf cfg.enable {
+      environment.systemPackages = with pkgs; [
+        igir
+        skyscraper
+      ];
+
       users.users.romm = {
         isSystemUser = true;
         group = "romm";

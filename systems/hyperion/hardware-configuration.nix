@@ -65,6 +65,12 @@
     options = ["rw" "X-mount.mkdir" "uid=${toString config.users.users.awilliams.uid}" "nofail"];
   };
 
+  fileSystems."/mnt/yatsuhiro" = {
+    device = "tank/yatsuhiro";
+    fsType = "zfs";
+    options = ["zfsutil" "nofail"];
+  };
+
   swapDevices = [
     {
       device = "/dev/disk/by-id/nvme-Micron_7450_MTFDKCB960TFR_22323E51305F-part3";
