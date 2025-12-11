@@ -97,6 +97,15 @@
           path = "mnt/iserlohn-media";
         };
       };
+
+      brick = {
+        type = "sftp";
+        config = {
+          host = "brick.lan";
+          user = "root";
+          key_file = "id_ed25519";
+        };
+      };
     };
 
     # Environment variables
