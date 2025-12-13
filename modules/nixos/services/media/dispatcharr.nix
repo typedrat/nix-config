@@ -115,7 +115,7 @@ in {
         content = ''
           # Django
           DJANGO_SETTINGS_MODULE=dispatcharr.settings
-          SECRET_KEY=${config.sops.placeholder."dispatcharr/secret_key"}
+          DJANGO_SECRET_KEY=${config.sops.placeholder."dispatcharr/secret_key"}
 
           # Database Configuration - Unix socket with peer auth
           POSTGRES_DB=dispatcharr

@@ -127,6 +127,21 @@
               }
             ];
           };
+
+          "Noogle" = {
+            definedAliases = ["@ng" "@noog" "@noogle"];
+            urls = [
+              {
+                template = "https://noogle.dev/q";
+                params = [
+                  {
+                    name = "term";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+          };
         };
 
         extensions = {
@@ -135,14 +150,17 @@
           packages = with inputs'.firefox-addons.packages; [
             self'.packages.bypass-paywalls-clean
 
+            augmented-steam
             bitwarden
             catppuccin-web-file-icons
+            consent-o-matic
             downthemall
             indie-wiki-buddy
             metamask
             offline-qr-code-generator
             pwas-for-firefox
             react-devtools
+            return-youtube-dislikes
             sponsorblock
             stylus
             ublock-origin

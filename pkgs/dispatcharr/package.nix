@@ -7,13 +7,13 @@
   nodejs_24,
   streamlink,
 }: let
-  version = "0.13.1";
+  version = "0.14.0";
 
   src = fetchFromGitHub {
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-8uXD1NA1LRGpTdIB0LqaBfhPtrL0bGObG31zBxujfkU=";
+    hash = "sha256-XJBJ7awgS6HViYNCdzIY+sRp8JcQN7P48+CoL2gdmQM=";
     leaveDotGit = true;
   };
 
