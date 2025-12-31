@@ -149,6 +149,7 @@
 
           packages = with inputs'.firefox-addons.packages; [
             self'.packages.bypass-paywalls-clean
+            self'.packages.ttv-lol-pro
 
             augmented-steam
             bitwarden

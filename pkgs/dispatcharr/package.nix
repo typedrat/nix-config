@@ -7,13 +7,13 @@
   nodejs_24,
   streamlink,
 }: let
-  version = "0.14.0";
+  version = "0.15.1";
 
   src = fetchFromGitHub {
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-XJBJ7awgS6HViYNCdzIY+sRp8JcQN7P48+CoL2gdmQM=";
+    hash = "sha256-uehF55cywzuhuh3LLT+rTTLAJwSb3IIuUJOLKq35tcA=";
     leaveDotGit = true;
   };
 
@@ -25,18 +25,10 @@
 
     nodejs = nodejs_24;
 
-    # Patch package-lock.json to use fork with package-lock.json included
-    postPatch = ''
-      substituteInPlace package-lock.json \
-        --replace-fail \
-          '"resolved": "git+ssh://git@github.com/xqq/webworkify-webpack.git"' \
-          '"resolved": "git+ssh://git@github.com/xqq/webworkify-webpack.git#24d1e719b4a6cac37a518b2bb10fe124527ef4ef"'
-    '';
-
     # Peer dependency conflicts with React 19 vs packages expecting React 16-18
     npmFlags = ["--legacy-peer-deps"];
 
-    npmDepsHash = "sha256-Bxp4gJY/1JNSjV/zjvWpLvvmQNM4Uc4A93TUCFrd5Sg=";
+    npmDepsHash = "sha256-9g7Uts6tOHZppSkqI5QjYBgxAHtgz8xKnqUnKzBtMYo=";
     forceGitDeps = true;
     makeCacheWritable = true;
 
@@ -55,43 +47,43 @@ in
     pyproject = true;
 
     postPatch = ''
-      cp ${./pyproject.toml} pyproject.toml
-      cp ${./manage.py} dispatcharr/manage.py
+            cp ${./pyproject.toml} pyproject.toml
+            cp ${./manage.py} dispatcharr/manage.py
 
-      # Patch settings.py to read paths from environment variables
-      substituteInPlace dispatcharr/settings.py \
-        --replace-fail \
-          'STATIC_ROOT = BASE_DIR / "static"' \
-          'STATIC_ROOT = Path(os.environ.get("STATIC_ROOT", BASE_DIR / "static"))' \
-        --replace-fail \
-          'STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontend/dist"),  # React build static files
-]' \
-          'STATICFILES_DIRS = [os.environ.get("STATICFILES_DIRS", os.path.join(BASE_DIR, "frontend/dist"))]' \
-        --replace-fail \
-          'MEDIA_ROOT = BASE_DIR / "media"' \
-          'MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", BASE_DIR / "media"))' \
-        --replace-fail \
-          '"DIRS": [os.path.join(BASE_DIR, "frontend/dist"), BASE_DIR / "templates"],' \
-          '"DIRS": [os.environ.get("TEMPLATE_DIRS", os.path.join(BASE_DIR, "frontend/dist")), BASE_DIR / "templates"],' \
-        --replace-fail \
-          '"django.middleware.security.SecurityMiddleware",' \
-          '"django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",'
+            # Patch settings.py to read paths from environment variables
+            substituteInPlace dispatcharr/settings.py \
+              --replace-fail \
+                'STATIC_ROOT = BASE_DIR / "static"' \
+                'STATIC_ROOT = Path(os.environ.get("STATIC_ROOT", BASE_DIR / "static"))' \
+              --replace-fail \
+                'STATICFILES_DIRS = [
+          os.path.join(BASE_DIR, "frontend/dist"),  # React build static files
+      ]' \
+                'STATICFILES_DIRS = [os.environ.get("STATICFILES_DIRS", os.path.join(BASE_DIR, "frontend/dist"))]' \
+              --replace-fail \
+                'MEDIA_ROOT = BASE_DIR / "media"' \
+                'MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", BASE_DIR / "media"))' \
+              --replace-fail \
+                '"DIRS": [os.path.join(BASE_DIR, "frontend/dist"), BASE_DIR / "templates"],' \
+                '"DIRS": [os.environ.get("TEMPLATE_DIRS", os.path.join(BASE_DIR, "frontend/dist")), BASE_DIR / "templates"],' \
+              --replace-fail \
+                '"django.middleware.security.SecurityMiddleware",' \
+                '"django.middleware.security.SecurityMiddleware",
+          "whitenoise.middleware.WhiteNoiseMiddleware",'
 
-      # Add URL pattern to serve /assets/ from frontend
-      substituteInPlace dispatcharr/urls.py \
-        --replace-fail \
-          'from django.views.generic import TemplateView, RedirectView' \
-          'from django.views.generic import TemplateView, RedirectView
-from django.views.static import serve
-import os' \
-        --replace-fail \
-          '# Catch-all routes should always be last' \
-          '# Serve frontend assets
-    re_path(r"^assets/(?P<path>.*)$", serve, {"document_root": os.environ.get("STATICFILES_DIRS", "frontend/dist") + "/assets"}),
-    re_path(r"^(?P<path>logo\.png|favicon\.ico|vite\.svg)$", serve, {"document_root": os.environ.get("STATICFILES_DIRS", "frontend/dist")}),
-    # Catch-all routes should always be last'
+            # Add URL pattern to serve /assets/ from frontend
+            substituteInPlace dispatcharr/urls.py \
+              --replace-fail \
+                'from django.views.generic import TemplateView, RedirectView' \
+                'from django.views.generic import TemplateView, RedirectView
+      from django.views.static import serve
+      import os' \
+              --replace-fail \
+                '# Catch-all routes should always be last' \
+                '# Serve frontend assets
+          re_path(r"^assets/(?P<path>.*)$", serve, {"document_root": os.environ.get("STATICFILES_DIRS", "frontend/dist") + "/assets"}),
+          re_path(r"^(?P<path>logo\.png|favicon\.ico|vite\.svg)$", serve, {"document_root": os.environ.get("STATICFILES_DIRS", "frontend/dist")}),
+          # Catch-all routes should always be last'
     '';
 
     build-system = with python3Packages; [setuptools];

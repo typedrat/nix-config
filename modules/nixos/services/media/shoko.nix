@@ -1,6 +1,6 @@
 {
   config,
-  self',
+  inputs',
   inputs,
   lib,
   ...
@@ -11,8 +11,6 @@
 
   persistentGroup = "shoko-persist";
 in {
-  # The shoko module is available via nixpkgs patch (PR #350065)
-
   options.rat.services.shoko = {
     enable = options.mkEnableOption "Shoko";
     subdomain = options.mkOption {
@@ -28,8 +26,8 @@ in {
 
       services.shoko = {
         enable = true;
-        package = self'.packages.shoko-dev;
-        webui = self'.packages.shoko-webui-dev;
+        package = inputs'.nanopkgs.packages.shoko;
+        webui = inputs'.nanopkgs.packages.shoko-webui;
       };
 
       systemd.services.shoko = {

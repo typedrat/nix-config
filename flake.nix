@@ -26,10 +26,7 @@
 
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
-    nixpkgs-patch-shoko = {
-      url = "https://github.com/NixOS/nixpkgs/pull/350065.diff";
-      flake = false;
-    };
+
     #endregion
 
     #region `flake-parts`
@@ -49,10 +46,8 @@
 
     #region NixOS Extensions
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
+      url = "github:nix-community/lanzaboote/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
-      # Temporary fix, remove pending nix-community/lanzaboote#485, nix-community/lanzaboote#487
-      inputs.rust-overlay.follows = "lanzaboote-rust-overlay";
     };
 
     lanzaboote-rust-overlay = {
@@ -153,7 +148,7 @@
 
     pyprland = {
       # Workaround for hyprland-community/pyprland#195
-      url = "github:hyprland-community/pyprland/e82637d73207abd634a96ea21fa937455374d131";
+      url = "github:hyprland-community/pyprland";
     };
 
     wayland-pipewire-idle-inhibit = {
@@ -188,6 +183,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nanopkgs = {
+      url = "git+https://git.theless.one/nanoyaki/nanopkgs.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -200,7 +200,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    vscode-extensions = {
+      url = "github:nix-community/nix-vscode-extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     #endregion
   };
 
@@ -337,7 +341,6 @@
 
         apps = let
           nixos-rebuild = pkgs.nixos-rebuild-ng.override {
-            withNgSuffix = false;
             nix = inputs.nix.packages.${system}.default;
           };
 

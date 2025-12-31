@@ -1,6 +1,6 @@
 {
   config,
-  pkgs,
+  inputs',
   lib,
   ...
 }: let
@@ -12,8 +12,10 @@ in {
   config = mkIf config.rat.hardware.openrgb.enable {
     services.hardware.openrgb = {
       enable = true;
-      package = pkgs.openrgb-with-all-plugins;
+      package = inputs'.nanopkgs.packages.openrgb;
     };
+
+    programs.coolercontrol.enable = true;
 
     boot.kernelModules = ["i2c-dev"];
   };

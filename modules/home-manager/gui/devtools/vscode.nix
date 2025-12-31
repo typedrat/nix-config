@@ -9,16 +9,17 @@
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
     programs.vscode = let
+      version = "0.21.0";
+
       pkl-vscode = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
         mktplcRef = {
           name = "pkl-vscode";
-          version = "0.18.2";
+          inherit version;
           publisher = "apple";
         };
         vsix = builtins.fetchurl {
-          url = "https://github.com/apple/pkl-vscode/releases/download/0.18.2/pkl-vscode-0.18.2.vsix";
-          sha256 = "sha256:0lvsf1y9ib05n6idbl0171ncdjb0r01kibp6128k2j8ncxyvpvy3";
-          name = "pkl-vscode-0.18.2.zip";
+          url = "https://github.com/apple/pkl-vscode/releases/download/${version}/pkl-vscode-${version}.vsix";
+          sha256 = "sha256:0jgbsxllqd1vhqzd83vv7bjg2hb951hqg6wflxxxalxvj4zlni79";
         };
       };
     in {
@@ -40,7 +41,6 @@ in {
           mtxr.sqltools-driver-pg
           pkl-vscode
           redhat.vscode-xml
-          rooveterinaryinc.roo-cline
           tamasfe.even-better-toml
         ];
 
