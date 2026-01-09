@@ -40,10 +40,15 @@
     security.sudo.extendedTimeout.enable = true;
     virtualisation.docker.enable = true;
 
+    impermanence = {
+      enable = true;
+      zfs.enable = true;
+    };
+
     zfs = {
       enable = true;
       rootPool = "zpool";
-      rootDataset = "root";
+      rootDataset = "local/root";
     };
 
     # User configuration (system-specific overrides)

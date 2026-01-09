@@ -55,21 +55,31 @@
           xattr = "sa";
           mountpoint = "none";
         };
+        postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zpool/local/root@blank$' || zfs snapshot zpool/local/root@blank";
 
         datasets = {
-          root = {
+          local = {
+            type = "zfs_fs";
+            options.mountpoint = "none";
+          };
+          safe = {
+            type = "zfs_fs";
+            options.mountpoint = "none";
+            options."com.sun:auto-snapshot" = "true";
+          };
+          "local/root" = {
             type = "zfs_fs";
             mountpoint = "/";
           };
-          nix = {
+          "local/nix" = {
             type = "zfs_fs";
             mountpoint = "/nix";
           };
-          var = {
+          "safe/persist" = {
             type = "zfs_fs";
-            mountpoint = "/var";
+            mountpoint = "/persist";
           };
-          home = {
+          "safe/home" = {
             type = "zfs_fs";
             mountpoint = "/home";
           };
@@ -77,4 +87,6 @@
       };
     };
   };
+
+  fileSystems."/persist".neededForBoot = true;
 }
