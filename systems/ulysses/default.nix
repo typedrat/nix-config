@@ -18,8 +18,7 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   networking.hostName = "ulysses";
-  # TODO: Generate a unique hostId with: head -c 8 /dev/urandom | od -A none -t x8 | tr -d ' '
-  networking.hostId = "00000000";
+  networking.hostId = "7e104ef9";
 
   # TODO: Set the correct device path in disko-config.nix
   # disko.devices.disk.main.device = "/dev/disk/by-id/YOUR_DEVICE_ID";
