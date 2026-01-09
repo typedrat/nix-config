@@ -1,10 +1,8 @@
 {
   pkgs,
-  inputs,
   ...
 }: {
   imports = [
-    inputs.nixos-facter-modules.nixosModules.facter
     ./disko-config.nix
     ./nvidia.nix
   ];
