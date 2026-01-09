@@ -8,10 +8,10 @@
     };
 
     nvidia = {
-      open = false;
+      open = true;
       nvidiaPersistenced = true;
       modesetting.enable = true;
-      powerManagement.enable = false;
+      powerManagement.enable = true;
       nvidiaSettings = true;
     };
   };
