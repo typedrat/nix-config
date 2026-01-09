@@ -1,18 +1,436 @@
 {
-  "$schema": "https://raw.githubusercontent.com/numtide/nixos-facter/main/schema/facter.schema.json",
-  "version": 3,
+  "version": 1,
   "system": "x86_64-linux",
-  "virtualisation": null,
+  "virtualisation": "none",
   "hardware": {
-    "bios": null,
-    "cpu": null,
-    "gpu": [],
-    "memory": null,
-    "network": [],
-    "sound": [],
-    "bluetooth": [],
-    "usb_controllers": [],
-    "storage_controllers": [],
-    "input_devices": []
+    "bios": {
+      "apm_info": {
+        "supported": false,
+        "enabled": false,
+        "version": 0,
+        "sub_version": 0,
+        "bios_flags": 0
+      },
+      "vbe_info": {
+        "version": 0,
+        "video_memory": 0
+      },
+      "pnp": false,
+      "pnp_id": 0,
+      "lba_support": false,
+      "low_memory_size": 0,
+      "smbios_version": 775
+    },
+    "bluetooth": [
+      {
+        "index": 99,
+        "attached_to": 117,
+        "class_list": ["usb", "bluetooth"],
+        "bus_type": {"hex": "0086", "name": "USB", "value": 134},
+        "slot": {"bus": 0, "number": 0},
+        "base_class": {"hex": "0115", "name": "Bluetooth Device", "value": 277},
+        "vendor": {"hex": "0489", "name": "Foxconn / Hon Hai", "value": 1161},
+        "device": {"hex": "e110", "name": "Wireless_Device", "value": 57616},
+        "revision": {"hex": "0000", "name": "1.00", "value": 0},
+        "serial": "000000000",
+        "model": "Foxconn / Hon Hai Wireless_Device",
+        "sysfs_id": "/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:0c.0/0000:0b:00.0/usb1/1-12/1-12:1.1",
+        "sysfs_bus_id": "1-12:1.1",
+        "hotplug": "usb",
+        "driver": "btusb",
+        "driver_module": "btusb",
+        "drivers": ["btusb"],
+        "driver_modules": ["btusb"],
+        "module_alias": "usb:v0489pE110d0100dcEFdsc02dp01icE0isc01ip01in01"
+      }
+    ],
+    "cpu": [
+      {
+        "architecture": "x86_64",
+        "vendor_name": "AuthenticAMD",
+        "model_name": "AMD Ryzen 9 9950X3D 16-Core Processor",
+        "family": 26,
+        "model": 68,
+        "stepping": 0,
+        "features": ["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clflush", "mmx", "fxsr", "sse", "sse2", "ht", "syscall", "nx", "mmxext", "fxsr_opt", "pdpe1gb", "rdtscp", "lm", "constant_tsc", "rep_good", "amd_lbr_v2", "nopl", "xtopology", "nonstop_tsc", "cpuid", "extd_apicid", "aperfmperf", "rapl", "pni", "pclmulqdq", "monitor", "ssse3", "fma", "cx16", "sse4_1", "sse4_2", "movbe", "popcnt", "aes", "xsave", "avx", "f16c", "rdrand", "lahf_lm", "cmp_legacy", "svm", "extapic", "cr8_legacy", "abm", "sse4a", "misalignsse", "3dnowprefetch", "osvw", "ibs", "skinit", "wdt", "tce", "topoext", "perfctr_core", "perfctr_nb", "bpext", "perfctr_llc", "mwaitx", "cpb", "cat_l3", "cdp_l3", "hw_pstate", "ssbd", "mba", "perfmon_v2", "ibrs", "ibpb", "stibp", "ibrs_enhanced", "vmmcall", "fsgsbase", "tsc_adjust", "bmi1", "avx2", "smep", "bmi2", "erms", "invpcid", "cqm", "rdt_a", "avx512f", "avx512dq", "adx", "smap", "avx512ifma", "clflushopt", "clwb", "avx512cd", "sha_ni", "avx512bw", "avx512vl", "xsaveopt", "xsavec", "xgetbv1", "xsaves", "cqm_llc", "cqm_occup_llc", "cqm_mbm_total", "cqm_mbm_local", "user_shstk", "avx_vnni", "avx512_bf16", "clzero", "irperf", "xsaveerptr", "rdpru", "wbnoinvd", "cppc", "arat", "npt", "lbrv", "svm_lock", "nrip_save", "tsc_scale", "vmcb_clean", "flushbyasid", "decodeassists", "pausefilter", "pfthreshold", "avic", "v_vmsave_vmload", "vgif", "x2avic", "v_s"],
+        "bugs": ["sysret_ss_attrs", "spectre_v1", "spectre_v2", "spec_store_bypass", "srso", "vmscape"],
+        "power_management": ["ts", "ttp", "tm", "hwpstate", "cpb", "eff_freq_ro", "[13]", "[14]"],
+        "bogo": 8599,
+        "cache": 1024,
+        "units": 32,
+        "page_size": 4096,
+        "physical_id": 0,
+        "siblings": 32,
+        "cores": 16,
+        "fpu": false,
+        "fpu_exception": false,
+        "cpuid_level": 16,
+        "write_protect": false,
+        "tlb_size": 192,
+        "clflush_size": 64,
+        "cache_alignment": 64,
+        "address_sizes": {"physical": "0x30", "virtual": "0x30"}
+      }
+    ],
+    "disk": [
+      {
+        "index": 90,
+        "attached_to": 47,
+        "class_list": ["disk", "block_device", "nvme"],
+        "bus_type": {"hex": "0096", "name": "NVME", "value": 150},
+        "slot": {"bus": 0, "number": 0},
+        "base_class": {"hex": "0106", "name": "Mass Storage Device", "value": 262},
+        "sub_class": {"hex": "0000", "name": "Disk", "value": 0},
+        "vendor": {"hex": "1987", "value": 6535},
+        "sub_vendor": {"hex": "1987", "value": 6535},
+        "device": {"hex": "5028", "name": "Corsair MP700 PRO XT", "value": 20520},
+        "sub_device": {"hex": "5028", "value": 20520},
+        "serial": "AD27B54500663U",
+        "model": "Corsair MP700 PRO XT",
+        "sysfs_id": "/class/block/nvme0n1",
+        "sysfs_bus_id": "nvme0",
+        "sysfs_device_link": "/devices/pci0000:00/0000:00:01.2/0000:02:00.0/nvme/nvme0",
+        "unix_device_names": [
+          "/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B54500663U",
+          "/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B54500663U_1",
+          "/dev/disk/by-id/nvme-uuid.00000000-0000-0001-e0e0-0908ce8c1210",
+          "/dev/disk/by-path/pci-0000:02:00.0-nvme-1",
+          "/dev/nvme0n1"
+        ],
+        "resources": [
+          {"type": "disk_geo", "cylinders": 3815447, "heads": 64, "sectors": 32, "size": "0x0", "geo_type": "logical"},
+          {"type": "size", "unit": "sectors", "value_1": 7814037168, "value_2": 512}
+        ],
+        "driver": "nvme",
+        "driver_module": "nvme",
+        "drivers": ["nvme"],
+        "driver_modules": ["nvme"]
+      },
+      {
+        "index": 91,
+        "attached_to": 59,
+        "class_list": ["disk", "block_device", "nvme"],
+        "bus_type": {"hex": "0096", "name": "NVME", "value": 150},
+        "slot": {"bus": 0, "number": 1},
+        "base_class": {"hex": "0106", "name": "Mass Storage Device", "value": 262},
+        "sub_class": {"hex": "0000", "name": "Disk", "value": 0},
+        "vendor": {"hex": "15b7", "value": 5559},
+        "sub_vendor": {"hex": "15b7", "value": 5559},
+        "device": {"hex": "5006", "name": "WDS500G3X0C-00SJG0", "value": 20486},
+        "sub_device": {"hex": "5006", "value": 20486},
+        "serial": "21025A800309",
+        "model": "WDS500G3X0C-00SJG0",
+        "sysfs_id": "/class/block/nvme1n1",
+        "sysfs_bus_id": "nvme1",
+        "sysfs_device_link": "/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:0a:00.0/nvme/nvme1",
+        "unix_device_names": [
+          "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309",
+          "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309_1",
+          "/dev/disk/by-id/nvme-eui.e8238fa6bf530001001b448b488b86ed",
+          "/dev/disk/by-path/pci-0000:0a:00.0-nvme-1",
+          "/dev/nvme1n1"
+        ],
+        "resources": [
+          {"type": "disk_geo", "cylinders": 476940, "heads": 64, "sectors": 32, "size": "0x0", "geo_type": "logical"},
+          {"type": "size", "unit": "sectors", "value_1": 976773168, "value_2": 512}
+        ],
+        "driver": "nvme",
+        "driver_module": "nvme",
+        "drivers": ["nvme"],
+        "driver_modules": ["nvme"]
+      }
+    ],
+    "graphics_card": [
+      {
+        "index": 53,
+        "attached_to": 68,
+        "class_list": ["graphics_card", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 113, "number": 0},
+        "base_class": {"hex": "0003", "name": "Display controller", "value": 3},
+        "sub_class": {"hex": "0000", "name": "VGA compatible controller", "value": 0},
+        "pci_interface": {"hex": "0000", "name": "VGA", "value": 0},
+        "vendor": {"hex": "1002", "name": "ATI Technologies Inc", "value": 4098},
+        "sub_vendor": {"hex": "1462", "value": 5218},
+        "device": {"hex": "13c0", "value": 5056},
+        "sub_device": {"hex": "7e50", "value": 32336},
+        "revision": {"hex": "00c9", "value": 201},
+        "model": "ATI VGA compatible controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:08.1/0000:71:00.0",
+        "sysfs_bus_id": "0000:71:00.0",
+        "sysfs_iommu_group_id": 29,
+        "module_alias": "pci:v00001002d000013C0sv00001462sd00007E50bc03sc00i00"
+      },
+      {
+        "index": 56,
+        "attached_to": 73,
+        "class_list": ["graphics_card", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 1, "number": 0},
+        "base_class": {"hex": "0003", "name": "Display controller", "value": 3},
+        "sub_class": {"hex": "0000", "name": "VGA compatible controller", "value": 0},
+        "pci_interface": {"hex": "0000", "name": "VGA", "value": 0},
+        "vendor": {"hex": "10de", "name": "nVidia Corporation", "value": 4318},
+        "sub_vendor": {"hex": "10de", "name": "nVidia Corporation", "value": 4318},
+        "device": {"hex": "2b85", "value": 11141},
+        "sub_device": {"hex": "2057", "value": 8279},
+        "revision": {"hex": "00a1", "value": 161},
+        "model": "nVidia VGA compatible controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:01.1/0000:01:00.0",
+        "sysfs_bus_id": "0000:01:00.0",
+        "sysfs_iommu_group_id": 13,
+        "module_alias": "pci:v000010DEd00002B85sv000010DEsd00002057bc03sc00i00"
+      }
+    ],
+    "memory": [
+      {
+        "index": 35,
+        "attached_to": 0,
+        "class_list": ["memory"],
+        "base_class": {"hex": "0101", "name": "Internally Used Class", "value": 257},
+        "sub_class": {"hex": "0002", "name": "Main Memory", "value": 2},
+        "model": "Main Memory",
+        "resources": [{"type": "phys_mem", "range": 128849018880}]
+      }
+    ],
+    "network_controller": [
+      {
+        "index": 41,
+        "attached_to": 78,
+        "class_list": ["network_controller", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 9, "number": 0},
+        "base_class": {"hex": "0002", "name": "Network controller", "value": 2},
+        "sub_class": {"hex": "0080", "name": "Network controller", "value": 128},
+        "vendor": {"hex": "14c3", "value": 5315},
+        "sub_vendor": {"hex": "105b", "value": 4187},
+        "device": {"hex": "7927", "value": 31015},
+        "sub_device": {"hex": "e0fe", "value": 57598},
+        "model": "Network controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:07.0/0000:09:00.0",
+        "sysfs_bus_id": "0000:09:00.0",
+        "sysfs_iommu_group_id": 20,
+        "module_alias": "pci:v000014C3d00007927sv0000105Bsd0000E0FEbc02sc80i00"
+      },
+      {
+        "index": 52,
+        "attached_to": 38,
+        "class_list": ["network_controller", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 8, "number": 0},
+        "base_class": {"hex": "0002", "name": "Network controller", "value": 2},
+        "sub_class": {"hex": "0000", "name": "Ethernet controller", "value": 0},
+        "vendor": {"hex": "10ec", "value": 4332},
+        "sub_vendor": {"hex": "1462", "value": 5218},
+        "device": {"hex": "8126", "value": 33062},
+        "sub_device": {"hex": "7e50", "value": 32336},
+        "revision": {"hex": "0001", "value": 1},
+        "model": "Ethernet controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:06.0/0000:08:00.0",
+        "sysfs_bus_id": "0000:08:00.0",
+        "sysfs_iommu_group_id": 19,
+        "unix_device_names": ["enp8s0"],
+        "driver": "r8169",
+        "driver_module": "r8169",
+        "drivers": ["r8169"],
+        "driver_modules": ["r8169"],
+        "module_alias": "pci:v000010ECd00008126sv00001462sd00007E50bc02sc00i00"
+      }
+    ],
+    "network_interface": [
+      {
+        "index": 131,
+        "attached_to": 52,
+        "class_list": ["network_interface"],
+        "base_class": {"hex": "0107", "name": "Network Interface", "value": 263},
+        "sub_class": {"hex": "0001", "name": "Ethernet", "value": 1},
+        "model": "Ethernet network interface",
+        "sysfs_id": "/class/net/enp8s0",
+        "sysfs_device_link": "/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:06.0/0000:08:00.0",
+        "unix_device_names": ["enp8s0"],
+        "driver": "r8169",
+        "driver_module": "r8169",
+        "drivers": ["r8169"],
+        "driver_modules": ["r8169"]
+      },
+      {
+        "index": 132,
+        "attached_to": 0,
+        "class_list": ["network_interface"],
+        "base_class": {"hex": "0107", "name": "Network Interface", "value": 263},
+        "sub_class": {"hex": "0000", "name": "Loopback", "value": 0},
+        "model": "Loopback network interface",
+        "sysfs_id": "/class/net/lo",
+        "unix_device_names": ["lo"]
+      }
+    ],
+    "sound": [
+      {
+        "index": 77,
+        "attached_to": 68,
+        "class_list": ["sound", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 113, "number": 0},
+        "base_class": {"hex": "0004", "name": "Multimedia controller", "value": 4},
+        "sub_class": {"hex": "0003", "value": 3},
+        "vendor": {"hex": "1002", "name": "ATI Technologies Inc", "value": 4098},
+        "sub_vendor": {"hex": "1462", "value": 5218},
+        "device": {"hex": "1640", "value": 5696},
+        "sub_device": {"hex": "7e50", "value": 32336},
+        "model": "ATI Multimedia controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:08.1/0000:71:00.1",
+        "sysfs_bus_id": "0000:71:00.1",
+        "sysfs_iommu_group_id": 30,
+        "driver": "snd_hda_intel",
+        "driver_module": "snd_hda_intel",
+        "drivers": ["snd_hda_intel"],
+        "driver_modules": ["snd_hda_intel"],
+        "module_alias": "pci:v00001002d00001640sv00001462sd00007E50bc04sc03i00"
+      },
+      {
+        "index": 80,
+        "attached_to": 73,
+        "class_list": ["sound", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 1, "number": 0},
+        "base_class": {"hex": "0004", "name": "Multimedia controller", "value": 4},
+        "sub_class": {"hex": "0003", "value": 3},
+        "vendor": {"hex": "10de", "name": "nVidia Corporation", "value": 4318},
+        "sub_vendor": {"hex": "10de", "name": "nVidia Corporation", "value": 4318},
+        "device": {"hex": "22e8", "value": 8936},
+        "sub_device": {"hex": "0000", "value": 0},
+        "revision": {"hex": "00a1", "value": 161},
+        "model": "nVidia Multimedia controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:01.1/0000:01:00.0",
+        "sysfs_bus_id": "0000:01:00.1",
+        "sysfs_iommu_group_id": 13,
+        "driver": "snd_hda_intel",
+        "driver_module": "snd_hda_intel",
+        "drivers": ["snd_hda_intel"],
+        "driver_modules": ["snd_hda_intel"],
+        "module_alias": "pci:v000010DEd000022E8sv000010DEsd00000000bc04sc03i00"
+      },
+      {
+        "index": 89,
+        "attached_to": 68,
+        "class_list": ["sound", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 113, "number": 0},
+        "base_class": {"hex": "0004", "name": "Multimedia controller", "value": 4},
+        "sub_class": {"hex": "0003", "value": 3},
+        "vendor": {"hex": "1022", "name": "AMD", "value": 4130},
+        "sub_vendor": {"hex": "0db0", "value": 3504},
+        "device": {"hex": "15e3", "value": 5603},
+        "sub_device": {"hex": "4c84", "value": 19588},
+        "model": "AMD Multimedia controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:08.1/0000:71:00.6",
+        "sysfs_bus_id": "0000:71:00.6",
+        "sysfs_iommu_group_id": 34,
+        "driver": "snd_hda_intel",
+        "driver_module": "snd_hda_intel",
+        "drivers": ["snd_hda_intel"],
+        "driver_modules": ["snd_hda_intel"],
+        "module_alias": "pci:v00001022d000015E3sv00000DB0sd00004C84bc04sc03i00",
+        "label": "Realtek ALC1220"
+      }
+    ],
+    "storage_controller": [
+      {
+        "index": 47,
+        "attached_to": 43,
+        "class_list": ["storage_controller", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 2, "number": 0},
+        "base_class": {"hex": "0001", "name": "Mass storage controller", "value": 1},
+        "sub_class": {"hex": "0008", "value": 8},
+        "pci_interface": {"hex": "0002", "value": 2},
+        "vendor": {"hex": "1987", "value": 6535},
+        "sub_vendor": {"hex": "1987", "value": 6535},
+        "device": {"hex": "5028", "value": 20520},
+        "sub_device": {"hex": "5028", "value": 20520},
+        "revision": {"hex": "0001", "value": 1},
+        "model": "Mass storage controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:01.2/0000:02:00.0",
+        "sysfs_bus_id": "0000:02:00.0",
+        "sysfs_iommu_group_id": 14,
+        "driver": "nvme",
+        "driver_module": "nvme",
+        "drivers": ["nvme"],
+        "driver_modules": ["nvme"],
+        "module_alias": "pci:v00001987d00005028sv00001987sd00005028bc01sc08i02"
+      },
+      {
+        "index": 59,
+        "attached_to": 65,
+        "class_list": ["storage_controller", "pci"],
+        "bus_type": {"hex": "0004", "name": "PCI", "value": 4},
+        "slot": {"bus": 10, "number": 0},
+        "base_class": {"hex": "0001", "name": "Mass storage controller", "value": 1},
+        "sub_class": {"hex": "0008", "value": 8},
+        "pci_interface": {"hex": "0002", "value": 2},
+        "vendor": {"hex": "15b7", "value": 5559},
+        "sub_vendor": {"hex": "15b7", "value": 5559},
+        "device": {"hex": "5006", "value": 20486},
+        "sub_device": {"hex": "5006", "value": 20486},
+        "model": "Mass storage controller",
+        "sysfs_id": "/devices/pci0000:00/0000:00:02.1/0000:03:00.0/0000:04:08.0/0000:0a:00.0",
+        "sysfs_bus_id": "0000:0a:00.0",
+        "sysfs_iommu_group_id": 21,
+        "driver": "nvme",
+        "driver_module": "nvme",
+        "drivers": ["nvme"],
+        "driver_modules": ["nvme"],
+        "module_alias": "pci:v000015B7d00005006sv000015B7sd00005006bc01sc08i02"
+      }
+    ],
+    "system": {
+      "form_factor": "desktop"
+    }
+  },
+  "smbios": {
+    "bios": {
+      "handle": 0,
+      "vendor": "American Megatrends International, LLC.",
+      "version": "1.A20",
+      "date": "10/29/2025",
+      "features": ["PCI supported", "BIOS flashable", "BIOS shadowing allowed", "CD boot supported", "Selectable boot supported", "BIOS ROM socketed", "EDD spec supported", "ACPI supported", "USB Legacy supported", "BIOS Boot Spec supported"],
+      "start_address": "0xf0000",
+      "rom_size": 16777216
+    },
+    "board": {
+      "handle": 2,
+      "manufacturer": "Micro-Star International Co., Ltd.",
+      "product": "MPG X870I EDGE TI EVO WIFI (MS-7E50)",
+      "version": "1.0",
+      "board_type": {"hex": "000a", "name": "Motherboard", "value": 10},
+      "features": ["Hosting Board", "Replaceable"],
+      "location": "To be filled by O.E.M.",
+      "chassis": 3
+    },
+    "cache": [
+      {"handle": 10, "socket": "L1 - Cache", "size_max": 1280, "size_current": 1280, "speed": 1, "mode": {"hex": "0001", "name": "Write Back", "value": 1}, "enabled": true, "location": {"hex": "0000", "name": "Internal", "value": 0}, "socketed": false, "level": 0, "ecc": {"hex": "0006", "name": "Multi-bit", "value": 6}, "cache_type": {"hex": "0005", "name": "Unified", "value": 5}, "associativity": {"hex": "0007", "name": "8-way Set-Associative", "value": 7}, "sram_type_current": ["Pipeline Burst"], "sram_type_supported": ["Pipeline Burst"]},
+      {"handle": 11, "socket": "L2 - Cache", "size_max": 16384, "size_current": 16384, "speed": 1, "mode": {"hex": "0001", "name": "Write Back", "value": 1}, "enabled": true, "location": {"hex": "0000", "name": "Internal", "value": 0}, "socketed": false, "level": 1, "ecc": {"hex": "0006", "name": "Multi-bit", "value": 6}, "cache_type": {"hex": "0005", "name": "Unified", "value": 5}, "associativity": {"hex": "0008", "name": "16-way Set-Associative", "value": 8}, "sram_type_current": ["Pipeline Burst"], "sram_type_supported": ["Pipeline Burst"]},
+      {"handle": 12, "socket": "L3 - Cache", "size_max": 131072, "size_current": 131072, "speed": 1, "mode": {"hex": "0001", "name": "Write Back", "value": 1}, "enabled": true, "location": {"hex": "0000", "name": "Internal", "value": 0}, "socketed": false, "level": 2, "ecc": {"hex": "0006", "name": "Multi-bit", "value": 6}, "cache_type": {"hex": "0005", "name": "Unified", "value": 5}, "associativity": {"hex": "0008", "name": "16-way Set-Associative", "value": 8}, "sram_type_current": ["Pipeline Burst"], "sram_type_supported": ["Pipeline Burst"]}
+    ],
+    "chassis": [
+      {"handle": 3, "manufacturer": "Micro-Star International Co., Ltd.", "version": "1.0", "chassis_type": {"hex": "0003", "name": "Desktop", "value": 3}, "lock_present": false, "bootup_state": {"hex": "0003", "name": "Safe", "value": 3}, "power_state": {"hex": "0003", "name": "Safe", "value": 3}, "thermal_state": {"hex": "0003", "name": "Safe", "value": 3}, "security_state": {"hex": "0003", "name": "None", "value": 3}, "oem": "0x0"}
+    ],
+    "memory_array": [
+      {"handle": 16, "location": {"hex": "0003", "name": "Motherboard", "value": 3}, "usage": {"hex": "0003", "name": "System memory", "value": 3}, "ecc": {"hex": "0003", "name": "None", "value": 3}, "max_size": "0x8000000", "error_handle": 15, "slots": 4}
+    ],
+    "memory_device": [
+      {"handle": 21, "location": "DIMMA2", "bank_location": "P0 CHANNEL A", "manufacturer": "Unknown", "part_number": "F5-6000J3444F64G", "array_handle": 16, "error_handle": 20, "width": 64, "ecc_bits": 0, "size": 67108864, "form_factor": {"hex": "0009", "name": "DIMM", "value": 9}, "set": 0, "memory_type": {"hex": "0022", "name": "Other", "value": 34}, "memory_type_details": ["Synchronous"], "speed": 5600},
+      {"handle": 26, "location": "DIMMB2", "bank_location": "P0 CHANNEL B", "manufacturer": "Unknown", "part_number": "F5-6000J3444F64G", "array_handle": 16, "error_handle": 25, "width": 64, "ecc_bits": 0, "size": 67108864, "form_factor": {"hex": "0009", "name": "DIMM", "value": 9}, "set": 0, "memory_type": {"hex": "0022", "name": "Other", "value": 34}, "memory_type_details": ["Synchronous"], "speed": 5600}
+    ],
+    "processor": [
+      {"handle": 13, "socket": "AM5", "socket_type": {"hex": "0049", "name": "Other", "value": 73}, "socket_populated": true, "manufacturer": "Advanced Micro Devices, Inc.", "version": "AMD Ryzen 9 9950X3D 16-Core Processor", "part": "Unknown", "processor_type": {"hex": "0003", "name": "CPU", "value": 3}, "processor_family": {"hex": "006b", "name": "Other", "value": 107}, "processor_status": {"hex": "0001", "name": "Enabled", "value": 1}, "clock_ext": 100, "clock_max": 5750, "cache_handle_l1": 10, "cache_handle_l2": 11, "cache_handle_l3": 12}
+    ],
+    "system": {
+      "handle": 1,
+      "manufacturer": "Micro-Star International Co., Ltd.",
+      "product": "MS-7E50",
+      "version": "1.0",
+      "wake_up": {"hex": "0006", "name": "Power Switch", "value": 6}
+    }
   }
 }

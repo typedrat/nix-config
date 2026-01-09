@@ -6,12 +6,9 @@
   imports = [
     inputs.nixos-facter-modules.nixosModules.facter
     ./disko-config.nix
+    ./nvidia.nix
   ];
 
-  # TODO: Generate facter report on target system with:
-  #   nix run github:numtide/nixos-facter -- -o /tmp/facter.json
-  # Then copy it to this directory:
-  #   cp /tmp/facter.json systems/ulysses/facter.json
   facter.reportPath = ./facter.json;
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
@@ -19,9 +16,6 @@
 
   networking.hostName = "ulysses";
   networking.hostId = "7e104ef9";
-
-  # TODO: Set the correct device path in disko-config.nix
-  # disko.devices.disk.main.device = "/dev/disk/by-id/YOUR_DEVICE_ID";
 
   rat = {
     boot.loader = "lanzaboote";

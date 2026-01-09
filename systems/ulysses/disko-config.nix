@@ -7,9 +7,7 @@
     disk = {
       main = {
         type = "disk";
-        # TODO: Set the correct device path for your system
-        # Use `lsblk` or `ls -la /dev/disk/by-id/` to find it
-        # device = "/dev/disk/by-id/YOUR_DEVICE_ID";
+        device = "/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B54500663U";
         content = {
           type = "gpt";
           partitions = {
