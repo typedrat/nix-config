@@ -13,6 +13,7 @@
 in {
   imports = [
     ./3d-printing.nix
+    ./blender.nix
     ./freecad.nix
     ./kicad.nix
     ./libreoffice.nix

@@ -13,6 +13,7 @@
 in {
   imports = [
     ./mpv.nix
+    ./obs.nix
     ./spotify.nix
     ./tauon.nix
   ];
@@ -21,6 +22,7 @@ in {
     home.packages = with pkgs; [
       # jellyfin-media-player # Disabled: requires insecure qtwebengine - see NixOS/nixpkgs#437865 and jellyfin/jellyfin-media-player#282
       jellyfin-mpv-shim
+      hypnotix
     ];
   };
 }

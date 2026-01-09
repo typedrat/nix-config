@@ -3,6 +3,8 @@
     ./hardware-configuration.nix
   ];
 
+  nixpkgs.config.rocmSupport = true;
+
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 

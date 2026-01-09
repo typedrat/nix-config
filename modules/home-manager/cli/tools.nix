@@ -60,6 +60,11 @@ in {
       enableZshIntegration = true;
     };
 
+    programs.parallel = {
+      enable = true;
+      will-cite = true;
+    };
+
     programs.ripgrep.enable = true;
 
     programs.yazi = {

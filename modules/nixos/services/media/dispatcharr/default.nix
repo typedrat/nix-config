@@ -21,6 +21,9 @@
     StateDirectory = "dispatcharr";
   };
 in {
+  imports = [
+    ./channelidentifiarr.nix
+  ];
   options.rat.services.dispatcharr = {
     enable = options.mkEnableOption "Dispatcharr IPTV stream management";
 
@@ -105,7 +108,7 @@ in {
 
       # Secrets
       sops.secrets."dispatcharr/secret_key" = {
-        sopsFile = ../../../../secrets/dispatcharr.yaml;
+        sopsFile = ../../../../../secrets/dispatcharr.yaml;
         key = "secret_key";
         restartUnits = ["dispatcharr.service" "dispatcharr-celery.service" "dispatcharr-celery-beat.service"];
         owner = "dispatcharr";
@@ -188,7 +191,8 @@ in {
                 # Collect static files
                 ${dispatcharr}/bin/dispatcharr collectstatic --noinput
               '';
-            in preStartScript;
+            in
+              preStartScript;
             ExecStart = "${dispatcharr}/bin/dispatcharr-daphne -b 127.0.0.1 -p ${toString config.links.dispatcharr.port} dispatcharr.asgi:application";
             Restart = "on-failure";
             RestartSec = 5;

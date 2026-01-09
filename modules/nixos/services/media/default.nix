@@ -1,9 +1,9 @@
 {
   imports = [
+    ./dispatcharr
     ./autobrr.nix
     ./configarr.nix
     ./cross-seed.nix
-    ./dispatcharr.nix
     ./jellyfin.nix
     ./lidarr.nix
     ./prowlarr.nix
