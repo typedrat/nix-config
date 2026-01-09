@@ -61,6 +61,11 @@
         system = "x86_64-linux";
         modules = [./iserlohn];
       };
+
+      ulysses = {
+        system = "x86_64-linux";
+        modules = [./ulysses];
+      };
     };
   };
 }

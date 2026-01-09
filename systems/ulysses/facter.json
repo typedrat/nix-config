@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/numtide/nixos-facter/main/schema/facter.schema.json",
+  "version": 3,
+  "system": "x86_64-linux",
+  "virtualisation": null,
+  "hardware": {
+    "bios": null,
+    "cpu": null,
+    "gpu": [],
+    "memory": null,
+    "network": [],
+    "sound": [],
+    "bluetooth": [],
+    "usb_controllers": [],
+    "storage_controllers": [],
+    "input_devices": []
+  }
+}
