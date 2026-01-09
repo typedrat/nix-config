@@ -40,6 +40,17 @@
     security.sudo.extendedTimeout.enable = true;
     virtualisation.docker.enable = true;
 
+    games = {
+      enable = true;
+      animeGameLaunchers.enable = true;
+      steam.enable = true;
+    };
+
+    hardware.openrgb.enable = true;
+    hardware.usbmuxd.enable = true;
+    java.enable = true;
+    nix-ld.enable = true;
+
     impermanence = {
       enable = true;
       zfs.enable = true;
