@@ -16,7 +16,10 @@
   networking.hostId = "7e104ef9";
 
   rat = {
-    boot.loader = "lanzaboote";
+    boot = {
+      loader = "lanzaboote";
+      secureBoot.autoEnrollKeys = true;
+    };
 
     gui = {
       enable = true;
