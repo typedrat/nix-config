@@ -14,7 +14,7 @@ in {
     home.packages = with pkgs; [
       # Nix formatters and linters
       alejandra
-      nixfmt-rfc-style
+      nixfmt
 
       # Nix LSP and development tools
       nixd

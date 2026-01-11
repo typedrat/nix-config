@@ -27,6 +27,9 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
+    nixpkgs-patch-sgdboop-gcc15.url = "https://github.com/NixOS/nixpkgs/pull/475718.patch";
+    nixpkgs-patch-sgdboop-gcc15.flake = false;
+
     #endregion
 
     #region `flake-parts`

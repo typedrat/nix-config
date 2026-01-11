@@ -5,9 +5,10 @@
   imports = [
     ./disko-config.nix
     ./nvidia.nix
+    ./superio.nix
   ];
 
-  facter.reportPath = ./facter.json;
+  hardware.facter.reportPath = ./facter.json;
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
@@ -24,13 +25,18 @@
     gui = {
       enable = true;
       hyprland = {
-        # TODO: Configure monitors for your setup
-        # Use `hyprctl monitors` to find monitor names and resolutions
         monitors = [
-          # "DP-1,1920x1080@60.0,0x0,1.0"
+          "desc:Acer Technologies XB321HK #ASM9xe8P/tXd,3840x2160@60.0,0x1080,1.0"
+          "desc:DENON Ltd. DENON-AVR 0x01010101,3840x2160@60.0,960x0,2.0"
         ];
         workspaces = [
-          # "1, monitor:DP-1, persistent=true"
+          "1, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
+          "2, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
+          "3, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
+          "4, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
+          "5, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
+          "6, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
+          "name:tv, monitor:desc:DENON Ltd. DENON-AVR 0x01010101, persistent=true"
         ];
       };
     };
@@ -67,6 +73,8 @@
       enable = true;
       gui = {
         enable = true;
+        hyprland.launcher = "vicinae";
+        terminal.ghostty.enable = true;
       };
     };
   };

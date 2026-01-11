@@ -47,6 +47,9 @@
           autotrim = "on";
         };
         rootFsOptions = {
+          encryption = "aes-256-gcm";
+          keyformat = "passphrase";
+          keylocation = "file:///tmp/disk.key";
           acltype = "posixacl";
           canmount = "off";
           dnodesize = "auto";

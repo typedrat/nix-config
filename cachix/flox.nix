@@ -2,10 +2,10 @@
   nix = {
     settings = {
       substituters = [
-        "https://attic.thisratis.gay/system"
+        "https://cache.flox.dev"
       ];
       trusted-public-keys = [
-        "system:GkLn1oI/ojHpSIE6jog6++ASlYDATMAdr6+MpMGMJkw="
+        "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
       ];
     };
   };

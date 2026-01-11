@@ -10,11 +10,10 @@ in {
     programs.mpv = {
       enable = true;
 
-      package = pkgs.mpv-unwrapped.wrapper {
-        mpv = pkgs.mpv-unwrapped.override {
+      package = pkgs.mpv.override {
+        mpv-unwrapped = pkgs.mpv-unwrapped.override {
           vapoursynthSupport = true;
         };
-
         scripts = with pkgs.mpvScripts; [
           mpris
           mpv-discord
@@ -22,7 +21,6 @@ in {
           thumbfast
           uosc
         ];
-        youtubeSupport = true;
       };
 
       config = {
