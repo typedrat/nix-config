@@ -1,6 +1,7 @@
 {
   config,
   osConfig,
+  pkgs,
   lib,
   ...
 }: let
@@ -16,6 +17,11 @@ in {
     programs.zsh.shellAliases.cat = "bat";
 
     programs.bottom.enable = true;
+
+    programs.btop = {
+      enable = true;
+      package = pkgs.btop-cuda;
+    };
 
     programs.difftastic = {
       enable = true;

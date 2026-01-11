@@ -27,6 +27,8 @@
     else if (hyprlandCfg.useHostDefaults or true)
     then hostHyprlandCfg.workspaces or []
     else [];
+
+  tvMonitor = hostHyprlandCfg.tvMonitor or null;
 in {
   imports = [
     ./hyprlock
@@ -164,11 +166,13 @@ in {
           float = on
         }
 
-        windowrule {
-          name = mpv-to-hdmi
-          match:class = mpv
-          monitor = HDMI-A-1
-        }
+        ${lib.optionalString (tvMonitor != null) ''
+          windowrule {
+            name = mpv-to-tv
+            match:class = mpv
+            monitor = ${tvMonitor}
+          }
+        ''}
       '';
     };
 

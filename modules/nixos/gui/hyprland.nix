@@ -19,6 +19,20 @@ in {
       ];
     };
 
+    primaryMonitor = options.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Primary monitor ID for waybar, hyprlock, etc.";
+      example = "DP-2";
+    };
+
+    tvMonitor = options.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "TV monitor ID for media applications (MPV, etc.). If null, TV-specific rules are disabled.";
+      example = "HDMI-A-1";
+    };
+
     workspaces = options.mkOption {
       type = types.listOf types.str;
       default = [];

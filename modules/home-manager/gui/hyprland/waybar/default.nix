@@ -10,6 +10,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
+  hostHyprlandCfg = osConfig.rat.gui.hyprland or {};
+  primaryMonitor = hostHyprlandCfg.primaryMonitor or null;
 in {
   config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false)) {
     wayland.windowManager.hyprland.settings = {
@@ -22,48 +24,48 @@ in {
       enable = true;
 
       settings = [
-        {
-          reload_style_on_change = true;
-          layer = "top";
-          output = "DP-2";
-          modules-left = ["hyprland/workspaces" "custom/spotify" "clock"];
-          modules-right = ["tray" "wireplumber" "custom/wlogout"];
+        ({
+            reload_style_on_change = true;
+            layer = "top";
+            modules-left = ["hyprland/workspaces" "custom/spotify" "clock"];
+            modules-right = ["tray" "wireplumber" "custom/wlogout"];
 
-          "hyprland/workspaces" = {
-            "persistent-workspaces" = {
-              "*" = 6;
+            "hyprland/workspaces" = {
+              "persistent-workspaces" = {
+                "*" = 6;
+              };
             };
-          };
 
-          "custom/spotify" = {
-            format = "󰓇";
-            tooltip = false;
-            on-click = "pypr toggle spotify";
-          };
+            "custom/spotify" = {
+              format = "󰓇";
+              tooltip = false;
+              on-click = "pypr toggle spotify";
+            };
 
-          clock = {
-            format = "<span foreground='#babbf1'></span> {:%I:%M %p}";
-            tooltip-format = "<span foreground='#babbf1'>󰃶</span> {:%A, %B %d, %Y}";
-          };
+            clock = {
+              format = "<span foreground='#babbf1'></span> {:%I:%M %p}";
+              tooltip-format = "<span foreground='#babbf1'>󰃶</span> {:%A, %B %d, %Y}";
+            };
 
-          tray = {
-            spacing = 9;
-          };
+            tray = {
+              spacing = 9;
+            };
 
-          wireplumber = {
-            format = "{icon}";
-            tooltip-format = "{node_name} — {volume}%";
-            format-muted = " ";
-            format-icons = [" " " " " "];
-            on-click = "pypr toggle pwvucontrol";
-          };
+            wireplumber = {
+              format = "{icon}";
+              tooltip-format = "{node_name} — {volume}%";
+              format-muted = " ";
+              format-icons = [" " " " " "];
+              on-click = "pypr toggle pwvucontrol";
+            };
 
-          "custom/wlogout" = {
-            format = "󰩈";
-            tooltip = false;
-            on-click = "${lib.getExe pkgs.wlogout}";
-          };
-        }
+            "custom/wlogout" = {
+              format = "󰩈";
+              tooltip = false;
+              on-click = "${lib.getExe pkgs.wlogout}";
+            };
+          }
+          // lib.optionalAttrs (primaryMonitor != null) {output = primaryMonitor;})
       ];
 
       style = ./waybar.css;

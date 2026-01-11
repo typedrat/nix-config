@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./disko-config.nix
     ./nvidia.nix
@@ -25,18 +22,20 @@
     gui = {
       enable = true;
       hyprland = {
+        primaryMonitor = "DP-3";
+        tvMonitor = "HDMI-A-1";
         monitors = [
-          "desc:Acer Technologies XB321HK #ASM9xe8P/tXd,3840x2160@60.0,0x1080,1.0"
-          "desc:DENON Ltd. DENON-AVR 0x01010101,3840x2160@60.0,960x0,2.0"
+          "DP-3,3840x2160@60.0,0x1080,1.0"
+          "HDMI-A-1,3840x2160@60.0,960x0,2.0"
         ];
         workspaces = [
-          "1, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
-          "2, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
-          "3, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
-          "4, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
-          "5, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
-          "6, monitor:desc:Acer Technologies XB321HK #ASM9xe8P/tXd, persistent=true"
-          "name:tv, monitor:desc:DENON Ltd. DENON-AVR 0x01010101, persistent=true"
+          "1, monitor:DP-3, persistent=true"
+          "2, monitor:DP-3, persistent=true"
+          "3, monitor:DP-3, persistent=true"
+          "4, monitor:DP-3, persistent=true"
+          "5, monitor:DP-3, persistent=true"
+          "6, monitor:DP-3, persistent=true"
+          "name:tv, monitor:HDMI-A-1, persistent=true"
         ];
       };
     };
