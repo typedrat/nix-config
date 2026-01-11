@@ -1,4 +1,11 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  hostname = config.networking.hostName;
+in {
   rat.users.awilliams = {
     uid = 1000;
     isNormalUser = true;
@@ -47,66 +54,88 @@
     };
 
     # Rclone remotes
-    rclone.remotes = {
-      b2 = {
-        type = "b2";
-        config = {};
-        secrets = {
-          # Secret names that will be resolved to paths by the home-manager module
-          account = "b2/keyId";
-          key = "b2/applicationKey";
-        };
-      };
-
-      workdrive = {
-        type = "drive";
-        config = {
-          service_account_file = "work-gdrive-sa-key";
-          impersonate = "alexis@synapdeck.com";
-          scope = "drive";
-        };
-      };
-
-      workdrive-shared = {
-        type = "drive";
-        config = {
-          service_account_file = "work-gdrive-sa-key";
-          impersonate = "alexis@synapdeck.com";
-          scope = "drive";
-          team_drive = "0AEjPQYC7XEWcUk9PVA";
-        };
-      };
-
-      iserlohn = {
-        type = "sftp";
-        config = {
-          host = "iserlohn.lan";
-          user = "awilliams";
-          key_file = "id_ed25519";
-        };
-      };
-
-      iserlohn-media = {
-        type = "alias";
-        config = {
-          remote = "iserlohn:/mnt/media";
+    rclone.remotes =
+      {
+        b2 = {
+          type = "b2";
+          config = {};
+          secrets = {
+            # Secret names that will be resolved to paths by the home-manager module
+            account = "b2/keyId";
+            key = "b2/applicationKey";
+          };
         };
 
-        mount = {
-          enable = true;
-          path = "mnt/iserlohn-media";
+        workdrive = {
+          type = "drive";
+          config = {
+            service_account_file = "work-gdrive-sa-key";
+            impersonate = "alexis@synapdeck.com";
+            scope = "drive";
+          };
         };
-      };
 
-      brick = {
-        type = "sftp";
-        config = {
-          host = "brick.lan";
-          user = "root";
-          key_file = "id_ed25519";
+        workdrive-shared = {
+          type = "drive";
+          config = {
+            service_account_file = "work-gdrive-sa-key";
+            impersonate = "alexis@synapdeck.com";
+            scope = "drive";
+            team_drive = "0AEjPQYC7XEWcUk9PVA";
+          };
+        };
+
+        brick = {
+          type = "sftp";
+          config = {
+            host = "brick.lan";
+            user = "root";
+            key_file = "id_ed25519";
+          };
+        };
+      }
+      // lib.optionalAttrs (hostname != "hyperion") {
+        hyperion = {
+          type = "sftp";
+          config = {
+            host = "hyperion.lan";
+            user = "awilliams";
+            key_file = "id_ed25519";
+          };
+        };
+      }
+      // lib.optionalAttrs (hostname != "ulysses") {
+        ulysses = {
+          type = "sftp";
+          config = {
+            host = "ulysses.lan";
+            user = "awilliams";
+            key_file = "id_ed25519";
+          };
+        };
+      }
+      // lib.optionalAttrs (hostname != "iserlohn") {
+        iserlohn = {
+          type = "sftp";
+          config = {
+            host = "iserlohn.lan";
+            user = "awilliams";
+            key_file = "id_ed25519";
+          };
+        };
+
+        iserlohn-media = {
+          type = "alias";
+          config = {
+            remote = "iserlohn:/mnt/media";
+          };
+
+          mount = {
+            enable = true;
+            path = "mnt/iserlohn-media";
+          };
         };
       };
-    };
 
     # Environment variables
     environment.variables = {
