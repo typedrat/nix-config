@@ -16,11 +16,20 @@ in {
             ])
         ];
 
+        # https://github.com/NixOS/nixpkgs/issues/468456
         makeWrapperFlags = [
           "--prefix"
           "PATH"
           ":"
           (lib.makeBinPath [calculix-ccx gmsh netgen])
+          "--prefix"
+          "MESA_LOADER_DRIVER_OVERRIDE"
+          ":"
+          "zink"
+          "--prefix"
+          "__EGL_VENDOR_LIBRARY_FILENAMES"
+          ":"
+          "${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json"
         ];
       })
       calculix-ccx
