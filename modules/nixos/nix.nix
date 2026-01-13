@@ -63,9 +63,11 @@
 
     sops = {
       secrets = {
+        civitaiApiToken = {};
         github-api-key = {
           key = "miseGithubToken";
         };
+        hfToken = {};
         "attic/cacheToken" = {
           sopsFile = ../../secrets/attic.yaml;
           key = "cacheToken";
@@ -89,7 +91,17 @@
           '';
           mode = "0440";
         };
+
+        nix-daemon-env = {
+          content = ''
+            CIVITAI_API_TOKEN=${config.sops.placeholder.civitaiApiToken}
+            HF_TOKEN=${config.sops.placeholder.hfToken}
+          '';
+          mode = "0400";
+        };
       };
     };
+
+    systemd.services.nix-daemon.serviceConfig.EnvironmentFile = config.sops.templates.nix-daemon-env.path;
   };
 }

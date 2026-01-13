@@ -22,6 +22,7 @@ in {
       bottles
       gamescope
       igir
+      lutris
       pegasus-frontend
       wineWowPackages.stable
     ];

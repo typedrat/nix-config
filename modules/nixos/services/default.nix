@@ -17,6 +17,7 @@ in {
     self.nixosModules.port-magic
     self.nixosModules.servarr-multitenant
 
+    ./ai
     ./core
     ./communication
     ./development

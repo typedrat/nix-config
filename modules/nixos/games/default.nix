@@ -32,6 +32,12 @@ in {
       ];
 
       hardware.xpadneo.enable = true;
+      # GuliKit ES Pro - fix rumble being constantly on
+      boot.extraModprobeConfig = let
+        gulikitEsProMAC = "06:71:10:21:29:B3";
+      in ''
+        options hid_xpadneo quirks=${gulikitEsProMAC}:7
+      '';
     })
   ];
 }

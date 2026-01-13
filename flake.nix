@@ -195,6 +195,8 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixified-ai.url = "github:nixified-ai/flake";
     #endregion
 
     #region Extension Repositories

@@ -40,6 +40,7 @@ in {
       openssl
       pv
       rename
+      vim.xxd
       waypipe
       wl-clipboard
 

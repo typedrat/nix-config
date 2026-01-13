@@ -15,6 +15,8 @@
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.shell.enable or false)) {
     sops.secrets = lib.mkIf hasUserSecrets {
+      civitaiApiToken = {};
+      hfToken = {};
       miseGithubToken = {};
       openrouterApiKey = {};
       vizioAuth = {};
@@ -42,6 +44,8 @@ in {
           bindkey "^[[1;5D" backward-word
         ''
         + lib.optionalString hasUserSecrets ''
+          export CIVITAI_API_TOKEN=$(cat ${config.sops.secrets.civitaiApiToken.path})
+          export HF_TOKEN=$(cat ${config.sops.secrets.hfToken.path})
           export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
           export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
           export VIZO_IP=$(cat ${config.sops.secrets.vizioIp.path})

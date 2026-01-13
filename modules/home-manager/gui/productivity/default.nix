@@ -16,6 +16,8 @@ in {
     ./blender.nix
     ./freecad.nix
     ./kicad.nix
+    ./krita.nix
+    ./openscad.nix
     ./libreoffice.nix
     ./obsidian.nix
     ./sioyek.nix

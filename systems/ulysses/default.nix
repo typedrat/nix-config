@@ -1,5 +1,10 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
+    ./comfyui
     ./disko-config.nix
     ./nvidia.nix
     ./superio.nix
@@ -9,6 +14,21 @@
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
+  boot.supportedFilesystems = ["ntfs"];
+
+  # Windows drive (WD SN750 500GB)
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309-part3";
+    fsType = "ntfs-3g";
+    options = [
+      "rw"
+      "uid=${toString config.users.users.awilliams.uid}"
+      "nofail"
+      "x-gvfs-show"
+      "x-gvfs-name=Windows"
+      "x-gvfs-icon=drive-harddisk"
+    ];
+  };
 
   networking.hostName = "ulysses";
   networking.hostId = "7e104ef9";
@@ -70,10 +90,15 @@
     # User configuration (system-specific overrides)
     users.awilliams = {
       enable = true;
+      extraGroups = ["comfyui"];
       gui = {
         enable = true;
         hyprland.launcher = "vicinae";
         terminal.ghostty.enable = true;
+        productivity.krita = {
+          enable = true;
+          aiDiffusion.enable = true;
+        };
       };
     };
   };
