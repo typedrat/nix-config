@@ -19,12 +19,11 @@ in {
 
   config = modules.mkIf ((guiCfg.enable or false) && (gamesCfg.enable or false)) {
     home.packages = with pkgs; [
-      bottles
       gamescope
       igir
-      lutris
       pegasus-frontend
-      wineWowPackages.stable
+      umu-launcher
+      wineWowPackages.stableFull
     ];
   };
 }

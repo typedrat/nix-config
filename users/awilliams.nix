@@ -10,11 +10,15 @@ in {
     uid = 1000;
     isNormalUser = true;
     home = "/home/awilliams";
-    extraGroups = [
-      "dialout"
-      "games"
-      "wheel"
-    ];
+    extraGroups =
+      [
+        "dialout"
+        "games"
+        "wheel"
+      ]
+      ++ lib.optionals config.rat.games.enable [
+        "gamemode"
+      ];
     shell = pkgs.zsh;
     sshKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFCm+qnsWUuTDU6IgvxPAkfe6dnwwomGQXlM9c2yUqlJ awilliams@hyperion"

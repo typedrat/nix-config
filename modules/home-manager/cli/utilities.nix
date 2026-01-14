@@ -18,6 +18,7 @@ in {
       xz
       zip
       p7zip
+      unrar
 
       # Crypto and secrets
       age

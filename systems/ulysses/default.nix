@@ -6,7 +6,6 @@
   imports = [
     ./comfyui
     ./disko-config.nix
-    ./nvidia.nix
     ./superio.nix
   ];
 
@@ -15,6 +14,22 @@
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
+
+  # Windows dual-boot via UEFI chainloading
+  # To find the correct efiDeviceHandle:
+  # 1. Reboot and select "UEFI Shell" from systemd-boot
+  # 2. Run: map -c
+  # 3. Try each FSx: followed by "ls EFI" to find the one with Microsoft/Boot
+  # 4. Update the efiDeviceHandle below with that value (e.g., "FS1")
+  boot.loader.systemd-boot = {
+    edk2-uefi-shell.enable = true;
+    edk2-uefi-shell.sortKey = "z_shell";
+    windows."windows" = {
+      title = "Windows";
+      efiDeviceHandle = "HD0b"; # TODO: Update after running `map -c` in UEFI shell
+      sortKey = "y_windows";
+    };
+  };
 
   # Windows drive (WD SN750 500GB)
   fileSystems."/mnt/windows" = {
@@ -39,22 +54,27 @@
       secureBoot.autoEnrollKeys = true;
     };
 
+    hardware.nvidia = {
+      enable = true;
+      cuda.enable = true;
+    };
+
     gui = {
       enable = true;
       hyprland = {
-        primaryMonitor = "DP-3";
-        tvMonitor = "HDMI-A-1";
+        primaryMonitor = "DP-1";
+        tvMonitor = "HDMI-A-2";
         monitors = [
-          "DP-3,3840x2160@60.0,0x1080,1.0"
+          "DP-1,3840x2160@60.0,0x1080,1.0"
           "HDMI-A-1,3840x2160@60.0,960x0,2.0"
         ];
         workspaces = [
-          "1, monitor:DP-3, persistent=true"
-          "2, monitor:DP-3, persistent=true"
-          "3, monitor:DP-3, persistent=true"
-          "4, monitor:DP-3, persistent=true"
-          "5, monitor:DP-3, persistent=true"
-          "6, monitor:DP-3, persistent=true"
+          "1, monitor:DP-1, persistent=true"
+          "2, monitor:DP-1, persistent=true"
+          "3, monitor:DP-1, persistent=true"
+          "4, monitor:DP-1, persistent=true"
+          "5, monitor:DP-1, persistent=true"
+          "6, monitor:DP-1, persistent=true"
           "name:tv, monitor:HDMI-A-1, persistent=true"
         ];
       };

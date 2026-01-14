@@ -7,7 +7,6 @@
     ./disko-config.nix
     ./hardware-configuration.nix
     ./home-assistant.nix
-    ./nvidia.nix
     ./service-user.nix
     ./sillytavern.nix
     ./sr-iov.nix
@@ -23,6 +22,13 @@
 
   rat = {
     boot.loader = "lanzaboote";
+
+    hardware.nvidia = {
+      enable = true;
+      open = false;
+      powerManagement.enable = false;
+      cuda.enable = true;
+    };
 
     impermanence = {
       enable = true;

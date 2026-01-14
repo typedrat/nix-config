@@ -4,6 +4,7 @@ in {
   imports = [
     ./audio.nix
     ./bluetooth.nix
+    ./nvidia.nix
     ./openrgb.nix
     ./udisks2.nix
     ./usbmuxd.nix

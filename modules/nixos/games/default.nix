@@ -31,7 +31,20 @@ in {
         }
       ];
 
+      systemd.settings.Manager = {
+        DefaultLimitNOFILE = 524288;
+      };
+      security.pam.loginLimits = [
+        {
+          domain = "awilliams";
+          type = "hard";
+          item = "nofile";
+          value = "524288";
+        }
+      ];
+
       hardware.xpadneo.enable = true;
+      programs.gamemode.enable = true;
       # GuliKit ES Pro - fix rumble being constantly on
       boot.extraModprobeConfig = let
         gulikitEsProMAC = "06:71:10:21:29:B3";

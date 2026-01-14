@@ -36,10 +36,22 @@ in {
     (mkIf cfg.enable {
       environment.persistence.${cfg.persistDir} = {
         enable = true;
+        hideMounts = true;
+
+        files = [
+          "/etc/machine-id"
+          "/var/lib/systemd/random-seed"
+        ];
+
         directories = [
           "/var/log"
           "/var/lib/nixos"
           "/var/lib/systemd/coredump"
+          "/var/lib/systemd/timers"
+          "/var/lib/systemd/timesync"
+          "/var/lib/systemd/rfkill"
+          "/var/lib/dhcpcd"
+          "/var/lib/lastlog"
         ];
       };
 
