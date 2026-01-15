@@ -26,7 +26,7 @@
     edk2-uefi-shell.sortKey = "z_shell";
     windows."windows" = {
       title = "Windows";
-      efiDeviceHandle = "HD0b"; # TODO: Update after running `map -c` in UEFI shell
+      efiDeviceHandle = "FS1";
       sortKey = "y_windows";
     };
   };

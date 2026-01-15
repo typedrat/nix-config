@@ -88,11 +88,18 @@ in {
     }
 
     (mkIf config.rat.theming.fonts.enableGoogleFonts {
-      fonts.packages = [pkgs.google-fonts];
+      fonts.packages = [
+        pkgs.google-fonts
+      ];
     })
 
     (mkIf (! config.rat.theming.fonts.enableGoogleFonts) {
-      fonts.packages = [pkgs.noto-fonts];
+      fonts.packages = [
+        pkgs.noto-fonts
+        (pkgs.google-fonts.override {
+          fonts = ["DotGothic16"];
+        })
+      ];
     })
   ]);
 }

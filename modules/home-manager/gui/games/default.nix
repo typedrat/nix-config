@@ -1,6 +1,7 @@
 {
   config,
   osConfig,
+  self',
   pkgs,
   lib,
   ...
@@ -25,5 +26,7 @@ in {
       umu-launcher
       wineWowPackages.stableFull
     ];
+
+    xdg.configFile."pegasus-frontend/themes/colorful".source = "${self'.packages.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
   };
 }

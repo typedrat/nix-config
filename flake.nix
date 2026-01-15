@@ -27,9 +27,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    nixpkgs-patch-sgdboop-gcc15.url = "https://github.com/NixOS/nixpkgs/pull/475718.patch";
-    nixpkgs-patch-sgdboop-gcc15.flake = false;
-
     #endregion
 
     #region `flake-parts`
@@ -196,7 +193,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixified-ai.url = "github:nixified-ai/flake";
+    # Pinned: upstream flake.lock was manually edited without Nix, breaking hercules-ci-effects metadata
+    nixified-ai.url = "github:nixified-ai/flake/4a0e94067f863de3a2711d48651e499cb51f337e";
     #endregion
 
     #region Extension Repositories
