@@ -2,7 +2,6 @@
   config,
   inputs',
   lib,
-  pkgs,
   ...
 }: let
   inherit (lib.options) mkEnableOption;
@@ -11,7 +10,7 @@
   cfg = config.rat.hardware.openrgb;
   impermanenceCfg = config.rat.impermanence;
 
-  openrgb = inputs'.nanopkgs.packages.openrgb;
+  inherit (inputs'.nanopkgs.packages) openrgb;
 in {
   options.rat.hardware.openrgb.enable = mkEnableOption "OpenRGB";
 

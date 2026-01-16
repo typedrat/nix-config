@@ -114,7 +114,14 @@ in {
   config = let
     managerFlags = lib.optional cfg.enableManager "--enable-manager";
     apiNodeFlags = lib.optional cfg.disableApiNodes "--disable-api-nodes";
-    allExtraFlags = managerFlags ++ apiNodeFlags ++ cfg.extraFlags;
+    sageAttentionFlags = lib.optional cfg.enableSageAttention "--sage-attention";
+    baseDirFlags = ["--base-directory" config.services.comfyui.home];
+    allExtraFlags =
+      managerFlags
+      ++ apiNodeFlags
+      ++ sageAttentionFlags
+      ++ baseDirFlags
+      ++ cfg.extraFlags;
 
     sageAttentionNodes = lib.optional cfg.enableSageAttention pkgs.comfyuiPackages.comfyui-kijai-wan-video-wrapper;
     allCustomNodes = sageAttentionNodes ++ cfg.customNodes;
@@ -137,38 +144,6 @@ in {
           inherit (cfg) environmentVariables openFirewall;
           extraFlags = allExtraFlags;
           customNodes = allCustomNodes;
-        };
-
-        links.comfyui = {
-          protocol = "http";
-          port = 8188;
-        };
-
-        rat.services.traefik.routes.comfyui = {
-          enable = true;
-          inherit (cfg) subdomain;
-          serviceUrl = config.links.comfyui.url;
-          inherit (cfg) authentik;
-        };
-      })
-      (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
-        services.comfyui = {
-          user = "comfyui";
-          group = "comfyui";
-        };
-
-        users.users.comfyui = {
-          isSystemUser = true;
-          group = "comfyui";
-          inherit (config.services.comfyui) home;
-        };
-
-        users.groups.comfyui = {};
-
-        systemd.services.comfyui.serviceConfig = {
-          DynamicUser = lib.mkForce false;
-          User = "comfyui";
-          Group = "comfyui";
         };
 
         # Create model directories with setgid bit so files inherit group ownership
@@ -216,6 +191,38 @@ in {
             "d ${home}/output 2770 comfyui comfyui -"
           ]
           ++ map (dir: "d ${home}/models/${dir} 2770 comfyui comfyui -") modelDirs;
+
+        links.comfyui = {
+          protocol = "http";
+          port = 8188;
+        };
+
+        rat.services.traefik.routes.comfyui = {
+          enable = true;
+          inherit (cfg) subdomain;
+          serviceUrl = config.links.comfyui.url;
+          inherit (cfg) authentik;
+        };
+      })
+      (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
+        services.comfyui = {
+          user = "comfyui";
+          group = "comfyui";
+        };
+
+        users.users.comfyui = {
+          isSystemUser = true;
+          group = "comfyui";
+          inherit (config.services.comfyui) home;
+        };
+
+        users.groups.comfyui = {};
+
+        systemd.services.comfyui.serviceConfig = {
+          DynamicUser = lib.mkForce false;
+          User = "comfyui";
+          Group = "comfyui";
+        };
 
         environment.persistence.${impermanenceCfg.persistDir} = {
           directories = [
