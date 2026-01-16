@@ -114,7 +114,7 @@ in {
   config = let
     managerFlags = lib.optional cfg.enableManager "--enable-manager";
     apiNodeFlags = lib.optional cfg.disableApiNodes "--disable-api-nodes";
-    sageAttentionFlags = lib.optional cfg.enableSageAttention "--sage-attention";
+    sageAttentionFlags = lib.optional cfg.enableSageAttention "--use-sage-attention";
     baseDirFlags = ["--base-directory" config.services.comfyui.home];
     allExtraFlags =
       managerFlags
