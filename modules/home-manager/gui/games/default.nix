@@ -20,6 +20,7 @@ in {
 
   config = modules.mkIf ((guiCfg.enable or false) && (gamesCfg.enable or false)) {
     home.packages = with pkgs; [
+      bottles
       gamescope
       igir
       pegasus-frontend

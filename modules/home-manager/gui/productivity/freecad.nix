@@ -1,12 +1,17 @@
 {
+  config,
   osConfig,
   pkgs,
   lib,
   ...
 }: let
   inherit (lib.modules) mkIf;
+  inherit (config.home) username;
+  userCfg = osConfig.rat.users.${username} or {};
+  guiCfg = userCfg.gui or {};
+  productivityCfg = guiCfg.productivity or {};
 in {
-  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.productivity.enable) {
+  config = mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false) && (productivityCfg.freecad.enable or false)) {
     home.packages = with pkgs; [
       (freecad.customize {
         pythons = [

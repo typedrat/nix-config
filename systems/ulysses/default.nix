@@ -115,9 +115,12 @@
         enable = true;
         hyprland.launcher = "vicinae";
         terminal.ghostty.enable = true;
-        productivity.krita = {
-          enable = true;
-          aiDiffusion.enable = true;
+        productivity = {
+          freecad.enable = false;
+          krita = {
+            enable = true;
+            aiDiffusion.enable = true;
+          };
         };
       };
     };

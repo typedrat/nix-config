@@ -16,6 +16,12 @@ in {
   options.rat.services.comfyui = {
     enable = options.mkEnableOption "ComfyUI";
 
+    autoStart = options.mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to automatically start ComfyUI at boot. If false, the service is configured but must be started manually.";
+    };
+
     subdomain = options.mkOption {
       type = types.str;
       default = "comfyui";
@@ -45,7 +51,7 @@ in {
 
     enableManager = options.mkOption {
       type = types.bool;
-      default = true;
+      default = false;
       description = "Enable the ComfyUI Manager for installing custom nodes and models.";
     };
 
@@ -187,6 +193,8 @@ in {
           ];
         in
           [
+            "d ${home}/custom_nodes 2770 comfyui comfyui -"
+            "d ${home}/input 2770 comfyui comfyui -"
             "d ${home}/models 2770 comfyui comfyui -"
             "d ${home}/output 2770 comfyui comfyui -"
           ]
@@ -203,6 +211,9 @@ in {
           serviceUrl = config.links.comfyui.url;
           inherit (cfg) authentik;
         };
+      })
+      (modules.mkIf (cfg.enable && !cfg.autoStart) {
+        systemd.services.comfyui.wantedBy = lib.mkForce [];
       })
       (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
         services.comfyui = {

@@ -13,6 +13,7 @@ in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
     home.packages = with pkgs; [
       # Network diagnostics and utilities
+      cloudflared
       dnsutils
       ipcalc
       iperf3

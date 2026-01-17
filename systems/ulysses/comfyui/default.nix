@@ -54,9 +54,15 @@
 in {
   rat.services.comfyui = {
     enable = true;
+    autoStart = false;
+
     acceleration = "cuda";
-    enableSageAttention = true;
+    enableSageAttention = false;
     disableApiNodes = true;
+    extraFlags = [
+      "--preview-method"
+      "taesd"
+    ];
 
     models = allModels;
 
@@ -76,6 +82,17 @@ in {
       comfyui-ip-adapter
       comfyui-inpaint
       comfyui-external-tooling
+
+      (pkgs.comfyuiLib.mkComfyUICustomNode {
+        pname = "comfyui-inpaint-cropandstitch";
+        version = "unstable-2026-01-16";
+        src = pkgs.fetchFromGitHub {
+          owner = "lquesada";
+          repo = "ComfyUI-Inpaint-CropAndStitch";
+          rev = "3551c8c361746f8d48bcdd45aa39c3db19d9939a";
+          hash = "sha256-W+j+Z1VG/RMVg3N2XxM1MIt5kxHVMEy3pyX0W5NJqPk=";
+        };
+      })
 
       (pkgs.comfyuiLib.mkComfyUICustomNode {
         pname = "comfyui-prompt-control";

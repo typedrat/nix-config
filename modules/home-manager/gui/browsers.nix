@@ -28,10 +28,6 @@
   zenRepoAccent = capitalizeFirst accent;
 
   commonFirefoxConfig = {
-    nativeMessagingHosts = with pkgs; [
-      firefoxpwa
-    ];
-
     profiles = {
       default = {
         id = 0;
@@ -159,7 +155,6 @@
             indie-wiki-buddy
             metamask
             offline-qr-code-generator
-            pwas-for-firefox
             react-devtools
             return-youtube-dislikes
             sponsorblock
@@ -178,13 +173,6 @@ in {
   ];
 
   config = modules.mkMerge [
-    # Firefox PWA support (enabled if any Firefox-based browser is enabled)
-    (modules.mkIf ((guiCfg.enable or false) && ((browsersCfg.firefox.enable or false) || (browsersCfg.zen.enable or false))) {
-      home.packages = with pkgs; [
-        firefoxpwa
-      ];
-    })
-
     # Chromium
     (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.chromium.enable or false)) {
       programs.chromium = {
