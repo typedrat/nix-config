@@ -42,7 +42,7 @@ in {
           "$main_mod, space, exec, vicinae toggle"
           "$main_mod, b, exec, vicinae vicinae://extensions/vicinae/wm/switch-windows"
           "$main_mod, v, exec, vicinae vicinae://extensions/vicinae/clipboard/history"
-          "$main_mod&SHIFT, period, exec, vicinae vicinae://extensions/vicinae/vicinae/search-emojis"
+          "$main_mod&SHIFT, period, exec, vicinae vicinae://extensions/vicinae/core/search-emojis"
         ];
       };
 

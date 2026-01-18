@@ -67,7 +67,7 @@
         tvMonitor = "HDMI-A-1";
         monitors = [
           "DP-1,3840x2160@60.0,0x1080,1.0"
-          "HDMI-A-1,3840x2160@60.0,960x0,2.0"
+          "HDMI-A-1,1920x1080@60.0,960x0,1.0"
         ];
         workspaces = [
           "1, monitor:DP-1, persistent=true"
