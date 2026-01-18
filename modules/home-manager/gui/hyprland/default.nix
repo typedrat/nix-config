@@ -108,15 +108,16 @@ in {
           "ALT, mouse:272, movewindow"
         ];
 
-        exec-once = [
-          "uwsm app -- swww init"
-          "uwsm app -- waytrogen --restore"
-          "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
-          "uwsm app -- discord --start-minimized"
-          "uwsm app -- jellyfin-mpv-shim"
-          "uwsm app -- openrgb --startminimized"
-          "uwsm app -- pyvizio power on"
-        ];
+        exec-once =
+          [
+            "uwsm app -- waytrogen --restore"
+          ]
+          ++ lib.optional (osConfig.programs.steam.enable or false) "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
+          ++ lib.optional (guiCfg.chat.discord.enable or false) "uwsm app -- discord --start-minimized"
+          ++ lib.optional (guiCfg.media.enable or false) "uwsm app -- jellyfin-mpv-shim"
+          ++ lib.optional (osConfig.rat.hardware.openrgb.enable or false) "uwsm app -- openrgb --startminimized"
+          ++ lib.optional (osConfig.programs.coolercontrol.enable or false) "uwsm app -- coolercontrol"
+          ++ lib.optional (tvMonitor != null) "pyvizio power on";
 
         general = {
           resize_on_border = true;

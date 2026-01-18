@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./alsa-ucm-conf.nix
     ./comfyui
     ./disko-config.nix
     ./superio.nix
@@ -63,7 +64,7 @@
       enable = true;
       hyprland = {
         primaryMonitor = "DP-1";
-        tvMonitor = "HDMI-A-2";
+        tvMonitor = "HDMI-A-1";
         monitors = [
           "DP-1,3840x2160@60.0,0x1080,1.0"
           "HDMI-A-1,3840x2160@60.0,960x0,2.0"
