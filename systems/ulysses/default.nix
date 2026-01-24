@@ -8,6 +8,7 @@
     ./comfyui
     ./disko-config.nix
     ./superio.nix
+    ./wireplumber.nix
   ];
 
   hardware.facter.reportPath = ./facter.json;
