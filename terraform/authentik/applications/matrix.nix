@@ -13,8 +13,8 @@
         launchUrl = "blank://blank";
         redirectUris = [
           {
-            url = "https://matrix-auth.thisratis.gay/upstream/callback/authentik";
-            matchingMode = "strict";
+            url = "https://matrix-auth.thisratis.gay/upstream/callback/.*";
+            matchingMode = "regex";
           }
         ];
       };
