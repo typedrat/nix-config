@@ -68,14 +68,44 @@ in {
 
     customNodes = with pkgs.comfyuiPackages; [
       comfyui-automatic-cfg
-      comfyui-gguf
       comfyui-essentials
       comfyui-impact-pack
       comfyui-impact-subpack
-      comfyui-kjnodes
       comfyui-pythongosssss-custom-scripts
       comfyui-res4lyf
       comfyui-rgthree
+
+      # Overridden for LTX-2 support
+      (pkgs.comfyuiLib.mkComfyUICustomNode {
+        pname = "comfyui-gguf";
+        version = "unstable-2026-01-12";
+        src = pkgs.fetchFromGitHub {
+          owner = "city96";
+          repo = "ComfyUI-GGUF";
+          rev = "6ea2651e7df66d7585f6ffee804b20e92fb38b8a";
+          hash = "sha256-/ZwecgxTTMo9J1whdEJci8lEkOy/yP+UmjbpOAA3BvU=";
+        };
+      })
+      (pkgs.comfyuiLib.mkComfyUICustomNode {
+        pname = "comfyui-kjnodes";
+        version = "unstable-2026-01-24";
+        src = pkgs.fetchFromGitHub {
+          owner = "kijai";
+          repo = "ComfyUI-KJNodes";
+          rev = "f91daf93293ab7fb28836159595a5b088c86313a";
+          hash = "sha256-V0bw/osQAfc2i3AMnt7vypTA6+paJ/rdvVxfE9nXe6Y=";
+        };
+      })
+      (pkgs.comfyuiLib.mkComfyUICustomNode {
+        pname = "comfyui-ltxvideo";
+        version = "unstable-2026-01-15";
+        src = pkgs.fetchFromGitHub {
+          owner = "Lightricks";
+          repo = "ComfyUI-LTXVideo";
+          rev = "cd5d371518afb07d6b3641be8012f644f25269fc";
+          hash = "sha256-VR7NRuTsSDC0MTHAArBkWtTmdb2ZEIOjz/ikxhy4msY=";
+        };
+      })
 
       # Required for krita-ai-diffusion
       comfyui-controlnet-preprocessors
