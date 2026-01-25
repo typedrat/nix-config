@@ -5,7 +5,7 @@
 }: {
   imports = [
     ./alsa-ucm-conf.nix
-    ./comfyui
+    # ./comfyui
     ./disko-config.nix
     ./superio.nix
     ./wireplumber.nix
