@@ -193,8 +193,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Pinned: upstream flake.lock was manually edited without Nix, breaking hercules-ci-effects metadata
-    nixified-ai.url = "github:nixified-ai/flake/4a0e94067f863de3a2711d48651e499cb51f337e";
+    nixified-ai.url = "github:nixified-ai/flake";
     #endregion
 
     #region Extension Repositories
