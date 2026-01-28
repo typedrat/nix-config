@@ -17,22 +17,6 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
 
-  # Windows dual-boot via UEFI chainloading
-  # To find the correct efiDeviceHandle:
-  # 1. Reboot and select "UEFI Shell" from systemd-boot
-  # 2. Run: map -c
-  # 3. Try each FSx: followed by "ls EFI" to find the one with Microsoft/Boot
-  # 4. Update the efiDeviceHandle below with that value (e.g., "FS1")
-  boot.loader.systemd-boot = {
-    edk2-uefi-shell.enable = true;
-    edk2-uefi-shell.sortKey = "z_shell";
-    windows."windows" = {
-      title = "Windows";
-      efiDeviceHandle = "FS1";
-      sortKey = "y_windows";
-    };
-  };
-
   # Windows drive (WD SN750 500GB)
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309-part3";
@@ -52,8 +36,18 @@
 
   rat = {
     boot = {
-      loader = "lanzaboote";
-      secureBoot.autoEnrollKeys = true;
+      loader = "limine";
+      memtest86.enable = true;
+      limine.secureBoot = {
+        validateChecksums = true;
+        enrollConfig = true;
+      };
+      windows = {
+        enable = true;
+        title = "Windows 11";
+        # Windows ESP on WD SN750 (/dev/nvme0n1p1)
+        efiPartition = "guid://a2b0ff18-ff5e-4783-b72d-323241b76611";
+      };
     };
 
     hardware.nvidia = {
