@@ -33,6 +33,7 @@ in {
       # CLI utilities
       aria2
       cachix
+      chafa
       yt-dlp
       gdu
       jd-diff-patch
