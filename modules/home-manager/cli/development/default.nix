@@ -32,6 +32,7 @@ in {
 
       # AI/Editor tools
       claude-code
+      self'.packages.cclogviewer
       self'.packages.claude-powerline
 
       # VCS and GitHub
