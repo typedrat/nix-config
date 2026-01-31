@@ -7,6 +7,9 @@
   inherit (lib.modules) mkIf mkMerge;
   cfg = config.rat;
   usesSystemdBoot = cfg.boot.loader == "systemd-boot" || cfg.boot.loader == "lanzaboote";
+  # NVIDIA provides its own DRM framebuffer via nvidia-drm.fbdev=1, so simpledrm
+  # is not needed and actually prevents Plymouth from finding the framebuffer.
+  usesNvidia = cfg.hardware.nvidia.enable or false;
 in {
   options.rat.gui.plymouth.enable =
     mkEnableOption "plymouth"
@@ -36,10 +39,14 @@ in {
           "rd.systemd.show_status=false"
           "rd.udev.log_level=3"
           "udev.log_priority=3"
-          "plymouth.use-simpledrm"
         ];
       };
     }
+
+    # Use simpledrm for Plymouth on non-NVIDIA systems (provides early framebuffer from EFI GOP)
+    (mkIf (!usesNvidia) {
+      boot.kernelParams = ["plymouth.use-simpledrm"];
+    })
 
     # systemd-boot specific configuration
     (mkIf usesSystemdBoot {
