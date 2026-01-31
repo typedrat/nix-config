@@ -27,6 +27,7 @@ in {
 
       tty.enable = true;
       plymouth.enable = config.rat.gui.plymouth.enable;
+      limine.enable = config.rat.boot.loader == "limine";
     };
   };
 }
