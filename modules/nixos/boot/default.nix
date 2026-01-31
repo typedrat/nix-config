@@ -88,8 +88,8 @@ in {
           When null (default), uses "boot()" for the same ESP as Limine.
           For a different partition, specify:
           - "boot(n)" for the nth partition on the boot drive
-          - "uuid://XXXX-XXXX" for a partition by filesystem UUID
-          - "guid://XXXX-XXXX-XXXX-XXXX" for a partition by GPT GUID
+          - "uuid(XXXX-XXXX)" for a partition by filesystem UUID
+          - "guid(XXXX-XXXX-XXXX-XXXX)" for a partition by GPT GUID
 
           Only used with the Limine bootloader.
         '';

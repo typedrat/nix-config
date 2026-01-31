@@ -139,18 +139,20 @@ in {
 
     # Memtest86+ for Limine
     (modules.mkIf (cfg.loader == "limine" && cfg.memtest86.enable) {
-      boot.loader.limine = {
-        additionalFiles."EFI/memtest86plus/mt86plus.efi" = "${pkgs.memtest86plus}/mt86plus.efi";
-        extraEntries = let
-          memtestHash = lib.strings.trim (builtins.readFile (pkgs.runCommand "memtest-blake2b" {} ''
-            ${lib.getExe' pkgs.coreutils "b2sum"} ${pkgs.memtest86plus}/mt86plus.efi | cut -d' ' -f1 > $out
-          ''));
-        in ''
-          /Memtest86+
-          protocol: efi
-          path: boot():/EFI/memtest86plus/mt86plus.efi#${memtestHash}
-        '';
-      };
+      # Copy memtest86+ directly to ESP (not through limine's additionalFiles which uses /boot/limine/)
+      system.activationScripts.memtest86plus = ''
+        install -D -m 644 ${pkgs.memtest86plus}/mt86plus.efi ${config.boot.loader.efi.efiSysMountPoint}/EFI/memtest86plus/mt86plus.efi
+      '';
+
+      boot.loader.limine.extraEntries = let
+        memtestHash = lib.strings.trim (builtins.readFile (pkgs.runCommand "memtest-blake2b" {} ''
+          ${lib.getExe' pkgs.coreutils "b2sum"} ${pkgs.memtest86plus}/mt86plus.efi | cut -d' ' -f1 > $out
+        ''));
+      in ''
+        /Memtest86+
+        protocol: efi
+        path: boot():/EFI/memtest86plus/mt86plus.efi#${memtestHash}
+      '';
     })
 
     # BIOS device configuration
