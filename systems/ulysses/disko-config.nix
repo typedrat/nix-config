@@ -7,7 +7,7 @@
     disk = {
       main = {
         type = "disk";
-        device = "/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B54500663U";
+        device = "/dev/disk/by-id/nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D";
         content = {
           type = "gpt";
           partitions = {
