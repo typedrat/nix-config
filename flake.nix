@@ -178,6 +178,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    llama-cpp = {
+      url = "github:ggml-org/llama.cpp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mlnx-ofed-nixos = {
       url = "github:codgician/mlnx-ofed-nixos";
       inputs.nixpkgs.follows = "nixpkgs";

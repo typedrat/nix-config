@@ -1,5 +1,6 @@
 {
   config,
+  inputs',
   pkgs,
   ...
 }: {
@@ -122,8 +123,8 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    llama-cpp
+  environment.systemPackages = [
+    inputs'.llama-cpp.packages.cuda
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
