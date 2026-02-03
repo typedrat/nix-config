@@ -31,7 +31,7 @@ in {
       uv
 
       # AI/Editor tools
-      claude-code
+      claude-code-bin
       self'.packages.cclogviewer
       self'.packages.claude-powerline
 
