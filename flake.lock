@@ -1959,6 +1959,18 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-486268": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-uJrSxlrAAIN+nBcRoV8LmoLOIjSG/yL5zJLEM7dPrFs=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/486268.patch"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/486268.patch"
+      }
+    },
     "nixpkgs-patcher": {
       "locked": {
         "lastModified": 1769207991,
@@ -2499,6 +2511,7 @@
         "nixified-ai": "nixified-ai",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_12",
+        "nixpkgs-patch-486268": "nixpkgs-patch-486268",
         "nixpkgs-patcher": "nixpkgs-patcher",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixvirt": "nixvirt",

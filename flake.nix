@@ -26,7 +26,10 @@
 
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
-
+    nixpkgs-patch-486268 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/486268.patch";
+      flake = false;
+    };
     #endregion
 
     #region `flake-parts`
