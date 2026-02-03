@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  self',
   inputs,
   pkgs,
   lib,
@@ -13,6 +12,7 @@
   cliCfg = userCfg.cli or {};
 in {
   imports = [
+    ./claude-code.nix
     ./cloud.nix
     ./git-spice.nix
     ./languages.nix
@@ -29,11 +29,6 @@ in {
       process-compose
       rainfrog
       uv
-
-      # AI/Editor tools
-      claude-code-bin
-      self'.packages.cclogviewer
-      self'.packages.claude-powerline
 
       # VCS and GitHub
       github-cli
