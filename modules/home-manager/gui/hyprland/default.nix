@@ -67,7 +67,6 @@ in {
       kdePackages.okular
       kdePackages.dolphin
       kdePackages.ark
-      kdePackages.kwalletmanager
     ];
 
     wayland.windowManager.hyprland = {
