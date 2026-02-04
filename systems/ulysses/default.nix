@@ -17,6 +17,8 @@
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
+  # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
+  boot.blacklistedKernelModules = ["battery"];
 
   # Windows drive (WD SN750 500GB)
   fileSystems."/mnt/windows" = {
