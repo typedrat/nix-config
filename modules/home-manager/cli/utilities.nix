@@ -38,7 +38,6 @@ in {
       gdu
       jd-diff-patch
       jq
-      llm
       openssl
       pv
       rename

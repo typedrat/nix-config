@@ -17,6 +17,10 @@
         enable = options.mkEnableOption "development CLI tools" // {default = true;};
       };
 
+      ai = {
+        enable = options.mkEnableOption "AI tools and configuration" // {default = true;};
+      };
+
       comfy-cli = {
         enable = options.mkEnableOption "comfy-cli for managing ComfyUI";
       };

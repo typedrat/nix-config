@@ -3,27 +3,25 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   cfg = config.programs.comfy-cli;
-in
-{
-  meta.maintainers = [ ];
+in {
+  meta.maintainers = [];
 
   options.programs.comfy-cli = {
     enable = lib.mkEnableOption "comfy-cli, a CLI for managing ComfyUI";
 
-    package = lib.mkPackageOption pkgs "comfy-cli" { };
+    package = lib.mkPackageOption pkgs "comfy-cli" {};
 
-    enableBashIntegration = lib.hm.shell.mkBashIntegrationOption { inherit config; };
+    enableBashIntegration = lib.hm.shell.mkBashIntegrationOption {inherit config;};
 
-    enableZshIntegration = lib.hm.shell.mkZshIntegrationOption { inherit config; };
+    enableZshIntegration = lib.hm.shell.mkZshIntegrationOption {inherit config;};
 
-    enableFishIntegration = lib.hm.shell.mkFishIntegrationOption { inherit config; };
+    enableFishIntegration = lib.hm.shell.mkFishIntegrationOption {inherit config;};
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+    home.packages = [cfg.package];
 
     programs.bash.initExtra = lib.mkIf cfg.enableBashIntegration ''
       _comfy_completion() {

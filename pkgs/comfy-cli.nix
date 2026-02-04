@@ -3,7 +3,6 @@
   python3,
   fetchFromGitHub,
 }:
-
 python3.pkgs.buildPythonApplication rec {
   pname = "comfy-cli";
   version = "1.5.4";
@@ -26,7 +25,7 @@ python3.pkgs.buildPythonApplication rec {
 
   # comfy-cli pins click<=8.1.8 due to old typer incompatibility (github.com/Comfy-Org/comfy-cli/issues/266)
   # but typer 0.16.0+ works with newer click, and nixpkgs has typer 0.21.0
-  pythonRelaxDeps = [ "click" ];
+  pythonRelaxDeps = ["click"];
 
   dependencies = with python3.pkgs; [
     charset-normalizer
@@ -72,7 +71,7 @@ python3.pkgs.buildPythonApplication rec {
     description = "Command Line Interface for Managing ComfyUI";
     homepage = "https://github.com/Comfy-Org/comfy-cli";
     license = lib.licenses.gpl3Only;
-    maintainers = with lib.maintainers; [ typedrat ];
+    maintainers = with lib.maintainers; [typedrat];
     mainProgram = "comfy";
   };
 }
