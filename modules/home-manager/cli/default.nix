@@ -12,6 +12,7 @@ in {
   imports = [
     ./development
     ./shell
+    ./comfy-cli.nix
     ./networking.nix
     ./system-tools.nix
     ./tools.nix

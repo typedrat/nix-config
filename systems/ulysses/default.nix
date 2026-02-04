@@ -108,6 +108,10 @@
     users.awilliams = {
       enable = true;
       extraGroups = ["comfyui"];
+      cli = {
+        enable = true;
+        comfy-cli.enable = true;
+      };
       gui = {
         enable = true;
         hyprland.launcher = "vicinae";

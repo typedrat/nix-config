@@ -28,6 +28,7 @@
 
             sharedModules = [
               "${self}/modules/home-manager"
+              "${self}/modules/extra/home-manager/comfy-cli.nix"
             ];
           };
         }
