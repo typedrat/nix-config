@@ -32,6 +32,7 @@ in {
       catppuccin = {
         gtk.icon.enable = true;
         cursors.enable = true;
+        kvantum.enable = true;
         waybar.mode = "createLink";
       };
 
