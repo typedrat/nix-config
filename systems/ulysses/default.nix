@@ -1,6 +1,7 @@
 {
   config,
   inputs',
+  lib,
   pkgs,
   ...
 }: {
@@ -19,6 +20,8 @@
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
   boot.blacklistedKernelModules = ["battery"];
+  # Don't load amdgpu in initrd - it changes monitor enumeration order
+  hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce ["nvidia"];
 
   # Windows drive (WD SN750 500GB)
   fileSystems."/mnt/windows" = {
