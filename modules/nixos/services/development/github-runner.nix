@@ -102,7 +102,7 @@ in {
               python3
               # Nix tooling
               nix
-              nixfmt-classic
+              nixfmt
               # Add user-specified packages
               openssh
             ]
