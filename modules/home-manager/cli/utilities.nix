@@ -46,6 +46,7 @@ in {
       wl-clipboard
 
       # Nix utilities
+      fh
       nixpkgs-review
       nix-diff
       nix-tree

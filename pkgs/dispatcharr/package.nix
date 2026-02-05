@@ -13,7 +13,7 @@
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-uehF55cywzuhuh3LLT+rTTLAJwSb3IIuUJOLKq35tcA=";
+    hash = "sha256-IonSHMhIL3SFgAg5FAvQqg0TnZ6lFk2NbeGUQUNQQBU=";
     leaveDotGit = true;
   };
 

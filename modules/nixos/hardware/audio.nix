@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib.options) mkEnableOption;
@@ -13,6 +14,24 @@ in {
     };
 
   config = mkIf config.rat.audio.enable {
+    # MAONO PD200X USB microphone (352f:0104) - capture doesn't work without this
+    # The device has an INV_BOOLEAN mute control that Linux handles incorrectly
+    environment.etc."wireplumber/main.lua.d/51-maono-pd200x.lua".text = ''
+      rule = {
+        matches = {
+          {
+            { "device.vendor.id", "equals", "13615" },
+            { "device.product.id", "equals", "260" },
+          },
+        },
+        apply_properties = {
+          ["api.alsa.use-acp"] = false,
+        },
+      }
+
+      table.insert(alsa_monitor.rules, rule)
+    '';
+
     security.rtkit.enable = true;
     services.avahi.enable = true;
     services.pipewire = {

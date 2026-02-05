@@ -75,10 +75,7 @@
         exporters.ipmi.enable = true;
       };
 
-      attic = {
-        enable = true;
-        bucket = "typedrat-nix-cache";
-      };
+      attic.enable = false;
 
       github-runner = {
         enable = true;
@@ -117,6 +114,7 @@
 
       shoko.enable = true;
       sonarr.enable = true;
+      style-search.enable = true;
       sonarr.anime.enable = true;
       torrents = {
         enable = true;
