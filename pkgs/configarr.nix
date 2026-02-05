@@ -4,6 +4,8 @@
   fetchFromGitHub,
   nodejs,
   pnpm_10,
+  pnpmConfigHook,
+  fetchPnpmDeps,
   makeBinaryWrapper,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -19,11 +21,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     nodejs
-    pnpm_10.configHook
+    pnpm_10
+    pnpmConfigHook
     makeBinaryWrapper
   ];
 
-  pnpmDeps = pnpm_10.fetchDeps {
+  pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     fetcherVersion = 2;
     hash = "sha256-2+zHCzY7zpebkH9TpihJRJnzQVaO+qbf2OmxYfoqjiA=";
