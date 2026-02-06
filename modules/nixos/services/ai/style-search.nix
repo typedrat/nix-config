@@ -6,6 +6,7 @@
 }: let
   inherit (lib) modules options types;
   cfg = config.rat.services.style-search;
+  inherit (config.rat.services) domainName;
   impermanenceCfg = config.rat.impermanence;
 in {
   imports = [
@@ -34,6 +35,8 @@ in {
         enable = true;
         host = "127.0.0.1";
         inherit (config.links.style-search) port;
+        domain = "${cfg.subdomain}.${domainName}";
+        protocol = "https";
       };
 
       links.style-search = {

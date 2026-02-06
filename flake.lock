@@ -2827,11 +2827,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770334546,
-        "narHash": "sha256-/knsZL3UGhQUneyWcRVl0xkudbupQZkEWKPyfJZGgik=",
+        "lastModified": 1770339651,
+        "narHash": "sha256-CRQVMnji7lvyjfdTiCnC7IQmIWfzESiqW2buqyJ35BM=",
         "owner": "typedrat",
         "repo": "style-search",
-        "rev": "b4e5e8bac39f72db96596c73eed36a73c01d3870",
+        "rev": "90b1e9957776ab52a7a79c7a72ee55ecf0df91d3",
         "type": "github"
       },
       "original": {
