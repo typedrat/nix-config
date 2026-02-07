@@ -15,7 +15,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "raydak-labs";
     repo = "configarr";
-    tag = "v1.13.4";
+    tag = "v${version}";
     hash = "sha256-hfP1hrqK/ueuY4ll1Cr4msdJO0yu/mVTVYLP+u/xB5U=";
   };
 

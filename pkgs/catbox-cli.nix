@@ -32,6 +32,7 @@ rustPlatform.buildRustPackage (_finalAttrs: {
     description = "A simple catbox cli app that has progress when uploading!";
     homepage = "https://github.com/JustSimplyKyle/catbox-cli";
     license = licenses.mit;
+    mainProgram = "cbx";
     maintainers = [];
   };
 })
