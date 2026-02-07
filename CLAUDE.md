@@ -18,6 +18,7 @@ This is a NixOS configuration flake using `flake-parts` with a custom `nixos-hos
   - `flake/default.nix` - Imports all flake modules
   - `flake/checks.nix` - Flake checks (e.g., package updateScript validation)
   - `flake/formatter.nix` - treefmt configuration
+  - `flake/github-actions.nix` - GitHub Actions workflow generation
   - `flake/outputs.nix` - Flake-level outputs (lib, nixosModules, hydraJobs)
   - `flake/packages.nix` - Local package discovery via `local-packages` module
   - `flake/rebuild.nix` - `nix run .#switch` and `.#boot` apps
@@ -87,6 +88,17 @@ The rebuild apps automatically:
 - Use Determinate Systems Nix with the new experimental CLI
 
 **Tip**: Use `--build-host iserlohn` to offload builds to the remote server, which is often faster than building locally. Remember to use `--` before the flag to pass it to nixos-rebuild rather than `nix run`.
+
+### GitHub Actions Workflows
+
+GitHub Actions workflows are generated from Nix configuration in `flake/github-actions.nix`:
+
+```bash
+# Regenerate .github/workflows/ from Nix configuration
+nix run .#write-files
+```
+
+The generated workflows should be committed to the repository.
 
 ### Code Formatting and Linting
 

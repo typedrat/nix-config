@@ -35,6 +35,10 @@
 
     flake-root.url = "https://flakehub.com/f/srid/flake-root/*";
 
+    files.url = "github:mightyiam/files";
+
+    github-actions-nix.url = "https://flakehub.com/f/synapdeck/github-actions-nix/*";
+
     terranix.url = "github:terranix/terranix";
 
     treefmt-nix = {
