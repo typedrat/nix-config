@@ -8,6 +8,20 @@
 }: let
   inherit (lib.options) mkEnableOption;
   inherit (lib.modules) mkIf mkMerge;
+
+  apple-fonts = pkgs.symlinkJoin {
+    name = "apple-fonts";
+    paths = with inputs'.apple-fonts.packages; [
+      sf-pro
+      sf-compact
+      sf-arabic
+      sf-armenian
+      sf-georgian
+      sf-hebrew
+      sf-mono
+      ny
+    ];
+  };
 in {
   options.rat.theming.fonts = {
     enable =
@@ -30,7 +44,7 @@ in {
           vista-fonts-cht
 
           # Primary system fonts, stolen from a company with design sense:
-          self'.packages.apple-fonts
+          apple-fonts
           inputs'.apple-emoji.packages.apple-emoji-linux
 
           # Coding fonts:

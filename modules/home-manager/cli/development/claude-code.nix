@@ -15,7 +15,6 @@ in {
     home.packages = [
       pkgs.claude-code-bin
       self'.packages.cclogviewer
-      self'.packages.claude-powerline
     ];
 
     # Add ~/.local/bin to PATH

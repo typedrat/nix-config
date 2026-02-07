@@ -1,9 +1,8 @@
 {
-  inputs,
+  inputs',
   lib,
-  stdenv,
 }:
-inputs.firefox-addons.lib.${stdenv.hostPlatform.system}.buildFirefoxXpiAddon rec {
+inputs'.firefox-addons.lib.buildFirefoxXpiAddon rec {
   pname = "bypass-paywalls-clean";
   version = "4.2.9.6";
   addonId = "magnolia@12.34";

@@ -5,14 +5,14 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "krita-ai-diffusion";
-  version = "1.45.0";
+  version = "1.47.0";
 
   src = fetchFromGitHub {
     owner = "Acly";
     repo = "krita-ai-diffusion";
     tag = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-Ree+k0tWuKym8TIUOhi8taA+I+w+fxlz6r4hxZqDYUw=";
+    hash = "sha256-OYcBxwNMg8ztf9aaO4kJFE1afLqMzTutGhMsViutIZM=";
   };
 
   dontBuild = true;

@@ -25,9 +25,8 @@ in {
 
       # Custom packages
       self'.packages.catbox-cli
-      self'.packages.qbittorrent-cli
-      self'.packages.stable-diffusion-cpp
-      self'.packages.pyvizio
+      qbittorrent-cli
+      python3Packages.pyvizio
 
       # Fetch tools
       (fastfetch.overrideAttrs (oldAttrs: {

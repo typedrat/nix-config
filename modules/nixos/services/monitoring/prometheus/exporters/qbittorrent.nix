@@ -1,6 +1,6 @@
 {
   config,
-  self',
+  pkgs,
   lib,
   ...
 }: let
@@ -20,7 +20,7 @@ in {
       };
 
       serviceConfig = {
-        ExecStart = lib.getExe self'.packages.qbittorrent-exporter;
+        ExecStart = lib.getExe pkgs.prometheus-qbittorrent-exporter;
         Restart = "on-failure";
         RestartSec = "5s";
 
