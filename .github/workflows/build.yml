@@ -21,7 +21,6 @@ jobs:
       fail-fast: false
       matrix:
         host:
-          - hyperion
           - iserlohn
           - ulysses
   build-summary:

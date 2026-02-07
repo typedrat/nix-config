@@ -40,7 +40,7 @@
               strategy = {
                 failFast = false;
                 matrix = {
-                  host = ["hyperion" "iserlohn" "ulysses"];
+                  host = ["iserlohn" "ulysses"];
                 };
               };
 
