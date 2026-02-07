@@ -14,7 +14,7 @@
     };
 
     home-manager = {
-      url = "https://flakehub.com/f/nix-community/home-manager/*";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -95,7 +95,7 @@
     };
 
     catppuccin = {
-      url = "https://flakehub.com/f/catppuccin/nix/*";
+      url = "github:catppuccin/nix";
     };
 
     catppuccin-element = {
