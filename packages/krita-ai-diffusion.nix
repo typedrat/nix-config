@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitHub,
+  nix-update-script,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "krita-ai-diffusion";
@@ -26,6 +27,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
+
+  passthru.updateScript = nix-update-script {};
 
   meta = {
     description = "Generative AI for Krita - image generation plugin using ComfyUI as backend";

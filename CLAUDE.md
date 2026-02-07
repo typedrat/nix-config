@@ -21,7 +21,7 @@ This is a NixOS configuration flake using `flake-parts` with a custom `nixos-hos
   - `modules/extra/` - Extra modules for flake-parts integration
 - **User Configuration**: Home Manager integration with user-specific configs in `users/`
 - **Secrets Management**: SOPS-nix for encrypted secrets stored in `secrets/`
-- **Custom Packages**: Local package definitions in `pkgs/` directory with automatic discovery via `pkgs-by-name-for-flake-parts`
+- **Custom Packages**: Local package definitions in `packages/` directory with automatic discovery via `local-packages` flake-parts module
 - **Terraform Integration**: Infrastructure as code with `terranix` module for service configuration
 
 ### Service Architecture
@@ -117,7 +117,7 @@ The terranix wrapper automatically:
 - **System configs**: `systems/{hyperion,iserlohn}/`
 - **NixOS modules**: `modules/nixos/`
 - **User configs**: `users/awilliams/`
-- **Custom packages**: `pkgs/`
+- **Custom packages**: `packages/`
 - **Secrets**: `secrets/` (SOPS encrypted)
 - **Terraform**: `terraform/` (uses terranix)
 
@@ -147,11 +147,11 @@ The terranix wrapper automatically:
 
 ### Custom Package Development
 
-- Add new packages to `pkgs/` directory
-- `pkgs-by-name-for-flake-parts` provides automatic package discovery
+- Add new packages to `packages/` directory
+- The `local-packages` flake-parts module (`modules/extra/flake-parts/local-packages.nix`) provides automatic package discovery
 - Packages are automatically available as `pkgs.<name>` after being added
 - Follow existing package patterns for consistency
-- Custom package overlays are available for more complex modifications
+- All packages should have `passthru.updateScript` set
 
 ### Terraform Service Configuration
 
@@ -216,7 +216,7 @@ The configuration uses several important flake inputs:
   - `terranix` - Terraform configuration in Nix
   - `treefmt-nix` - Code formatting
   - `fenix` - Rust toolchain management
-  - `pkgs-by-name-for-flake-parts` - Automatic package discovery
+  - `flake-compat` - Enables importing flake as traditional Nix expression (for nix-update compatibility)
 
 ## Testing Changes
 

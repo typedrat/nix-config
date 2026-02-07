@@ -3,6 +3,7 @@
   python3Packages,
   fetchFromGitHub,
   makeWrapper,
+  nix-update-script,
 }:
 python3Packages.buildPythonApplication rec {
   pname = "channelidentifiarr";
@@ -51,6 +52,8 @@ python3Packages.buildPythonApplication rec {
   '';
 
   doCheck = false;
+
+  passthru.updateScript = nix-update-script {};
 
   meta = {
     description = "Web-based TV channel lineup search and Dispatcharr/Emby integration";

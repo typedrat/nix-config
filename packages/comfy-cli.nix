@@ -2,6 +2,7 @@
   lib,
   python3,
   fetchFromGitHub,
+  nix-update-script,
 }:
 python3.pkgs.buildPythonApplication rec {
   pname = "comfy-cli";
@@ -66,6 +67,8 @@ python3.pkgs.buildPythonApplication rec {
   postFixup = ''
     rm $out/bin/comfy-cli $out/bin/comfycli
   '';
+
+  passthru.updateScript = nix-update-script {};
 
   meta = {
     description = "Command Line Interface for Managing ComfyUI";

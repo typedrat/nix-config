@@ -29,11 +29,11 @@
     #endregion
 
     #region `flake-parts`
+    flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/*";
+
     flake-parts.url = "https://flakehub.com/f/hercules-ci/flake-parts/*";
 
     flake-root.url = "https://flakehub.com/f/srid/flake-root/*";
-
-    pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
 
     terranix.url = "github:terranix/terranix";
 
@@ -221,14 +221,19 @@
     #endregion
   };
 
-  outputs = {flake-parts, ...} @ inputs:
+  outputs = {
+    flake-parts,
+    github-actions-nix,
+    ...
+  } @ inputs:
     flake-parts.lib.mkFlake {inherit inputs;} ({self, ...}: {
       imports = [
         inputs.flake-root.flakeModule
         inputs.home-manager.flakeModules.home-manager
-        inputs.pkgs-by-name-for-flake-parts.flakeModule
         inputs.terranix.flakeModule
         inputs.treefmt-nix.flakeModule
+
+        ./modules/extra/flake-parts/local-packages.nix
 
         (import ./modules/extra/flake-parts/nixos-hosts.nix {
           inherit (inputs) nixpkgs-patcher;
@@ -268,7 +273,7 @@
         lib,
         ...
       }: {
-        pkgsDirectory = ./pkgs;
+        localPackages.directory = ./packages;
 
         treefmt.config = {
           inherit (config.flake-root) projectRootFile;
@@ -282,6 +287,28 @@
         };
 
         formatter = config.treefmt.build.wrapper;
+
+        checks = let
+          # Get only our local packages (excluding terraform outputs)
+          localPkgs =
+            lib.filterAttrs
+            (name: v: lib.isDerivation v && !(lib.hasPrefix "terraform" name))
+            config.packages;
+          packagesWithoutUpdateScript =
+            lib.filterAttrs
+            (_: pkg: !(pkg.passthru.updateScript or null != null))
+            localPkgs;
+        in {
+          packages-have-updateScript = pkgs.runCommand "check-updateScript" {} ''
+            ${lib.optionalString (packagesWithoutUpdateScript != {}) ''
+              echo "The following packages are missing passthru.updateScript:"
+              ${lib.concatMapStringsSep "\n" (name: "echo '  - ${name}'") (lib.attrNames packagesWithoutUpdateScript)}
+              exit 1
+            ''}
+            echo "All packages have updateScript set."
+            touch $out
+          '';
+        };
 
         terranix = {
           terranixConfigurations = {
@@ -302,7 +329,7 @@
 
                   mkPortForward = _key: port: "-L ${toString port}:localhost:${toString port}";
                   portForwards = builtins.concatStringsSep " " (
-                    builtins.map
+                    map
                     (key: mkPortForward key (self.nixosConfigurations.iserlohn.config.links.${key}.port or null))
                     links_to_tunnel
                   );
@@ -343,7 +370,7 @@
           };
         };
 
-        packages = builtins.listToAttrs (builtins.map
+        packages = builtins.listToAttrs (map
           (
             key: {
               name = "${key}.tf.json";

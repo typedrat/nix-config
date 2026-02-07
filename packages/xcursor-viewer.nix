@@ -5,16 +5,17 @@
   cmake,
   pkg-config,
   libsForQt5,
+  nix-update-script,
 }:
 stdenv.mkDerivation rec {
   pname = "xcursor-viewer";
-  version = "unstable-2023-01-13";
+  version = "0-unstable-2026-01-27";
 
   src = fetchFromGitHub {
     owner = "drizt";
     repo = pname;
-    rev = "6b8a95a6071d860ee6f9b8e82695cd09d9e6ff31";
-    hash = "sha256-65oL1zVNFhKM2ePNvWdSyUIEkHGktNFP5k0/oI+S2j0=";
+    rev = "f53e1d261458e84b0f76fb587af560841c413087";
+    hash = "sha256-fWkjcXmtU51AQOTK1nLx7Kw9kQtQhUz9EVtAAVX0WEg=";
   };
 
   nativeBuildInputs = [
@@ -27,10 +28,9 @@ stdenv.mkDerivation rec {
     libsForQt5.qt5.qtbase
   ];
 
-  postPatch = ''
-    substituteInPlace CMakeLists.txt \
-      --replace-fail "cmake_minimum_required(VERSION 3.0)" "cmake_minimum_required(VERSION 3.10)"
-  '';
+  passthru.updateScript = nix-update-script {
+    extraArgs = ["--version=branch"];
+  };
 
   meta = with lib; {
     description = "View XCursor files in list";

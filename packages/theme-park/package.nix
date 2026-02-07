@@ -3,18 +3,19 @@
   fetchFromGitHub,
   stdenv,
   python3,
+  nix-update-script,
   themeParkScheme ? "http",
   themeParkDomain ? "localhost",
 }:
 stdenv.mkDerivation rec {
   pname = "theme-park";
-  version = "1.20.1";
+  version = "1.22.0";
 
   src = fetchFromGitHub {
     owner = "themepark-dev";
     repo = "theme.park";
     tag = version;
-    sha256 = "sha256-6LRHW0ESfNRvWCrp84gepaBGBKcyJw+NFdR+x5pMQ+I=";
+    sha256 = "sha256-dbE3Y8mO2c6JVFCRnS8OpKwCWUXgl86Tx+umuib86ZQ=";
   };
 
   patches = [./remove-chdir.patch];
@@ -41,6 +42,8 @@ stdenv.mkDerivation rec {
 
     runHook postInstall
   '';
+
+  passthru.updateScript = nix-update-script {};
 
   meta = with lib; {
     description = "Self-hosted themes for various self-hosted applications";

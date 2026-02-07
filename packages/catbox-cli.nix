@@ -5,19 +5,20 @@
   pkg-config,
   dbus,
   openssl,
+  nix-update-script,
 }:
 rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "catbox-cli";
-  version = "0.1.2";
+  version = "0.1.0-unstable-2025-07-10";
 
   src = fetchFromGitHub {
     owner = "JustSimplyKyle";
     repo = "catbox-cli";
-    rev = "4629bebea82544dd4e79863321c11cb53c77593a";
-    hash = "sha256-BVcdMEGpZCWIwzYfxhV9PghiLPAc4vViM+UrMFkatHY=";
+    rev = "9b19dc2ee2d058cd758ff1afa85eb01dc9320a2e";
+    hash = "sha256-ZZt/j3ehX7nKpTX3BJMb4lDQOgFCIMXNJM9HrA4Ddlc=";
   };
 
-  cargoHash = "sha256-zF+j7kDvOggBvN/Dl7gI1v8FKUsB3nKDHPQlf3KKC74=";
+  cargoHash = "sha256-X0CQnBki90gjPNMdnbwNt1ImWXdMTQHDpak4/wB9nwU=";
 
   nativeBuildInputs = [
     pkg-config
@@ -27,6 +28,10 @@ rustPlatform.buildRustPackage (_finalAttrs: {
     dbus
     openssl
   ];
+
+  passthru.updateScript = nix-update-script {
+    extraArgs = ["--version=branch"];
+  };
 
   meta = with lib; {
     description = "A simple catbox cli app that has progress when uploading!";

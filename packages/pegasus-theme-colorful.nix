@@ -4,10 +4,11 @@
   fetchFromGitHub,
   fetchurl,
   unzip,
+  nix-update-script,
 }:
 stdenvNoCC.mkDerivation {
   pname = "pegasus-theme-colorful";
-  version = "0-unstable-2025-02-27";
+  version = "0.2.0";
 
   src = fetchFromGitHub {
     owner = "RobZombie9043";
@@ -32,6 +33,8 @@ stdenvNoCC.mkDerivation {
 
     runHook postInstall
   '';
+
+  passthru.updateScript = nix-update-script {};
 
   meta = {
     description = "A port of the COLORFUL bigbox theme to Pegasus";

@@ -2,6 +2,7 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
+  nix-update-script,
 }:
 buildGoModule rec {
   pname = "cclogviewer";
@@ -19,6 +20,8 @@ buildGoModule rec {
   ldflags = ["-s" "-w"];
 
   subPackages = ["cmd/cclogviewer"];
+
+  passthru.updateScript = nix-update-script {};
 
   meta = with lib; {
     description = "Convert Claude Code JSONL log files into interactive HTML";

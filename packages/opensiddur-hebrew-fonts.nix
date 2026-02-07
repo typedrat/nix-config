@@ -3,16 +3,17 @@
   stdenv,
   fetchFromGitHub,
   unzip,
+  nix-update-script,
 }:
 stdenv.mkDerivation rec {
   pname = "opensiddur-hebrew-fonts";
-  version = "20240803";
+  version = "0-unstable-2026-02-02";
 
   src = fetchFromGitHub {
     owner = "aharonium";
     repo = "fonts";
-    rev = "bbde28cbfdb434807d480e3eac5b1ba796c79f47";
-    sha256 = "sha256-8Lfq1U4tuceserKAMQaZq46GeFDbKbnwqQveiGePkUI=";
+    rev = "b29a29fb3c65df90d78860a5939ac8f3af5d0b9c";
+    sha256 = "sha256-+1QpCAGMsZvh7a+6kkCt0JOU3uRvsurMgoGM52wJL6w=";
   };
 
   nativeBuildInputs = [unzip];
@@ -40,6 +41,10 @@ stdenv.mkDerivation rec {
 
     runHook postInstall
   '';
+
+  passthru.updateScript = nix-update-script {
+    extraArgs = ["--version=branch"];
+  };
 
   meta = with lib; {
     description = "The Open Siddur Project's Unicode Hebrew font pack. A large collection of open source Hebrew fonts, as well as a few for Latin, Greek, Cyrillic, Arabic, and Amharic";

@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  inputs',
   lib,
   ...
 }: {
@@ -10,25 +11,11 @@
     nixpkgs = {
       overlays = [
         inputs.vscode-extensions.overlays.default
-        (final: prev: {
-          skyscraper = prev.skyscraper.overrideAttrs (oldAttrs: {
-            nativeBuildInputs =
-              (oldAttrs.nativeBuildInputs or [])
-              ++ [
-                final.makeWrapper
-              ];
 
-            postInstall =
-              (oldAttrs.postInstall or "")
-              + ''
-                # Install mdb2sqlite.sh script from source
-                install -Dm755 supplementary/scraperdata/mdb2sqlite.sh $out/bin/mdb2sqlite
-
-                # Wrap the script to provide mdbtools and sqlite in PATH
-                wrapProgram $out/bin/mdb2sqlite \
-                  --prefix PATH : ${final.lib.makeBinPath [final.mdbtools final.sqlite]}
-              '';
-          });
+        (_final: prev: {
+          nix-update = prev.nix-update.override {
+            nix = inputs'.nix.packages.default;
+          };
         })
       ];
 

@@ -7,16 +7,17 @@
   pnpmConfigHook,
   fetchPnpmDeps,
   makeBinaryWrapper,
+  nix-update-script,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "configarr";
-  version = "1.13.4";
+  version = "1.20.0";
 
   src = fetchFromGitHub {
     owner = "raydak-labs";
     repo = "configarr";
-    tag = "v${version}";
-    hash = "sha256-hfP1hrqK/ueuY4ll1Cr4msdJO0yu/mVTVYLP+u/xB5U=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-5cfgswyUBECox5D0bl7P7JrZn6UcJCgZcruKCWMXFPc=";
   };
 
   nativeBuildInputs = [
@@ -29,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     fetcherVersion = 2;
-    hash = "sha256-2+zHCzY7zpebkH9TpihJRJnzQVaO+qbf2OmxYfoqjiA=";
+    hash = "sha256-2ygBfPRpXH5ZHBMCB3phEYzg1S9KriF6iW8ktphbC7U=";
   };
 
   buildPhase = ''
@@ -58,6 +59,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
+
+  passthru.updateScript = nix-update-script {};
 
   meta = {
     description = "Sync TRaSH Guides + custom configs with Sonarr/Radarr";

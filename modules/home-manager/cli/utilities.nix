@@ -51,6 +51,7 @@ in {
       nix-diff
       nix-tree
       nix-prefetch-github
+      nix-update
 
       # Binary cache
       inputs'.attic.packages.attic-client
