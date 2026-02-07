@@ -37,6 +37,7 @@ in {
     ./blur.nix
     ./fcitx5.nix
     ./hyprbars.nix
+    ./hyprpaper.nix
     ./polkit.nix
     ./pyprland.nix
     ./rofi.nix
