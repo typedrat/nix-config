@@ -5,21 +5,21 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  workflow_dispatch: # allows manual triggering
+  workflow_dispatch:
 
-# Cancel in-progress runs when a new commit is pushed
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # Individual build job for each machine - creates separate status checks
   build:
     name: Build ${{ matrix.machine.host }} (${{ matrix.machine.platform }})
     runs-on: nixos
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       fail-fast: false
-      # Each matrix entry becomes a separate status check
       matrix:
         machine:
           - host: hyperion
@@ -29,45 +29,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3
+      - uses: DeterminateSystems/flakehub-cache-action@main
+      - uses: DeterminateSystems/flake-checker-action@main
+      - name: Build ${{ matrix.machine.host }}
+        run: nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
 
-      # Set up SSH known_hosts with GitHub's official SSH keys
-      - name: Configure SSH known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          curl -sL \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/meta \
-            | jq -r '.ssh_keys | map("github.com " + .) | join("\n")' \
-            >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-      # We build each system in a separate job, targeting the configuration using matrix.machine.host
-      # Once built, we login to Attic and push the built system to our `system` cache!
-      - name: Build and push ${{ matrix.machine.host }}
-        run: |
-          nix build .#nixosConfigurations.${{ matrix.machine.host }}.config.system.build.toplevel
-          nix run github:zhaofengli/attic#default login system https://attic.thisratis.gay ${{ secrets.ATTIC_TOKEN }}
-          nix run github:zhaofengli/attic#default push system result -j 2
-
-  # Optional: Summary job that depends on all builds
   build-summary:
     name: Build Summary
     runs-on: ubuntu-latest
     needs: build
-    if: always() # Run even if some builds fail
-
+    if: always()
     steps:
       - name: Check build results
         run: |
-          echo "Build results:"
-          echo "- hyperion: ${{ needs.build.outputs.hyperion-status || 'unknown' }}"
-          echo "- iserlohn: ${{ needs.build.outputs.iserlohn-status || 'unknown' }}"
-
           if [[ "${{ needs.build.result }}" == "success" ]]; then
-            echo "✅ All systems built successfully!"
+            echo "All systems built successfully!"
           else
-            echo "❌ Some systems failed to build"
-            echo "Overall result: ${{ needs.build.result }}"
+            echo "Some systems failed to build"
             exit 1
           fi

@@ -13,7 +13,7 @@ This is a NixOS configuration flake using `flake-parts` with a custom `nixos-hos
 
 ### Key Architecture Components
 
-- **Flake Structure**: Uses `flake-parts` for modular flake organization with a custom nixos-hosts module (`modules/extra/flake-parts/nixos-hosts.nix`)
+- **Flake Structure**: Uses `flake-parts` for modular flake organization with a custom nixos-hosts module (`modules/extra/flake-parts/nixos-hosts.nix`). Flake inputs are sourced from FlakeHub where available.
 - **Module System**: Organized into multiple categories:
   - `modules/nixos/` - NixOS system modules (boot, games, gui, hardware, security, services, theming, virtualisation)
   - `modules/home-manager/` - Home Manager user modules
@@ -171,11 +171,16 @@ The terranix wrapper automatically:
 
 ## Key Flake Inputs
 
+The configuration sources most inputs from [FlakeHub](https://flakehub.com) for improved reliability and semantic versioning. When adding or updating inputs:
+
+- **Prefer FlakeHub URLs**: Use `https://flakehub.com/f/<org>/<repo>/*` for inputs available on FlakeHub
+- **Version patterns**: Use `/*` for latest compatible version; for nixpkgs, `/0.1` is a special FlakeHub convention meaning "current nixos-unstable"
+- **Fallback to GitHub**: Use `github:<org>/<repo>` only for inputs not published to FlakeHub
+
 The configuration uses several important flake inputs:
 
 - **Core Inputs**:
   - `nixpkgs` - Main package repository (unstable channel)
-  - `nixpkgs-stable` - Stable channel (25.05) for specific packages
   - `determinate` - Determinate Systems Nix for improved CLI and features
   - `home-manager` - User environment management
   - `flake-parts` - Modular flake organization

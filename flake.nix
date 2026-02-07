@@ -3,19 +3,18 @@
 
   inputs = {
     #region Core
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     nix.follows = "determinate/nix";
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     disko = {
-      url = "github:nix-community/disko";
+      url = "https://flakehub.com/f/nix-community/disko/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "https://flakehub.com/f/nix-community/home-manager/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -30,32 +29,32 @@
     #endregion
 
     #region `flake-parts`
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.url = "https://flakehub.com/f/hercules-ci/flake-parts/*";
 
-    flake-root.url = "github:srid/flake-root";
+    flake-root.url = "https://flakehub.com/f/srid/flake-root/*";
 
     pkgs-by-name-for-flake-parts.url = "github:drupol/pkgs-by-name-for-flake-parts";
 
     terranix.url = "github:terranix/terranix";
 
     treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
+      url = "https://flakehub.com/f/numtide/treefmt-nix/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #endregion
 
     #region NixOS Extensions
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.0.0";
+      url = "https://flakehub.com/f/nix-community/lanzaboote/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     lanzaboote-rust-overlay = {
-      url = "github:oxalica/rust-overlay";
+      url = "https://flakehub.com/f/oxalica/rust-overlay/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence.url = "https://flakehub.com/f/nix-community/impermanence/*";
 
     microvm = {
       url = "github:astro/microvm.nix";
@@ -65,12 +64,12 @@
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
     nixvirt = {
-      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/0.6.0";
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     sops-nix = {
-      url = "github:Mic92/sops-nix";
+      url = "https://flakehub.com/f/Mic92/sops-nix/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #endregion
@@ -92,7 +91,7 @@
     };
 
     catppuccin = {
-      url = "github:catppuccin/nix";
+      url = "https://flakehub.com/f/catppuccin/nix/*";
     };
 
     catppuccin-element = {
@@ -131,15 +130,15 @@
     };
 
     typedrat-fonts = {
-      url = "github:typedrat/nix-fonts/cdee4ed0085ddffeb17827b8d5d9f919736141db";
+      url = "https://flakehub.com/f/typedrat/nix-fonts/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #endregion
 
     #region Hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/*";
 
-    hyprlock.url = "github:hyprwm/hyprlock/v0.8.2";
+    hyprlock.url = "github:hyprwm/hyprlock";
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
@@ -164,7 +163,7 @@
     };
 
     attic = {
-      url = "github:zhaofengli/attic";
+      url = "https://flakehub.com/f/zhaofengli/attic/*";
       # `attic` doesn't build against current Nix, so we have to use an old `nixpkgs` for it.
       # inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -174,7 +173,7 @@
     };
 
     fenix = {
-      url = "github:nix-community/fenix";
+      url = "https://flakehub.com/f/nix-community/fenix/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -198,7 +197,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixified-ai.url = "github:nixified-ai/flake";
+    nixified-ai = {
+      url = "https://flakehub.com/f/nixified-ai/flake/*";
+    };
 
     style-search = {
       url = "github:typedrat/style-search";
@@ -286,7 +287,7 @@
           terranixConfigurations = {
             terraform = {
               terraformWrapper = {
-                package = inputs.nixpkgs-stable.legacyPackages.${system}.opentofu;
+                package = pkgs.opentofu;
                 extraRuntimeInputs = [pkgs.sops pkgs.openssh];
                 prefixText = let
                   target_host = "iserlohn.thisratis.gay";
