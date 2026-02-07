@@ -6,14 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## System Architecture
 
-This is a NixOS configuration flake using `flake-parts` with a custom `nixos-hosts` module for modular system definitions. The configuration supports two main systems:
+This is a NixOS configuration flake using `flake-parts` with a custom `nixos-hosts` module for modular system definitions. The configuration supports three main systems:
 
-- `hyperion`: Local desktop system
-- `iserlohn`: Remote server system
+- `hyperion`: Old desktop (semi-decommissioned) - Ryzen 9 2700X, 48GB DDR4, RX 5700XT 8GB
+- `iserlohn`: Server/homelab - Xeon Gold 6132, 96GB RAM, Quadro P1000, ZFS RAID-Z2 HDD array
+- `ulysses`: Main desktop/workstation - Ryzen 9 9950X3D, 128GB DDR5, RTX 5090, 8TB NVMe
 
 ### Key Architecture Components
 
-- **Flake Structure**: Uses `flake-parts` for modular flake organization with a custom nixos-hosts module (`modules/extra/flake-parts/nixos-hosts.nix`). Flake inputs are sourced from FlakeHub where available.
+- **Flake Structure**: Uses `flake-parts` for modular flake organization. The flake outputs are split into modules under `flake/`:
+  - `flake/default.nix` - Imports all flake modules
+  - `flake/checks.nix` - Flake checks (e.g., package updateScript validation)
+  - `flake/formatter.nix` - treefmt configuration
+  - `flake/outputs.nix` - Flake-level outputs (lib, nixosModules, hydraJobs)
+  - `flake/packages.nix` - Local package discovery via `local-packages` module
+  - `flake/rebuild.nix` - `nix run .#switch` and `.#boot` apps
+  - `flake/systems.nix` - NixOS host configurations and home-manager
+  - `flake/terranix.nix` - Terraform/terranix configuration
 - **Module System**: Organized into multiple categories:
   - `modules/nixos/` - NixOS system modules (boot, games, gui, hardware, security, services, theming, virtualisation)
   - `modules/home-manager/` - Home Manager user modules
@@ -54,7 +63,7 @@ The server (`iserlohn`) runs a comprehensive media, development, and home automa
 nix run .#switch
 nix run .#switch hyperion
 
-# Remote system rebuild (iserlohn)
+# Server rebuild (iserlohn, via SSH)
 nix run .#switch iserlohn
 
 # Build on iserlohn (recommended for faster builds)
@@ -114,7 +123,8 @@ The terranix wrapper automatically:
 
 ## Key File Locations
 
-- **System configs**: `systems/{hyperion,iserlohn}/`
+- **Flake outputs**: `flake/` (modular flake-parts configuration)
+- **System configs**: `systems/{hyperion,iserlohn,ulysses}/`
 - **NixOS modules**: `modules/nixos/`
 - **User configs**: `users/awilliams/`
 - **Custom packages**: `packages/`
@@ -225,7 +235,7 @@ Always test system changes safely:
 1. Use `nix run .#boot` for boot-time testing rather than immediate switch
 2. Test package builds with `nix build .#<package>` before system rebuild
 3. Verify formatting with `nix fmt` before commits
-4. For remote systems (iserlohn), ensure SSH access before deploying changes
+4. For server deployments (iserlohn), ensure SSH access before deploying changes
 5. Check `nix flake check` for basic validation (may take a while)
 6. Use `--show-trace` flag for debugging evaluation errors
 
@@ -236,3 +246,4 @@ Always test system changes safely:
 - Custom fonts include Apple SF Pro, SF Mono, and New York
 - The `rat.*` namespace is used for custom NixOS options throughout the configuration
 - Nixpkgs patches can be added via inputs prefixed with `nixpkgs-patch-` (handled by nixpkgs-patcher)
+- Root `default.nix` uses `flake-compat` to expose the flake for `nix-update` compatibility
