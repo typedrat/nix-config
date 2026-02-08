@@ -168,20 +168,86 @@ in {
     };
 
     region = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = lib.types.nullOr (lib.types.enum [
+        "ame"
+        "asi"
+        "au"
+        "bg"
+        "br"
+        "ca"
+        "cl"
+        "cn"
+        "cus"
+        "cz"
+        "de"
+        "dk"
+        "eu"
+        "fi"
+        "fr"
+        "gr"
+        "hu"
+        "il"
+        "it"
+        "jp"
+        "kr"
+        "kw"
+        "mor"
+        "nl"
+        "no"
+        "nz"
+        "oce"
+        "pe"
+        "pl"
+        "pt"
+        "ru"
+        "se"
+        "sk"
+        "sp"
+        "ss"
+        "tr"
+        "tw"
+        "uk"
+        "us"
+        "wor"
+      ]);
       default = null;
       example = "eu";
       description = ''
         Primary region preference for game data.
+
+        See <https://gemba.github.io/skyscraper/REGIONS/> for details.
       '';
     };
 
     lang = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+      type = lib.types.nullOr (lib.types.enum [
+        "cz"
+        "da"
+        "de"
+        "en"
+        "es"
+        "fi"
+        "fr"
+        "hu"
+        "it"
+        "ja"
+        "ko"
+        "nl"
+        "no"
+        "pl"
+        "pt"
+        "ru"
+        "sk"
+        "sv"
+        "tr"
+        "zh"
+      ]);
       default = null;
       example = "en";
       description = ''
         Primary language preference for game data.
+
+        See <https://gemba.github.io/skyscraper/LANGUAGES/> for details.
       '';
     };
 
