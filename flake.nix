@@ -140,7 +140,7 @@
     #endregion
 
     #region Hyprland
-    hyprland.url = "https://flakehub.com/f/hyprwm/Hyprland/*";
+    hyprland.url = "github:hyprwm/Hyprland";
 
     hyprlock.url = "github:hyprwm/hyprlock";
 
