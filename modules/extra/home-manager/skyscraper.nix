@@ -16,6 +16,40 @@
         else lib.generators.mkValueStringDefault {} v;
     } "=";
   };
+
+  # Build settings from structured options
+  mainSettings = lib.filterAttrs (_: v: v != null) {
+    inherit (cfg) frontend;
+    inputFolder =
+      if cfg.inputFolder != null
+      then toString cfg.inputFolder
+      else null;
+    gameListFolder =
+      if cfg.gameListFolder != null
+      then toString cfg.gameListFolder
+      else null;
+    mediaFolder =
+      if cfg.mediaFolder != null
+      then toString cfg.mediaFolder
+      else null;
+    cacheFolder =
+      if cfg.cacheFolder != null
+      then toString cfg.cacheFolder
+      else null;
+    inherit (cfg) videos;
+    inherit (cfg) manuals;
+    inherit (cfg) unattend;
+    inherit (cfg) threads;
+    inherit (cfg) region;
+    inherit (cfg) lang;
+  };
+
+  structuredSettings = lib.optionalAttrs (mainSettings != {}) {main = mainSettings;};
+
+  # Merge structured settings with extraSettings (extraSettings takes precedence)
+  settings = lib.recursiveUpdate structuredSettings cfg.extraSettings;
+
+  hasSettings = settings != {};
 in {
   meta.maintainers = [];
 
@@ -40,30 +74,139 @@ in {
       '';
     };
 
-    settings = lib.mkOption {
+    configPath = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = "./skyscraper/config.ini";
+      description = ''
+        Path to a custom config.ini file to use.
+
+        When set, this path is linked directly as the configuration file,
+        and all other configuration options are ignored.
+      '';
+    };
+
+    frontend = lib.mkOption {
+      type = lib.types.nullOr (lib.types.enum [
+        "emulationstation"
+        "esde"
+        "pegasus"
+        "retrobat"
+        "attractmode"
+      ]);
+      default = null;
+      description = ''
+        The frontend to generate game lists for.
+      '';
+    };
+
+    inputFolder = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = "/home/user/roms";
+      description = ''
+        Path to the ROM input directory.
+      '';
+    };
+
+    gameListFolder = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = "/home/user/roms";
+      description = ''
+        Path where game list files are exported.
+      '';
+    };
+
+    mediaFolder = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      example = "/home/user/roms/media";
+      description = ''
+        Path where media files (artwork, videos) are stored.
+      '';
+    };
+
+    cacheFolder = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        Path to the resource cache directory.
+      '';
+    };
+
+    videos = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = ''
+        Whether to scrape and cache video files.
+      '';
+    };
+
+    manuals = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = ''
+        Whether to scrape and cache game manuals (PDF).
+      '';
+    };
+
+    unattend = lib.mkOption {
+      type = lib.types.nullOr lib.types.bool;
+      default = null;
+      description = ''
+        Skip confirmation prompts and run non-interactively.
+      '';
+    };
+
+    threads = lib.mkOption {
+      type = lib.types.nullOr lib.types.ints.positive;
+      default = null;
+      description = ''
+        Number of parallel scraping threads.
+      '';
+    };
+
+    region = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "eu";
+      description = ''
+        Primary region preference for game data.
+      '';
+    };
+
+    lang = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      example = "en";
+      description = ''
+        Primary language preference for game data.
+      '';
+    };
+
+    extraSettings = lib.mkOption {
       inherit (settingsFormat) type;
       default = {};
       example = lib.literalExpression ''
         {
           main = {
-            frontend = "emulationstation";
-            inputFolder = "/home/user/roms";
-            cacheFolder = "/home/user/.skyscraper/cache";
-            videos = true;
-            unattend = true;
+            minMatch = 80;
+            maxLength = 500;
           };
           snes = {
             inputFolder = "/home/user/roms/snes";
-            minMatch = 80;
           };
           screenscraper = {
             userCreds = "username:password";
-            threads = 2;
           };
         }
       '';
       description = ''
-        Configuration settings for Skyscraper's {file}`config.ini`.
+        Additional configuration settings for Skyscraper's {file}`config.ini`.
+
+        These settings are merged with the structured options, with extraSettings
+        taking precedence.
 
         Settings are organized into sections:
         - {var}`main`: Global default settings
@@ -85,12 +228,16 @@ in {
       )
     ];
 
-    xdg.configFile."skyscraper/config.ini" = lib.mkIf (cfg.enableXdg && cfg.settings != {}) {
-      source = settingsFormat.generate "config.ini" cfg.settings;
-    };
+    xdg.configFile."skyscraper/config.ini" = lib.mkIf cfg.enableXdg (
+      if cfg.configPath != null
+      then {source = cfg.configPath;}
+      else lib.mkIf hasSettings {source = settingsFormat.generate "config.ini" settings;}
+    );
 
-    home.file.".skyscraper/config.ini" = lib.mkIf (!cfg.enableXdg && cfg.settings != {}) {
-      source = settingsFormat.generate "config.ini" cfg.settings;
-    };
+    home.file.".skyscraper/config.ini" = lib.mkIf (!cfg.enableXdg) (
+      if cfg.configPath != null
+      then {source = cfg.configPath;}
+      else lib.mkIf hasSettings {source = settingsFormat.generate "config.ini" settings;}
+    );
   };
 }
