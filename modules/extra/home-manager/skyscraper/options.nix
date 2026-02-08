@@ -1,11 +1,19 @@
+# Top-level options for the Skyscraper home-manager module.
+#
+# This module provides a user-friendly nested interface for configuring
+# Skyscraper, which is then converted to flat INI format at build time.
 {
   lib,
   pkgs,
-  settingsFormat,
-  settingsTypes,
   skyscraperTypes,
+  mainSettingsType,
+  platformSettingsType,
+  frontendSettingsType,
+  scraperSettingsType,
+  settingsFormat,
 }: let
-  # Create an attrsOf type that validates attribute names against an enum
+  # Create an attrsOf type that validates attribute names against an enum.
+  # This catches typos like `platforms.sness` at evaluation time.
   attrsOfValidated = keyType: valueType:
     lib.types.addCheck (lib.types.attrsOf valueType) (
       attrs: lib.all (name: keyType.check name) (lib.attrNames attrs)
@@ -42,36 +50,42 @@ in {
       Path to a custom config.ini file to use.
 
       When set, this path is linked directly as the configuration file,
-      and all other configuration options are ignored.
+      and all other configuration options ({option}`settings`,
+      {option}`platforms`, {option}`frontends`, {option}`scrapers`,
+      {option}`extraSettings`) are ignored.
     '';
   };
 
   settings = lib.mkOption {
-    type = settingsTypes.main;
+    type = mainSettingsType;
     default = {};
     description = ''
       Global settings for Skyscraper's {file}`config.ini` `[main]` section.
 
-      See <https://gemba.github.io/skyscraper/CONFIGINI/> for available options.
+      These are applied to all scraping runs regardless of platform,
+      frontend, or module, unless overridden by a more specific section.
+
+      See <https://gemba.github.io/skyscraper/CONFIGINI/> for details.
     '';
   };
 
   platforms = lib.mkOption {
-    type = attrsOfValidated skyscraperTypes.platform settingsTypes.platform;
+    type = attrsOfValidated skyscraperTypes.platform platformSettingsType;
     default = {};
     example = lib.literalExpression ''
       {
         snes = {
-          minMatch = 80;
-          inputFolder = "/home/user/roms/snes";
+          matching.minPercent = 80;
+          paths.roms = "/home/user/roms/snes";
         };
         megadrive = {
-          region = "eu";
+          localization.region = "eu";
         };
       }
     '';
     description = ''
-      Platform-specific settings that override the global settings.
+      Platform-specific settings that override global settings when
+      scraping for that platform.
 
       Each attribute name must be a valid platform identifier.
       See <https://gemba.github.io/skyscraper/PLATFORMS/> for the full list.
@@ -79,18 +93,25 @@ in {
   };
 
   frontends = lib.mkOption {
-    type = attrsOfValidated skyscraperTypes.frontend settingsTypes.frontend;
+    type = attrsOfValidated skyscraperTypes.frontend frontendSettingsType;
     default = {};
     example = lib.literalExpression ''
       {
         pegasus = {
-          relativePaths = true;
-          launch = "retroarch -L cores/{core}_libretro.so {file.path}";
+          output.gameList.filename = "metadata.txt";
+        };
+        emulationstation = {
+          output.gameList.includeFolders = true;
+          output.gameList.variants = [ "enable-manuals" ];
         };
       }
     '';
     description = ''
-      Frontend-specific settings that override platform and global settings.
+      Frontend-specific settings that override platform and global
+      settings when generating game lists for that frontend.
+
+      Available options vary by frontend — for example, `includeFolders` is
+      only available for `emulationstation`, `esde`, and `retrobat`.
 
       Valid frontends: `attractmode`, `batocera`, `emulationstation`,
       `esde`, `pegasus`, `retrobat`.
@@ -98,22 +119,34 @@ in {
   };
 
   scrapers = lib.mkOption {
-    type = attrsOfValidated skyscraperTypes.scraper settingsTypes.scraper;
+    type = attrsOfValidated skyscraperTypes.scraper scraperSettingsType;
     default = {};
     example = lib.literalExpression ''
       {
         screenscraper = {
-          userCreds = "username:password";
-          threads = 2;
-          maxLength = 500;
+          credentials.file = config.sops.secrets.screenscraper.path;
+          media.videos.preferNormalized = false;
+          runtime.threads = 2;
+        };
+        igdb = {
+          credentials.text = "clientId:clientSecret";  # For testing only!
         };
       }
     '';
     description = ''
-      Scraper-specific settings that override all other settings.
+      Scraper-specific settings with the highest precedence (after CLI
+      options). These override frontend, platform, and global settings.
+
+      For secure credential handling, use `credentials.file` with a path
+      to a secrets file (compatible with sops-nix or agenix). The file
+      is read at activation time, not build time.
+
+      Available options vary by scraper — for example,
+      `media.videos.preferNormalized` is only available for `screenscraper`.
 
       Valid scrapers: `arcadedb`, `igdb`, `mobygames`, `openretro`,
-      `screenscraper`, `thegamesdb`, `zxinfo`, `esgamelist`, `gamebase`, `import`.
+      `screenscraper`, `thegamesdb`, `zxinfo`, `esgamelist`, `gamebase`,
+      `import`.
     '';
   };
 
@@ -131,10 +164,17 @@ in {
     description = ''
       Additional freeform settings for Skyscraper's {file}`config.ini`.
 
-      These settings are merged with the structured options, with extraSettings
-      taking precedence. Use this for options not covered by the structured settings.
+      These settings are merged with the structured options, with
+      {option}`extraSettings` taking precedence. Use this for options
+      not yet covered by the structured settings, or for unusual
+      configurations.
 
-      See <https://gemba.github.io/skyscraper/CONFIGINI/> for available options.
+      Section names correspond to Skyscraper's INI sections: `main`,
+      platform names (e.g. `snes`), frontend names (e.g. `pegasus`),
+      or scraper names (e.g. `screenscraper`).
+
+      See <https://gemba.github.io/skyscraper/CONFIGINI/> for available
+      options.
     '';
   };
 }

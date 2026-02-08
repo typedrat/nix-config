@@ -27,6 +27,10 @@
         ];
       });
 
+    homeModules = {
+      skyscraper = {imports = [../modules/extra/home-manager/skyscraper];};
+    };
+
     hydraJobs = {
       nodes = builtins.mapAttrs (_: node: node.config.system.build.toplevel) self.nixosConfigurations;
     };
