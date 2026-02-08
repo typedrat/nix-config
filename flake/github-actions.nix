@@ -34,7 +34,7 @@
 
               permissions = {
                 id-token = "write";
-                contents = "read";
+                contents = "write";
               };
 
               strategy = {
@@ -50,8 +50,31 @@
                 {uses = "DeterminateSystems/flakehub-cache-action@main";}
                 {uses = "DeterminateSystems/flake-checker-action@main";}
                 {
+                  id = "build";
                   name = "Build \${{ matrix.host }}";
                   run = "nix build .#nixosConfigurations.\${{ matrix.host }}.config.system.build.toplevel";
+                }
+                {
+                  name = "Fix hash mismatches";
+                  if_ = "failure() && steps.build.outcome == 'failure' && github.event_name == 'pull_request'";
+                  run = ''
+                    git stash --include-untracked
+                    git fetch --depth=1 origin "$GITHUB_HEAD_REF"
+                    git checkout -B "$GITHUB_HEAD_REF" "''${{ github.event.pull_request.head.sha }}"
+
+                    determinate-nixd fix hashes --auto-apply
+
+                    if ! git diff --quiet; then
+                      git config user.name "github-actions[bot]"
+                      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                      git add --update --ignore-removal .
+                      git commit -m "Automatically fix Nix hashes"
+                      git push origin "$GITHUB_HEAD_REF"
+                    fi
+
+                    git checkout -
+                    git stash pop || true
+                  '';
                 }
               ];
             };
