@@ -19,6 +19,7 @@ in {
     ./packages.nix
     ./rclone.nix
     ./security-key.nix
+    ./skyscraper.nix
     ./sops.nix
     ./user-sops-secrets.nix
   ];

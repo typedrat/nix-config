@@ -41,6 +41,7 @@
   networking.hostId = "7e104ef9";
 
   rat = {
+    # Ryzen 9 9950X3D
     deployment = {
       enable = true;
       flakeRef = "typedrat/nix-config/0.1";
@@ -49,6 +50,10 @@
       polling.enable = true;
       rollback.enable = true;
       tunnel.enable = true;
+    };
+    hardware.cpu = {
+      cores = 16;
+      threads = 32;
     };
 
     boot = {

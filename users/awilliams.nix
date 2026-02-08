@@ -33,6 +33,14 @@ in {
     # Security key support (GPG with hardware key)
     securityKey.enable = true;
 
+    # Skyscraper ROM scraper
+    skyscraper = {
+      enable = true;
+      romsPath = "/home/awilliams/Games/roms";
+      frontend = "pegasus";
+      region = "us";
+    };
+
     # Git configuration
     git = {
       name = "Alexis Williams";
