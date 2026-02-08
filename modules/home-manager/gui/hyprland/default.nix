@@ -31,18 +31,23 @@
   tvMonitor = hostHyprlandCfg.tvMonitor or null;
 in {
   imports = [
-    ./hyprlock
-    ./kde
-    ./waybar
+    # Category folders with alternatives
+    ./bar
+    ./idle
+    ./launcher
+    ./locker
+    ./logout
+    ./notifications
+    ./wallpaper
+
+    # Simple toggles
     ./blur.nix
     ./fcitx5.nix
     ./hyprbars.nix
-    ./hyprpaper.nix
+    ./kde
     ./polkit.nix
     ./pyprland.nix
-    ./rofi.nix
     ./smart-gaps.nix
-    ./vicinae.nix
     ./wayland-pipewire-idle-inhibit.nix
   ];
 
@@ -177,42 +182,6 @@ in {
     systemd.user.sessionVariables = {
       HYPRSHOT_DIR = "$HOME/Pictures/Screenshots";
       NIXOS_OZONE_WL = "1";
-    };
-
-    services.mako = {
-      enable = true;
-      settings = {
-        defaultTimeout = "5000";
-        font = "SF Pro Display 14";
-        width = "600";
-      };
-    };
-
-    services.hypridle = {
-      enable = true;
-      settings = {
-        general = {
-          lock_cmd = "pidof hyprlock || hyprlock";
-          before_sleep_cmd = "loginctl lock-session";
-          after_sleep_cmd = "hyprctl dispatch dpms on";
-        };
-
-        listener = [
-          {
-            timeout = 300;
-            on-timeout = "loginctl lock-session";
-          }
-          {
-            timeout = 600;
-            on-timeout = "hyprctl dispatch dpms off";
-            on-resume = "hyprctl dispatch dpms on";
-          }
-        ];
-      };
-    };
-
-    programs.wlogout = {
-      enable = true;
     };
 
     services.hyprpaper = {

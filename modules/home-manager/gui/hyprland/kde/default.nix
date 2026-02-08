@@ -10,32 +10,38 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
+  kdeCfg = hyprlandCfg.kde or {};
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false)) {
-    # KDE cruft to get Dolphin et al working
-    home.packages = with pkgs; [
-      kdePackages.plasma-workspace
-      kdePackages.kio
-      kdePackages.kdf
-      kdePackages.kio-fuse
-      kdePackages.kio-extras
-      kdePackages.kio-admin
-      kdePackages.qtwayland
-      kdePackages.plasma-integration
-      kdePackages.kdegraphics-thumbnailers
-      kdePackages.breeze-icons
-      kdePackages.qtsvg
-      kdePackages.kservice
-      shared-mime-info
+  config =
+    modules.mkIf (
+      (guiCfg.enable or false)
+      && (hyprlandCfg.enable or false)
+      && (kdeCfg.enable or false)
+    ) {
+      # KDE cruft to get Dolphin et al working
+      home.packages = with pkgs; [
+        kdePackages.plasma-workspace
+        kdePackages.kio
+        kdePackages.kdf
+        kdePackages.kio-fuse
+        kdePackages.kio-extras
+        kdePackages.kio-admin
+        kdePackages.qtwayland
+        kdePackages.plasma-integration
+        kdePackages.kdegraphics-thumbnailers
+        kdePackages.breeze-icons
+        kdePackages.qtsvg
+        kdePackages.kservice
+        shared-mime-info
 
-      kdePackages.akonadi
-      kdePackages.akonadi-search
-      kdePackages.akonadi-mime
-      kdePackages.akonadi-calendar
-      kdePackages.akonadi-import-wizard
-      kdePackages.merkuro
-    ];
+        kdePackages.akonadi
+        kdePackages.akonadi-search
+        kdePackages.akonadi-mime
+        kdePackages.akonadi-calendar
+        kdePackages.akonadi-import-wizard
+        kdePackages.merkuro
+      ];
 
-    xdg.configFile."menus/applications.menu".text = builtins.readFile ./applications.menu;
-  };
+      xdg.configFile."menus/applications.menu".text = builtins.readFile ./applications.menu;
+    };
 }

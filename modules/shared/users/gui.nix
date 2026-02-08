@@ -7,11 +7,83 @@
 
       hyprland = {
         enable = options.mkEnableOption "Hyprland window manager configuration" // {default = true;};
-        launcher = options.mkOption {
-          type = types.enum ["rofi" "vicinae"];
-          default = "rofi";
-          description = "Application launcher to use with Hyprland";
+
+        # === Components with alternatives ===
+
+        launcher = {
+          variant = options.mkOption {
+            type = types.enum ["rofi" "vicinae"];
+            default = "rofi";
+            description = "Application launcher to use with Hyprland";
+          };
         };
+
+        locker = {
+          enable = options.mkEnableOption "screen locker" // {default = true;};
+          variant = options.mkOption {
+            type = types.enum ["hyprlock"];
+            default = "hyprlock";
+            description = "Screen locker implementation";
+          };
+        };
+
+        idle = {
+          enable = options.mkEnableOption "idle management" // {default = true;};
+          variant = options.mkOption {
+            type = types.enum ["hypridle"];
+            default = "hypridle";
+            description = "Idle management implementation";
+          };
+          mediaInhibit = options.mkEnableOption "prevent idle when media is playing";
+        };
+
+        notifications = {
+          enable = options.mkEnableOption "notification daemon" // {default = true;};
+          variant = options.mkOption {
+            type = types.enum ["mako"];
+            default = "mako";
+            description = "Notification daemon implementation";
+          };
+        };
+
+        bar = {
+          enable = options.mkEnableOption "status bar" // {default = true;};
+          variant = options.mkOption {
+            type = types.enum ["waybar"];
+            default = "waybar";
+            description = "Status bar implementation";
+          };
+        };
+
+        wallpaper = {
+          enable = options.mkEnableOption "wallpaper daemon";
+          variant = options.mkOption {
+            type = types.enum ["hyprpaper"];
+            default = "hyprpaper";
+            description = "Wallpaper daemon implementation";
+          };
+        };
+
+        logout = {
+          enable = options.mkEnableOption "logout menu";
+          variant = options.mkOption {
+            type = types.enum ["wlogout"];
+            default = "wlogout";
+            description = "Logout menu implementation";
+          };
+        };
+
+        # === Simple enable/disable components ===
+
+        blur.enable = options.mkEnableOption "window blur effects";
+        fcitx5.enable = options.mkEnableOption "CJK input method support";
+        hyprbars.enable = options.mkEnableOption "window title bars";
+        kde.enable = options.mkEnableOption "KDE application support";
+        polkit.enable = options.mkEnableOption "polkit authentication agent" // {default = true;};
+        pyprland.enable = options.mkEnableOption "Hyprland extensions (scratchpads)";
+        smartGaps.enable = options.mkEnableOption "workspace-specific gap rules";
+
+        # === Monitor/workspace configuration ===
 
         monitors = options.mkOption {
           type = types.listOf types.str;

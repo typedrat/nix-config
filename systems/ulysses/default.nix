@@ -129,7 +129,17 @@
       };
       gui = {
         enable = true;
-        hyprland.launcher = "vicinae";
+        hyprland = {
+          launcher.variant = "vicinae";
+          idle.mediaInhibit = true;
+          wallpaper.enable = true;
+          logout.enable = true;
+          blur.enable = true;
+          hyprbars.enable = true;
+          kde.enable = true;
+          pyprland.enable = true;
+          smartGaps.enable = true;
+        };
         terminal.ghostty.enable = true;
         productivity = {
           freecad.enable = false;
