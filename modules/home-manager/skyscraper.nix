@@ -38,7 +38,7 @@ in {
       enable = true;
 
       settings = {
-        # Path configuration - adjust to your ROM setup
+        # Path configuration
         paths = {
           roms = skyscraperCfg.romsPath or "/home/${username}/Games/roms";
           gameLists = skyscraperCfg.gameListsPath or "/home/${username}/Games/roms";
@@ -59,6 +59,11 @@ in {
           frontend = skyscraperCfg.frontend or "pegasus";
         };
 
+        # Title formatting
+        titles = {
+          articlePosition = "end"; # "Legend of Zelda, The" for better sorting
+        };
+
         # Runtime settings
         runtime = {
           verbosity = "normal";
@@ -67,10 +72,57 @@ in {
         };
 
         # Media settings
-        media.videos = {
-          enable = true;
-          symlink = true; # Save disk space
+        media = {
+          videos = {
+            enable = true;
+            symlink = true; # Save disk space
+          };
+          manuals = true;
+          backcovers = true;
         };
+
+        # File extensions
+        extensions.add = ["zip" "7z"];
+
+        # Include subdirectories
+        filter.includeSubdirs = true;
+      };
+
+      # Frontend-specific settings
+      frontends = {
+        # Batocera for handheld - separate ROM folder
+        batocera = {
+          paths = {
+            roms = "/home/${username}/Games/batocera";
+            gameLists = "/home/${username}/Games/batocera";
+            media = "/home/${username}/Games/batocera";
+          };
+        };
+      };
+
+      # Platform-specific settings
+      platforms = {
+        # Nintendo
+        nes = {};
+        snes = {};
+        n64 = {};
+        gb = {};
+        gbc = {};
+        gba = {};
+
+        # Sega
+        megadrive = {};
+        saturn = {};
+        dreamcast = {};
+
+        # Sony
+        psx = {};
+        ps2 = {};
+        psp = {};
+
+        # Arcade
+        mame = {};
+        fba = {};
       };
 
       # Scraper credentials
