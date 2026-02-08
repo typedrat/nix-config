@@ -61,7 +61,7 @@
     impermanence.url = "https://flakehub.com/f/nix-community/impermanence/*";
 
     flakehub-deploy = {
-      url = "path:/home/awilliams/Development/flakehub-deploy";
+      url = "https://flakehub.com/f/typedrat/flakehub-deploy/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
