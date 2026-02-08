@@ -7,6 +7,7 @@
   cfg = config.programs.skyscraper;
 
   skyscraperTypes = import ./types.nix {inherit lib;};
+  settingsTypes = import ./settings.nix {inherit lib;};
 
   # INI format with custom key-value handling for Skyscraper
   # Skyscraper expects lowercase "true"/"false" for booleans
@@ -25,43 +26,40 @@
     then toString p
     else null;
 
-  # Build settings from structured options
-  mainSettings = lib.filterAttrs (_: v: v != null) {
-    # General
-    inherit (cfg.settings) frontend verbosity hints pretend interactive unattend threads;
+  # Convert a settings attrset to INI-compatible format
+  # Handles path conversion and filters out null values
+  convertSettings = settings:
+    lib.filterAttrs (_: v: v != null) (lib.mapAttrs (
+        name: value:
+          if lib.elem name ["inputFolder" "gameListFolder" "mediaFolder" "cacheFolder"]
+          then pathToString value
+          else value
+      )
+      settings);
 
-    # Paths
-    inputFolder = pathToString cfg.settings.inputFolder;
-    gameListFolder = pathToString cfg.settings.gameListFolder;
-    mediaFolder = pathToString cfg.settings.mediaFolder;
-    cacheFolder = pathToString cfg.settings.cacheFolder;
+  # Build the main section from cfg.settings
+  mainSection = convertSettings cfg.settings;
 
-    # Localization
-    inherit (cfg.settings) region lang;
+  # Build platform sections
+  platformSections = lib.mapAttrs (_: convertSettings) cfg.platforms;
 
-    # Game list
-    inherit (cfg.settings) gameListBackup relativePaths skipped;
+  # Build frontend sections
+  frontendSections = lib.mapAttrs (_: convertSettings) cfg.frontends;
 
-    # Title formatting
-    inherit (cfg.settings) brackets theInFront;
+  # Build scraper sections
+  scraperSections = lib.mapAttrs (_: convertSettings) cfg.scrapers;
 
-    # Media
-    inherit (cfg.settings) videos manuals backcovers fanarts symlink;
-
-    # Processing
-    inherit (cfg.settings) minMatch maxLength tidyDesc cropBlack subdirs;
-
-    # Cache options
-    cacheCovers = cfg.settings.cache.covers;
-    cacheScreenshots = cfg.settings.cache.screenshots;
-    cacheWheels = cfg.settings.cache.wheels;
-    cacheMarquees = cfg.settings.cache.marquees;
-    cacheTextures = cfg.settings.cache.textures;
-    cacheResize = cfg.settings.cache.resize;
-    cacheRefresh = cfg.settings.cache.refresh;
-  };
-
-  structuredSettings = lib.optionalAttrs (mainSettings != {}) {main = mainSettings;};
+  # Combine all structured settings
+  structuredSettings = let
+    # Filter out empty sections
+    nonEmpty = lib.filterAttrs (_: v: v != {});
+  in
+    nonEmpty (
+      {main = mainSection;}
+      // platformSections
+      // frontendSections
+      // scraperSections
+    );
 
   # Merge structured settings with extraSettings (extraSettings takes precedence)
   finalSettings = lib.recursiveUpdate structuredSettings cfg.extraSettings;
@@ -71,7 +69,7 @@ in {
   meta.maintainers = [];
 
   options.programs.skyscraper = import ./options.nix {
-    inherit lib pkgs skyscraperTypes settingsFormat;
+    inherit lib pkgs settingsFormat settingsTypes skyscraperTypes;
   };
 
   config = lib.mkIf cfg.enable {
