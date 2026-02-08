@@ -53,6 +53,15 @@
     virtualisation.libvirt.enable = true;
 
     serviceMonitor.enable = true;
+    deployment = {
+      enable = true;
+      flakeRef = "typedrat/nix-config/0.1";
+      operation = "switch";
+      webhook.enable = true;
+      polling.enable = true;
+      rollback.enable = true;
+    };
+
     services = {
       domainName = "thisratis.gay";
 
@@ -66,7 +75,16 @@
       jellyfin.enable = true;
       mysql.enable = true;
 
-      traefik.enable = true;
+      traefik = {
+        enable = true;
+
+        routes.deploy-webhook = {
+          enable = true;
+          subdomain = "iserlohn-webhook";
+          serviceUrl = "http://127.0.0.1:9876";
+          authentik = false;
+        };
+      };
 
       postgres.enable = true;
 

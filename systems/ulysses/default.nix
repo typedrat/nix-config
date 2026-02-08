@@ -41,6 +41,16 @@
   networking.hostId = "7e104ef9";
 
   rat = {
+    deployment = {
+      enable = true;
+      flakeRef = "typedrat/nix-config/0.1";
+      operation = "boot"; # Safer for workstation - applies on next reboot
+      webhook.enable = true;
+      polling.enable = true;
+      rollback.enable = true;
+      tunnel.enable = true;
+    };
+
     boot = {
       loader = "limine";
       memtest86.enable = true;

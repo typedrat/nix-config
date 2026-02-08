@@ -2,6 +2,8 @@
   imports = [
     ./arrs
     ./authentik
+    ./cloudflare
+    ./github
     ./sops.nix
   ];
 
@@ -17,11 +19,11 @@
         };
 
         method.aes_gcm.enc_method = {
-          keys = "\${ key_provider.pbkdf2.enc_key }";
+          keys = "key_provider.pbkdf2.enc_key";
         };
 
         state = {
-          method = "\${ method.aes_gcm.enc_method }";
+          method = "method.aes_gcm.enc_method";
         };
       };
 

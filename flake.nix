@@ -60,6 +60,11 @@
 
     impermanence.url = "https://flakehub.com/f/nix-community/impermanence/*";
 
+    flakehub-deploy = {
+      url = "path:/home/awilliams/Development/flakehub-deploy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     microvm = {
       url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -20,6 +20,7 @@ in {
     ./ai
     ./core
     ./communication
+    ./deployment
     ./development
     ./home
     ./media

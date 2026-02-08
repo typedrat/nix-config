@@ -116,7 +116,7 @@
               description = "Redirect URI";
             };
             matchingMode = mkOption {
-              type = types.enum ["strict" "startsWith"];
+              type = types.enum ["strict" "startsWith" "regex"];
               default = "strict";
               description = "URI matching mode";
             };

@@ -99,6 +99,32 @@
                 }
               ];
             };
+
+            publish = {
+              name = "Publish to FlakeHub";
+              runsOn = "ubuntu-latest";
+              needs = "build-summary";
+              if_ = "github.ref == 'refs/heads/master' && needs.build-summary.result == 'success'";
+
+              permissions = {
+                id-token = "write";
+                contents = "read";
+              };
+
+              steps = [
+                {uses = "actions/checkout@v4";}
+                {uses = "DeterminateSystems/determinate-nix-action@v3";}
+                {
+                  uses = "DeterminateSystems/flakehub-push@main";
+                  with_ = {
+                    visibility = "private";
+                    rolling = true;
+                    rolling-minor = "0.1";
+                    include-output-paths = true;
+                  };
+                }
+              ];
+            };
           };
         };
 
