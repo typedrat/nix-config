@@ -12,6 +12,12 @@
   networking.hostId = "0a2e777f";
 
   rat = {
+    # Ryzen 9 2700X
+    hardware.cpu = {
+      cores = 8;
+      threads = 16;
+    };
+
     boot.loader = "lanzaboote";
 
     games = {

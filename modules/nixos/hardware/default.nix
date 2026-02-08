@@ -11,9 +11,25 @@ in {
     ./usbmuxd.nix
   ];
 
-  options.rat.hardware.network.mainInterface = options.mkOption {
-    type = types.nullOr types.str;
-    description = "The main network interface";
-    default = null;
+  options.rat.hardware = {
+    cpu = {
+      cores = options.mkOption {
+        type = types.ints.positive;
+        description = "Number of physical CPU cores";
+        example = 8;
+      };
+
+      threads = options.mkOption {
+        type = types.ints.positive;
+        description = "Number of CPU threads (including SMT/hyperthreading)";
+        example = 16;
+      };
+    };
+
+    network.mainInterface = options.mkOption {
+      type = types.nullOr types.str;
+      description = "The main network interface";
+      default = null;
+    };
   };
 }

@@ -21,6 +21,12 @@
   networking.hostId = "8425e349";
 
   rat = {
+    # Xeon Gold 6132
+    hardware.cpu = {
+      cores = 14;
+      threads = 28;
+    };
+
     boot.loader = "lanzaboote";
 
     hardware.nvidia = {

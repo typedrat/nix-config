@@ -9,6 +9,7 @@
     ./mime.nix
     ./rclone.nix
     ./security-key.nix
+    ./skyscraper.nix
     ./theming.nix
   ];
 }
