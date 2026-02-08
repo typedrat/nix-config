@@ -53,9 +53,6 @@ in {
 
     home.packages = with pkgs; [
       hyprpolkitagent
-      hyprpaper
-      swww
-      hyprpaper
       mpvpaper
       waytrogen
       hyprpicker
@@ -215,6 +212,13 @@ in {
 
     programs.wlogout = {
       enable = true;
+    };
+
+    services.hyprpaper = {
+      enable = true;
+      settings = {
+        splash = false;
+      };
     };
   };
 }
