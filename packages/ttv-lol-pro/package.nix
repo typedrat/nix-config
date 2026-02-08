@@ -27,7 +27,9 @@ in
       ];
     };
   }).overrideAttrs (old: {
-    passthru = old.passthru // {
-      updateScript = ./update.sh;
-    };
+    passthru =
+      old.passthru
+      // {
+        updateScript = ./update.sh;
+      };
   })

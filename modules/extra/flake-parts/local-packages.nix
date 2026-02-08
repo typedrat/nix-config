@@ -8,7 +8,7 @@
   inherit (lib) mkOption types;
 in {
   options = {
-    perSystem = mkPerSystemOption ({...}: {
+    perSystem = mkPerSystemOption (_: {
       options = {
         localPackages = {
           directory = mkOption {
@@ -50,7 +50,7 @@ in {
         else {};
 
       # Create a scope that includes flake inputs for packages that need them
-      inputsScope = lib.makeScope pkgs.newScope (self: {
+      inputsScope = lib.makeScope pkgs.newScope (_self: {
         inherit inputs;
       });
 
