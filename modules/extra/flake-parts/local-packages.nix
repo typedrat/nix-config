@@ -78,10 +78,15 @@ in {
 
       localPackages = extractPackages scope;
       flatPackages = flattenPkgs cfg.nameSeparator [] localPackages;
+
+      # Filter packages to only include those available on the current platform
+      availablePackages = lib.filterAttrs (_name: pkg:
+        lib.meta.availableOn pkgs.stdenv.hostPlatform pkg
+      ) flatPackages;
     in
       lib.mkIf (cfg.directory != null) {
         # Expose our packages in the standard packages output (flattened for flake compatibility)
-        packages = flatPackages;
+        packages = availablePackages;
 
         # Expose full nixpkgs with our packages overlaid (nested structure preserved)
         legacyPackages = pkgs.appendOverlays [
