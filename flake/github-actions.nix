@@ -188,7 +188,7 @@
 
                     for pkg in $packages; do
                       echo "Updating $pkg..."
-                      if nix run nixpkgs#nix-update -- --flake "$pkg" --write-commit-message ".commit-message-$pkg"; then
+                      if nix run nixpkgs#nix-update -- --flake "$pkg" --use-update-script --write-commit-message ".commit-message-$pkg"; then
                         if [ -f ".commit-message-$pkg" ]; then
                           nix fmt
                           git add -A
