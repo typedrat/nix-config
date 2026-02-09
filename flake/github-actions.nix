@@ -76,6 +76,16 @@
                     git stash pop || true
                   '';
                 }
+                {
+                  name = "Publish to FlakeHub";
+                  if_ = "success() && github.ref == 'refs/heads/master' && matrix.host == 'iserlohn'";
+                  uses = "DeterminateSystems/flakehub-push@main";
+                  with_ = {
+                    visibility = "private";
+                    rolling = true;
+                    include-output-paths = true;
+                  };
+                }
               ];
             };
 
@@ -100,31 +110,6 @@
               ];
             };
 
-            publish = {
-              name = "Publish to FlakeHub";
-              runsOn = "nixos";
-              needs = "build-summary";
-              if_ = "github.ref == 'refs/heads/master' && needs.build-summary.result == 'success'";
-
-              permissions = {
-                id-token = "write";
-                contents = "read";
-              };
-
-              steps = [
-                {uses = "actions/checkout@v4";}
-                {uses = "DeterminateSystems/determinate-nix-action@v3";}
-                {uses = "DeterminateSystems/flakehub-cache-action@main";}
-                {
-                  uses = "DeterminateSystems/flakehub-push@main";
-                  with_ = {
-                    visibility = "private";
-                    rolling = true;
-                    include-output-paths = true;
-                  };
-                }
-              ];
-            };
           };
         };
 

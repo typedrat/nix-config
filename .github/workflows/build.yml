@@ -37,6 +37,13 @@ jobs:
 
           git checkout -
           git stash pop || true
+      - if: success() && github.ref == 'refs/heads/master' && matrix.host == 'iserlohn'
+        name: Publish to FlakeHub
+        uses: DeterminateSystems/flakehub-push@main
+        with:
+          include-output-paths: true
+          rolling: true
+          visibility: private
     strategy:
       fail-fast: false
       matrix:
@@ -57,23 +64,6 @@ jobs:
             echo "Some systems failed to build"
             exit 1
           fi
-  publish:
-    if: github.ref == 'refs/heads/master' && needs.build-summary.result == 'success'
-    name: Publish to FlakeHub
-    needs: build-summary
-    permissions:
-      contents: read
-      id-token: write
-    runs-on: nixos
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/determinate-nix-action@v3
-      - uses: DeterminateSystems/flakehub-cache-action@main
-      - uses: DeterminateSystems/flakehub-push@main
-        with:
-          include-output-paths: true
-          rolling: true
-          visibility: private
 name: Build NixOS Systems
 "on":
   pull_request:
