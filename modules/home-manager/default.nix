@@ -57,7 +57,7 @@ in {
         lfs.enable = true;
 
         signing = mkIf (gitCfg.signing.key != null) {
-          inherit (gitCfg.signing) key;
+          inherit (gitCfg.signing) key format;
           inherit (gitCfg.signing) signByDefault;
         };
 

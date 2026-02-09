@@ -24,6 +24,7 @@ in {
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFCm+qnsWUuTDU6IgvxPAkfe6dnwwomGQXlM9c2yUqlJ awilliams@hyperion"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBjz3PWnehAKNKXGpkDu+Huiyizd/24efmLmJCoct+KP awilliams@hyperion-windows"
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLI5a9axsIGCRFLzb9lviLINzebCWV68O94WlXRnMkEKO8uqLAJHGy2aw8i/rB4TcLfqP5lBvOZn0nCNRTvZIRg= awilliams@ipad"
+      "sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIJcXA2Ai6aGNe5aPvgaoi4OrC9wVl8kykZgP0y++2mxkAAAABHNzaDo= alexis@typedr.at"
     ];
 
     cli.enable = true;
@@ -33,6 +34,11 @@ in {
     git = {
       name = "Alexis Williams";
       email = "alexis@typedr.at";
+      signing = {
+        key = "~/.ssh/id_ed25519_sk";
+        format = "ssh";
+        signByDefault = true;
+      };
     };
 
     # Email accounts

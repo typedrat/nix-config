@@ -21,8 +21,14 @@
         key = options.mkOption {
           type = types.nullOr types.str;
           default = null;
-          description = "GPG key ID for signing commits";
-          example = "0x1234567890ABCDEF";
+          description = "Key for signing commits (GPG key ID or SSH key path)";
+          example = "~/.ssh/id_ed25519_sk";
+        };
+
+        format = options.mkOption {
+          type = types.enum ["gpg" "ssh"];
+          default = "gpg";
+          description = "Format for signing commits";
         };
 
         signByDefault = options.mkOption {
