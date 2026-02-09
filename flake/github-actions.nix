@@ -102,7 +102,7 @@
 
             publish = {
               name = "Publish to FlakeHub";
-              runsOn = "ubuntu-latest";
+              runsOn = "nixos";
               needs = "build-summary";
               if_ = "github.ref == 'refs/heads/master' && needs.build-summary.result == 'success'";
 
@@ -114,6 +114,7 @@
               steps = [
                 {uses = "actions/checkout@v4";}
                 {uses = "DeterminateSystems/determinate-nix-action@v3";}
+                {uses = "DeterminateSystems/flakehub-cache-action@main";}
                 {
                   uses = "DeterminateSystems/flakehub-push@main";
                   with_ = {
