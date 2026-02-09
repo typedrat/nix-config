@@ -72,7 +72,6 @@ jobs:
         with:
           include-output-paths: true
           rolling: true
-          rolling-minor: "0.1"
           visibility: private
 name: Build NixOS Systems
 "on":

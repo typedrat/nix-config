@@ -119,7 +119,6 @@
                   with_ = {
                     visibility = "private";
                     rolling = true;
-                    rolling-minor = "0.1";
                     include-output-paths = true;
                   };
                 }
