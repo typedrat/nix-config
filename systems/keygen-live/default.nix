@@ -26,8 +26,8 @@
   ];
 
   # ISO configuration
+  image.fileName = "keygen-live.iso";
   isoImage = {
-    isoName = "keygen-live.iso";
     volumeID = "KEYGEN";
     squashfsCompression = "zstd"; # Faster builds than xz
     makeEfiBootable = true;
@@ -135,6 +135,7 @@
     # Key backup tools
     paperkey
     pgpdump
+    self'.packages.keyfork
 
     # QR code generation and reading
     qrencode # Generate QR codes
