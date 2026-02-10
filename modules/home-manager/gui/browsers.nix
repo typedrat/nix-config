@@ -143,10 +143,8 @@
           force = true;
 
           packages = with inputs'.firefox-addons.packages; [
-            pkgs.bypass-paywalls-clean
-            pkgs.ttv-lol-pro
-
             augmented-steam
+            bypass-paywalls-clean
             bitwarden
             catppuccin-web-file-icons
             consent-o-matic
