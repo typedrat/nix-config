@@ -213,6 +213,8 @@
     style-search = {
       url = "github:typedrat/style-search";
       inputs.nixpkgs.follows = "nixpkgs";
+      # https://github.com/nix-community/bun2nix/pull/81
+      inputs.bun2nix.url = "github:krauterbaquette/bun2nix/fix-cache-entry";
     };
     #endregion
 
