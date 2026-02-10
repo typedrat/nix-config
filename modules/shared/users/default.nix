@@ -8,6 +8,7 @@
     ./gui.nix
     ./mime.nix
     ./rclone.nix
+    ./security-key.nix
     ./theming.nix
   ];
 }

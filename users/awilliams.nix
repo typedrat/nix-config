@@ -30,6 +30,9 @@ in {
     cli.enable = true;
     theming.enable = true;
 
+    # Security key support (GPG with hardware key)
+    securityKey.enable = true;
+
     # Git configuration
     git = {
       name = "Alexis Williams";

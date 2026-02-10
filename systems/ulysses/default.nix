@@ -104,6 +104,7 @@
     };
 
     hardware.openrgb.enable = true;
+    hardware.securityKey.enable = true;
     hardware.usbmuxd.enable = true;
     java.enable = true;
     nix-ld.enable = true;

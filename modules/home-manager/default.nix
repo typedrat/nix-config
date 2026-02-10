@@ -18,6 +18,7 @@ in {
     ./mime.nix
     ./packages.nix
     ./rclone.nix
+    ./security-key.nix
     ./sops.nix
     ./user-sops-secrets.nix
   ];
