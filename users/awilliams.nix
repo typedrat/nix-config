@@ -40,7 +40,7 @@ in {
       signing = {
         key = "~/.ssh/id_ed25519_sk";
         format = "ssh";
-        signByDefault = true;
+        signByDefault = false;
       };
     };
 
