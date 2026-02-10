@@ -12,6 +12,7 @@
     ./virtualisation
     ./alien.nix
     ./appimage.nix
+    ./avahi.nix
     ./impermanence.nix
     ./java.nix
     ./nix.nix

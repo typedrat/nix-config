@@ -32,7 +32,6 @@ in {
     '';
 
     security.rtkit.enable = true;
-    services.avahi.enable = true;
     services.pipewire = {
       enable = true;
       alsa.enable = true;

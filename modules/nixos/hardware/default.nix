@@ -6,6 +6,7 @@ in {
     ./bluetooth.nix
     ./nvidia.nix
     ./openrgb.nix
+    ./printing.nix
     ./security-key.nix
     ./udisks2.nix
     ./usbmuxd.nix
