@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  self',
   inputs,
   inputs',
   pkgs,
@@ -144,8 +143,8 @@
           force = true;
 
           packages = with inputs'.firefox-addons.packages; [
-            self'.packages.bypass-paywalls-clean
-            self'.packages.ttv-lol-pro
+            pkgs.bypass-paywalls-clean
+            pkgs.ttv-lol-pro
 
             augmented-steam
             bitwarden

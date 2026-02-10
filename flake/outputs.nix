@@ -1,7 +1,6 @@
 {
   self,
   inputs,
-  withSystem,
   ...
 }: {
   flake = {
@@ -18,14 +17,13 @@
 
     # Minimal air-gapped live environment for security key generation
     # Build ISO with: nix build .#nixosConfigurations.keygen-live.config.system.build.isoImage
-    nixosConfigurations.keygen-live = withSystem "x86_64-linux" ({self', ...}:
-      inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ../systems/keygen-live
-          {_module.args = {inherit self';};}
-        ];
-      });
+    nixosConfigurations.keygen-live = inputs.nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ../systems/keygen-live
+        {nixpkgs.overlays = [self.overlays.localPackages];}
+      ];
+    };
 
     homeModules = {
       skyscraper = {imports = [../modules/extra/home-manager/skyscraper];};

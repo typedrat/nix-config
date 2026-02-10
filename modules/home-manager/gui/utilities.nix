@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  self',
   pkgs,
   lib,
   ...
@@ -17,7 +16,7 @@ in {
       transmission_4-qt6
       waypipe
       wev
-      self'.packages.xcursor-viewer
+      xcursor-viewer
     ];
   };
 }

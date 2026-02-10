@@ -1,6 +1,5 @@
 {
   config,
-  self',
   pkgs,
   lib,
   ...
@@ -10,7 +9,7 @@
   inherit (config.rat.services) domainName;
 
   themeParkTheme = "catppuccin-${config.catppuccin.flavor}";
-  themeParkPkg = self'.packages.theme-park.override {
+  themeParkPkg = pkgs.theme-park.override {
     themeParkScheme = "https";
     themeParkDomain = "${cfg.theme-park.subdomain}.${domainName}";
   };

@@ -1,5 +1,4 @@
 {
-  self',
   config,
   osConfig,
   pkgs,
@@ -16,7 +15,7 @@
   kritaEnabled = (guiCfg.enable or false) && (productivityCfg.enable or false) && (kritaCfg.enable or false);
   aiDiffusionEnabled = kritaEnabled && (kritaCfg.aiDiffusion.enable or false);
 
-  aiDiffusionPkg = self'.packages.krita-ai-diffusion;
+  aiDiffusionPkg = pkgs.krita-ai-diffusion;
 in {
   config = modules.mkIf kritaEnabled {
     home.packages = [pkgs.krita];

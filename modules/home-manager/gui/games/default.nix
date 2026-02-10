@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  self',
   pkgs,
   lib,
   ...
@@ -28,6 +27,6 @@ in {
       wineWowPackages.stableFull
     ];
 
-    xdg.configFile."pegasus-frontend/themes/colorful".source = "${self'.packages.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
+    xdg.configFile."pegasus-frontend/themes/colorful".source = "${pkgs.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
   };
 }

@@ -1,6 +1,5 @@
 {
   config,
-  self',
   pkgs,
   lib,
   ...
@@ -9,7 +8,7 @@
   cfg = config.rat.services.configarr;
 
   mkConfigarrSecrets = path: secrets:
-    builtins.listToAttrs (builtins.map (secret: {
+    builtins.listToAttrs (map (secret: {
         name = "configarr/${secret}";
         value = {
           sopsFile = path;
@@ -471,7 +470,7 @@ in {
         User = "configarr";
         Group = "configarr";
 
-        ExecStart = "${self'.packages.configarr}/bin/configarr";
+        ExecStart = "${pkgs.configarr}/bin/configarr";
         WorkingDirectory = "/var/lib/configarr";
       };
 

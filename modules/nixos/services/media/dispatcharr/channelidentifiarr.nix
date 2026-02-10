@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  self',
   ...
 }: let
   inherit (lib) modules options types;
@@ -14,7 +13,7 @@
   etagPath = "${stateDir}/.database-etag";
   databaseUrl = "https://epg.jesmann.com/channelidentifiarr.db";
 
-  inherit (self'.packages) channelidentifiarr;
+  inherit (pkgs) channelidentifiarr;
 
   updateScript = pkgs.writeShellScript "channelidentifiarr-update-db" ''
     set -euo pipefail

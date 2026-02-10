@@ -9,7 +9,6 @@
   zbar,
   installShellFiles,
 }:
-
 rustPlatform.buildRustPackage rec {
   pname = "keyfork";
   version = "0.3.4";

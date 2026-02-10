@@ -52,6 +52,8 @@
           cfg.sharedModules
           ++ hostConfig.modules
           ++ [
+            {nixpkgs.overlays = [self.overlays.localPackages];}
+
             # Module to provide self' and inputs' using withSystem
             {
               _module.args = withSystem hostConfig.system ({

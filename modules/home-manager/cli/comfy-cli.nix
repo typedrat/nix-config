@@ -1,8 +1,8 @@
 {
   config,
   osConfig,
+  pkgs,
   lib,
-  self',
   ...
 }: let
   inherit (lib) modules;
@@ -13,7 +13,7 @@ in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.comfy-cli.enable or false)) {
     programs.comfy-cli = {
       enable = true;
-      package = self'.packages.comfy-cli;
+      package = pkgs.comfy-cli;
     };
   };
 }

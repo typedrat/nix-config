@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  self',
   ...
 }: let
   inherit (lib.options) mkEnableOption;
@@ -21,7 +20,7 @@ in {
       enable = true;
       drivers = [
         pkgs.gutenprint
-        self'.packages.cups-brother-dcpl2550dw
+        pkgs.cups-brother-dcpl2550dw
       ];
     };
   };

@@ -7,7 +7,6 @@
   skyscraperTypes,
 }: let
   # Import settings submodules (subset for frontends)
-
   # Frontend-specific paths (no cache or import)
   frontendPathsModule = {lib, ...}: {
     options = {

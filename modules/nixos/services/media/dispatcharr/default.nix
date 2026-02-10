@@ -2,10 +2,9 @@
   config,
   lib,
   pkgs,
-  self',
   ...
 }: let
-  inherit (self'.packages) dispatcharr;
+  inherit (pkgs) dispatcharr;
 
   inherit (lib) modules options types;
   cfg = config.rat.services.dispatcharr;

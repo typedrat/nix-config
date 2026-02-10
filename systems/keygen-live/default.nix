@@ -16,7 +16,6 @@
 {
   lib,
   pkgs,
-  self',
   modulesPath,
   ...
 }: {
@@ -87,7 +86,7 @@
       enable = true;
       drivers = [
         pkgs.gutenprint
-        self'.packages.cups-brother-dcpl2550dw
+        pkgs.cups-brother-dcpl2550dw
       ];
     };
   };
@@ -135,7 +134,7 @@
     # Key backup tools
     paperkey
     pgpdump
-    self'.packages.keyfork
+    pkgs.keyfork
 
     # QR code generation and reading
     qrencode # Generate QR codes
@@ -180,11 +179,7 @@
     keyMap = "us";
   };
 
-  # Allow unfree Brother printer driver
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "cups-brother-dcpl2550dw"
-    ];
+  nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "25.05";
 }

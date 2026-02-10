@@ -1,6 +1,5 @@
 {
   config,
-  self',
   inputs',
   pkgs,
   lib,
@@ -55,7 +54,7 @@ in {
           inputs'.typedrat-fonts.packages.berkeley-mono-nerd-font-mono
 
           # Non-English fonts:
-          self'.packages.opensiddur-hebrew-fonts
+          pkgs.opensiddur-hebrew-fonts
           ipaexfont
           mplus-outline-fonts.githubRelease
         ];

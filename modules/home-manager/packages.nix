@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  self',
   pkgs,
   lib,
   ...
@@ -24,7 +23,7 @@ in {
       zstd
 
       # Custom packages
-      self'.packages.catbox-cli
+      catbox-cli
       qbittorrent-cli
       python3Packages.pyvizio
 

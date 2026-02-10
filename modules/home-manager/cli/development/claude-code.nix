@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  self',
   pkgs,
   lib,
   ...
@@ -14,7 +13,7 @@ in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.development.enable or false)) {
     home.packages = [
       pkgs.claude-code-bin
-      self'.packages.cclogviewer
+      pkgs.cclogviewer
     ];
 
     # Add ~/.local/bin to PATH
