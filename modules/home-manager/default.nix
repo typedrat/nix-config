@@ -43,6 +43,10 @@ in {
         (mkIf (envCfg.variables or {} != {}) envCfg.variables)
       ];
 
+      xdg.configFile."nixpkgs/config.nix".text = ''
+        { allowUnfree = true; }
+      '';
+
       programs.home-manager.enable = true;
       services.ssh-agent.enable = true;
 
