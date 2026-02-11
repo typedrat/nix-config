@@ -1,9 +1,9 @@
 {
   imports = [
+    ./github-actions
     ./checks.nix
     ./devshell.nix
     ./formatter.nix
-    ./github-actions.nix
     ./outputs.nix
     ./packages.nix
     ./rebuild.nix
