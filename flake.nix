@@ -155,8 +155,8 @@
     };
 
     pyprland = {
-      # Workaround for hyprland-community/pyprland#195
       url = "github:hyprland-community/pyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     wayland-pipewire-idle-inhibit = {
