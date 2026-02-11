@@ -149,7 +149,7 @@
                 fi
 
                 if [ "$should_delete" = "1" ]; then
-                  gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number/comments/$comment_id" \
+                  gh api "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" \
                     -X DELETE --silent 2>/dev/null || true
                   echo "Deleted notification for $comment_ref"
                 fi
