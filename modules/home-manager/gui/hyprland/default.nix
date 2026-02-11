@@ -140,6 +140,8 @@ in {
 
         misc = {
           enable_anr_dialog = false;
+          disable_splash_rendering = true;
+          disable_hyprland_logo = true;
         };
       };
 

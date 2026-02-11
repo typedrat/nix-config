@@ -3,18 +3,25 @@
   lib,
   ...
 }: let
+  inherit (lib) types;
   inherit (lib.modules) mkIf;
-  inherit (lib.options) mkEnableOption;
+  inherit (lib.options) mkEnableOption mkOption;
 in {
   imports = [
     ./gnome-keyring.nix
-    ./greetd.nix
+    ./greeter
     ./hyprland.nix
     ./plymouth.nix
   ];
 
   options.rat.gui = {
     enable = mkEnableOption "gui";
+
+    greeter.variant = mkOption {
+      default = "tuigreet";
+      type = types.enum ["tuigreet" "sddm"];
+      description = "The display manager / greeter to use";
+    };
 
     chat.enable = mkEnableOption "chat clients" // {default = true;};
     media.enable = mkEnableOption "media software" // {default = true;};
