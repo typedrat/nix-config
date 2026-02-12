@@ -172,22 +172,35 @@ in {
   ];
 
   config = modules.mkMerge [
-    # Chromium
-    (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.chromium.enable or false)) {
-      programs.chromium = {
+    # Brave
+    (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.brave.enable or false)) {
+      programs.brave = {
         enable = true;
         commandLineArgs = [
           "-no-default-browser-check"
         ];
         extensions = [
           "nngceckbapebfimnlniiiahkandclblb" # Bitwarden Password Manager
-          "ddkjiahejlhfcafbddmgiahcphecmpfh" # uBlock Origin Lite
           "mbniclmhobmnbdlbpiphghaielnnpgdp" # Lightshot
           "gcbommkclmclpchllfjekcdonpmejbdp" # HTTPS Everywhere
           "lnjaiaapbakfhlbjenjkhffcdpoompki" # Catppuccin for Web File Explorer Icons
           "fmkadmapgofadopljbjfkapdkoienihi" # React Developer Tools
+          "fcoeoabgfenejglbffodgkkbkcdhcgfn" # Claude
         ];
       };
+
+      # Claude Code native messaging host for Brave
+      programs.brave.nativeMessagingHosts = [
+        (pkgs.writeTextDir "etc/chromium/native-messaging-hosts/com.anthropic.claude_code_browser_extension.json" (builtins.toJSON {
+          name = "com.anthropic.claude_code_browser_extension";
+          description = "Claude Code Browser Extension Native Host";
+          path = "${config.home.homeDirectory}/.claude/chrome/chrome-native-host";
+          type = "stdio";
+          allowed_origins = [
+            "chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/"
+          ];
+        }))
+      ];
     })
 
     # Zen Browser

@@ -174,7 +174,7 @@
 
       browsers = {
         firefox.enable = options.mkEnableOption "Firefox" // {default = true;};
-        chromium.enable = options.mkEnableOption "Chromium" // {default = true;};
+        brave.enable = options.mkEnableOption "Brave" // {default = true;};
         zen.enable = options.mkEnableOption "Zen Browser" // {default = true;};
       };
 
