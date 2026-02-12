@@ -15,7 +15,7 @@
   jobs = {
     build = {
       name = "Build \${{ matrix.host }}";
-      runsOn = "ubuntu-latest";
+      runsOn = "nixos";
 
       permissions = {
         id-token = "write";
