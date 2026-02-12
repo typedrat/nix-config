@@ -105,9 +105,8 @@
       lib.concatMapStringsSep " " (secret: let
         # Escape special characters in placeholder for sed
         file = lib.escapeShellArg (toString secret.file);
-      in ''
-        -e "s|${secret.placeholder}|$(cat ${file} | tr -d '\n')|g"
-      '')
+      in
+        "-e \"s|${secret.placeholder}|$(cat ${file} | tr -d '\\n')|g\"")
       secrets;
   in ''
     # Skyscraper config with secrets substitution
@@ -172,7 +171,7 @@ in {
 
     # Use activation script when secrets need substitution
     home.activation.skyscraperConfig = lib.mkIf (hasSettings && hasSecrets && cfg.configPath == null) (
-      lib.hm.dag.entryAfter ["writeBoundary"] activationScript
+      lib.hm.dag.entryAfter ["writeBoundary" "sops-nix"] activationScript
     );
 
     # Assertions for invalid configurations
