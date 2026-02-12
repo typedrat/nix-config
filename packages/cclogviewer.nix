@@ -21,7 +21,7 @@ buildGoModule rec {
 
   subPackages = ["cmd/cclogviewer"];
 
-  passthru.updateScript = nix-update-script {};
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = with lib; {
     description = "Convert Claude Code JSONL log files into interactive HTML";

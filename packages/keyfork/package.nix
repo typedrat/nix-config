@@ -8,6 +8,7 @@
   pcsclite,
   zbar,
   installShellFiles,
+  nix-update-script,
 }:
 rustPlatform.buildRustPackage rec {
   pname = "keyfork";
@@ -48,6 +49,8 @@ rustPlatform.buildRustPackage rec {
       --zsh <($out/bin/keyfork completion zsh) \
       --fish <($out/bin/keyfork completion fish)
   '';
+
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = {
     description = "Opinionated toolchain for managing cryptographic keys offline and on smartcards";

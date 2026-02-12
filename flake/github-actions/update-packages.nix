@@ -33,23 +33,62 @@
         {
           name = "Update packages";
           run = ''
-            packages=$(nix eval .#packages.x86_64-linux --apply 'pkgs: builtins.filter (n: n != "terraform") (builtins.attrNames pkgs)' --json | jq -r '.[]')
+            packages=$(nix eval .#packages.x86_64-linux --apply 'pkgs: builtins.filter (n: n != "terraform" && n != "terraform.tf.json") (builtins.attrNames pkgs)' --json | jq -r '.[]')
             updated_packages=""
+            failed_packages=""
+
+            # Packages with custom update scripts that must be run directly
+            # (nix-update can't handle packages built via external flake inputs)
+            custom_update_packages="bypass-paywalls-clean ttv-lol-pro"
 
             for pkg in $packages; do
               echo "Updating $pkg..."
-              if nix run nixpkgs#nix-update -- --flake "$pkg" --use-update-script --write-commit-message ".commit-message-$pkg"; then
-                if [ -f ".commit-message-$pkg" ]; then
-                  nix fmt
-                  git add -A
-                  git commit \
-                    --author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
-                    --file=".commit-message-$pkg"
-                  rm ".commit-message-$pkg"
-                  updated_packages="$updated_packages- $pkg\n"
+
+              is_custom=false
+              for custom_pkg in $custom_update_packages; do
+                if [ "$pkg" = "$custom_pkg" ]; then
+                  is_custom=true
+                  break
+                fi
+              done
+
+              if [ "$is_custom" = true ]; then
+                # Run the package's update.sh script directly
+                pkg_dir=$(find packages -maxdepth 2 -name "update.sh" -path "*/$pkg/*" -exec dirname {} \;)
+                if [ -n "$pkg_dir" ] && [ -x "$pkg_dir/update.sh" ]; then
+                  echo "Running custom update script for $pkg..."
+                  if "$pkg_dir/update.sh"; then
+                    if ! git diff --quiet; then
+                      nix fmt
+                      git add -A
+                      git commit \
+                        --author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
+                        -m "$pkg: update via custom script"
+                      updated_packages="$updated_packages- $pkg\n"
+                    fi
+                  else
+                    echo "::error::Failed to update $pkg"
+                    failed_packages="$failed_packages- $pkg\n"
+                  fi
+                else
+                  echo "::error::No update.sh found for $pkg"
+                  failed_packages="$failed_packages- $pkg\n"
                 fi
               else
-                echo "Failed to update $pkg, continuing..."
+                if nix run nixpkgs#nix-update -- --flake "$pkg" --use-update-script --write-commit-message ".commit-message-$pkg"; then
+                  if [ -f ".commit-message-$pkg" ]; then
+                    nix fmt
+                    git add -A
+                    git commit \
+                      --author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
+                      --file=".commit-message-$pkg"
+                    rm ".commit-message-$pkg"
+                    updated_packages="$updated_packages- $pkg\n"
+                  fi
+                else
+                  echo "::error::Failed to update $pkg"
+                  failed_packages="$failed_packages- $pkg\n"
+                fi
               fi
             done
 
@@ -60,10 +99,18 @@
             else
               echo "UPDATED_PACKAGES=_No packages were updated._" >> "$GITHUB_ENV"
             fi
+
+            if [ -n "$failed_packages" ]; then
+              echo ""
+              echo "The following packages failed to update:"
+              echo -e "$failed_packages"
+              exit 1
+            fi
           '';
         }
         {
           name = "Create Pull Request";
+          if_ = "always()";
           uses = "peter-evans/create-pull-request@v7";
           with_ = {
             token = "\${{ secrets.GH_TOKEN_FOR_UPDATES }}";

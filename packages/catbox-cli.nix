@@ -30,7 +30,7 @@ rustPlatform.buildRustPackage (_finalAttrs: {
   ];
 
   passthru.updateScript = nix-update-script {
-    extraArgs = ["--version=branch"];
+    extraArgs = ["--flake" "--version=branch"];
   };
 
   meta = with lib; {

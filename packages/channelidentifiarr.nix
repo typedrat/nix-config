@@ -53,7 +53,7 @@ python3Packages.buildPythonApplication rec {
 
   doCheck = false;
 
-  passthru.updateScript = nix-update-script {};
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = {
     description = "Web-based TV channel lineup search and Dispatcharr/Emby integration";

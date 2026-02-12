@@ -12,6 +12,7 @@
   coreutils,
   gnugrep,
   which,
+  nix-update-script,
 }: let
   arches = [
     "x86_64"
@@ -92,6 +93,8 @@ in
 
         runHook postInstall
       '';
+
+    passthru.updateScript = nix-update-script {extraArgs = ["--flake" "--version=skip"];};
 
     meta = {
       homepage = "http://www.brother.com/";

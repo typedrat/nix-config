@@ -143,7 +143,7 @@ python3Packages.buildPythonApplication rec {
 
   doCheck = false;
 
-  passthru.updateScript = nix-update-script {};
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = {
     description = "IPTV stream management and dispatching application";

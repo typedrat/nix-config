@@ -68,7 +68,7 @@ python3.pkgs.buildPythonApplication rec {
     rm $out/bin/comfy-cli $out/bin/comfycli
   '';
 
-  passthru.updateScript = nix-update-script {};
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = {
     description = "Command Line Interface for Managing ComfyUI";
