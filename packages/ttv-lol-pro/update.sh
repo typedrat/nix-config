@@ -34,3 +34,8 @@ sed -i "s|fileId = \"[^\"]*\"|fileId = \"$file_id\"|" "$pkg_file"
 sed -i "s|sha256 = \"[^\"]*\"|sha256 = \"$new_hash\"|" "$pkg_file"
 
 echo "ttv-lol-pro: $current_version -> $latest_version" >&2
+
+# Write commit message if requested
+if [[ -n "${COMMIT_MESSAGE_FILE:-}" ]]; then
+  echo "ttv-lol-pro: $current_version -> $latest_version" > "$COMMIT_MESSAGE_FILE"
+fi

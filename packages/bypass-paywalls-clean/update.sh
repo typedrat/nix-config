@@ -38,3 +38,8 @@ sed -i "s|bypass_paywalls_clean-[^\"]*\.xpi|bypass_paywalls_clean-${latest_versi
 sed -i "s|sha256 = \"[^\"]*\"|sha256 = \"$latest_sri\"|" "$pkg_file"
 
 echo "bypass-paywalls-clean: $current_version -> $latest_version" >&2
+
+# Write commit message if requested
+if [[ -n "${COMMIT_MESSAGE_FILE:-}" ]]; then
+  echo "bypass-paywalls-clean: $current_version -> $latest_version" > "$COMMIT_MESSAGE_FILE"
+fi

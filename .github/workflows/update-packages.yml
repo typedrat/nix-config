@@ -36,47 +36,47 @@ jobs:
               fi
             done
 
+            commit_msg=".commit-message-$pkg"
+
             if [ "$is_custom" = true ]; then
               # Run the package's update.sh script directly
               pkg_dir=$(find packages -maxdepth 2 -name "update.sh" -path "*/$pkg/*" -exec dirname {} \;)
               if [ -n "$pkg_dir" ] && [ -x "$pkg_dir/update.sh" ]; then
                 echo "Running custom update script for $pkg..."
-                if "$pkg_dir/update.sh"; then
-                  if ! git diff --quiet; then
-                    nix fmt
-                    git add -A
-                    git commit \
-                      --author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
-                      -m "$pkg: update via custom script"
-                    updated_packages="$updated_packages- $pkg\n"
-                  fi
-                else
+                if ! COMMIT_MESSAGE_FILE="$commit_msg" "$pkg_dir/update.sh"; then
                   echo "::error::Failed to update $pkg"
                   failed_packages="$failed_packages- $pkg\n"
+                  rm -f "$commit_msg"
                   git checkout -- .
                   git clean -fd
+                  continue
                 fi
               else
                 echo "::error::No update.sh found for $pkg"
                 failed_packages="$failed_packages- $pkg\n"
+                continue
               fi
             else
-              if nix run nixpkgs#nix-update -- --flake "$pkg" --use-update-script --write-commit-message ".commit-message-$pkg"; then
-                if [ -f ".commit-message-$pkg" ]; then
-                  nix fmt
-                  git add -A
-                  git commit \
-                    --author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
-                    --file=".commit-message-$pkg"
-                  rm ".commit-message-$pkg"
-                  updated_packages="$updated_packages- $pkg\n"
-                fi
-              else
+              if ! nix run nixpkgs#nix-update -- --flake "$pkg" --use-update-script --write-commit-message "$commit_msg"; then
                 echo "::error::Failed to update $pkg"
                 failed_packages="$failed_packages- $pkg\n"
+                rm -f "$commit_msg"
                 git checkout -- .
                 git clean -fd
+                continue
               fi
+            fi
+
+            # Commit if there are changes
+            if [ -f "$commit_msg" ]; then
+              nix fmt
+              commit_msg_content=$(cat "$commit_msg")
+              rm "$commit_msg"
+              git add -A
+              git commit \
+                --author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>" \
+                -m "$commit_msg_content"
+              updated_packages="$updated_packages- $pkg\n"
             fi
           done
 
