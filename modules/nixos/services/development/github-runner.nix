@@ -1,5 +1,6 @@
 {
   config,
+  inputs',
   lib,
   pkgs,
   ...
@@ -103,6 +104,7 @@ in {
               # Nix tooling
               nix
               nixfmt
+              inputs'.determinate.packages.default
               # Add user-specified packages
               openssh
             ]
