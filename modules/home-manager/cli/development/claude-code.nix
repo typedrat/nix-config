@@ -17,9 +17,10 @@ in {
       githubPersonalAccessToken = {};
     };
 
-    home.packages = [
-      pkgs.claude-code-bin
-      pkgs.cclogviewer
+    home.packages = with pkgs; [
+      claude-code-bin
+      cclogviewer
+      happy-coder
     ];
 
     # Add ~/.local/bin to PATH
@@ -27,7 +28,7 @@ in {
       "${homeDirectory}/.local/bin"
     ];
 
-    # Symlink claude-code to ~/.local/bin for easy access
+    # Symlink claude-code to ~/.local/bin to shut up the native install check
     home.file.".local/bin/claude".source = getExe pkgs.claude-code-bin;
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
