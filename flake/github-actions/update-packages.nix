@@ -33,7 +33,7 @@
         {
           name = "Update packages";
           run = ''
-            packages=$(nix eval .#packages.x86_64-linux --apply 'pkgs: builtins.filter (n: n != "terraform" && n != "terraform.tf.json") (builtins.attrNames pkgs)' --json | jq -r '.[]')
+            packages=$(nix eval .#packages.x86_64-linux --apply 'pkgs: builtins.filter (n: (pkgs.''${n}.passthru.updateScript or null) != null) (builtins.attrNames pkgs)' --json | jq -r '.[]')
             updated_packages=""
             failed_packages=""
 

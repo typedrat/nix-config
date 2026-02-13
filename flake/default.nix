@@ -1,7 +1,6 @@
 {
   imports = [
     ./github-actions
-    ./checks.nix
     ./devshell.nix
     ./formatter.nix
     ./outputs.nix
