@@ -24,7 +24,7 @@ in {
       igir
       pegasus-frontend
       umu-launcher
-      wineWowPackages.stableFull
+      winePackages.stagingFull
     ];
 
     xdg.configFile."pegasus-frontend/themes/colorful".source = "${pkgs.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
