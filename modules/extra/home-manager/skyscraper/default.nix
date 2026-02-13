@@ -101,13 +101,11 @@
 
   activationScript = let
     # Generate sed commands for each secret substitution
-    sedCommands =
-      lib.concatMapStringsSep " " (secret: let
-        # Escape special characters in placeholder for sed
-        file = lib.escapeShellArg (toString secret.file);
-      in
-        "-e \"s|${secret.placeholder}|$(cat ${file} | tr -d '\\n')|g\"")
-      secrets;
+    sedCommands = lib.concatMapStringsSep " " (secret: let
+      # Escape special characters in placeholder for sed
+      file = lib.escapeShellArg (toString secret.file);
+    in "-e \"s|${secret.placeholder}|$(cat ${file} | tr -d '\\n')|g\"")
+    secrets;
   in ''
     # Skyscraper config with secrets substitution
     config_dir=${lib.escapeShellArg configDir}
