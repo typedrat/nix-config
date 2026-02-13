@@ -31,7 +31,10 @@
 
       steps = [
         {uses = "actions/checkout@v4";}
-        {uses = "wimpysworld/nothing-but-nix@main";}
+        {
+          uses = "wimpysworld/nothing-but-nix@main";
+          if_ = "runner.os == 'Linux' && runner.environment == 'github-hosted'";
+        }
         {uses = "DeterminateSystems/determinate-nix-action@v3";}
         {uses = "DeterminateSystems/flakehub-cache-action@main";}
         {uses = "DeterminateSystems/flake-checker-action@main";}
