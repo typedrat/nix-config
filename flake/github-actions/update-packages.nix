@@ -69,6 +69,8 @@
                   else
                     echo "::error::Failed to update $pkg"
                     failed_packages="$failed_packages- $pkg\n"
+                    git checkout -- .
+                    git clean -fd
                   fi
                 else
                   echo "::error::No update.sh found for $pkg"
@@ -88,6 +90,8 @@
                 else
                   echo "::error::Failed to update $pkg"
                   failed_packages="$failed_packages- $pkg\n"
+                  git checkout -- .
+                  git clean -fd
                 fi
               fi
             done
