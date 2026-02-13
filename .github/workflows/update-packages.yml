@@ -110,5 +110,5 @@ jobs:
 name: Update packages
 "on":
   schedule:
-    - cron: 0 7 * * *
+    - cron: 0 21 * * *
   workflow_dispatch: {}

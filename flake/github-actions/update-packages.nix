@@ -3,9 +3,9 @@
 
   on = {
     workflowDispatch = {};
-    # Run 1 hour after flake.lock update (0 6 * * *) to use fresh nixpkgs
+    # Run 1 hour after flake.lock update (0 20 * * *) to use fresh nixpkgs
     schedule = [
-      {cron = "0 7 * * *";}
+      {cron = "0 21 * * *";}
     ];
   };
 

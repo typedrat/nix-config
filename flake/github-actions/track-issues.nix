@@ -5,7 +5,7 @@
     push.branches = ["master"];
     workflowDispatch = {};
     schedule = [
-      {cron = "0 8 * * *";}
+      {cron = "0 22 * * *";}
     ];
   };
 

@@ -4,7 +4,7 @@
   on = {
     workflowDispatch = {};
     schedule = [
-      {cron = "0 6 * * *";}
+      {cron = "0 20 * * *";}
     ];
   };
 
