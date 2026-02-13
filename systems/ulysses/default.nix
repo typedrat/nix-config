@@ -110,6 +110,7 @@
     };
 
     hardware.openrgb.enable = true;
+    hardware.topping-e2x2.enable = true;
     hardware.securityKey.enable = true;
     hardware.usbmuxd.enable = true;
     java.enable = true;
