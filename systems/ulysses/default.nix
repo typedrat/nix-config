@@ -149,7 +149,6 @@
         };
         terminal.ghostty.enable = true;
         productivity = {
-          freecad.enable = false;
           krita = {
             enable = true;
             aiDiffusion.enable = true;
