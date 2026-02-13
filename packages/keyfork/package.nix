@@ -50,7 +50,7 @@ rustPlatform.buildRustPackage rec {
       --fish <($out/bin/keyfork completion fish)
   '';
 
-  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake" "--version-regex" "keyfork-v(.*)"];};
 
   meta = {
     description = "Opinionated toolchain for managing cryptographic keys offline and on smartcards";
