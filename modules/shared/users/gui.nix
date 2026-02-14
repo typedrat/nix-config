@@ -184,7 +184,7 @@
       };
 
       easyeffects = {
-        enable = options.mkEnableOption "EasyEffects audio processing" // {default = true;};
+        enable = options.mkEnableOption "EasyEffects audio processing";
       };
 
       packages = {
