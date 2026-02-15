@@ -177,7 +177,13 @@ in {
       programs.brave = {
         enable = true;
         commandLineArgs = [
-          "-no-default-browser-check"
+          "--no-default-browser-check"
+          "--enable-features=UseOzonePlatform,Vulkan,VulkanFromANGLE"
+          "--enable-unsafe-webgpu"
+          "--use-angle=vulkan"
+          "--ozone-platform=wayland"
+          "--enable-wayland-ime"
+          "--wayland-text-input-version=3"
         ];
         extensions = [
           "nngceckbapebfimnlniiiahkandclblb" # Bitwarden Password Manager
