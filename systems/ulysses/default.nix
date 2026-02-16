@@ -13,15 +13,26 @@
     ./wireplumber.nix
   ];
 
-  hardware.facter.reportPath = ./facter.json;
+  # --- Networking ---
+
+  networking.hostName = "ulysses";
+  networking.hostId = "7e104ef9";
+
+  # --- Boot ---
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
   boot.blacklistedKernelModules = ["battery"];
+
+  # --- Hardware ---
+
+  hardware.facter.reportPath = ./facter.json;
   # Don't load amdgpu in initrd - it changes monitor enumeration order
   hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce ["nvidia"];
+
+  # --- Extra filesystems ---
 
   # Hyperion home backup (ZFS dataset received from old system)
   fileSystems."/mnt/hyperion-home" = {
@@ -44,26 +55,16 @@
     ];
   };
 
-  networking.hostName = "ulysses";
-  networking.hostId = "7e104ef9";
+  # --- Extra packages ---
+
+  environment.systemPackages = [
+    inputs'.llama-cpp.packages.cuda
+  ];
+
+  # --- rat.* configuration ---
 
   rat = {
-    # Ryzen 9 9950X3D
-    hardware.cpu = {
-      cores = 16;
-      threads = 32;
-    };
-
-    deployment = {
-      enable = true;
-      flakeRef = "typedrat/nix-config/0.1";
-      operation = "boot"; # Safer for workstation - applies on next reboot
-      webhook.enable = true;
-      polling.enable = true;
-      rollback.enable = true;
-      tunnel.enable = true;
-    };
-
+    # Boot
     boot = {
       loader = "limine";
       memtest86.enable = true;
@@ -79,11 +80,46 @@
       };
     };
 
-    hardware.nvidia = {
-      enable = true;
-      cuda.enable = true;
+    # Hardware
+    hardware = {
+      # Ryzen 9 9950X3D
+      cpu = {
+        cores = 16;
+        threads = 32;
+      };
+      nvidia = {
+        enable = true;
+        cuda.enable = true;
+      };
+      openrgb.enable = true;
+      topping-e2x2.enable = true;
+      securityKey.enable = true;
+      usbmuxd.enable = true;
     };
 
+    # Storage
+    zfs = {
+      enable = true;
+      rootPool = "zpool";
+      rootDataset = "local/root";
+    };
+    impermanence = {
+      enable = true;
+      zfs.enable = true;
+    };
+
+    # Deployment
+    deployment = {
+      enable = true;
+      flakeRef = "typedrat/nix-config/0.1";
+      operation = "boot"; # Safer for workstation - applies on next reboot
+      webhook.enable = true;
+      polling.enable = true;
+      rollback.enable = true;
+      tunnel.enable = true;
+    };
+
+    # GUI
     gui = {
       enable = true;
       hyprland = {
@@ -104,37 +140,25 @@
         ];
       };
     };
-
     theming.fonts.enableGoogleFonts = false;
-    polkit.unprivilegedPowerManagement = true;
-    security.sudo.extendedTimeout.enable = true;
-    virtualisation.docker.enable = true;
 
+    # Games
     games = {
       enable = true;
       animeGameLaunchers.enable = true;
       steam.enable = true;
     };
 
-    hardware.openrgb.enable = true;
-    hardware.topping-e2x2.enable = true;
-    hardware.securityKey.enable = true;
-    hardware.usbmuxd.enable = true;
+    # Software
     java.enable = true;
     nix-ld.enable = true;
+    virtualisation.docker.enable = true;
 
-    impermanence = {
-      enable = true;
-      zfs.enable = true;
-    };
+    # Security
+    polkit.unprivilegedPowerManagement = true;
+    security.sudo.extendedTimeout.enable = true;
 
-    zfs = {
-      enable = true;
-      rootPool = "zpool";
-      rootDataset = "local/root";
-    };
-
-    # User configuration (system-specific overrides)
+    # User configuration
     users.awilliams = {
       enable = true;
       extraGroups = ["comfyui"];
@@ -165,10 +189,6 @@
       };
     };
   };
-
-  environment.systemPackages = [
-    inputs'.llama-cpp.packages.cuda
-  ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "25.05";
