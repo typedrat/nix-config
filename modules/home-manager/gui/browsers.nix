@@ -73,6 +73,7 @@
           "extensions.webextensions.ExtensionStorageIDB.enabled" = false;
         };
 
+        search.force = true;
         search.engines = {
           "Nix Packages" = {
             urls = [
@@ -237,15 +238,13 @@ in {
         };
       };
 
-      home.file.".zen/default/search.json.mozlz4".force = lib.mkForce true;
-
-      home.file.".zen/default/chrome/userContent.css".text = lib.strings.concatLines [
+      home.file.".config/zen/default/chrome/userContent.css".text = lib.strings.concatLines [
         (builtins.readFile "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userContent.css")
         (builtins.readFile "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userContent.css")
       ];
 
-      home.file.".zen/default/chrome/zen-logo-latte.svg".source = "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/zen-logo-latte.svg";
-      home.file.".zen/default/chrome/zen-logo-${flavor}.svg".source = "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/zen-logo-${flavor}.svg";
+      home.file.".config/zen/default/chrome/zen-logo-latte.svg".source = "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/zen-logo-latte.svg";
+      home.file.".config/zen/default/chrome/zen-logo-${flavor}.svg".source = "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/zen-logo-${flavor}.svg";
     })
   ];
 }
