@@ -23,6 +23,13 @@
   # Don't load amdgpu in initrd - it changes monitor enumeration order
   hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce ["nvidia"];
 
+  # Hyperion home backup (ZFS dataset received from old system)
+  fileSystems."/mnt/hyperion-home" = {
+    device = "zpool/safe/hyperion-home";
+    fsType = "zfs";
+    options = ["nofail"];
+  };
+
   # Windows drive (WD SN750 500GB)
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309-part3";
