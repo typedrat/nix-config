@@ -27,6 +27,7 @@ in {
   config = modules.mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false)) {
     home.packages = with pkgs; [
       cherry-studio
+      zotero
     ];
   };
 }

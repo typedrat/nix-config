@@ -160,6 +160,7 @@
             stylus
             ublock-origin
             violentmonkey
+            zotero-connector
           ];
         };
       };
@@ -178,10 +179,9 @@ in {
         enable = true;
         commandLineArgs = [
           "--no-default-browser-check"
-          "--enable-features=UseOzonePlatform,Vulkan,VulkanFromANGLE"
-          "--enable-unsafe-webgpu"
+          "--enable-features=UseOzonePlatform,Vulkan,VulkanFromANGLE,WebNN"
           "--use-angle=vulkan"
-          "--ozone-platform=wayland"
+          "--ozone-platform=x11"
           "--enable-wayland-ime"
           "--wayland-text-input-version=3"
         ];

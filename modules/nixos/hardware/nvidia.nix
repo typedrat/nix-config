@@ -74,6 +74,9 @@ in {
       # See: https://github.com/elFarto/nvidia-vaapi-driver
       LIBVA_DRIVER_NAME = "nvidia";
       NVD_BACKEND = "direct";
+
+      # Point Vulkan loader directly at the NVIDIA ICD
+      VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
     };
 
     # CUDA and license configuration
