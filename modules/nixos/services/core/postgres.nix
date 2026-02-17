@@ -35,6 +35,7 @@ in {
       services.postgresql = {
         enable = true;
         enableJIT = true;
+        package = pkgs.postgresql_16;
 
         authentication = modules.mkOverride 10 ''
           local sameuser all              peer          map=superuser_map

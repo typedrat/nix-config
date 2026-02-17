@@ -53,7 +53,12 @@ in {
       # Nicely reload system units when changing configs
       systemd.user.startServices = "sd-switch";
 
-      home.stateVersion = "25.05";
+      xdg.userDirs = {
+        enable = true;
+        setSessionVariables = true;
+      };
+
+      home.stateVersion = "26.05";
     }
 
     # Git configuration (only if user has configured it)
