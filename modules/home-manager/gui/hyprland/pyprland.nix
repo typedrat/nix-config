@@ -73,7 +73,7 @@ in {
           };
         };
 
-        xdg.configFile."hypr/pyprland.toml".source = (pkgs.formats.toml {}).generate "pyprland.toml" cfg.settings;
+        xdg.configFile."pypr/config.toml".source = (pkgs.formats.toml {}).generate "pyprland-config" cfg.settings;
 
         systemd.user.services.pyprland = {
           Unit = {
