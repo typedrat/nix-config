@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib.options) mkEnableOption;
@@ -18,5 +19,13 @@ in {
     # ];
 
     programs.nix-ld.enable = true;
+    programs.nix-ld.libraries = with pkgs; [
+      expat
+      fontconfig
+      freetype
+      glib
+      libGL
+      libxcb
+    ];
   };
 }
