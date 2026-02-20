@@ -14,31 +14,32 @@
   lsCfg = config.services.librespeed;
 
   # Generate frontend assets, replicating upstream module logic with servers.json added.
-  librespeedAssets = pkgs.runCommand "librespeed-assets" {
-    serversList = ''
-      function get_servers() {
-        return ${builtins.toJSON lsCfg.frontend.servers}
-      }
-      function override_settings () {
-      ${lib.pipe lsCfg.frontend.settings [
-        (lib.mapAttrs (name: val: "  s.setParameter(${builtins.toJSON name},${builtins.toJSON val});"))
-        lib.attrValues
-        lib.concatLines
-      ]}
-      }
+  librespeedAssets =
+    pkgs.runCommand "librespeed-assets" {
+      serversList = ''
+        function get_servers() {
+          return ${builtins.toJSON lsCfg.frontend.servers}
+        }
+        function override_settings () {
+        ${lib.pipe lsCfg.frontend.settings [
+          (lib.mapAttrs (name: val: "  s.setParameter(${builtins.toJSON name},${builtins.toJSON val});"))
+          lib.attrValues
+          lib.concatLines
+        ]}
+        }
+      '';
+      serversJson = builtins.toJSON lsCfg.frontend.servers;
+      passAsFile = ["serversList" "serversJson"];
+    } ''
+      cp -r --no-preserve=mode ${lsCfg.package}/assets $out
+      cp "$serversListPath" "$out/servers_list.js"
+      cp "$serversJsonPath" "$out/servers.json"
+      substitute ${lsCfg.package}/assets/index.html $out/index.html \
+        --replace-fail "s.setParameter(\"telemetry_level\",\"basic\"); //enable telemetry" "override_settings();" \
+        --replace-fail "LibreSpeed Example" ${lib.escapeShellArg (lib.escapeXML lsCfg.frontend.pageTitle)} \
+        --replace-fail "PUT@YOUR_EMAIL.HERE" ${lib.escapeShellArg (lib.escapeXML lsCfg.frontend.contactEmail)} \
+        --replace-fail "TO BE FILLED BY DEVELOPER" ${lib.escapeShellArg (lib.escapeXML lsCfg.frontend.contactEmail)}
     '';
-    serversJson = builtins.toJSON lsCfg.frontend.servers;
-    passAsFile = ["serversList" "serversJson"];
-  } ''
-    cp -r --no-preserve=mode ${lsCfg.package}/assets $out
-    cp "$serversListPath" "$out/servers_list.js"
-    cp "$serversJsonPath" "$out/servers.json"
-    substitute ${lsCfg.package}/assets/index.html $out/index.html \
-      --replace-fail "s.setParameter(\"telemetry_level\",\"basic\"); //enable telemetry" "override_settings();" \
-      --replace-fail "LibreSpeed Example" ${lib.escapeShellArg (lib.escapeXML lsCfg.frontend.pageTitle)} \
-      --replace-fail "PUT@YOUR_EMAIL.HERE" ${lib.escapeShellArg (lib.escapeXML lsCfg.frontend.contactEmail)} \
-      --replace-fail "TO BE FILLED BY DEVELOPER" ${lib.escapeShellArg (lib.escapeXML lsCfg.frontend.contactEmail)}
-  '';
 in {
   options.rat.services.librespeed = {
     enable = options.mkEnableOption "LibreSpeed";
@@ -108,7 +109,7 @@ in {
       # Backend API (higher priority via PathPrefix, no response buffering).
       librespeed-backend = {
         enable = true;
-        subdomain = cfg.subdomain;
+        inherit (cfg) subdomain;
         path = "/backend/";
         serviceUrl = config.links.librespeed-backend.url;
         authentik = false;
