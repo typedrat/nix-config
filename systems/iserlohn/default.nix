@@ -77,6 +77,7 @@
       };
 
       grafana.enable = true;
+      librespeed.enable = true;
       loki.enable = true;
       jellyfin.enable = true;
       mysql.enable = true;
