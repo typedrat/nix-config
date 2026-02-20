@@ -41,19 +41,20 @@
     options = ["nofail"];
   };
 
-  # Windows drive (WD SN750 500GB)
-  fileSystems."/mnt/windows" = {
-    device = "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309-part3";
-    fsType = "ntfs-3g";
-    options = [
-      "rw"
-      "uid=${toString config.users.users.awilliams.uid}"
-      "nofail"
-      "x-gvfs-show"
-      "x-gvfs-name=Windows"
-      "x-gvfs-icon=drive-harddisk"
-    ];
-  };
+  # Not currently installed.
+  # # Windows drive (WD SN750 500GB)
+  # fileSystems."/mnt/windows" = {
+  #   device = "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309-part3";
+  #   fsType = "ntfs-3g";
+  #   options = [
+  #     "rw"
+  #     "uid=${toString config.users.users.awilliams.uid}"
+  #     "nofail"
+  #     "x-gvfs-show"
+  #     "x-gvfs-name=Windows"
+  #     "x-gvfs-icon=drive-harddisk"
+  #   ];
+  # };
 
   # --- Extra packages ---
 
@@ -72,12 +73,12 @@
         validateChecksums = true;
         enrollConfig = true;
       };
-      windows = {
-        enable = true;
-        title = "Windows 11";
-        # Windows ESP on WD SN750 (/dev/nvme0n1p1)
-        efiPartition = "guid(a2b0ff18-ff5e-4783-b72d-323241b76611)";
-      };
+      # windows = {
+      #   enable = true;
+      #   title = "Windows 11";
+      #   # Windows ESP on WD SN750 (/dev/nvme0n1p1)
+      #   efiPartition = "guid(a2b0ff18-ff5e-4783-b72d-323241b76611)";
+      # };
     };
 
     # Hardware
