@@ -95,7 +95,6 @@
       topping-e2x2.enable = true;
       securityKey.enable = true;
       usbmuxd.enable = true;
-      wifi.enable = true;
     };
 
     # Storage
