@@ -91,7 +91,7 @@ in {
       };
     };
 
-    services.traefik.dynamicConfigOptions = lib.mkIf synapseCfg.enable {
+    services.traefik.dynamic.files."config".settings = lib.mkIf synapseCfg.enable {
       http.middlewares.matrix-to-element-redirect = {
         redirectRegex = {
           regex = "^https://${synapseCfg.subdomain}.${domainName}/?$";

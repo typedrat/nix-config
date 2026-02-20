@@ -11,6 +11,7 @@ in {
     ./topping-e2x2.nix
     ./udisks2.nix
     ./usbmuxd.nix
+    ./wifi.nix
   ];
 
   options.rat.hardware = {

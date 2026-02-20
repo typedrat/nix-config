@@ -86,7 +86,9 @@ in {
     services.traefik = {
       enable = true;
 
-      staticConfigOptions = {
+      dynamic.dir = "/var/lib/traefik/dynamic";
+
+      static.settings = {
         entryPoints = {
           web = {
             address = ":80";
@@ -128,7 +130,7 @@ in {
         };
       };
 
-      dynamicConfigOptions = {
+      dynamic.files."config".settings = {
         tls.certificates = [
           {
             certFile = "/var/lib/acme/${domainName}-rsa4096/fullchain.pem";

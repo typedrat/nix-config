@@ -12,6 +12,7 @@ in {
     home = "/home/awilliams";
     extraGroups =
       [
+        "audio"
         "dialout"
         "games"
         "wheel"

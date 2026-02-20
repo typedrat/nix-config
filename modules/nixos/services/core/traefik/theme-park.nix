@@ -56,7 +56,7 @@ in {
   };
 
   config = modules.mkIf cfg.enable {
-    services.traefik.staticConfigOptions = {
+    services.traefik.static.settings = {
       experimental.localPlugins.themepark = {
         moduleName = "github.com/packruler/traefik-themepark";
       };
@@ -92,7 +92,7 @@ in {
       ln -Tsf ${themeParkPlugin} ${config.services.traefik.dataDir}/plugins-local/src/github.com/packruler/traefik-themepark
     '';
 
-    services.traefik.dynamicConfigOptions.http.middlewares = lib.mapAttrs' (
+    services.traefik.dynamic.files."config".settings.http.middlewares = lib.mapAttrs' (
       name: route:
         lib.nameValuePair "${name}-theme" {
           plugin.themepark = {
@@ -105,7 +105,7 @@ in {
         }
     ) (lib.filterAttrs (_: route: route.enable && route.theme-park.app != null) cfg.routes);
 
-    services.traefik.dynamicConfigOptions.http.routers =
+    services.traefik.dynamic.files."config".settings.http.routers =
       lib.mapAttrs (
         name: route:
           modules.mkIf (route.enable && route.theme-park.app != null) {
