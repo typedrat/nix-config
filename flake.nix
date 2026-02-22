@@ -90,7 +90,7 @@
     };
 
     apple-fonts = {
-      url = "github:nmarks413/apple-fonts.nix"; # TODO: revert to Lyndeno/apple-fonts.nix after Lyndeno/apple-fonts.nix#26 is merged
+      url = "github:Lyndeno/apple-fonts.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
