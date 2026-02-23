@@ -119,7 +119,7 @@ in {
           ++ lib.optional (guiCfg.media.enable or false) "uwsm app -- jellyfin-mpv-shim"
           ++ lib.optional (osConfig.rat.hardware.openrgb.enable or false) "uwsm app -- openrgb --startminimized"
           ++ lib.optional (osConfig.programs.coolercontrol.enable or false) "uwsm app -- coolercontrol"
-          ++ lib.optional (tvMonitor != null) "pyvizio power on";
+          ++ lib.optional (tvMonitor != null) "tv-power on";
 
         general = {
           resize_on_border = true;

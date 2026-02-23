@@ -159,12 +159,6 @@ in {
         };
       };
 
-    # Environment variables
-    environment.variables = {
-      VIZIO_IP = "viziocastdisplay.lan";
-      VIZIO_AUTH = "Zmge7tbkiz";
-    };
-
     mime = {
       enable = true;
       defaultApplications = {

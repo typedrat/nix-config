@@ -24,6 +24,10 @@
       comfy-cli = {
         enable = options.mkEnableOption "comfy-cli for managing ComfyUI";
       };
+
+      tv-power = {
+        enable = options.mkEnableOption "tv-power script for Vizio TV control";
+      };
     };
   };
 in {

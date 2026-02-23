@@ -16,8 +16,6 @@ in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.shell.enable or false)) {
     sops.secrets = lib.mkIf hasUserSecrets {
       miseGithubToken = {};
-      vizioAuth = {};
-      vizioIp = {};
     };
 
     programs.zsh = {
@@ -42,8 +40,6 @@ in {
         ''
         + lib.optionalString hasUserSecrets ''
           export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
-          export VIZO_IP=$(cat ${config.sops.secrets.vizioIp.path})
-          export VIZIO_AUTH=$(cat ${config.sops.secrets.vizioAuth.path})
         '');
 
       history.size = 10000;

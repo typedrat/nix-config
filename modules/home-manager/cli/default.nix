@@ -17,6 +17,7 @@ in {
     ./networking.nix
     ./system-tools.nix
     ./tools.nix
+    ./tv-power.nix
     ./utilities.nix
   ];
 
