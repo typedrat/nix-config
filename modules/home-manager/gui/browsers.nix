@@ -214,6 +214,7 @@ in {
     (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.zen.enable or false)) {
       programs.zen-browser = lib.attrsets.recursiveUpdate commonFirefoxConfig {
         enable = true;
+        suppressXdgMigrationWarning = true;
 
         profiles = {
           default = {
