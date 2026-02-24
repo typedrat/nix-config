@@ -37,5 +37,14 @@ in {
       "${config.home.sessionVariables.CARGO_HOME}/bin"
       "${config.home.sessionVariables.BUN_INSTALL}/bin"
     ];
+
+    programs.zsh = {
+      completionInit = ''
+        autoload -U compinit && compinit -d "${config.xdg.cacheHome}/zsh/zcompdump-$ZSH_VERSION"
+      '';
+      history.path = "${config.xdg.stateHome}/zsh/history";
+    };
+
+    programs.bash.historyFile = "/dev/null";
   };
 }
