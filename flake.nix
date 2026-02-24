@@ -26,6 +26,12 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
+    # manually apply NixOS/nixpkgs#490985 to fix Traefik configuration
+    nixpkgs-patch-490985 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/490985.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region `flake-parts`
@@ -85,7 +91,7 @@
 
     #region Theming
     apple-emoji = {
-      url = "github:samuelngs/apple-emoji-linux";
+      url = "github:samuelngs/apple-emoji-ttf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

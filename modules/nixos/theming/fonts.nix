@@ -44,7 +44,7 @@ in {
 
           # Primary system fonts, stolen from a company with design sense:
           apple-fonts
-          inputs'.apple-emoji.packages.apple-emoji-linux
+          inputs'.apple-emoji.packages.default
 
           # Coding fonts:
           nerd-fonts.symbols-only
