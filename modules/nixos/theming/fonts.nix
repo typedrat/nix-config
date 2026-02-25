@@ -34,6 +34,8 @@ in {
 
   config = mkIf config.rat.theming.fonts.enable (mkMerge [
     {
+      fonts.appleColorEmoji.enable = true;
+
       fonts = {
         packages = with pkgs; [
           # Microsoft fonts that get used everywhere:
@@ -44,7 +46,6 @@ in {
 
           # Primary system fonts, stolen from a company with design sense:
           apple-fonts
-          inputs'.apple-emoji.packages.default
 
           # Coding fonts:
           nerd-fonts.symbols-only
@@ -88,10 +89,6 @@ in {
               "M PLUS 1 Code"
               "JuliaMono"
               "Symbols Nerd Font"
-            ];
-
-            emoji = [
-              "Apple Color Emoji"
             ];
           };
 

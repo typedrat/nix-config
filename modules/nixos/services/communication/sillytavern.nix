@@ -9,10 +9,6 @@
   impermanenceCfg = config.rat.impermanence;
   inherit (config.links.sillytavern) port;
 
-  sillytavernExtensions = pkgs.linkFarm "sillytavern-extensions" (
-    lib.mapAttrsToList (name: path: {inherit name path;}) cfg.systemExtensions
-  );
-
   configFile = pkgs.writeText "sillytavern-config.yaml" (lib.generators.toYAML {} {
     # Data configuration
     dataRoot = "/var/lib/SillyTavern/data";
@@ -526,13 +522,17 @@ in {
       };
 
       # Install system extensions if configured
-      systemd.tmpfiles.settings.sillytavern-extensions = lib.mkIf (cfg.systemExtensions != {}) {
-        "/var/lib/SillyTavern/extensions/third-party".L = {
-          argument = toString sillytavernExtensions;
-          user = "sillytavern";
-          group = "sillytavern";
-        };
-      };
+      systemd.tmpfiles.settings.sillytavern-extensions = lib.mkIf (cfg.systemExtensions != {}) (
+        lib.mapAttrs' (name: path: {
+          name = "/var/lib/SillyTavern/extensions/${name}";
+          value.L = {
+            argument = toString path;
+            user = "sillytavern";
+            group = "sillytavern";
+          };
+        })
+        cfg.systemExtensions
+      );
 
       links.sillytavern = {
         protocol = "http";

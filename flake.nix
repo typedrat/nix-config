@@ -32,6 +32,12 @@
       flake = false;
     };
 
+    # NixOS/nixpkgs#493363: lager 0.1.0 -> 0.1.2
+    nixpkgs-patch-493363 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/493363.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region `flake-parts`
@@ -90,14 +96,8 @@
     #endregion
 
     #region Theming
-    apple-emoji = {
-      url = "github:samuelngs/apple-emoji-ttf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     apple-fonts = {
       url = "github:Lyndeno/apple-fonts.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     bentu404-cursors = {
@@ -144,9 +144,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # TODO: temporary path reference until FlakeHub raises the 75MB archive size
+    # limit (LFS-tracked .ttc gets stripped from the source tarball). Revert to:
+    # url = "https://flakehub.com/f/typedrat/nix-fonts/*";
     typedrat-fonts = {
-      url = "https://flakehub.com/f/typedrat/nix-fonts/*";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "path:/home/awilliams/Development/nix-fonts";
     };
     #endregion
 

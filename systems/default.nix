@@ -11,6 +11,7 @@
       "${self}/users"
       inputs.determinate.nixosModules.default
       inputs.home-manager.nixosModules.home-manager
+      inputs.typedrat-fonts.nixosModules.apple-color-emoji
       (
         {
           self',
