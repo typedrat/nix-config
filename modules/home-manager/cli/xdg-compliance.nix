@@ -13,12 +13,13 @@ in {
     {
       home.sessionVariables = {
         # Development tools
-        CARGO_HOME = "${config.xdg.dataHome}/cargo";
-        RUSTUP_HOME = "${config.xdg.dataHome}/rustup";
         BUN_INSTALL = "${config.xdg.dataHome}/bun";
+        CARGO_HOME = "${config.xdg.dataHome}/cargo";
+        CLAUDE_CONFIG_DIR = "${config.xdg.configHome}/claude";
+        DOCKER_CONFIG = "${config.xdg.configHome}/docker";
         NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
         npm_config_cache = "${config.xdg.cacheHome}/npm";
-        DOCKER_CONFIG = "${config.xdg.configHome}/docker";
+        RUSTUP_HOME = "${config.xdg.dataHome}/rustup";
 
         # Cloud/Infra
         TF_CLI_CONFIG_FILE = "${config.xdg.configHome}/terraform/terraformrc";
@@ -26,9 +27,9 @@ in {
         CHECKPOINT_DISABLE = "1";
 
         # Shell/REPL history
+        IPYTHONDIR = "${config.xdg.configHome}/ipython";
         PYTHON_HISTORY = "${config.xdg.stateHome}/python/history";
         LESSHISTFILE = "${config.xdg.stateHome}/less/history";
-        IPYTHONDIR = "${config.xdg.configHome}/ipython";
 
         # Other
         WINEPREFIX = "${config.xdg.dataHome}/wine";
