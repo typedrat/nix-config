@@ -58,7 +58,10 @@
           xattr = "sa";
           mountpoint = "none";
         };
-        postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zpool/local/root@blank$' || zfs snapshot zpool/local/root@blank";
+        postCreateHook = ''
+          zfs list -t snapshot -H -o name | grep -E '^zpool/local/root@blank$' || zfs snapshot zpool/local/root@blank
+          zfs list -t snapshot -H -o name | grep -E '^zpool/local/home@blank$' || zfs snapshot zpool/local/home@blank
+        '';
 
         datasets = {
           local = {
@@ -82,7 +85,7 @@
             type = "zfs_fs";
             mountpoint = "/persist";
           };
-          "safe/home" = {
+          "local/home" = {
             type = "zfs_fs";
             mountpoint = "/home";
           };

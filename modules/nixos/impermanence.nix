@@ -30,6 +30,11 @@ in {
       default = "blank";
       description = "The name of the ZFS snapshot to restore.";
     };
+    zfs.homeDataset = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "ZFS dataset for /home to rollback on boot. If null, home is not rolled back.";
+    };
   };
 
   config = mkMerge [
@@ -57,6 +62,11 @@ in {
 
       # Disable sudo lecture
       security.sudo.extraConfig = "Defaults lecture=never";
+
+      # Ensure persist home directories exist for each enabled user
+      systemd.tmpfiles.rules = lib.mapAttrsToList (
+        username: _userCfg: "d ${cfg.persistDir}/home/${username} 0700 ${username} users -"
+      ) (lib.filterAttrs (_: u: u.enable) config.rat.users);
     })
 
     (mkIf (cfg.enable && cfg.zfs.enable) {
@@ -69,9 +79,13 @@ in {
         path = [zfsCfg.package];
         unitConfig.DefaultDependencies = "no";
         serviceConfig.Type = "oneshot";
-        script = ''
-          zfs rollback -r ${zfsCfg.rootPool}/${zfsCfg.rootDataset}@${cfg.zfs.snapshotName} && echo " >> >> Rollback Complete << <<"
-        '';
+        script =
+          ''
+            zfs rollback -r ${zfsCfg.rootPool}/${zfsCfg.rootDataset}@${cfg.zfs.snapshotName} && echo " >> >> Root Rollback Complete << <<"
+          ''
+          + lib.optionalString (cfg.zfs.homeDataset != null) ''
+            zfs rollback -r ${zfsCfg.rootPool}/${cfg.zfs.homeDataset}@${cfg.zfs.snapshotName} && echo " >> >> Home Rollback Complete << <<"
+          '';
       };
     })
   ];
