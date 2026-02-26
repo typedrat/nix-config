@@ -15,6 +15,7 @@ in {
     ./gui
     ./theming
     ./accounts.nix
+    ./impermanence.nix
     ./mime.nix
     ./packages.nix
     ./rclone.nix
