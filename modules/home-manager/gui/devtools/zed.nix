@@ -7,8 +7,13 @@
   ...
 }: let
   inherit (lib.modules) mkIf;
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [".config/zed" ".local/share/zed"];
+    };
     programs.zed-editor = {
       enable = true;
 

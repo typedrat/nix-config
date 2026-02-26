@@ -12,12 +12,19 @@
   productivityCfg = guiCfg.productivity or {};
   kritaCfg = productivityCfg.krita or {};
 
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
+
   kritaEnabled = (guiCfg.enable or false) && (productivityCfg.enable or false) && (kritaCfg.enable or false);
   aiDiffusionEnabled = kritaEnabled && (kritaCfg.aiDiffusion.enable or false);
 
   aiDiffusionPkg = pkgs.krita-ai-diffusion;
 in {
   config = modules.mkIf kritaEnabled {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [".config/krita" ".local/share/krita"];
+    };
+
     home.packages = [pkgs.krita];
 
     # Krita only looks for pykrita plugins in ~/.local/share/krita/pykrita/

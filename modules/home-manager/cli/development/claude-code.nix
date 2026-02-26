@@ -11,6 +11,8 @@
   cliCfg = userCfg.cli or {};
 
   hasUserSecrets = username == "awilliams";
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.development.enable or false)) {
     sops.secrets = lib.mkIf hasUserSecrets {
@@ -39,5 +41,16 @@ in {
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})
     '');
+
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [
+        ".config/claude"
+        ".local/share/claude"
+        ".local/state/claude"
+        ".config/codebook"
+        ".local/share/codebook"
+      ];
+      files = [".claude.json"];
+    };
   };
 }

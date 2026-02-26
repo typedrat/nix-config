@@ -11,6 +11,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   rcloneCfg = userCfg.rclone or {};
   rcloneRemotes = rcloneCfg.remotes or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 
   # Resolve secret names to actual sops secret paths
   resolveSecrets = secrets:
@@ -42,6 +44,10 @@
   mountedRemotes = filterAttrs (_name: remote: remote.mount.enable) rcloneRemotes;
 in {
   config = mkIf (rcloneRemotes != {}) {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [".config/rclone"];
+    };
+
     programs.rclone = {
       enable = true;
       remotes =

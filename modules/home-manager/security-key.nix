@@ -10,8 +10,18 @@
   securityKeyCfg = userCfg.securityKey or {};
   gpgCfg = securityKeyCfg.gpg or {};
   agentCfg = securityKeyCfg.agent or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = mkIf (securityKeyCfg.enable or false) {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+      ];
+    };
     programs.gpg = mkIf (gpgCfg.enable or true) {
       enable = true;
       scdaemonSettings = gpgCfg.scdaemonSettings or {};

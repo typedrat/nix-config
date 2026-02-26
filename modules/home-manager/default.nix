@@ -13,6 +13,7 @@ in {
   imports = [
     ./cli
     ./gui
+    ./hardware
     ./theming
     ./accounts.nix
     ./impermanence.nix
@@ -56,6 +57,7 @@ in {
 
       xdg.userDirs = {
         enable = true;
+        createDirectories = true;
         setSessionVariables = true;
       };
 

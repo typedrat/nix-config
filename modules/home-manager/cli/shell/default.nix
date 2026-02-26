@@ -12,8 +12,13 @@
 
   # Check if user has specific secrets configured (awilliams-specific)
   hasUserSecrets = username == "awilliams";
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.shell.enable or false)) {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [".local/state/zsh" ".zsh"];
+    };
     sops.secrets = lib.mkIf hasUserSecrets {
       miseGithubToken = {};
     };

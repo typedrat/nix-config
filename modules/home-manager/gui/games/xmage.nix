@@ -6,8 +6,13 @@
   ...
 }: let
   inherit (lib.modules) mkIf;
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = mkIf osConfig.rat.games.enable {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [".local/share/xmage"];
+    };
     home.packages = [
       pkgs.xmage
     ];

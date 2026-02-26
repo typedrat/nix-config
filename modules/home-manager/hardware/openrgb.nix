@@ -7,11 +7,9 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.productivity.enable) {
+  config = mkIf (osConfig.rat.hardware.openrgb.enable or false) {
     home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
-      directories = [".config/sioyek"];
+      directories = [".config/OpenRGB"];
     };
-
-    programs.sioyek.enable = true;
   };
 }

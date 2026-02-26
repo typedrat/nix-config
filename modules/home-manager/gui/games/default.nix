@@ -10,6 +10,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   gamesCfg = guiCfg.games or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   imports = [
     ./retroarch.nix
@@ -27,6 +29,19 @@ in {
       winePackages.stagingFull
     ];
 
+    xdg.userDirs.extraConfig.XDG_GAMES_DIR = "$HOME/Games";
+
     xdg.configFile."pegasus-frontend/themes/colorful".source = "${pkgs.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
+
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [
+        ".local/share/Steam"
+        ".steam"
+        ".local/share/bottles"
+        ".config/pegasus-frontend"
+        ".local/share/wine"
+        "Games"
+      ];
+    };
   };
 }

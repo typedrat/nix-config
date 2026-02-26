@@ -10,8 +10,17 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   skyscraperCfg = userCfg.skyscraper or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = lib.mkIf (skyscraperCfg.enable or false) {
+    home.persistence.${persistDir} = lib.mkIf impermanenceCfg.enable {
+      directories = [
+        ".cache/skyscraper"
+        ".local/share/skyscraper"
+        ".local/state/skyscraper"
+      ];
+    };
     # Declare the screenscraper secrets
     sops.secrets."skyscraper/screenscraper/username" = {
       sopsFile = ../../secrets/skyscraper.yaml;

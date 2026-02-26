@@ -12,6 +12,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   browsersCfg = guiCfg.browsers or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 
   capitalizeFirst = str:
     (lib.strings.toUpper (builtins.substring 0 1 str))
@@ -174,6 +176,13 @@ in {
   ];
 
   config = modules.mkMerge [
+    # Persistence
+    (modules.mkIf ((guiCfg.enable or false) && impermanenceCfg.enable) {
+      home.persistence.${persistDir} = {
+        directories = [".config/zen" ".mozilla" ".pki"];
+      };
+    })
+
     # Brave
     (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.brave.enable or false)) {
       programs.brave = {

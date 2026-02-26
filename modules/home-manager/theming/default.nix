@@ -2,7 +2,6 @@
   config,
   osConfig,
   inputs,
-  inputs',
   pkgs,
   lib,
   ...
@@ -12,6 +11,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   themingCfg = userCfg.theming or {};
   guiCfg = userCfg.gui or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   imports = [
     inputs.catppuccin.homeModules.catppuccin
@@ -21,6 +22,10 @@ in {
 
   config = modules.mkIf (themingCfg.enable or false) (modules.mkMerge [
     {
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+        directories = [".config/dconf"];
+      };
+
       catppuccin = {
         enable = true;
         inherit (osConfig.catppuccin) flavor;

@@ -10,18 +10,26 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   productivityCfg = guiCfg.productivity or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 
   # FreeCAD doesn't build with boost 1.89+; pin to 1.87
   freecad' = pkgs.freecad.override {
-    python3Packages = pkgs.python3Packages // {
-      boost = pkgs.python3Packages.toPythonModule (pkgs.boost187.override {
-        inherit (pkgs.python3Packages) python numpy;
-        enablePython = true;
-      });
-    };
+    python3Packages =
+      pkgs.python3Packages
+      // {
+        boost = pkgs.python3Packages.toPythonModule (pkgs.boost187.override {
+          inherit (pkgs.python3Packages) python numpy;
+          enablePython = true;
+        });
+      };
   };
 in {
   config = mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false) && (productivityCfg.freecad.enable or false)) {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [".config/FreeCAD" ".local/share/FreeCAD"];
+    };
+
     home.packages = with pkgs; [
       (freecad'.customize {
         pythons = [

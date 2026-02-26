@@ -6,8 +6,13 @@
   ...
 }: let
   inherit (lib.modules) mkIf;
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [".config/Code" ".vscode"];
+    };
     programs.vscode = let
       version = "0.21.0";
 

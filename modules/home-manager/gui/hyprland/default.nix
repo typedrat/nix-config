@@ -29,6 +29,8 @@
     else [];
 
   tvMonitor = hostHyprlandCfg.tvMonitor or null;
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   imports = [
     # Category folders with alternatives
@@ -191,6 +193,17 @@ in {
       settings = {
         splash = false;
       };
+    };
+
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [
+        ".config/fcitx5"
+        ".config/pulse"
+        ".local/state/wireplumber"
+        ".config/waytrogen"
+        ".config/nomacs"
+        ".local/share/nomacs"
+      ];
     };
   };
 }

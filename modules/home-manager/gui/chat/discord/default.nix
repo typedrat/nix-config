@@ -6,6 +6,9 @@
 }: let
   inherit (lib.modules) mkIf;
 
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
+
   krisp-patcher = pkgs.writers.writePython3Bin "krisp-patcher" {
     libraries = with pkgs.python3Packages; [capstone pyelftools];
     flakeIgnore = [
@@ -29,5 +32,9 @@ in {
 
     # Discord theming:
     xdg.configFile."Vesktop/settings/quickCss.css".source = ./quickCss.css;
+
+    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+      directories = [".config/Vesktop" ".config/Vencord"];
+    };
   };
 }

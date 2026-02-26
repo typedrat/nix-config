@@ -10,6 +10,8 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   imports = [
     ./claude-code.nix
@@ -61,7 +63,22 @@ in {
       };
     };
 
+    xdg.userDirs.extraConfig.XDG_DEVELOPMENT_DIR = "$HOME/Development";
+
     # process-compose theme
     xdg.configFile."process-compose/theme.yaml".source = "${inputs.catppuccin-process-compose}/themes/catppuccin-${config.catppuccin.flavor}.yaml";
+
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [
+        ".config/gh"
+        ".local/share/gh"
+        ".local/state/gh"
+        ".config/mise"
+        ".local/state/mise"
+        ".config/docker"
+        ".local/share/docker"
+        "Development"
+      ];
+    };
   };
 }

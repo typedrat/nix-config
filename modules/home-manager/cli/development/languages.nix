@@ -10,8 +10,21 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.development.enable or false)) {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [
+        ".local/share/cargo"
+        ".local/share/rustup"
+        ".local/share/bun"
+        ".config/npm"
+        ".config/ipython"
+        ".local/share/pnpm"
+        ".local/state/pnpm"
+      ];
+    };
     home.packages = with pkgs; [
       # Rust toolchain with multiple targets
       (inputs'.fenix.packages.combine [

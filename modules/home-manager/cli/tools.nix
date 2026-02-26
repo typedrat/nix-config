@@ -9,8 +9,18 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      directories = [
+        ".local/share/direnv"
+        ".local/share/zoxide"
+        ".local/state/yazi"
+        ".local/share/mergiraf"
+      ];
+    };
     programs.aria2.enable = true;
 
     programs.bat.enable = true;
