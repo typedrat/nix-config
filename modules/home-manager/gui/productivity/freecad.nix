@@ -10,10 +10,20 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   productivityCfg = guiCfg.productivity or {};
+
+  # FreeCAD doesn't build with boost 1.89+; pin to 1.87
+  freecad' = pkgs.freecad.override {
+    python3Packages = pkgs.python3Packages // {
+      boost = pkgs.python3Packages.toPythonModule (pkgs.boost187.override {
+        inherit (pkgs.python3Packages) python numpy;
+        enablePython = true;
+      });
+    };
+  };
 in {
   config = mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false) && (productivityCfg.freecad.enable or false)) {
     home.packages = with pkgs; [
-      (freecad.customize {
+      (freecad'.customize {
         pythons = [
           (ps:
             with ps; [
