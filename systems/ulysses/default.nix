@@ -40,6 +40,12 @@
     options = ["nofail"];
   };
 
+  fileSystems."/home/awilliams/mnt/hyperion-home" = {
+    device = "/mnt/hyperion-home/awilliams";
+    fsType = "none";
+    options = ["bind" "nofail"];
+  };
+
   # Not currently installed.
   # # Windows drive (WD SN750 500GB)
   # fileSystems."/mnt/windows" = {
