@@ -25,7 +25,7 @@ in {
     systemd.user.services.easyeffects.Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
     home.packages = with pkgs; [lsp-plugins];
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/easyeffects" ".local/share/easyeffects"];
     };
   };

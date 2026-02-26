@@ -9,7 +9,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.media.enable) {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/obs-studio"];
     };
     programs.obs-studio = {

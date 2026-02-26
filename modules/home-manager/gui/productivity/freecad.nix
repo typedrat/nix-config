@@ -26,7 +26,7 @@
   };
 in {
   config = mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false) && (productivityCfg.freecad.enable or false)) {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/FreeCAD" ".local/share/FreeCAD"];
     };
 

@@ -33,7 +33,7 @@ in {
 
     xdg.configFile."pegasus-frontend/themes/colorful".source = "${pkgs.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".local/share/Steam"
         ".steam"

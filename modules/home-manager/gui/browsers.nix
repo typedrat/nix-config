@@ -177,7 +177,7 @@ in {
 
   config = modules.mkMerge [
     # Persistence
-    (modules.mkIf ((guiCfg.enable or false) && impermanenceCfg.enable) {
+    (modules.mkIf ((guiCfg.enable or false) && impermanenceCfg.home.enable) {
       home.persistence.${persistDir} = {
         directories = [".config/zen" ".mozilla" ".pki"];
       };

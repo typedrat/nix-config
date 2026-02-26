@@ -42,7 +42,7 @@ in {
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})
     '');
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".config/claude"
         ".local/share/claude"

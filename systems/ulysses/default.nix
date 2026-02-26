@@ -111,6 +111,7 @@
     };
     impermanence = {
       enable = true;
+      home.enable = true;
       zfs.enable = true;
       zfs.homeDataset = "local/home";
     };

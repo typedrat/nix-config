@@ -22,7 +22,7 @@ in {
 
   config = modules.mkIf (themingCfg.enable or false) (modules.mkMerge [
     {
-      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
         directories = [".config/dconf"];
       };
 

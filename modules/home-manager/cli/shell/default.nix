@@ -16,7 +16,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.shell.enable or false)) {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".local/state/zsh" ".zsh"];
     };
     sops.secrets = lib.mkIf hasUserSecrets {

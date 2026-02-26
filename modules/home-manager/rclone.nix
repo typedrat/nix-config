@@ -44,7 +44,7 @@
   mountedRemotes = filterAttrs (_name: remote: remote.mount.enable) rcloneRemotes;
 in {
   config = mkIf (rcloneRemotes != {}) {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/rclone"];
     };
 

@@ -14,7 +14,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   config = lib.mkIf (skyscraperCfg.enable or false) {
-    home.persistence.${persistDir} = lib.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = lib.mkIf impermanenceCfg.home.enable {
       directories = [
         ".cache/skyscraper"
         ".local/share/skyscraper"

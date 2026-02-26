@@ -10,7 +10,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   config = mkIf osConfig.rat.games.enable {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".local/share/xmage"];
     };
     home.packages = [

@@ -1,5 +1,4 @@
 {
-  config,
   osConfig,
   lib,
   ...
@@ -8,7 +7,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = mkIf impermanenceCfg.enable {
+  config = mkIf impermanenceCfg.home.enable {
     home.persistence.${persistDir} = {
       directories = [
         # --- SSH ---

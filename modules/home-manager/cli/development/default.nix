@@ -68,7 +68,7 @@ in {
     # process-compose theme
     xdg.configFile."process-compose/theme.yaml".source = "${inputs.catppuccin-process-compose}/themes/catppuccin-${config.catppuccin.flavor}.yaml";
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".config/gh"
         ".local/share/gh"

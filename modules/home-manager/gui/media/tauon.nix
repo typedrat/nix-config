@@ -15,7 +15,7 @@
     (file: lib.hasSuffix ".ttheme" file)
     (lib.filesystem.listFilesRecursive themesDir);
 in {
-  home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+  home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
     directories = [".local/share/TauonMusicBox"];
   };
 

@@ -11,7 +11,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.chat.enable) {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/Element"];
     };
     programs.element-desktop = {

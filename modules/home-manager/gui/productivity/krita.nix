@@ -21,7 +21,7 @@
   aiDiffusionPkg = pkgs.krita-ai-diffusion;
 in {
   config = modules.mkIf kritaEnabled {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/krita" ".local/share/krita"];
     };
 

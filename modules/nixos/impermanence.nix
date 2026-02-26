@@ -24,6 +24,8 @@ in {
       description = "The path of the persist directory.";
     };
 
+    home.enable = mkEnableOption "home directory impermanence";
+
     zfs.enable = mkEnableOption "impermanence by ZFS snapshot";
     zfs.snapshotName = mkOption {
       type = types.str;
@@ -64,9 +66,9 @@ in {
       security.sudo.extraConfig = "Defaults lecture=never";
 
       # Ensure persist home directories exist for each enabled user
-      systemd.tmpfiles.rules = lib.mapAttrsToList (
+      systemd.tmpfiles.rules = lib.mkIf cfg.home.enable (lib.mapAttrsToList (
         username: _userCfg: "d ${cfg.persistDir}/home/${username} 0700 ${username} users -"
-      ) (lib.filterAttrs (_: u: u.enable) config.rat.users);
+      ) (lib.filterAttrs (_: u: u.enable) config.rat.users));
     })
 
     (mkIf (cfg.enable && cfg.zfs.enable) {
@@ -83,7 +85,7 @@ in {
           ''
             zfs rollback -r ${zfsCfg.rootPool}/${zfsCfg.rootDataset}@${cfg.zfs.snapshotName} && echo " >> >> Root Rollback Complete << <<"
           ''
-          + lib.optionalString (cfg.zfs.homeDataset != null) ''
+          + lib.optionalString (cfg.home.enable && cfg.zfs.homeDataset != null) ''
             zfs rollback -r ${zfsCfg.rootPool}/${cfg.zfs.homeDataset}@${cfg.zfs.snapshotName} && echo " >> >> Home Rollback Complete << <<"
           '';
       };

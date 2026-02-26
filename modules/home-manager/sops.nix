@@ -18,7 +18,7 @@ in {
     age.sshKeyPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
   };
 
-  home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+  home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
     directories = [".config/sops" ".config/sops-nix"];
   };
 }

@@ -195,7 +195,7 @@ in {
       };
     };
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".config/fcitx5"
         ".config/pulse"

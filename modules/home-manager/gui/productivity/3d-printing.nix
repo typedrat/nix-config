@@ -24,7 +24,7 @@
   };
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.productivity.enable) {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.enable {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/OrcaSlicer" ".local/share/orca-slicer"];
     };
 
