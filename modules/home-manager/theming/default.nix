@@ -40,7 +40,6 @@ in {
         enable = true;
 
         font = {
-          package = inputs'.apple-fonts.packages.sf-pro;
           name = "SF Pro Display";
           size = 13;
         };

@@ -38,6 +38,18 @@
       flake = false;
     };
 
+    # NixOS/nixpkgs#493695: undmg: use shared zlib build
+    nixpkgs-patch-493695 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/493695.diff";
+      flake = false;
+    };
+
+    # NixOS/nixpkgs#493813: openscad: apply boost 1.89 patch
+    nixpkgs-patch-493813 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/493813.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region `flake-parts`
@@ -98,6 +110,7 @@
     #region Theming
     apple-fonts = {
       url = "github:Lyndeno/apple-fonts.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     bentu404-cursors = {
