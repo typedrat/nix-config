@@ -9,6 +9,8 @@
 in {
   config = mkIf impermanenceCfg.home.enable {
     home.persistence.${persistDir} = {
+      hideMounts = true;
+
       directories = [
         # --- SSH ---
         {

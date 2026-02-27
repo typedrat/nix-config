@@ -15,7 +15,7 @@ in {
 
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.media.enable) {
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
-      directories = [".config/spotify"];
+      directories = [".config/spotify" ".cache/spotify"];
     };
 
     programs.spicetify = {
