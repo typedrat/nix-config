@@ -11,6 +11,7 @@
     ./productivity
     ./wezterm
     ./browsers.nix
+    ./claude-desktop.nix
     ./gnome-keyring.nix
     ./graphics.nix
     ./security.nix

@@ -192,6 +192,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Update when aaddrick/claude-desktop-debian#266 is merged
+    claude-desktop-debian = {
+      url = "github:typedrat/claude-desktop-debian/feature/nixos-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
+
     attic = {
       url = "https://flakehub.com/f/zhaofengli/attic/*";
       # `attic` doesn't build against current Nix, so we have to use an old `nixpkgs` for it.

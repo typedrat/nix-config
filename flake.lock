@@ -352,6 +352,30 @@
         "type": "github"
       }
     },
+    "claude-desktop-debian": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1772165441,
+        "narHash": "sha256-dQ80W8GwFkn898cyjcwTPl6TyPlMvns9jheZId1PdCA=",
+        "owner": "typedrat",
+        "repo": "claude-desktop-debian",
+        "rev": "c8d36ad7d53b9d003c6646e95f3a4ea9745f4bd9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "typedrat",
+        "ref": "feature/nixos-flake",
+        "repo": "claude-desktop-debian",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1751562746,
@@ -2749,6 +2773,7 @@
         "catppuccin-shoko-webui": "catppuccin-shoko-webui",
         "catppuccin-tauon-music-box": "catppuccin-tauon-music-box",
         "catppuccin-zen": "catppuccin-zen",
+        "claude-desktop-debian": "claude-desktop-debian",
         "determinate": "determinate",
         "disko": "disko",
         "fenix": "fenix",
