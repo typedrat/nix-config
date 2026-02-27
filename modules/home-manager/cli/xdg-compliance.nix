@@ -17,7 +17,6 @@ in {
         # Development tools
         BUN_INSTALL = "${config.xdg.dataHome}/bun";
         CARGO_HOME = "${config.xdg.dataHome}/cargo";
-        CLAUDE_CONFIG_DIR = "${config.xdg.configHome}/claude";
         DOCKER_CONFIG = "${config.xdg.configHome}/docker";
         NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm/npmrc";
         npm_config_cache = "${config.xdg.cacheHome}/npm";

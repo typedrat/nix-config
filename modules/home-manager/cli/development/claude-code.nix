@@ -44,9 +44,7 @@ in {
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
-        ".config/claude"
-        ".local/share/claude"
-        ".local/state/claude"
+        ".claude"
         ".config/codebook"
         ".local/share/codebook"
       ];
