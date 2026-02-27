@@ -31,6 +31,11 @@ in {
     # Symlink claude-code to ~/.local/bin to shut up the native install check
     home.file.".local/bin/claude".source = getExe pkgs.claude-code-bin;
 
+    programs.git.ignores = [
+      ".claude/settings.local.json"
+      "CLAUDE.local.md"
+    ];
+
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})
     '');
