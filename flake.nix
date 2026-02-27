@@ -50,6 +50,12 @@
       flake = false;
     };
 
+    # NixOS/nixpkgs#494260: claude-code 2.1.49 -> 2.1.59
+    nixpkgs-patch-494260 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/494260.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region `flake-parts`
