@@ -9,11 +9,19 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 
   # Check if user has specific secrets configured (awilliams-specific)
   hasUserSecrets = username == "awilliams";
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.ai.enable or false)) {
+    xdg.userDirs.extraConfig.XDG_AI_DIR = "$HOME/AI";
+
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+      directories = ["AI"];
+    };
+
     sops.secrets = lib.mkIf hasUserSecrets {
       civitaiApiToken = {};
       hfToken = {};
