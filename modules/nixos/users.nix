@@ -26,5 +26,17 @@ in {
       )
       enabledUsers
     );
+
+    # Ensure ~/mnt exists with correct ownership for each user
+    systemd.tmpfiles.settings =
+      lib.mapAttrs' (username: userCfg: {
+        name = "10-home-mnt-${username}";
+        value."${userCfg.home}/mnt".d = {
+          user = username;
+          group = "users";
+          mode = "0755";
+        };
+      })
+      enabledUsers;
   };
 }
