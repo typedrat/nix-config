@@ -33,7 +33,6 @@ in {
       uv
 
       # VCS and GitHub
-      github-cli
       github-to-sops
 
       # Docker tools
@@ -44,6 +43,12 @@ in {
       lazydocker
       passt
     ];
+
+    # GitHub CLI
+    programs.gh = {
+      enable = true;
+      gitCredentialHelper.enable = true;
+    };
 
     # mise - polyglot runtime manager
     programs.mise = {
