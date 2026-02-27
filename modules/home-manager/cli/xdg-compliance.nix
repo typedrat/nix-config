@@ -8,6 +8,8 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf (cliCfg.enable or false) (modules.mkMerge [
     {
@@ -50,8 +52,19 @@ in {
       programs.bash.historyFile = "/dev/null";
     }
 
+    # GPU/shader cache persistence
+    {
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [".cache/mesa_shader_cache"];
+      };
+    }
+
     (modules.mkIf (osConfig.rat.hardware.nvidia.enable or false) {
       home.sessionVariables.__GL_SHADER_DISK_CACHE_PATH = "${config.xdg.cacheHome}/nvidia";
+
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [".cache/nvidia" ".nv"];
+      };
     })
   ]);
 }

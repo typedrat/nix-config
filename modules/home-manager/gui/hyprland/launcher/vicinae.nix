@@ -10,6 +10,8 @@
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
   launcherCfg = hyprlandCfg.launcher or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   config =
     modules.mkIf (
@@ -40,6 +42,10 @@ in {
             rounding = 10;
           };
         };
+      };
+
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [".local/share/vicinae"];
       };
 
       wayland.windowManager.hyprland = {

@@ -34,7 +34,7 @@ in {
     xdg.configFile."Vesktop/settings/quickCss.css".source = ./quickCss.css;
 
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
-      directories = [".config/Vesktop" ".config/Vencord"];
+      directories = [".config/discord" ".config/Vesktop" ".config/Vencord"];
     };
   };
 }

@@ -14,7 +14,7 @@
 in {
   config = modules.mkIf ((guiCfg.enable or false) && (guiCfg.utilities.enable or false)) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/transmission" ".config/tenacity"];
+      directories = [".config/transmission" ".config/tenacity" ".local/share/qalculate"];
     };
     home.packages = with pkgs; [
       qalculate-qt

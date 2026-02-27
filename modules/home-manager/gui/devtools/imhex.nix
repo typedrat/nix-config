@@ -6,6 +6,8 @@
   ...
 }: let
   inherit (lib) mkIf;
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 
   themesDir = "${inputs.catppuccin-imhex}/themes";
   themeFiles =
@@ -14,6 +16,10 @@
     (lib.filesystem.listFilesRecursive themesDir);
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
+    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
+      directories = [".config/imhex" ".local/share/imhex"];
+    };
+
     home.packages = with pkgs; [
       imhex
     ];

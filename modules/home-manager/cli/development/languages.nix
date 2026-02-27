@@ -23,6 +23,7 @@ in {
         ".config/ipython"
         ".local/share/pnpm"
         ".local/state/pnpm"
+        ".cache/uv"
       ];
     };
     home.packages = with pkgs; [

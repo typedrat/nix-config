@@ -30,6 +30,9 @@ in {
         ".local/state/nix/profiles"
         ".local/state/home-manager"
 
+        # --- Nix caches ---
+        ".cache/nix"
+
         # --- Trash (XDG freedesktop spec) ---
         ".local/share/Trash"
       ];
