@@ -18,6 +18,9 @@ in {
 
       # Nix LSP and development tools
       nixd
+
+      # Configuration languages
+      pkl
     ];
   };
 }

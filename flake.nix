@@ -56,6 +56,12 @@
       flake = false;
     };
 
+    # NixOS/nixpkgs#494791: pkl 0.29.1 -> 0.31.0
+    nixpkgs-patch-494791 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/494791.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region `flake-parts`

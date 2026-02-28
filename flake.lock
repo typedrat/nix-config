@@ -2290,6 +2290,18 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/494260.diff"
       }
     },
+    "nixpkgs-patch-494791": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-MbF+PKbK2x+qXGJPj21BkbhG39kt2qa/9iB60ckEGq8=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/494791.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/494791.diff"
+      }
+    },
     "nixpkgs-patcher": {
       "locked": {
         "lastModified": 1769207991,
@@ -2820,6 +2832,7 @@
         "nixpkgs-patch-493695": "nixpkgs-patch-493695",
         "nixpkgs-patch-493813": "nixpkgs-patch-493813",
         "nixpkgs-patch-494260": "nixpkgs-patch-494260",
+        "nixpkgs-patch-494791": "nixpkgs-patch-494791",
         "nixpkgs-patcher": "nixpkgs-patcher",
         "nixvirt": "nixvirt",
         "pyprland": "pyprland",
