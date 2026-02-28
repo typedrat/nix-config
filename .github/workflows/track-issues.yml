@@ -52,6 +52,27 @@ jobs:
               status="Open"
             fi
 
+            # For NixOS/nixpkgs merged PRs, only consider resolved once in nixos-unstable
+            if [ -n "$merged_at" ]; then
+              owner_repo_lower=$(echo "$owner_repo" | tr '[:upper:]' '[:lower:]')
+              if [ "$owner_repo_lower" = "nixos/nixpkgs" ]; then
+                merge_sha=$(gh api "repos/$owner_repo/pulls/$number" \
+                  --jq '.merge_commit_sha' 2>/dev/null) || true
+
+                if [ -n "$merge_sha" ]; then
+                  compare_status=$(gh api "repos/$owner_repo/compare/nixos-unstable...$merge_sha" \
+                    --jq '.status' 2>/dev/null) || true
+
+                  if [ "$compare_status" = "behind" ] || [ "$compare_status" = "identical" ]; then
+                    status="Merged (in nixos-unstable)"
+                  else
+                    status="Merged (awaiting nixos-unstable)"
+                    state="open"
+                  fi
+                fi
+              fi
+            fi
+
             ref_title["$ref"]="$title"
             ref_state["$ref"]="$state"
             ref_status["$ref"]="$status"
@@ -163,7 +184,7 @@ jobs:
               resolved_items+=$'\n'
             else
               title_safe=$(echo "$title" | sed 's/|/\\|/g')
-              open_rows+="| $link | $title_safe | ${ref_locations[$ref]} |"
+              open_rows+="| $link | $title_safe | ${ref_status[$ref]} | ${ref_locations[$ref]} |"
               open_rows+=$'\n'
             fi
           done
@@ -181,13 +202,13 @@ jobs:
 
           body+=$'\n'"## Awaiting Upstream"
           body+=$'\n\n'"These upstream issues are still open."
-          body+=$'\n\n'"| Reference | Title | Locations |"
-          body+=$'\n'"|-----------|-------|-----------|"
+          body+=$'\n\n'"| Reference | Title | Status | Locations |"
+          body+=$'\n'"|-----------|-------|--------|-----------|"
 
           if [ -n "$open_rows" ]; then
             body+=$'\n'"$open_rows"
           else
-            body+=$'\n'"| _None_ | | |"
+            body+=$'\n'"| _None_ | | | |"
           fi
 
           body+=$'\n\n'"---"
