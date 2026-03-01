@@ -362,16 +362,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1772167913,
-        "narHash": "sha256-ez9Hh5StYY+bs5MIbr6XQHA1Go2Y1hPm7TJt64gY6e0=",
-        "owner": "typedrat",
+        "lastModified": 1772372632,
+        "narHash": "sha256-BYYz1EhSD8KaeupqyLg6ju7kFgjI1w7OJQEZ2Zo/wqY=",
+        "owner": "aaddrick",
         "repo": "claude-desktop-debian",
-        "rev": "62acca7c711579b8e2683af7c3403ecedb69b195",
+        "rev": "4093324f0691e8789f6ab45acd2027394e8d5ff2",
         "type": "github"
       },
       "original": {
-        "owner": "typedrat",
-        "ref": "feature/nixos-flake",
+        "owner": "aaddrick",
         "repo": "claude-desktop-debian",
         "type": "github"
       }
@@ -2242,54 +2241,6 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/490985.diff"
       }
     },
-    "nixpkgs-patch-493363": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-eO/2laVtlag5BluGkuDQ0mSTcC86jfammYBIsV4knTs=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/493363.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/493363.diff"
-      }
-    },
-    "nixpkgs-patch-493695": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-1fdHOR3BNfnNsUgs7SCNQdrKxx6hP7XfeTbBPUjyAdI=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/493695.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/493695.diff"
-      }
-    },
-    "nixpkgs-patch-493813": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-rvsL1efWa8SCl+U4+mbbwtKTK2Il1BM4UqHlJN6XDi4=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/493813.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/493813.diff"
-      }
-    },
-    "nixpkgs-patch-494260": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-EjJZYebhNhujCPdChMB9gmjKX+hURBupJK5zZ8Gxs70=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/494260.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/494260.diff"
-      }
-    },
     "nixpkgs-patch-494791": {
       "flake": false,
       "locked": {
@@ -2828,10 +2779,6 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_13",
         "nixpkgs-patch-490985": "nixpkgs-patch-490985",
-        "nixpkgs-patch-493363": "nixpkgs-patch-493363",
-        "nixpkgs-patch-493695": "nixpkgs-patch-493695",
-        "nixpkgs-patch-493813": "nixpkgs-patch-493813",
-        "nixpkgs-patch-494260": "nixpkgs-patch-494260",
         "nixpkgs-patch-494791": "nixpkgs-patch-494791",
         "nixpkgs-patcher": "nixpkgs-patcher",
         "nixvirt": "nixvirt",

@@ -8,20 +8,9 @@
   inherit (lib.options) mkEnableOption;
   inherit (lib.modules) mkIf mkMerge;
 
-  # TODO: remove when NixOS/nixpkgs#493695 is merged
-  # Override undmg on apple-fonts packages to use our patched nixpkgs
-  overrideAppleFont = drv:
-    drv.overrideAttrs (prev: {
-      buildInputs = map (i:
-        if i.pname or "" == "undmg"
-        then pkgs.undmg
-        else i)
-      prev.buildInputs;
-    });
-
   apple-fonts = pkgs.symlinkJoin {
     name = "apple-fonts";
-    paths = map overrideAppleFont (with inputs'.apple-fonts.packages; [
+    paths = with inputs'.apple-fonts.packages; [
       sf-pro
       sf-compact
       sf-arabic
@@ -30,7 +19,7 @@
       sf-hebrew
       sf-mono
       ny
-    ]);
+    ];
   };
 in {
   options.rat.theming.fonts = {

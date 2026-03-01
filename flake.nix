@@ -32,30 +32,6 @@
       flake = false;
     };
 
-    # NixOS/nixpkgs#493363: lager 0.1.0 -> 0.1.2
-    nixpkgs-patch-493363 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/493363.diff";
-      flake = false;
-    };
-
-    # NixOS/nixpkgs#493695: undmg: use shared zlib build
-    nixpkgs-patch-493695 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/493695.diff";
-      flake = false;
-    };
-
-    # NixOS/nixpkgs#493813: openscad: apply boost 1.89 patch
-    nixpkgs-patch-493813 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/493813.diff";
-      flake = false;
-    };
-
-    # NixOS/nixpkgs#494260: claude-code 2.1.49 -> 2.1.59
-    nixpkgs-patch-494260 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/494260.diff";
-      flake = false;
-    };
-
     # NixOS/nixpkgs#494791: pkl 0.29.1 -> 0.31.0
     nixpkgs-patch-494791 = {
       url = "https://github.com/NixOS/nixpkgs/pull/494791.diff";
@@ -204,9 +180,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Update when aaddrick/claude-desktop-debian#266 is merged
     claude-desktop-debian = {
-      url = "github:typedrat/claude-desktop-debian/feature/nixos-flake";
+      url = "github:aaddrick/claude-desktop-debian";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
     };
