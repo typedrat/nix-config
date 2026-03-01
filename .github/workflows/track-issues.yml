@@ -8,219 +8,253 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        name: Scan and update dashboard
-        run: |
-          set -euo pipefail
+      - name: Scan and update dashboard
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
 
-          # Scan .nix files for GitHub issue/PR references (owner/repo#number)
-          refs=$(grep -rPoh '[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+#[0-9]+' \
-            --include='*.nix' --exclude-dir=.github . | sort -u) || true
+            // Recursively find .nix files, skipping hidden directories
+            function findNixFiles(dir) {
+              const results = [];
+              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                if (entry.name.startsWith(".")) continue;
+                const full = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                  results.push(...findNixFiles(full));
+                } else if (entry.name.endsWith(".nix")) {
+                  results.push(full);
+                }
+              }
+              return results;
+            }
 
-          if [ -z "$refs" ]; then
-            echo "No upstream references found."
-            exit 0
-          fi
+            // Scan for GitHub issue/PR references (owner/repo#number)
+            const refPattern = /[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+#[0-9]+/g;
+            const locations = new Map();
 
-          declare -A ref_title ref_state ref_status ref_locations
+            for (const file of findNixFiles(".")) {
+              const lines = fs.readFileSync(file, "utf-8").split("\n");
+              for (let i = 0; i < lines.length; i++) {
+                for (const m of lines[i].matchAll(refPattern)) {
+                  const ref = m[0];
+                  if (!locations.has(ref)) locations.set(ref, []);
+                  const relPath = file.replace(/^\.\//, "");
+                  locations.get(ref).push(`\`${relPath}:${i + 1}\``);
+                }
+              }
+            }
 
-          for ref in $refs; do
-            owner_repo="${ref%#*}"
-            number="${ref##*#}"
+            const refs = [...locations.keys()].sort();
+            if (refs.length === 0) {
+              console.log("No upstream references found.");
+              return;
+            }
 
-            locations=$(grep -rPn "${owner_repo}#${number}\\b" \
-              --include='*.nix' --exclude-dir=.github . \
-              | sed 's|^\./||' \
-              | while IFS=: read -r file line _; do echo -n "\`$file:$line\` "; done) || true
+            // Fetch issue/PR info for each reference
+            const info = new Map();
 
-            if ! api_response=$(gh api "repos/$owner_repo/issues/$number" \
-              --jq '[.title, .state, .pull_request.merged_at // empty] | @tsv' 2>/dev/null); then
-              echo "Warning: could not fetch $ref, skipping"
-              continue
-            fi
+            for (const ref of refs) {
+              const hashIdx = ref.indexOf("#");
+              const ownerRepo = ref.slice(0, hashIdx);
+              const number = parseInt(ref.slice(hashIdx + 1));
+              const [refOwner, refRepo] = ownerRepo.split("/");
 
-            title=$(echo "$api_response" | cut -f1)
-            state=$(echo "$api_response" | cut -f2)
-            merged_at=$(echo "$api_response" | cut -f3)
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner: refOwner, repo: refRepo, issue_number: number,
+                });
 
-            if [ -n "$merged_at" ]; then
-              status="Merged"
-            elif [ "$state" = "closed" ]; then
-              status="Closed"
-            else
-              status="Open"
-            fi
+                let state = issue.state;
+                let status;
+                const merged = issue.pull_request?.merged_at;
 
-            # For NixOS/nixpkgs merged PRs, only consider resolved once in nixos-unstable
-            if [ -n "$merged_at" ]; then
-              owner_repo_lower=$(echo "$owner_repo" | tr '[:upper:]' '[:lower:]')
-              if [ "$owner_repo_lower" = "nixos/nixpkgs" ]; then
-                merge_sha=$(gh api "repos/$owner_repo/pulls/$number" \
-                  --jq '.merge_commit_sha' 2>/dev/null) || true
+                if (merged) {
+                  status = "Merged";
+                } else if (state === "closed") {
+                  status = "Closed";
+                } else {
+                  status = "Open";
+                }
 
-                if [ -n "$merge_sha" ]; then
-                  compare_status=$(gh api "repos/$owner_repo/compare/nixos-unstable...$merge_sha" \
-                    --jq '.status' 2>/dev/null) || true
+                // For NixOS/nixpkgs merged PRs, check if in nixos-unstable
+                if (merged && ownerRepo.toLowerCase() === "nixos/nixpkgs") {
+                  try {
+                    const { data: pr } = await github.rest.pulls.get({
+                      owner: refOwner, repo: refRepo, pull_number: number,
+                    });
+                    if (pr.merge_commit_sha) {
+                      const { data: compare } = await github.rest.repos.compareCommits({
+                        owner: refOwner, repo: refRepo,
+                        base: "nixos-unstable",
+                        head: pr.merge_commit_sha,
+                      });
+                      if (compare.status === "behind" || compare.status === "identical") {
+                        status = "Merged (in nixos-unstable)";
+                      } else {
+                        status = "Merged (awaiting nixos-unstable)";
+                        state = "open";
+                      }
+                    }
+                  } catch (e) {
+                    console.log(`Warning: could not check nixos-unstable status for ${ref}`);
+                  }
+                }
 
-                  if [ "$compare_status" = "behind" ] || [ "$compare_status" = "identical" ]; then
-                    status="Merged (in nixos-unstable)"
-                  else
-                    status="Merged (awaiting nixos-unstable)"
-                    state="open"
-                  fi
-                fi
-              fi
-            fi
+                info.set(ref, { title: issue.title, state, status });
+              } catch (e) {
+                console.log(`Warning: could not fetch ${ref}, skipping`);
+              }
+            }
 
-            ref_title["$ref"]="$title"
-            ref_state["$ref"]="$state"
-            ref_status["$ref"]="$status"
-            ref_locations["$ref"]="$locations"
-          done
+            // Find or create the dashboard issue
+            const { owner, repo } = context.repo;
 
-          # Find existing dashboard issue
-          issue_number=$(gh issue list --state open \
-            --search "Upstream Issue Tracker in:title" \
-            --json number,title \
-            --jq '.[] | select(.title == "Upstream Issue Tracker") | .number' \
-            | head -n1) || true
+            const { data: search } = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${owner}/${repo} is:issue is:open in:title "Upstream Issue Tracker"`,
+            });
 
-          # Create the issue if it doesn't exist
-          if [ -z "$issue_number" ]; then
-            issue_url=$(gh issue create \
-              --title "Upstream Issue Tracker" \
-              --body "Initializing...")
-            issue_number="${issue_url##*/}"
-            echo "Created tracking issue #$issue_number"
-          fi
+            let issueNumber = null;
+            for (const issue of search.items) {
+              if (issue.title === "Upstream Issue Tracker") {
+                issueNumber = issue.number;
+                break;
+              }
+            }
 
-          # Parse existing issue body for checkbox states and previously resolved refs
-          declare -A prev_checked prev_resolved
-          existing_body=$(gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number" \
-            --jq '.body' 2>/dev/null) || true
+            if (!issueNumber) {
+              const { data: created } = await github.rest.issues.create({
+                owner, repo,
+                title: "Upstream Issue Tracker",
+                body: "Initializing...",
+              });
+              issueNumber = created.number;
+              console.log(`Created tracking issue #${issueNumber}`);
+            }
 
-          while IFS= read -r line; do
-            if [[ "$line" =~ ^\-\ \[x\]\ \[([a-zA-Z0-9_./-]+#[0-9]+)\] ]]; then
-              prev_checked["${BASH_REMATCH[1]}"]=1
-              prev_resolved["${BASH_REMATCH[1]}"]=1
-            elif [[ "$line" =~ ^\-\ \[\ \]\ \[([a-zA-Z0-9_./-]+#[0-9]+)\] ]]; then
-              prev_resolved["${BASH_REMATCH[1]}"]=1
-            fi
-          done <<< "$existing_body"
+            // Parse existing issue body for checkbox states
+            const { data: existing } = await github.rest.issues.get({
+              owner, repo, issue_number: issueNumber,
+            });
+            const existingBody = existing.body || "";
+            const prevChecked = new Set();
+            const prevResolved = new Set();
+            const checkboxPattern = /^- \[([ x])\] \[([a-zA-Z0-9_./-]+#\d+)\]/;
 
-          # Post comments for newly resolved refs
-          for ref in $refs; do
-            [ "${ref_state[$ref]:-}" = "closed" ] || continue
-            [ "${prev_resolved[$ref]:-}" = "1" ] && continue
+            for (const line of existingBody.split("\n")) {
+              const m = line.match(checkboxPattern);
+              if (!m) continue;
+              prevResolved.add(m[2]);
+              if (m[1] === "x") prevChecked.add(m[2]);
+            }
 
-            owner_repo="${ref%#*}"
-            number="${ref##*#}"
+            // Post comments for newly resolved refs
+            for (const ref of refs) {
+              const ri = info.get(ref);
+              if (!ri || ri.state !== "closed") continue;
+              if (prevResolved.has(ref)) continue;
 
-            comment="<!-- track-issues:$ref -->"
-            comment+=$'\n'"@$GITHUB_REPOSITORY_OWNER **[$ref](https://github.com/$owner_repo/issues/$number)** has been resolved (${ref_status[$ref]}). Locations that may need cleanup:"
-            for loc in ${ref_locations[$ref]}; do
-              comment+=$'\n'"- $loc"
-            done
-            comment+=$'\n\n'"Check the box on the dashboard to dismiss this notification."
+              const ownerRepo = ref.slice(0, ref.indexOf("#"));
+              const num = ref.slice(ref.indexOf("#") + 1);
+              const locs = locations.get(ref) || [];
 
-            gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number/comments" \
-              -f body="$comment" --silent
-            echo "Posted notification for $ref"
-          done
+              let body = `<!-- track-issues:${ref} -->\n`;
+              body += `@${owner} **[${ref}](https://github.com/${ownerRepo}/issues/${num})** has been resolved (${ri.status}). Locations that may need cleanup:\n`;
+              for (const loc of locs) {
+                body += `- ${loc}\n`;
+              }
+              body += "\nCheck the box on the dashboard to dismiss this notification.";
 
-          # Delete comments for checked refs, removed refs, or no-longer-resolved refs
-          tmp_comments=$(mktemp)
-          gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number/comments" \
-            --paginate \
-            --jq '.[] | select(.body | startswith("<!-- track-issues:")) | [.id, (.body | split("\n") | .[0])] | @tsv' \
-            > "$tmp_comments" 2>/dev/null || true
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issueNumber, body,
+              });
+              console.log(`Posted notification for ${ref}`);
+            }
 
-          while IFS=$'\t' read -r comment_id first_line; do
-            [ -z "$comment_id" ] && continue
-            if [[ "$first_line" =~ track-issues:([a-zA-Z0-9_./-]+#[0-9]+) ]]; then
-              comment_ref="${BASH_REMATCH[1]}"
-              should_delete=0
+            // Delete comments for checked/removed/no-longer-resolved refs
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number: issueNumber },
+            );
 
-              # Delete if checkbox is checked
-              [ "${prev_checked[$comment_ref]:-}" = "1" ] && should_delete=1
+            const trackPattern = /track-issues:([a-zA-Z0-9_./-]+#\d+)/;
+            for (const comment of comments) {
+              if (!comment.body?.startsWith("<!-- track-issues:")) continue;
+              const m = comment.body.match(trackPattern);
+              if (!m) continue;
 
-              # Delete if ref no longer in codebase
-              ref_in_codebase=0
-              for ref in $refs; do
-                [ "$ref" = "$comment_ref" ] && { ref_in_codebase=1; break; }
-              done
-              [ "$ref_in_codebase" = "0" ] && should_delete=1
+              const commentRef = m[1];
+              let shouldDelete = false;
 
-              # Delete if ref is no longer resolved (e.g. reopened upstream)
-              if [ "$ref_in_codebase" = "1" ] && [ -n "${ref_state[$comment_ref]:-}" ]; then
-                [ "${ref_state[$comment_ref]}" != "closed" ] && should_delete=1
-              fi
+              if (prevChecked.has(commentRef)) shouldDelete = true;
+              if (!locations.has(commentRef)) shouldDelete = true;
 
-              if [ "$should_delete" = "1" ]; then
-                gh api "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" \
-                  -X DELETE --silent 2>/dev/null || true
-                echo "Deleted notification for $comment_ref"
-              fi
-            fi
-          done < "$tmp_comments"
-          rm -f "$tmp_comments"
+              const ri = info.get(commentRef);
+              if (ri && ri.state !== "closed") shouldDelete = true;
 
-          # Generate dashboard body
-          resolved_items=""
-          open_rows=""
+              if (shouldDelete) {
+                await github.rest.issues.deleteComment({
+                  owner, repo, comment_id: comment.id,
+                });
+                console.log(`Deleted notification for ${commentRef}`);
+              }
+            }
 
-          for ref in $refs; do
-            [ -z "${ref_state[$ref]:-}" ] && continue
-            owner_repo="${ref%#*}"
-            number="${ref##*#}"
-            link="[$ref](https://github.com/$owner_repo/issues/$number)"
-            title="${ref_title[$ref]}"
+            // Generate dashboard body
+            let resolvedItems = "";
+            let openRows = "";
 
-            if [ "${ref_state[$ref]}" = "closed" ]; then
-              checkbox=" "
-              [ "${prev_checked[$ref]:-}" = "1" ] && checkbox="x"
-              resolved_items+="- [$checkbox] $link — $title (${ref_status[$ref]}) — ${ref_locations[$ref]}"
-              resolved_items+=$'\n'
-            else
-              title_safe=$(echo "$title" | sed 's/|/\\|/g')
-              open_rows+="| $link | $title_safe | ${ref_status[$ref]} | ${ref_locations[$ref]} |"
-              open_rows+=$'\n'
-            fi
-          done
+            for (const ref of refs) {
+              const ri = info.get(ref);
+              if (!ri) continue;
 
-          body="This issue is automatically updated by CI to track external issue/PR references found in the codebase."
-          body+=$'\n\n'"## Resolved"
-          body+=$'\n\n'"These upstream issues have been resolved. The associated workarounds or temporary changes may no longer be needed."
-          body+=$'\n'"Check the box to acknowledge and dismiss the notification."
+              const ownerRepo = ref.slice(0, ref.indexOf("#"));
+              const num = ref.slice(ref.indexOf("#") + 1);
+              const link = `[${ref}](https://github.com/${ownerRepo}/issues/${num})`;
+              const locs = (locations.get(ref) || []).join(" ");
 
-          if [ -n "$resolved_items" ]; then
-            body+=$'\n\n'"$resolved_items"
-          else
-            body+=$'\n\n'"_None_"$'\n'
-          fi
+              if (ri.state === "closed") {
+                const check = prevChecked.has(ref) ? "x" : " ";
+                resolvedItems += `- [${check}] ${link} \u2014 ${ri.title} (${ri.status}) \u2014 ${locs}\n`;
+              } else {
+                const title = ri.title.replace(/\|/g, "\\|");
+                openRows += `| ${link} | ${title} | ${ri.status} | ${locs} |\n`;
+              }
+            }
 
-          body+=$'\n'"## Awaiting Upstream"
-          body+=$'\n\n'"These upstream issues are still open."
-          body+=$'\n\n'"| Reference | Title | Status | Locations |"
-          body+=$'\n'"|-----------|-------|--------|-----------|"
+            // Format timestamp
+            const parts = new Intl.DateTimeFormat("en-US", {
+              timeZone: "America/Los_Angeles",
+              year: "numeric", month: "2-digit", day: "2-digit",
+              hour: "2-digit", minute: "2-digit", hour12: true,
+              timeZoneName: "short",
+            }).formatToParts(new Date());
+            const get = (type) => parts.find((p) => p.type === type).value;
+            const timestamp = `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")} ${get("dayPeriod")} ${get("timeZoneName")}`;
 
-          if [ -n "$open_rows" ]; then
-            body+=$'\n'"$open_rows"
-          else
-            body+=$'\n'"| _None_ | | | |"
-          fi
+            let body = "This issue is automatically updated by CI to track external issue/PR references found in the codebase.\n\n";
+            body += "## Resolved\n\n";
+            body += "These upstream issues have been resolved. The associated workarounds or temporary changes may no longer be needed.\n";
+            body += "Check the box to acknowledge and dismiss the notification.\n\n";
+            body += resolvedItems || "_None_\n";
+            body += "\n## Awaiting Upstream\n\n";
+            body += "These upstream issues are still open.\n\n";
+            body += "| Reference | Title | Status | Locations |\n";
+            body += "|-----------|-------|--------|-----------|\n";
+            body += openRows || "| _None_ | | | |\n";
+            body += "\n---\n";
+            body += `*Last updated: ${timestamp}. This issue is managed by CI \u2014 do not edit manually.*`;
 
-          body+=$'\n\n'"---"
-          body+=$'\n'"*Last updated: $(date -u +%Y-%m-%d). This issue is managed by CI — do not edit manually.*"
-
-          gh issue edit "$issue_number" --body "$body"
-          echo "Updated issue #$issue_number"
+            await github.rest.issues.update({
+              owner, repo, issue_number: issueNumber, body,
+            });
+            console.log(`Updated issue #${issueNumber}`);
 name: Track upstream issues
 "on":
   push:
     branches:
       - master
   schedule:
-    - cron: 0 22 * * *
+    - cron: 0 */3 * * *
   workflow_dispatch: {}
