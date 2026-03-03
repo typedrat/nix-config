@@ -20,7 +20,6 @@
 
     nix-std.url = "github:chessai/nix-std";
 
-    nixpkgs-patcher.url = "github:gepbird/nixpkgs-patcher";
     #endregion
 
     #region nixpkgs patches
