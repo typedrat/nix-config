@@ -1,4 +1,8 @@
-{nixpkgs-patcher}: {
+# modules/extra/flake-parts/nixos-hosts.nix
+let
+  patcher = import ./patcher.nix;
+in
+{
   self,
   inputs,
   lib,
@@ -35,41 +39,80 @@
     };
   };
 
-  config = let
-    cfg = config.nixos-hosts;
+  config =
+    let
+      cfg = config.nixos-hosts;
 
-    # Helper function to create a NixOS configuration with nixpkgs-patcher
-    mkNixosSystem = _hostname: hostConfig:
-      nixpkgs-patcher.lib.nixosSystem {
-        inherit (hostConfig) system;
+      mkNixosSystem = _hostname: hostConfig:
+        let
+          system = hostConfig.system;
 
-        # Pass inputs and self via specialArgs (same as easy-hosts did)
-        specialArgs = {
-          inherit inputs self;
-        };
+          # Unpatched pkgs — used only to run applyPatches itself.
+          pkgs = import inputs.nixpkgs { inherit system; };
 
-        modules =
-          cfg.sharedModules
-          ++ hostConfig.modules
-          ++ [
-            {nixpkgs.overlays = [self.overlays.localPackages];}
+          # nixpkgs patching
+          nixpkgsPatches = patcher.patchesFromInputs {
+            inherit inputs pkgs;
+            prefix = "nixpkgs-patch-";
+          };
+          patchedNixpkgs =
+            if nixpkgsPatches == []
+            then inputs.nixpkgs
+            else patcher.patchSource {
+              src  = inputs.nixpkgs;
+              name = "nixpkgs-${patcher.nixpkgsVersion {
+                nixpkgs = inputs.nixpkgs;
+                patches = nixpkgsPatches;
+              }}";
+              patches = nixpkgsPatches;
+              inherit pkgs;
+            };
 
-            # Module to provide self' and inputs' using withSystem
-            {
-              _module.args = withSystem hostConfig.system ({
-                self',
-                inputs',
-                ...
-              }: {
-                inherit self' inputs';
-              });
-            }
-          ];
+          # home-manager patching
+          hmPatches = patcher.patchesFromInputs {
+            inherit inputs pkgs;
+            prefix = "home-manager-patch-";
+          };
+          patchedHm =
+            if hmPatches == []
+            then inputs.home-manager
+            else patcher.patchSource {
+              src     = inputs.home-manager;
+              name    = "home-manager-patched";
+              patches = hmPatches;
+              inherit pkgs;
+            };
 
-        # Pass inputs via nixpkgsPatcher for patch discovery
-        nixpkgsPatcher.inputs = inputs;
-      };
-  in {
-    flake.nixosConfigurations = lib.mapAttrs mkNixosSystem cfg.hosts;
-  };
+          # Metadata module: marks nixos-version as patched when nixpkgs is patched.
+          versionModules = lib.optional (nixpkgsPatches != []) {
+            config.nixpkgs.flake.source       = toString inputs.nixpkgs;
+            config.system.nixos.versionSuffix = ".${patcher.nixpkgsVersion {
+              nixpkgs = inputs.nixpkgs;
+              patches = nixpkgsPatches;
+            }}";
+            config.system.nixos.revision = inputs.nixpkgs.rev or "dirty";
+          };
+        in
+          import "${patchedNixpkgs}/nixos/lib/eval-config.nix" {
+            inherit system;
+            specialArgs = { inherit inputs self; };
+            modules =
+              cfg.sharedModules
+              ++ hostConfig.modules
+              ++ [
+                { nixpkgs.overlays = [ self.overlays.localPackages ]; }
+                {
+                  _module.args = withSystem system (
+                    { self', inputs', ... }: { inherit self' inputs'; }
+                  );
+                }
+                # home-manager NixOS module — from patched source if patches present
+                "${patchedHm}/nixos"
+              ]
+              ++ versionModules;
+          };
+    in
+    {
+      flake.nixosConfigurations = lib.mapAttrs mkNixosSystem cfg.hosts;
+    };
 }
