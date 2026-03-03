@@ -16,12 +16,17 @@ in {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/git-spice"];
     };
+
     home.packages = with pkgs; [
       git-spice
     ];
 
-    home.shellAliases = {
-      "gs" = "git-spice";
+    programs.git.settings = {
+      spice.branchCreate.commit = false;
+    };
+
+    home.sessionVariables = {
+      GIT_SPICE_NO_GS_WARNING = 1;
     };
 
     programs.zsh.plugins = [
