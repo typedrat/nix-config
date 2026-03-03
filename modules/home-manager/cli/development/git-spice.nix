@@ -20,6 +20,10 @@ in {
       git-spice
     ];
 
+    home.shellAliases = {
+      "gs" = "git-spice";
+    };
+
     programs.zsh.plugins = [
       {
         name = "git-spice-completions";
