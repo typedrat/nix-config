@@ -34,32 +34,10 @@ in {
       ".claude/settings.local.json"
       "CLAUDE.local.md"
     ];
-
-    programs.peon-ping = {
-      enable = true;
-
-      packs = [
-        "glados"
-        "ocarina_of_time"
-      ];
+    home.file = {
+      # Symlink claude-code to ~/.local/bin to shut up the native install check
+      ".local/bin/claude".source = getExe pkgs.claude-code-bin;
     };
-
-    home.file =
-      {
-        # Symlink claude-code to ~/.local/bin to shut up the native install check
-        ".local/bin/claude".source = getExe pkgs.claude-code-bin;
-      }
-      // lib.listToAttrs (
-        map (name:
-          lib.nameValuePair ".claude/skills/${name}" {
-            source = "${config.programs.peon-ping.package.src}/skills/${name}";
-            recursive = true;
-          }) [
-          "peon-ping-config"
-          "peon-ping-toggle"
-          "peon-ping-use"
-        ]
-      );
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})
