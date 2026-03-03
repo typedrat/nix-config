@@ -23,6 +23,7 @@ in {
           directory = ".kube";
           mode = "0700";
         }
+        ".config/granted"
         ".config/gcloud"
         ".config/terraform"
       ];
@@ -31,18 +32,22 @@ in {
       # Cloud platforms
       google-cloud-sdk
       aws-vault
-      awscli2
       ssm-session-manager-plugin
 
       # Kubernetes tools
-      kubectl
       kubernetes-helm
-      fluxcd
-      cilium-cli
-      istioctl
 
       # Infrastructure as Code
       opentofu
     ];
+
+    programs.awscli.enable = true;
+
+    programs.kubecolor = {
+      enable = true;
+      enableAlias = true;
+    };
+
+    programs.granted.enable = true;
   };
 }

@@ -154,6 +154,7 @@
             catppuccin-web-file-icons
             consent-o-matic
             downthemall
+            granted
             indie-wiki-buddy
             metamask
             offline-qr-code-generator
@@ -197,15 +198,16 @@ in {
         ];
         extensions = [
           "nngceckbapebfimnlniiiahkandclblb" # Bitwarden Password Manager
-          "mbniclmhobmnbdlbpiphghaielnnpgdp" # Lightshot
-          "gcbommkclmclpchllfjekcdonpmejbdp" # HTTPS Everywhere
           "lnjaiaapbakfhlbjenjkhffcdpoompki" # Catppuccin for Web File Explorer Icons
-          "fmkadmapgofadopljbjfkapdkoienihi" # React Developer Tools
           "fcoeoabgfenejglbffodgkkbkcdhcgfn" # Claude
+          "cjjieeldgoohbkifkogalkmfpddeafcm" # Granted
+          "gcbommkclmclpchllfjekcdonpmejbdp" # HTTPS Everywhere
+          "mbniclmhobmnbdlbpiphghaielnnpgdp" # Lightshot
+          "fmkadmapgofadopljbjfkapdkoienihi" # React Developer Tools
         ];
       };
 
-      # Claude Code native messaging host for Brave
+      # Native messaging hosts for Brave
       programs.brave.nativeMessagingHosts = [
         (pkgs.writeTextDir "etc/chromium/native-messaging-hosts/com.anthropic.claude_code_browser_extension.json" (builtins.toJSON {
           name = "com.anthropic.claude_code_browser_extension";
@@ -214,6 +216,15 @@ in {
           type = "stdio";
           allowed_origins = [
             "chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/"
+          ];
+        }))
+        (pkgs.writeTextDir "etc/chromium/native-messaging-hosts/io.commonfate.granted.json" (builtins.toJSON {
+          name = "io.commonfate.granted";
+          description = "Granted BrowserSupport";
+          path = "${pkgs.granted}/bin/granted";
+          type = "stdio";
+          allowed_origins = [
+            "chrome-extension://cjjieeldgoohbkifkogalkmfpddeafcm/"
           ];
         }))
       ];
@@ -246,6 +257,18 @@ in {
               ];
           };
         };
+
+        nativeMessagingHosts = [
+          (pkgs.writeTextDir "lib/mozilla/native-messaging-hosts/io.commonfate.granted.json" (builtins.toJSON {
+            name = "io.commonfate.granted";
+            description = "Granted BrowserSupport";
+            path = "${pkgs.granted}/bin/granted";
+            type = "stdio";
+            allowed_extensions = [
+              "{b5e0e8de-ebfe-4306-9528-bcc18241a490}"
+            ];
+          }))
+        ];
       };
 
       home.file.".config/zen/default/chrome/userContent.css".text = lib.strings.concatLines [
