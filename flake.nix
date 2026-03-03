@@ -37,6 +37,21 @@
       flake = false;
     };
 
+    # NixOS/nixpkgs#490742: peon-ping: init at 1.8.1
+    nixpkgs-patch-490742 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/490742.diff";
+      flake = false;
+    };
+    #endregion
+
+    #region home-manager patches
+    # Add patches by creating inputs prefixed with "home-manager-patch-"
+
+    # nix-community/home-manager#8750: peon-ping: add module
+    home-manager-patch-8750 = {
+      url = "https://github.com/nix-community/home-manager/pull/8750.diff";
+      flake = false;
+    };
     #endregion
 
     #region `flake-parts`

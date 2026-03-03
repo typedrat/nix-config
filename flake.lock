@@ -1260,6 +1260,18 @@
         "type": "github"
       }
     },
+    "home-manager-patch-8750": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-GLPBIRZjhMErVJrbrNtTzB/e6+N116aSBIz2RFYCNc8=",
+        "type": "file",
+        "url": "https://github.com/nix-community/home-manager/pull/8750.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/nix-community/home-manager/pull/8750.diff"
+      }
+    },
     "home-manager_2": {
       "inputs": {
         "nixpkgs": [
@@ -2229,6 +2241,18 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-490742": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-sCxq4uDgy9QtSyGPnXr5rKGSBOHjt2ouLd5DzM6VZ4A=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/490742.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/490742.diff"
+      }
+    },
     "nixpkgs-patch-490985": {
       "flake": false,
       "locked": {
@@ -2745,6 +2769,7 @@
         "flakehub-deploy": "flakehub-deploy",
         "github-actions-nix": "github-actions-nix",
         "home-manager": "home-manager",
+        "home-manager-patch-8750": "home-manager-patch-8750",
         "hyprland": "hyprland",
         "hyprland-plugins": "hyprland-plugins",
         "hyprlock": "hyprlock",
@@ -2763,6 +2788,7 @@
         "nixified-ai": "nixified-ai",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_13",
+        "nixpkgs-patch-490742": "nixpkgs-patch-490742",
         "nixpkgs-patch-490985": "nixpkgs-patch-490985",
         "nixpkgs-patch-494791": "nixpkgs-patch-494791",
         "nixvirt": "nixvirt",
