@@ -14,6 +14,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   imports = [
+    ./anime-game-launchers.nix
     ./retroarch.nix
     ./sgdboop.nix
     ./xmage.nix
