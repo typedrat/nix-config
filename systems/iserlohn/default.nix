@@ -141,6 +141,7 @@
       sonarr.enable = true;
       style-search.enable = true;
       sonarr.anime.enable = true;
+      zipline.enable = true;
       torrents = {
         enable = true;
         downloadDir = "/mnt/media/torrents";
