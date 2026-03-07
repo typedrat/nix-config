@@ -8,29 +8,37 @@ let
   wrapPatch = pkgs: patch:
     pkgs.stdenvNoCC.mkDerivation {
       inherit (patch) name;
-      phases = [ "installPhase" ];
+      phases = ["installPhase"];
       installPhase = ''
         cp -r ${patch.value.outPath} $out
       '';
     };
 
   # Collect all inputs whose names start with `prefix`, wrap each one.
-  patchesFromInputs = { inputs, pkgs, prefix }:
-    let
-      matching = pkgs.lib.filterAttrs (n: _: pkgs.lib.hasPrefix prefix n) inputs;
-      pairs    = pkgs.lib.attrsToList matching;
-    in
+  patchesFromInputs = {
+    inputs,
+    pkgs,
+    prefix,
+  }: let
+    matching = pkgs.lib.filterAttrs (n: _: pkgs.lib.hasPrefix prefix n) inputs;
+    pairs = pkgs.lib.attrsToList matching;
+  in
     map (wrapPatch pkgs) pairs;
 
   # Apply a list of patches to a source tree using pkgs.applyPatches.
   # Provides a bat-based failure hook (same UX as nixpkgs-patcher).
   # Only call this when patches != [].
-  patchSource = { src, name, patches, pkgs }:
+  patchSource = {
+    src,
+    name,
+    patches,
+    pkgs,
+  }:
     pkgs.applyPatches {
       inherit name src patches;
       nativeBuildInputs =
-        [ pkgs.bat ]
-        ++ pkgs.lib.optionals pkgs.stdenv.buildPlatform.isLinux [ pkgs.breakpointHook ];
+        [pkgs.bat]
+        ++ pkgs.lib.optionals pkgs.stdenv.buildPlatform.isLinux [pkgs.breakpointHook];
       failureHook = ''
         failedPatches=$(find . -name "*.rej")
         for failedPatch in $failedPatches; do
@@ -46,11 +54,17 @@ let
     };
 
   # Produce a version string for a patched nixpkgs, used in versionSuffix.
-  nixpkgsVersion = { nixpkgs, patches }:
+  nixpkgsVersion = {
+    nixpkgs,
+    patches,
+  }:
     "${builtins.substring 0 8 (nixpkgs.lastModifiedDate or "19700101")}"
     + ".${nixpkgs.shortRev or "dirty"}"
-    + (if patches != [] then "-patched" else "");
-in
-{
+    + (
+      if patches != []
+      then "-patched"
+      else ""
+    );
+in {
   inherit patchesFromInputs patchSource nixpkgsVersion;
 }
