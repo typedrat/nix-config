@@ -86,7 +86,9 @@ in {
     services.traefik = {
       enable = true;
 
-      dynamic.dir = "/var/lib/traefik/dynamic";
+      # Use a non-default path to work around upstream isDefault value-equality check
+      # that fails when dynamic.files is set but dynamic.dir matches its default value.
+      dynamic.dir = "/var/lib/traefik/conf.d";
 
       static.settings = {
         entryPoints = {

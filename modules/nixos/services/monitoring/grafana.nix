@@ -50,6 +50,7 @@ in {
           security = {
             disable_initial_admin_creation = true;
             cookie_secure = true;
+            secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
           };
 
           users = {
@@ -131,6 +132,12 @@ in {
       users.users.redis-grafana.group = lib.mkForce "grafana";
 
       sops.secrets = {
+        "grafana/secret_key" = {
+          sopsFile = ../../../../secrets/grafana.yaml;
+          key = "secretKey";
+          owner = config.systemd.services.grafana.serviceConfig.User;
+          restartUnits = ["grafana.service"];
+        };
         "grafana/oauth_client_id" = {
           sopsFile = ../../../../secrets/grafana.yaml;
           key = "clientId";
