@@ -102,9 +102,9 @@ in {
         # Batocera for handheld - separate ROM folder
         batocera = {
           paths = {
-            roms = "/home/${username}/Games/batocera";
-            gameLists = "/home/${username}/Games/batocera";
-            media = "/home/${username}/Games/batocera";
+            roms = "/home/${username}/Games/retro/export/batocera/roms";
+            gameLists = "/home/${username}/Games/retro/export/batocera/roms";
+            media = "/home/${username}/Games/retro/export/batocera/roms";
           };
         };
       };

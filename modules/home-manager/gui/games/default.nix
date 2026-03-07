@@ -40,6 +40,7 @@ in {
         ".steam"
         ".local/share/bottles"
         ".config/pegasus-frontend"
+        ".config/rom-organizer"
         ".local/share/wine"
         "Games"
       ];

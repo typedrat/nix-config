@@ -37,8 +37,8 @@ in {
     # Skyscraper ROM scraper
     skyscraper = {
       enable = true;
-      romsPath = "/home/awilliams/Games/roms";
-      frontend = "pegasus";
+      romsPath = "/home/awilliams/Games/retro/export/es-de/roms";
+      frontend = "esde";
       region = "us";
     };
 
