@@ -35,7 +35,10 @@ in {
       ssm-session-manager-plugin
 
       # Kubernetes tools
+      kubectl
+      kubectl-cnpg
       kubernetes-helm
+      cilium-cli
 
       # Infrastructure as Code
       opentofu
