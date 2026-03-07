@@ -18,6 +18,7 @@ in {
     inputs.catppuccin.homeModules.catppuccin
 
     ./steam.nix
+    ./kde-colors.nix
   ];
 
   config = modules.mkIf (themingCfg.enable or false) (modules.mkMerge [

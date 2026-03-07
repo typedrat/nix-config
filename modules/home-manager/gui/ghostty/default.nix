@@ -36,11 +36,9 @@ in {
       pkgs.xdg-terminal-exec
     ];
 
-    xdg.configFile."kdeglobals".text = lib.generators.toINI {} {
-      General = {
-        TerminalApplication = "ghostty";
-        TerminalService = "com.mitchellh.ghostty.desktop";
-      };
+    rat.kdeglobals.General = {
+      TerminalApplication = "ghostty";
+      TerminalService = "com.mitchellh.ghostty.desktop";
     };
 
     xdg.configFile."xdg-terminals.list".text = ''

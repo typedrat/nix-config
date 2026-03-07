@@ -15,6 +15,7 @@ in {
     ./gui
     ./hardware
     ./theming
+    ./kdeglobals.nix
     ./accounts.nix
     ./impermanence.nix
     ./mime.nix
