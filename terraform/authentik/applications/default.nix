@@ -20,6 +20,7 @@
     ./sillytavern.nix
     ./sonarr.nix
     ./traefik.nix
+    ./zipline.nix
   ];
 
   commonAppOptions = {
