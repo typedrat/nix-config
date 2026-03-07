@@ -14,5 +14,6 @@
     ./sonarr.nix
     ./sonarr-anime.nix
     ./torrents.nix
+    ./zipline.nix
   ];
 }
