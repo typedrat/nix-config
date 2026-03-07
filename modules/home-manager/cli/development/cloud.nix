@@ -24,8 +24,10 @@ in {
           mode = "0700";
         }
         ".config/granted"
+        ".cloudflared"
         ".config/gcloud"
         ".config/terraform"
+        ".cache/terraform/plugins"
       ];
     };
     home.packages = with pkgs; [
