@@ -61,6 +61,13 @@
   #   ];
   # };
 
+  # --- udev rules ---
+
+  # Mionix Naos PRO - grant user access to hidraw devices
+  services.udev.extraRules = ''
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="22d4", ATTRS{idProduct}=="132b", MODE="0666"
+  '';
+
   # --- Extra packages ---
 
   environment.systemPackages = [

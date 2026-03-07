@@ -139,7 +139,7 @@
 
       shoko.enable = true;
       sonarr.enable = true;
-      style-search.enable = true;
+      #style-search.enable = true;
       sonarr.anime.enable = true;
       zipline.enable = true;
       torrents = {
