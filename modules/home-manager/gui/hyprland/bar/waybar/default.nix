@@ -66,8 +66,8 @@ in {
                 {
                   format = "{icon}";
                   tooltip-format = "{node_name} — {volume}%";
-                  format-muted = " ";
-                  format-icons = [" " " " " "];
+                  format-muted = "󰝟 ";
+                  format-icons = ["󰕿 " "󰖀 " "󰕾 "];
                 }
                 // lib.optionalAttrs pyprlandEnabled {
                   on-click = "pypr toggle pwvucontrol";
