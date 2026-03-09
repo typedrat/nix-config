@@ -77,7 +77,8 @@
 
         search.force = true;
         search.engines = {
-          "Nix Packages" = {
+          nix-packages = {
+            name = "Nix Packages";
             urls = [
               {
                 template = "https://search.nixos.org/packages";
@@ -92,8 +93,9 @@
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = ["@np"];
           };
-          "Nix Options" = {
-            definedAliases = ["@no"];
+
+          nix-options = {
+            name = "Nix Options";
             urls = [
               {
                 template = "https://search.nixos.org/options";
@@ -105,10 +107,23 @@
                 ];
               }
             ];
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = ["@no"];
           };
 
-          "Home Manager Options" = {
-            definedAliases = ["@hm"];
+          nixos-wiki = {
+            name = "NixOS Wiki";
+            urls = [
+              {
+                template = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
+              }
+            ];
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = ["@nw"];
+          };
+
+          hm-options = {
+            name = "Home Manager Options";
             urls = [
               {
                 template = "https://home-manager-options.extranix.com/";
@@ -124,10 +139,12 @@
                 ];
               }
             ];
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = ["@hm"];
           };
 
-          "Noogle" = {
-            definedAliases = ["@ng" "@noog" "@noogle"];
+          noogle = {
+            name = "Noogle";
             urls = [
               {
                 template = "https://noogle.dev/q";
@@ -139,6 +156,24 @@
                 ];
               }
             ];
+            definedAliases = ["@ng" "@noog" "@noogle"];
+          };
+
+          npm = {
+            name = "NPM";
+            urls = [
+              {
+                template = "https://www.npmjs.com/search";
+                params = [
+                  {
+                    name = "q";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            favicon = "https://static.npmjs.com/f1786e9b7cba9753ca7b9c40e8b98f67.png";
+            definedAliases = ["@npm"];
           };
         };
 
@@ -234,7 +269,6 @@ in {
     (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.zen.enable or false)) {
       programs.zen-browser = lib.attrsets.recursiveUpdate commonFirefoxConfig {
         enable = true;
-        suppressXdgMigrationWarning = true;
 
         profiles = {
           default = {
