@@ -36,22 +36,11 @@
       url = "https://github.com/NixOS/nixpkgs/pull/494791.diff";
       flake = false;
     };
-
-    # NixOS/nixpkgs#490742: peon-ping: init at 1.8.1
-    nixpkgs-patch-490742 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/490742.diff";
-      flake = false;
-    };
     #endregion
 
     #region home-manager patches
     # Add patches by creating inputs prefixed with "home-manager-patch-"
 
-    # nix-community/home-manager#8750: peon-ping: add module
-    home-manager-patch-8750 = {
-      url = "https://github.com/nix-community/home-manager/pull/8750.diff";
-      flake = false;
-    };
     #endregion
 
     #region `flake-parts`
@@ -168,7 +157,11 @@
     #endregion
 
     #region Hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
+    # Pinned before renderer refactor (a585801+) which broke both the .pc
+    # include paths and the plugin API. Must be after b88813c7 (EventBus
+    # refactor) which hyprland-plugins b85a56b depends on.
+    # hyprwm/hyprland-plugins#627
+    hyprland.url = "github:hyprwm/Hyprland/8685fd7b";
 
     hyprlock.url = "github:hyprwm/hyprlock";
 
