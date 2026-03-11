@@ -22,8 +22,8 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
       && (lockerCfg.enable or true)
       && (lockerCfg.variant or "hyprlock") == "hyprlock"
     ) {

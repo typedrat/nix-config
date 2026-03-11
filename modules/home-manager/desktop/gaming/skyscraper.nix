@@ -13,7 +13,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = lib.mkIf (skyscraperCfg.enable or false) {
+  config = lib.mkIf skyscraperCfg.enable {
     home.persistence.${persistDir} = lib.mkIf impermanenceCfg.home.enable {
       directories = [
         ".cache/skyscraper"

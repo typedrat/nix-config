@@ -21,7 +21,7 @@ in {
     ./kde-colors.nix
   ];
 
-  config = modules.mkIf (themingCfg.enable or false) (modules.mkMerge [
+  config = modules.mkIf themingCfg.enable (modules.mkMerge [
     {
       home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
         directories = [".config/dconf"];
@@ -34,7 +34,7 @@ in {
       };
     }
 
-    (modules.mkIf (guiCfg.enable or false) {
+    (modules.mkIf guiCfg.enable {
       catppuccin = {
         gtk.icon.enable = true;
         cursors.enable = true;

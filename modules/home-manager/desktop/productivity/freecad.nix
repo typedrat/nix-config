@@ -25,7 +25,7 @@
       };
   };
 in {
-  config = mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false) && (productivityCfg.freecad.enable or false)) {
+  config = mkIf (guiCfg.enable && productivityCfg.enable && productivityCfg.freecad.enable) {
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/FreeCAD" ".local/share/FreeCAD"];
     };

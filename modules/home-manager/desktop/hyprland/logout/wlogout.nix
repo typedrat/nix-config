@@ -13,9 +13,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (logoutCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && logoutCfg.enable
       && (logoutCfg.variant or "wlogout") == "wlogout"
     ) {
       programs.wlogout = {

@@ -12,7 +12,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.tools.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".local/share/direnv"

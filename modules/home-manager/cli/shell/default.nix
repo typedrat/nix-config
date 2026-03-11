@@ -15,7 +15,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.shell.enable or false)) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.shell.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".local/state/zsh" ".zsh"];
     };

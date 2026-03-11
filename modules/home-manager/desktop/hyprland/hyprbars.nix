@@ -15,9 +15,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (hyprbarsCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && hyprbarsCfg.enable
     ) {
       wayland.windowManager.hyprland = {
         plugins = [

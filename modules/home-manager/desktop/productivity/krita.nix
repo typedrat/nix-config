@@ -15,8 +15,8 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
-  kritaEnabled = (guiCfg.enable or false) && (productivityCfg.enable or false) && (kritaCfg.enable or false);
-  aiDiffusionEnabled = kritaEnabled && (kritaCfg.aiDiffusion.enable or false);
+  kritaEnabled = guiCfg.enable && productivityCfg.enable && kritaCfg.enable;
+  aiDiffusionEnabled = kritaEnabled && kritaCfg.aiDiffusion.enable;
 
   aiDiffusionPkg = pkgs.krita-ai-diffusion;
 in {

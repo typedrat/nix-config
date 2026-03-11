@@ -40,7 +40,7 @@
     ${pkgs.socat}/bin/socat -U - UNIX-CONNECT:/run/user/1000/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do handle "$line"; done
   '';
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false) && ((browsersCfg.firefox.enable or false) || (browsersCfg.zen.enable or false))) {
+  config = modules.mkIf (guiCfg.enable && hyprlandCfg.enable && (browsersCfg.firefox.enable || browsersCfg.zen.enable)) {
     wayland.windowManager.hyprland = {
       settings = {
         exec-once = ["$HOME/.local/share/scripts/hyprland-bitwarden-resize.sh"];

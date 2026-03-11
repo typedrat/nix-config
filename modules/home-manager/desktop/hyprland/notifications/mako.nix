@@ -13,8 +13,8 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
       && (notificationsCfg.enable or true)
       && (notificationsCfg.variant or "mako") == "mako"
     ) {

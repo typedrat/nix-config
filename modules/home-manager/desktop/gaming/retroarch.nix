@@ -14,7 +14,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && retroarchCfg.enable) {
+  config = modules.mkIf (guiCfg.enable && retroarchCfg.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/retroarch"];
     };

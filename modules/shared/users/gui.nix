@@ -173,12 +173,14 @@
       };
 
       browsers = {
+        enable = options.mkEnableOption "web browsers" // {default = true;};
         firefox.enable = options.mkEnableOption "Firefox" // {default = true;};
         brave.enable = options.mkEnableOption "Brave" // {default = true;};
         zen.enable = options.mkEnableOption "Zen Browser" // {default = true;};
       };
 
       terminals = {
+        enable = options.mkEnableOption "terminal emulators" // {default = true;};
         wezterm.enable = options.mkEnableOption "WezTerm" // {default = true;};
         ghostty.enable = options.mkEnableOption "Ghostty";
       };

@@ -13,7 +13,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = mkIf (securityKeyCfg.enable or false) {
+  config = mkIf securityKeyCfg.enable {
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [
         {
@@ -34,7 +34,7 @@ in {
       pinentry.package = agentCfg.pinentryPackage;
       defaultCacheTtl = agentCfg.defaultCacheTtl or 600;
       maxCacheTtl = agentCfg.maxCacheTtl or 7200;
-      enableSshSupport = agentCfg.enableSshSupport or false;
+      enableSshSupport = agentCfg.enableSshSupport;
     };
   };
 }

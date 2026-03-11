@@ -14,9 +14,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (kdeCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && kdeCfg.enable
     ) {
       # KDE cruft to get Dolphin et al working
       home.packages = with pkgs; [

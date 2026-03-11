@@ -13,7 +13,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && productivityCfg.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/kicad" ".local/share/kicad"];
     };

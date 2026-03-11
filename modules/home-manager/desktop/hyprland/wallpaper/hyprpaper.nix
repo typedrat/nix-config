@@ -13,9 +13,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (wallpaperCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && wallpaperCfg.enable
       && (wallpaperCfg.variant or "hyprpaper") == "hyprpaper"
     ) {
       services.hyprpaper = {

@@ -42,7 +42,7 @@ in {
     })
 
     # Git CLI tools
-    (mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
+    (mkIf (cliCfg.enable && cliCfg.tools.enable) {
       home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
         directories = [
           ".local/share/mergiraf"

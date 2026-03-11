@@ -11,7 +11,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf (cliCfg.enable or false) (modules.mkMerge [
+  config = modules.mkIf cliCfg.enable (modules.mkMerge [
     {
       home.sessionVariables = {
         # Development tools
@@ -64,7 +64,7 @@ in {
       };
     }
 
-    (modules.mkIf (osConfig.rat.hardware.nvidia.enable or false) {
+    (modules.mkIf osConfig.rat.hardware.nvidia.enable {
       home.sessionVariables.__GL_SHADER_DISK_CACHE_PATH = "${config.xdg.cacheHome}/nvidia";
 
       home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {

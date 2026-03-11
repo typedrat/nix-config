@@ -14,7 +14,7 @@
 in {
   config = modules.mkMerge [
     # Bitwarden
-    (modules.mkIf ((guiCfg.enable or false) && (guiCfg.security.enable or false)) {
+    (modules.mkIf (guiCfg.enable && guiCfg.security.enable) {
       home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
         directories = [".local/share/Bitwarden"];
       };
@@ -25,7 +25,7 @@ in {
     })
 
     # GNOME Keyring
-    (modules.mkIf (guiCfg.enable or false) {
+    (modules.mkIf guiCfg.enable {
       home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
         directories = [
           {

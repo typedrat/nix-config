@@ -21,7 +21,7 @@ in {
     ./nix-tools.nix
   ];
 
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.development.enable or false)) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
     home.packages = with pkgs; [
       # Compilers and build tools
       gcc

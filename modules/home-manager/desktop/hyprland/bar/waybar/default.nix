@@ -15,14 +15,14 @@
   primaryMonitor = hostHyprlandCfg.primaryMonitor or null;
 
   # Check if features are enabled for conditional button rendering
-  pyprlandEnabled = hyprlandCfg.pyprland.enable or false;
+  pyprlandEnabled = hyprlandCfg.pyprland.enable;
   logoutCfg = hyprlandCfg.logout or {};
-  logoutEnabled = (logoutCfg.enable or false) && (logoutCfg.variant or "wlogout") == "wlogout";
+  logoutEnabled = logoutCfg.enable && (logoutCfg.variant or "wlogout") == "wlogout";
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
       && (barCfg.enable or true)
       && (barCfg.variant or "waybar") == "waybar"
     ) {

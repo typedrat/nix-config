@@ -12,7 +12,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (guiCfg.utilities.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && guiCfg.utilities.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/transmission" ".config/tenacity" ".local/share/qalculate"];
     };

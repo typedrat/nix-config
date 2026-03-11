@@ -14,8 +14,8 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
       && (polkitCfg.enable or true)
     ) {
       systemd.user.services.hyprpolkitagent = {

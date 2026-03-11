@@ -13,9 +13,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (blurCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && blurCfg.enable
     ) {
       wayland.windowManager.hyprland.settings = {
         decoration = {

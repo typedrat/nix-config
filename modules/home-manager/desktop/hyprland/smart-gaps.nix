@@ -13,9 +13,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (smartGapsCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && smartGapsCfg.enable
     ) {
       wayland.windowManager.hyprland = {
         settings = {

@@ -17,7 +17,7 @@ in {
     ./zed.nix
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (developmentCfg.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && developmentCfg.enable) {
     home.packages = with pkgs; [
       virt-manager
     ];

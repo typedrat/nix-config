@@ -10,7 +10,7 @@
   guiCfg = userCfg.gui or {};
   terminalsCfg = guiCfg.terminals or {};
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (terminalsCfg.wezterm.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && terminalsCfg.wezterm.enable) {
     programs.wezterm = {
       enable = true;
       enableZshIntegration = true;

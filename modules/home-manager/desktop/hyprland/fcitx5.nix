@@ -14,9 +14,9 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (fcitx5Cfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && fcitx5Cfg.enable
     ) {
       i18n.inputMethod = {
         enable = true;

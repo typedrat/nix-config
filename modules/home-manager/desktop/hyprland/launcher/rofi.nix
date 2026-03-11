@@ -14,8 +14,8 @@
 in {
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
       && (launcherCfg.variant or "rofi") == "rofi"
     ) {
       programs.rofi = {

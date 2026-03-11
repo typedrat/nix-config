@@ -16,7 +16,7 @@ in {
     ./element.nix
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (chatCfg.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && chatCfg.enable) {
     home.packages = with pkgs; [
       telegram-desktop
       slack

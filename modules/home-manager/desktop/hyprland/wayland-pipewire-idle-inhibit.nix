@@ -18,9 +18,9 @@ in {
 
   config =
     modules.mkIf (
-      (guiCfg.enable or false)
-      && (hyprlandCfg.enable or false)
-      && (idleCfg.mediaInhibit or false)
+      guiCfg.enable
+      && hyprlandCfg.enable
+      && idleCfg.mediaInhibit
     ) {
       services.wayland-pipewire-idle-inhibit = {
         enable = true;

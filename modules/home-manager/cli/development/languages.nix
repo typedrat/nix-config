@@ -13,7 +13,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.development.enable or false)) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".local/share/cargo"

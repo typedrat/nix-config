@@ -21,7 +21,7 @@ in {
     ./xmage.nix
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (gamingCfg.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && gamingCfg.enable) {
     home.packages = with pkgs; [
       bottles
       gamescope

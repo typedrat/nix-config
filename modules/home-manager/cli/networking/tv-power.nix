@@ -10,7 +10,7 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
 in {
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.tv-power.enable or false)) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.networking.enable) {
     sops.secrets = {
       vizioAuth = {};
       vizioIp = {};

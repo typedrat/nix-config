@@ -10,7 +10,7 @@
   userCfg = osConfig.rat.users.${username} or {};
   mimeCfg = userCfg.mime or {};
 in {
-  config = modules.mkIf (mimeCfg.enable or false) {
+  config = modules.mkIf mimeCfg.enable {
     xdg.mimeApps = {
       enable = true;
       inherit (mimeCfg) defaultApplications;

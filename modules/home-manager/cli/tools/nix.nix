@@ -27,7 +27,7 @@ in {
     }
 
     # Nix CLI tools
-    (mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
+    (mkIf (cliCfg.enable && cliCfg.tools.enable) {
       home.packages = with pkgs; [
         cachix
         fh

@@ -15,9 +15,9 @@
 
   # Check if user has specific secrets configured (awilliams-specific)
   hasUserSecrets = username == "awilliams";
-  hasNvidia = osConfig.rat.hardware.nvidia.enable or false;
+  hasNvidia = osConfig.rat.hardware.nvidia.enable;
 in {
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.ai.enable or false)) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.ai.enable) {
     xdg.userDirs.extraConfig.XDG_AI_DIR = "$HOME/AI";
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {

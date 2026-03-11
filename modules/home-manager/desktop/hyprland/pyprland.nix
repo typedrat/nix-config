@@ -28,9 +28,9 @@ in {
 
   config = modules.mkMerge [
     (modules.mkIf (
-        (guiCfg.enable or false)
-        && (hyprlandCfg.enable or false)
-        && (pyprlandCfg.enable or false)
+        guiCfg.enable
+        && hyprlandCfg.enable
+        && pyprlandCfg.enable
       ) {
         home.packages = with pkgs; [
           pyprland
@@ -115,9 +115,9 @@ in {
       })
 
     (modules.mkIf (
-        (guiCfg.enable or false)
-        && (hyprlandCfg.enable or false)
-        && (pyprlandCfg.enable or false)
+        guiCfg.enable
+        && hyprlandCfg.enable
+        && pyprlandCfg.enable
         && (launcherCfg.variant or "rofi") == "rofi"
       ) {
         programs.pyprland.settings = {

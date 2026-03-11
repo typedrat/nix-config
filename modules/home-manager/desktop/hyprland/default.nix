@@ -54,7 +54,7 @@ in {
     ./wayland-pipewire-idle-inhibit.nix
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (hyprlandCfg.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && hyprlandCfg.enable) {
     nix.settings = {
       extra-substituters = ["https://hyprland.cachix.org"];
       extra-trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
@@ -117,11 +117,11 @@ in {
           [
             "uwsm app -- waytrogen --restore"
           ]
-          ++ lib.optional (osConfig.programs.steam.enable or false) "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
-          ++ lib.optional (guiCfg.chat.discord.enable or false) "uwsm app -- discord --start-minimized"
-          ++ lib.optional (guiCfg.media.enable or false) "uwsm app -- jellyfin-mpv-shim"
-          ++ lib.optional (osConfig.rat.hardware.openrgb.enable or false) "uwsm app -- openrgb --startminimized"
-          ++ lib.optional (osConfig.programs.coolercontrol.enable or false) "uwsm app -- coolercontrol"
+          ++ lib.optional osConfig.programs.steam.enable "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
+          ++ lib.optional guiCfg.chat.discord.enable "uwsm app -- discord --start-minimized"
+          ++ lib.optional guiCfg.media.enable "uwsm app -- jellyfin-mpv-shim"
+          ++ lib.optional osConfig.rat.hardware.openrgb.enable "uwsm app -- openrgb --startminimized"
+          ++ lib.optional osConfig.programs.coolercontrol.enable "uwsm app -- coolercontrol"
           ++ lib.optional (tvMonitor != null) "tv-power on";
 
         general = {

@@ -20,7 +20,7 @@ in {
     ./voice-calls.nix
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (easyeffectsCfg.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && easyeffectsCfg.enable) {
     services.easyeffects.enable = true;
     systemd.user.services.easyeffects.Unit.ConditionEnvironment = "WAYLAND_DISPLAY";
     home.packages = with pkgs; [lsp-plugins];

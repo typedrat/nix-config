@@ -11,7 +11,7 @@
   guiCfg = userCfg.gui or {};
   terminalsCfg = guiCfg.terminals or {};
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (terminalsCfg.ghostty.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && terminalsCfg.ghostty.enable) {
     programs.ghostty = {
       enable = true;
       settings = {

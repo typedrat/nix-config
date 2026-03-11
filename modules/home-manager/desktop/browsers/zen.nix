@@ -210,7 +210,7 @@ in {
     inputs.zen-browser.homeModules.default
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (browsersCfg.zen.enable or false)) {
+  config = modules.mkIf (guiCfg.enable && browsersCfg.zen.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/zen" ".cache/zen" ".mozilla" ".pki"];
     };

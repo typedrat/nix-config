@@ -173,8 +173,6 @@
       extraGroups = ["comfyui"];
       cli = {
         enable = true;
-        comfy-cli.enable = true;
-        tv-power.enable = true;
       };
       gui = {
         enable = true;

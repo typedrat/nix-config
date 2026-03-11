@@ -39,7 +39,7 @@
     ForegroundVisited = rgb palette.mauve;
   };
 in {
-  config = modules.mkIf ((themingCfg.enable or false) && (guiCfg.enable or false)) {
+  config = modules.mkIf (themingCfg.enable && guiCfg.enable) {
     rat.kdeglobals = {
       "ColorEffects:Disabled" = {
         Color = rgb palette.base;
