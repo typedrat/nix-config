@@ -23,18 +23,18 @@ in {
     };
     # Declare the screenscraper secrets
     sops.secrets."skyscraper/screenscraper/username" = {
-      sopsFile = ../../secrets/skyscraper.yaml;
+      sopsFile = ../../../../secrets/skyscraper.yaml;
     };
     sops.secrets."skyscraper/screenscraper/password" = {
-      sopsFile = ../../secrets/skyscraper.yaml;
+      sopsFile = ../../../../secrets/skyscraper.yaml;
     };
 
     # Declare the IGDB secrets
     sops.secrets."skyscraper/igdb/clientId" = {
-      sopsFile = ../../secrets/skyscraper.yaml;
+      sopsFile = ../../../../secrets/skyscraper.yaml;
     };
     sops.secrets."skyscraper/igdb/clientSecret" = {
-      sopsFile = ../../secrets/skyscraper.yaml;
+      sopsFile = ../../../../secrets/skyscraper.yaml;
     };
 
     # Template to combine username:password

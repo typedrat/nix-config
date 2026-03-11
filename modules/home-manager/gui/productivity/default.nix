@@ -32,7 +32,6 @@ in {
     };
 
     home.packages = with pkgs; [
-      cherry-studio
       zotero
     ];
   };

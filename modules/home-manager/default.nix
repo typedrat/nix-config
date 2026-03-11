@@ -12,15 +12,13 @@
 in {
   imports = [
     ./cli
+    ./core
     ./gui
     ./hardware
     ./theming
-    ./core
     ./kdeglobals.nix
     ./packages.nix
     ./rclone.nix
-    ./security-key.nix
-    ./skyscraper.nix
   ];
 
   config = mkMerge [

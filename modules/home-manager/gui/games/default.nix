@@ -17,6 +17,7 @@ in {
     ./anime-game-launchers.nix
     ./retroarch.nix
     ./sgdboop.nix
+    ./skyscraper.nix
     ./xmage.nix
   ];
 
