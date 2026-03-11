@@ -1,6 +1,7 @@
 {
   config,
   osConfig,
+  inputs,
   inputs',
   pkgs,
   lib,
@@ -11,6 +12,10 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
 in {
+  imports = [
+    inputs.nix-index-database.homeModules.nix-index
+  ];
+
   config = mkMerge [
     # Base Nix configuration
     {
@@ -43,6 +48,8 @@ in {
         enable = true;
         enableZshIntegration = true;
       };
+
+      programs.nix-index-database.comma.enable = true;
     })
   ];
 }
