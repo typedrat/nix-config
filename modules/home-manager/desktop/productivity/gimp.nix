@@ -9,17 +9,15 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
+  productivityCfg = guiCfg.productivity or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (guiCfg.graphics.enable or false)) {
+  config = modules.mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false)) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/inkscape"];
+      directories = [".config/GIMP"];
     };
-    home.packages = with pkgs; [
-      gimp3
-      inkscape
-      imgbrd-grabber
-    ];
+
+    home.packages = [pkgs.gimp3];
   };
 }

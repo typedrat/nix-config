@@ -9,24 +9,15 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
+  productivityCfg = guiCfg.productivity or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf (guiCfg.enable or false) {
+  config = modules.mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false)) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        {
-          directory = ".local/share/keyrings";
-          mode = "0700";
-        }
-      ];
+      directories = [".config/Bionus/Grabber"];
     };
 
-    home.packages = [pkgs.seahorse];
-
-    services.gnome-keyring = {
-      enable = true;
-      components = ["secrets"];
-    };
+    home.packages = [pkgs.imgbrd-grabber];
   };
 }

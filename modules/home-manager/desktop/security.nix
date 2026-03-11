@@ -12,13 +12,35 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (guiCfg.security.enable or false)) {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".local/share/Bitwarden"];
-    };
+  config = modules.mkMerge [
+    # Bitwarden
+    (modules.mkIf ((guiCfg.enable or false) && (guiCfg.security.enable or false)) {
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [".local/share/Bitwarden"];
+      };
 
-    home.packages = with pkgs; [
-      bitwarden-desktop
-    ];
-  };
+      home.packages = with pkgs; [
+        bitwarden-desktop
+      ];
+    })
+
+    # GNOME Keyring
+    (modules.mkIf (guiCfg.enable or false) {
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [
+          {
+            directory = ".local/share/keyrings";
+            mode = "0700";
+          }
+        ];
+      };
+
+      home.packages = [pkgs.seahorse];
+
+      services.gnome-keyring = {
+        enable = true;
+        components = ["secrets"];
+      };
+    })
+  ];
 }

@@ -3,15 +3,12 @@
     ./browsers
     ./chat
     ./development
-    ./easyeffects
     ./gaming
     ./hyprland
     ./media
     ./productivity
     ./terminals
-    ./claude-desktop.nix
-    ./gnome-keyring.nix
-    ./graphics.nix
+    ./ai.nix
     ./kdeglobals.nix
     ./security.nix
     ./utilities.nix

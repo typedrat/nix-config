@@ -14,6 +14,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   imports = [
+    ./easyeffects
     ./mpv.nix
     ./obs.nix
     ./spotify.nix

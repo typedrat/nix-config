@@ -15,16 +15,9 @@
 in {
   config = modules.mkIf ((guiCfg.enable or false) && (productivityCfg.enable or false)) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/kicad" ".local/share/kicad"];
+      directories = [".config/inkscape"];
     };
 
-    home.packages = [
-      (pkgs.kicad.override {
-        addons = with pkgs.kicadAddons; [
-          kikit
-          kikit-library
-        ];
-      })
-    ];
+    home.packages = [pkgs.inkscape];
   };
 }
