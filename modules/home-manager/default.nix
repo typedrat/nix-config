@@ -15,16 +15,12 @@ in {
     ./gui
     ./hardware
     ./theming
+    ./core
     ./kdeglobals.nix
-    ./accounts.nix
-    ./impermanence.nix
-    ./mime.nix
     ./packages.nix
     ./rclone.nix
     ./security-key.nix
     ./skyscraper.nix
-    ./sops.nix
-    ./user-sops-secrets.nix
   ];
 
   config = mkMerge [

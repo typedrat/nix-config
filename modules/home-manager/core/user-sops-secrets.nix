@@ -23,7 +23,7 @@ in {
       (mkIf needsWorkGdriveSecrets {
         work-gdrive-sa-key = {
           format = "json";
-          sopsFile = ../../secrets/synapdeck-gdrive.json;
+          sopsFile = ../../../secrets/synapdeck-gdrive.json;
           key = "";
         };
       })

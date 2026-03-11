@@ -19,7 +19,6 @@ in {
     ./tools.nix
     ./tv-power.nix
     ./utilities.nix
-    ./xdg-compliance.nix
   ];
 
   config = modules.mkIf (cliCfg.enable or false) {
