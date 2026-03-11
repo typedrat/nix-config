@@ -28,7 +28,7 @@
   zenRepoFlavor = capitalizeFirst flavor;
   zenRepoAccent = capitalizeFirst accent;
 
-  commonFirefoxConfig = {
+  zenFirefoxConfig = {
     profiles = {
       default = {
         id = 0;
@@ -208,110 +208,57 @@
 in {
   imports = [
     inputs.zen-browser.homeModules.default
-    ./firefox
   ];
 
-  config = modules.mkMerge [
-    # Persistence
-    (modules.mkIf ((guiCfg.enable or false) && impermanenceCfg.home.enable) {
-      home.persistence.${persistDir} = {
-        directories = [".config/BraveSoftware" ".config/zen" ".cache/zen" ".mozilla" ".pki"];
-      };
-    })
+  config = modules.mkIf ((guiCfg.enable or false) && (browsersCfg.zen.enable or false)) {
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+      directories = [".config/zen" ".cache/zen" ".mozilla" ".pki"];
+    };
 
-    # Brave
-    (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.brave.enable or false)) {
-      programs.brave = {
-        enable = true;
-        commandLineArgs = [
-          "--no-default-browser-check"
-          "--enable-features=UseOzonePlatform,Vulkan,VulkanFromANGLE,WebNN"
-          "--use-angle=vulkan"
-          "--ozone-platform=x11"
-          "--enable-wayland-ime"
-          "--wayland-text-input-version=3"
-        ];
-        extensions = [
-          "nngceckbapebfimnlniiiahkandclblb" # Bitwarden Password Manager
-          "lnjaiaapbakfhlbjenjkhffcdpoompki" # Catppuccin for Web File Explorer Icons
-          "fcoeoabgfenejglbffodgkkbkcdhcgfn" # Claude
-          "cjjieeldgoohbkifkogalkmfpddeafcm" # Granted
-          "gcbommkclmclpchllfjekcdonpmejbdp" # HTTPS Everywhere
-          "mbniclmhobmnbdlbpiphghaielnnpgdp" # Lightshot
-          "fmkadmapgofadopljbjfkapdkoienihi" # React Developer Tools
-        ];
+    programs.zen-browser = lib.attrsets.recursiveUpdate zenFirefoxConfig {
+      enable = true;
+
+      profiles = {
+        default = {
+          userChrome = let
+            patchCss = file:
+              pkgs.runCommand "patched-css" {} ''
+                ARROWPANEL_COLOR=''$(${pkgs.gnugrep}/bin/grep -o -- '--arrowpanel-color: [^;]*' ${file} | ${pkgs.coreutils}/bin/cut -d' ' -f2)
+                ARROWPANEL_BG=''$(${pkgs.gnugrep}/bin/grep -o -- '--arrowpanel-background: [^;]*' ${file} | ${pkgs.coreutils}/bin/cut -d' ' -f2)
+
+                ${pkgs.gnused}/bin/sed \
+                  -e '/--arrowpanel-color:/d' \
+                  -e '/--arrowpanel-background:/d' \
+                  -e '/^}$/i\\n  #mainPopupSet > menupopup, panel,tooltip {\n    --arrowpanel-color: '"$ARROWPANEL_COLOR"';\n    --arrowpanel-background: '"$ARROWPANEL_BG"';\n  }' \
+                  ${file} > $out
+              '';
+          in
+            lib.strings.concatLines [
+              (builtins.readFile (patchCss "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userChrome.css"))
+              (builtins.readFile (patchCss "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userChrome.css"))
+            ];
+        };
       };
 
-      # Native messaging hosts for Brave
-      programs.brave.nativeMessagingHosts = [
-        (pkgs.writeTextDir "etc/chromium/native-messaging-hosts/com.anthropic.claude_code_browser_extension.json" (builtins.toJSON {
-          name = "com.anthropic.claude_code_browser_extension";
-          description = "Claude Code Browser Extension Native Host";
-          path = "${config.home.homeDirectory}/.claude/chrome/chrome-native-host";
-          type = "stdio";
-          allowed_origins = [
-            "chrome-extension://fcoeoabgfenejglbffodgkkbkcdhcgfn/"
-          ];
-        }))
-        (pkgs.writeTextDir "etc/chromium/native-messaging-hosts/io.commonfate.granted.json" (builtins.toJSON {
+      nativeMessagingHosts = [
+        (pkgs.writeTextDir "lib/mozilla/native-messaging-hosts/io.commonfate.granted.json" (builtins.toJSON {
           name = "io.commonfate.granted";
           description = "Granted BrowserSupport";
           path = "${pkgs.granted}/bin/granted";
           type = "stdio";
-          allowed_origins = [
-            "chrome-extension://cjjieeldgoohbkifkogalkmfpddeafcm/"
+          allowed_extensions = [
+            "{b5e0e8de-ebfe-4306-9528-bcc18241a490}"
           ];
         }))
       ];
-    })
+    };
 
-    # Zen Browser
-    (modules.mkIf ((guiCfg.enable or false) && (browsersCfg.zen.enable or false)) {
-      programs.zen-browser = lib.attrsets.recursiveUpdate commonFirefoxConfig {
-        enable = true;
+    home.file.".config/zen/default/chrome/userContent.css".text = lib.strings.concatLines [
+      (builtins.readFile "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userContent.css")
+      (builtins.readFile "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userContent.css")
+    ];
 
-        profiles = {
-          default = {
-            userChrome = let
-              patchCss = file:
-                pkgs.runCommand "patched-css" {} ''
-                  ARROWPANEL_COLOR=''$(${pkgs.gnugrep}/bin/grep -o -- '--arrowpanel-color: [^;]*' ${file} | ${pkgs.coreutils}/bin/cut -d' ' -f2)
-                  ARROWPANEL_BG=''$(${pkgs.gnugrep}/bin/grep -o -- '--arrowpanel-background: [^;]*' ${file} | ${pkgs.coreutils}/bin/cut -d' ' -f2)
-
-                  ${pkgs.gnused}/bin/sed \
-                    -e '/--arrowpanel-color:/d' \
-                    -e '/--arrowpanel-background:/d' \
-                    -e '/^}$/i\\n  #mainPopupSet > menupopup, panel,tooltip {\n    --arrowpanel-color: '"$ARROWPANEL_COLOR"';\n    --arrowpanel-background: '"$ARROWPANEL_BG"';\n  }' \
-                    ${file} > $out
-                '';
-            in
-              lib.strings.concatLines [
-                (builtins.readFile (patchCss "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userChrome.css"))
-                (builtins.readFile (patchCss "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userChrome.css"))
-              ];
-          };
-        };
-
-        nativeMessagingHosts = [
-          (pkgs.writeTextDir "lib/mozilla/native-messaging-hosts/io.commonfate.granted.json" (builtins.toJSON {
-            name = "io.commonfate.granted";
-            description = "Granted BrowserSupport";
-            path = "${pkgs.granted}/bin/granted";
-            type = "stdio";
-            allowed_extensions = [
-              "{b5e0e8de-ebfe-4306-9528-bcc18241a490}"
-            ];
-          }))
-        ];
-      };
-
-      home.file.".config/zen/default/chrome/userContent.css".text = lib.strings.concatLines [
-        (builtins.readFile "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/userContent.css")
-        (builtins.readFile "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/userContent.css")
-      ];
-
-      home.file.".config/zen/default/chrome/zen-logo-latte.svg".source = "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/zen-logo-latte.svg";
-      home.file.".config/zen/default/chrome/zen-logo-${flavor}.svg".source = "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/zen-logo-${flavor}.svg";
-    })
-  ];
+    home.file.".config/zen/default/chrome/zen-logo-latte.svg".source = "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/zen-logo-latte.svg";
+    home.file.".config/zen/default/chrome/zen-logo-${flavor}.svg".source = "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/zen-logo-${flavor}.svg";
+  };
 }

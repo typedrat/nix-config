@@ -1,16 +1,15 @@
 {
   imports = [
+    ./browsers
     ./chat
     ./devtools
     ./easyeffects
-    ./firefox
     ./games
     ./ghostty
     ./hyprland
     ./media
     ./productivity
     ./wezterm
-    ./browsers.nix
     ./claude-desktop.nix
     ./gnome-keyring.nix
     ./graphics.nix

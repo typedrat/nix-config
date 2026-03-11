@@ -43,6 +43,7 @@ in {
     ./wallpaper
 
     # Simple toggles
+    ./bitwarden-resize.nix
     ./blur.nix
     ./fcitx5.nix
     ./hyprbars.nix
