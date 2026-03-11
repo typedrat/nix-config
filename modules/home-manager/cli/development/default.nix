@@ -29,6 +29,7 @@ in {
       # Development utilities
       devpod
       process-compose
+      tokei
       rainfrog
       uv
 

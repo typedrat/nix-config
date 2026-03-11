@@ -21,6 +21,7 @@ in {
       transmission_4-qt6
       waypipe
       wev
+      wl-clipboard
       xcursor-viewer
     ];
   };

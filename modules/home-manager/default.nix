@@ -17,7 +17,6 @@ in {
     ./hardware
     ./theming
     ./kdeglobals.nix
-    ./packages.nix
     ./rclone.nix
   ];
 

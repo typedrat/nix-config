@@ -12,15 +12,12 @@
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
     home.packages = with pkgs; [
-      # System monitoring and debugging
-      ethtool
-      lm_sensors
-      lsof
-      ltrace
-      pciutils
-      strace
-      sysstat
-      usbutils
+      _7zz-rar
+      unrar
+      unzip
+      xz
+      zip
+      zstd
     ];
   };
 }

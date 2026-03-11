@@ -18,25 +18,38 @@ in {
         ".local/share/direnv"
         ".local/share/zoxide"
         ".local/state/yazi"
-        ".local/share/mergiraf"
       ];
     };
+
+    home.packages = with pkgs; [
+      catbox-cli
+      cowsay
+      (fastfetch.overrideAttrs (oldAttrs: {
+        buildInputs =
+          (oldAttrs.buildInputs or [])
+          ++ [
+            zfs
+          ];
+      }))
+      file
+      gawk
+      gdu
+      gnused
+      gnutar
+      hyfetch
+      jd-diff-patch
+      openssl
+      pv
+      rename
+      tree
+      vim.xxd
+      which
+    ];
+
     programs.aria2.enable = true;
 
     programs.bat.enable = true;
     programs.zsh.shellAliases.cat = "bat";
-
-    programs.bottom.enable = true;
-
-    programs.btop = {
-      enable = true;
-      package = pkgs.btop-cuda;
-    };
-
-    programs.difftastic = {
-      enable = true;
-      git.enable = true;
-    };
 
     programs.direnv = {
       enable = true;
@@ -67,15 +80,6 @@ in {
     };
 
     programs.jq.enable = true;
-
-    programs.lazygit.enable = true;
-
-    programs.mergiraf.enable = true;
-
-    programs.nix-index = {
-      enable = true;
-      enableZshIntegration = true;
-    };
 
     programs.parallel = {
       enable = true;
