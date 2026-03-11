@@ -20,7 +20,7 @@
 
     boot.loader = "lanzaboote";
 
-    games = {
+    gaming = {
       enable = true;
       animeGameLaunchers.enable = true;
       steam.enable = true;
@@ -78,9 +78,9 @@
           pyprland.enable = true;
           smartGaps.enable = true;
         };
-        terminal.ghostty.enable = true;
+        terminals.ghostty.enable = true;
 
-        games.retroarch = {
+        gaming.retroarch = {
           enable = true;
           cores = libretro:
             with libretro; [

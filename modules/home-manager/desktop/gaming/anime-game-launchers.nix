@@ -4,11 +4,11 @@
   ...
 }: let
   inherit (lib) modules;
-  aaglCfg = osConfig.rat.games.animeGameLaunchers;
+  aaglCfg = osConfig.rat.gaming.animeGameLaunchers;
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = modules.mkIf (osConfig.rat.games.enable && aaglCfg.enable) {
+  config = modules.mkIf (osConfig.rat.gaming.enable && aaglCfg.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".local/share/anime-game-launcher"

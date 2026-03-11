@@ -9,7 +9,7 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
-  gamesCfg = guiCfg.games or {};
+  gamingCfg = guiCfg.gaming or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
@@ -21,7 +21,7 @@ in {
     ./xmage.nix
   ];
 
-  config = modules.mkIf ((guiCfg.enable or false) && (gamesCfg.enable or false)) {
+  config = modules.mkIf ((guiCfg.enable or false) && (gamingCfg.enable or false)) {
     home.packages = with pkgs; [
       bottles
       gamescope

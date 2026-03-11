@@ -8,9 +8,9 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
-  terminalCfg = guiCfg.terminal or {};
+  terminalsCfg = guiCfg.terminals or {};
 in {
-  config = modules.mkIf ((guiCfg.enable or false) && (terminalCfg.wezterm.enable or false)) {
+  config = modules.mkIf ((guiCfg.enable or false) && (terminalsCfg.wezterm.enable or false)) {
     programs.wezterm = {
       enable = true;
       enableZshIntegration = true;

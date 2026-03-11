@@ -10,7 +10,7 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
-  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
+  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.development.enable) {
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/zed" ".local/share/zed"];
     };

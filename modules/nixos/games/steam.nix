@@ -7,9 +7,9 @@
   inherit (lib.options) mkEnableOption;
   inherit (lib.modules) mkIf;
 in {
-  options.rat.games.steam.enable = mkEnableOption "Steam";
+  options.rat.gaming.steam.enable = mkEnableOption "Steam";
 
-  config = mkIf (config.rat.games.enable && config.rat.games.steam.enable) {
+  config = mkIf (config.rat.gaming.enable && config.rat.gaming.steam.enable) {
     rat.java.enable = true;
 
     programs.steam = {

@@ -9,7 +9,7 @@
     (lib.toUpper (builtins.substring 0 1 str))
     + (builtins.substring 1 (builtins.stringLength str) str);
 in
-  lib.optionalAttrs osConfig.rat.games.steam.enable {
+  lib.optionalAttrs osConfig.rat.gaming.steam.enable {
     home.packages = [pkgs.adwsteamgtk];
 
     home.activation = let

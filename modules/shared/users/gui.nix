@@ -118,14 +118,14 @@
         element.enable = options.mkEnableOption "Element (Matrix)" // {default = true;};
       };
 
-      devtools = {
+      development = {
         enable = options.mkEnableOption "graphical development tools" // {default = true;};
         vscode.enable = options.mkEnableOption "VS Code" // {default = true;};
         zed.enable = options.mkEnableOption "Zed editor" // {default = true;};
         imhex.enable = options.mkEnableOption "ImHex" // {default = true;};
       };
 
-      games = {
+      gaming = {
         enable = options.mkEnableOption "gaming applications" // {default = true;};
         xmage.enable = options.mkEnableOption "XMage" // {default = true;};
         sgdboop.enable = options.mkEnableOption "SGDBoop" // {default = true;};
@@ -178,21 +178,13 @@
         zen.enable = options.mkEnableOption "Zen Browser" // {default = true;};
       };
 
-      terminal = {
+      terminals = {
         wezterm.enable = options.mkEnableOption "WezTerm" // {default = true;};
         ghostty.enable = options.mkEnableOption "Ghostty";
       };
 
       easyeffects = {
         enable = options.mkEnableOption "EasyEffects audio processing";
-      };
-
-      packages = {
-        enable = options.mkEnableOption "miscellaneous GUI packages" // {default = true;};
-      };
-
-      graphics = {
-        enable = options.mkEnableOption "graphics and image editing tools" // {default = true;};
       };
 
       utilities = {

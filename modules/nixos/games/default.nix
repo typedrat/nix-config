@@ -12,7 +12,7 @@ in {
   ];
 
   options.rat = {
-    games.enable = mkEnableOption "games";
+    gaming.enable = mkEnableOption "gaming";
   };
 
   config = mkMerge [
@@ -23,7 +23,7 @@ in {
       };
     }
 
-    (mkIf config.rat.games.enable {
+    (mkIf config.rat.gaming.enable {
       assertions = [
         {
           assertion = config.rat.gui.enable;

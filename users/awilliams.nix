@@ -17,7 +17,7 @@ in {
         "games"
         "wheel"
       ]
-      ++ lib.optionals config.rat.games.enable [
+      ++ lib.optionals config.rat.gaming.enable [
         "gamemode"
       ];
     shell = pkgs.zsh;

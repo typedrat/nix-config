@@ -151,8 +151,8 @@
     };
     theming.fonts.enableGoogleFonts = false;
 
-    # Games
-    games = {
+    # Gaming
+    gaming = {
       enable = true;
       animeGameLaunchers.enable = true;
       steam.enable = true;
@@ -189,7 +189,7 @@
           pyprland.enable = true;
           smartGaps.enable = true;
         };
-        terminal.ghostty.enable = true;
+        terminals.ghostty.enable = true;
         productivity = {
           krita = {
             enable = true;

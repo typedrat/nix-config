@@ -9,8 +9,8 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
-  gamesCfg = guiCfg.games or {};
-  retroarchCfg = gamesCfg.retroarch or {};
+  gamingCfg = guiCfg.gaming or {};
+  retroarchCfg = gamingCfg.retroarch or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {

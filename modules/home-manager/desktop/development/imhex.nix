@@ -15,7 +15,7 @@
     (file: lib.hasSuffix ".json" file)
     (lib.filesystem.listFilesRecursive themesDir);
 in {
-  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.devtools.enable) {
+  config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.development.enable) {
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
       directories = [".config/imhex" ".local/share/imhex"];
     };
