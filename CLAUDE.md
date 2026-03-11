@@ -159,6 +159,24 @@ The terranix wrapper automatically:
 - NixOS modules use `rat.*` namespace for configuration options
 - Home Manager modules are separate in `modules/home-manager/`
 
+### Nixpkgs/Home-Manager Patches
+
+To apply an unmerged nixpkgs PR as a patch:
+
+1. Add an input to `flake.nix` in the `#region nixpkgs patches` section:
+   ```nix
+   # <short description of what the patch does> (NixOS/nixpkgs#<PR number>)
+   nixpkgs-patch-<PR number> = {
+     url = "https://github.com/NixOS/nixpkgs/pull/<PR number>.diff";
+     flake = false;
+   };
+   ```
+2. That's it — the custom patcher module (`modules/extra/flake-parts/patcher.nix`) auto-discovers all inputs prefixed with `nixpkgs-patch-` and applies them. The integration happens in `modules/extra/flake-parts/nixos-hosts.nix`.
+
+The same pattern works for home-manager patches using the `home-manager-patch-` prefix in the `#region home-manager patches` section.
+
+When adding a patch, fetch the PR details to write a useful comment describing what it does.
+
 ### Secret Management
 
 - All secrets use SOPS encryption stored in `secrets/`
@@ -257,5 +275,5 @@ Always test system changes safely:
 - The configuration uses Catppuccin theming extensively across applications
 - Custom fonts include Apple SF Pro, SF Mono, and New York
 - The `rat.*` namespace is used for custom NixOS options throughout the configuration
-- Nixpkgs patches can be added via inputs prefixed with `nixpkgs-patch-` (handled by nixpkgs-patcher)
+- Nixpkgs patches: see "Nixpkgs/Home-Manager Patches" section under Important Patterns
 - Root `default.nix` uses `flake-compat` to expose the flake for `nix-update` compatibility
