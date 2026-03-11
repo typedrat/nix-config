@@ -14,6 +14,7 @@
     ./claude-desktop.nix
     ./gnome-keyring.nix
     ./graphics.nix
+    ./kdeglobals.nix
     ./security.nix
     ./utilities.nix
   ];

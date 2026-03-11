@@ -12,10 +12,9 @@ in {
   imports = [
     ./cli
     ./core
-    ./gui
+    ./desktop
     ./hardware
     ./theming
-    ./kdeglobals.nix
   ];
 
   config = {
