@@ -6,8 +6,7 @@
   nodejs,
   makeBinaryWrapper,
   kicad-skip,
-}:
-let
+}: let
   pythonEnv = python3.withPackages (ps:
     with ps; [
       kicad # pcbnew SWIG bindings
@@ -23,7 +22,7 @@ let
       typing-extensions
     ]);
 in
-  buildNpmPackage (finalAttrs: {
+  buildNpmPackage (_finalAttrs: {
     pname = "kicad-mcp-server";
     version = "0-unstable-2025-12-01";
 

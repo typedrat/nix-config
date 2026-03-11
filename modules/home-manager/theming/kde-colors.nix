@@ -13,7 +13,9 @@
   palette =
     (builtins.fromJSON
       (builtins.readFile "${config.catppuccin.sources.palette}/palette.json"))
-    .${config.catppuccin.flavor}
+    .${
+      config.catppuccin.flavor
+    }
     .colors;
 
   accentColor = config.catppuccin.accent;

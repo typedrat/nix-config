@@ -34,7 +34,7 @@ in {
       pinentry.package = agentCfg.pinentryPackage;
       defaultCacheTtl = agentCfg.defaultCacheTtl or 600;
       maxCacheTtl = agentCfg.maxCacheTtl or 7200;
-      enableSshSupport = agentCfg.enableSshSupport;
+      inherit (agentCfg) enableSshSupport;
     };
   };
 }
