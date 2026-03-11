@@ -34,20 +34,27 @@ in {
     };
 
     proxy.providers = mkOption {
-      type = types.listOf types.str;
-      default = [];
-      description = "List of Proxy provider IDs";
+      type = types.attrsOf types.str;
+      default = {};
+      description = "Attrset of name → provider ID for proxy providers";
     };
   };
 
-  config.resource = {
-    authentik_outpost = {
-      embedded-outpost = {
-        name = "authentik Embedded Outpost";
-        protocol_providers = config.authentik.outposts.proxy.providers;
-      };
+  config = {
+    data.authentik_outpost.embedded-outpost = {
+      name = "authentik Embedded Outpost";
+    };
 
-      ldap = {
+    resource = {
+      authentik_outpost_provider_attachment = lib.mapAttrs' (name: provider: {
+        name = "embedded-outpost-${name}";
+        value = {
+          outpost = "\${ data.authentik_outpost.embedded-outpost.id }";
+          protocol_provider = provider;
+        };
+      }) config.authentik.outposts.proxy.providers;
+
+      authentik_outpost.ldap = {
         name = "LDAP Outpost";
         type = "ldap";
         config = builtins.toJSON outpostConfig;

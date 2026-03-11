@@ -378,7 +378,7 @@ in {
           )
           config.authentik.applications);
 
-      proxy.providers = lib.mapAttrsToList (
+      proxy.providers = lib.mapAttrs (
         name: _cfg: "\${authentik_provider_proxy.${name}-proxy.id}"
       ) (lib.filterAttrs (_name: cfg: cfg.proxy != null) config.authentik.applications);
     };
