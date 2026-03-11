@@ -16,7 +16,6 @@ in {
     ./hardware
     ./theming
     ./kdeglobals.nix
-    ./rclone.nix
   ];
 
   config = {

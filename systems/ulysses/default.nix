@@ -68,12 +68,6 @@
     SUBSYSTEM=="hidraw", ATTRS{idVendor}=="22d4", ATTRS{idProduct}=="132b", MODE="0666"
   '';
 
-  # --- Extra packages ---
-
-  environment.systemPackages = [
-    inputs'.llama-cpp.packages.cuda
-  ];
-
   # --- rat.* configuration ---
 
   rat = {

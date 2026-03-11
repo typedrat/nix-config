@@ -1,6 +1,7 @@
 {
   config,
   osConfig,
+  inputs',
   pkgs,
   lib,
   ...
@@ -14,6 +15,7 @@
 
   # Check if user has specific secrets configured (awilliams-specific)
   hasUserSecrets = username == "awilliams";
+  hasNvidia = osConfig.rat.hardware.nvidia.enable or false;
 in {
   config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.ai.enable or false)) {
     xdg.userDirs.extraConfig.XDG_AI_DIR = "$HOME/AI";
@@ -28,13 +30,20 @@ in {
       openrouterApiKey = {};
     };
 
-    home.packages = with pkgs; [
-      llm
-      python3Packages.huggingface-hub
-    ];
+    home.packages =
+      (with pkgs; [
+        llm
+        python3Packages.huggingface-hub
+      ])
+      ++ lib.optional hasNvidia inputs'.llama-cpp.packages.cuda;
 
     home.sessionVariables = {
       HF_HUB_ENABLE_HF_TRANSFER = "1";
+    };
+
+    programs.comfy-cli = {
+      enable = true;
+      package = pkgs.comfy-cli;
     };
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''

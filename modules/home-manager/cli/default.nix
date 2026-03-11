@@ -1,11 +1,9 @@
 {
   imports = [
     ./development
+    ./networking
     ./shell
     ./tools
     ./ai.nix
-    ./comfy-cli.nix
-    ./networking.nix
-    ./tv-power.nix
   ];
 }
