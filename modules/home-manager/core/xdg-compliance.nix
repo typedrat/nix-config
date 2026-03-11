@@ -49,6 +49,12 @@ in {
       };
 
       programs.bash.historyFile = "/dev/null";
+
+      xdg.userDirs = {
+        enable = true;
+        createDirectories = true;
+        setSessionVariables = true;
+      };
     }
 
     # GPU/shader cache persistence

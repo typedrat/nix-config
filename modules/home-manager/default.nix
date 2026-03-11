@@ -7,7 +7,6 @@
   inherit (lib.modules) mkIf mkMerge;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
-  gitCfg = userCfg.git or {};
   envCfg = userCfg.environment or {};
 in {
   imports = [
@@ -20,70 +19,22 @@ in {
     ./rclone.nix
   ];
 
-  config = mkMerge [
-    {
-      # Trim old Nix generations to free up space.
-      nix.gc = {
-        automatic = true;
-        persistent = true;
-        dates = "daily";
-        options = "--delete-older-than 30d";
-      };
+  config = {
+    systemd.user.sessionVariables = mkMerge [
+      {
+        SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+        TZ = osConfig.time.timeZone;
+      }
+      # User-specific environment variables
+      (mkIf (envCfg.variables or {} != {}) envCfg.variables)
+    ];
 
-      systemd.user.sessionVariables = mkMerge [
-        {
-          SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
-          TZ = osConfig.time.timeZone;
-        }
-        # User-specific environment variables
-        (mkIf (envCfg.variables or {} != {}) envCfg.variables)
-      ];
+    programs.home-manager.enable = true;
+    services.ssh-agent.enable = true;
 
-      xdg.configFile."nixpkgs/config.nix".text = ''
-        { allowUnfree = true; }
-      '';
+    # Nicely reload system units when changing configs
+    systemd.user.startServices = "sd-switch";
 
-      programs.home-manager.enable = true;
-      services.ssh-agent.enable = true;
-
-      # Nicely reload system units when changing configs
-      systemd.user.startServices = "sd-switch";
-
-      xdg.userDirs = {
-        enable = true;
-        createDirectories = true;
-        setSessionVariables = true;
-      };
-
-      home.stateVersion = "26.05";
-    }
-
-    # Git configuration (only if user has configured it)
-    (mkIf (gitCfg.name != null && gitCfg.email != null) {
-      programs.git = {
-        enable = true;
-        lfs.enable = true;
-
-        signing = mkIf (gitCfg.signing.key != null) {
-          inherit (gitCfg.signing) key format;
-          inherit (gitCfg.signing) signByDefault;
-        };
-
-        settings = {
-          user = {
-            inherit (gitCfg) name;
-            inherit (gitCfg) email;
-          };
-
-          init = {
-            defaultBranch = "master";
-          };
-
-          push = {
-            autoSetupRemote = true;
-          };
-        };
-      };
-    })
-  ];
+    home.stateVersion = "26.05";
+  };
 }

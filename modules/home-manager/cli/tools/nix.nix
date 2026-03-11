@@ -6,26 +6,43 @@
   lib,
   ...
 }: let
-  inherit (lib) modules;
+  inherit (lib.modules) mkIf mkMerge;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
 in {
-  config = modules.mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
-    home.packages = with pkgs; [
-      cachix
-      fh
-      nix-diff
-      nix-prefetch-github
-      nix-tree
-      nix-update
-      nixpkgs-review
-      inputs'.attic.packages.attic-client
-    ];
+  config = mkMerge [
+    # Base Nix configuration
+    {
+      nix.gc = {
+        automatic = true;
+        persistent = true;
+        dates = "daily";
+        options = "--delete-older-than 30d";
+      };
 
-    programs.nix-index = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-  };
+      xdg.configFile."nixpkgs/config.nix".text = ''
+        { allowUnfree = true; }
+      '';
+    }
+
+    # Nix CLI tools
+    (mkIf ((cliCfg.enable or false) && (cliCfg.tools.enable or false)) {
+      home.packages = with pkgs; [
+        cachix
+        fh
+        nix-diff
+        nix-prefetch-github
+        nix-tree
+        nix-update
+        nixpkgs-review
+        inputs'.attic.packages.attic-client
+      ];
+
+      programs.nix-index = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+    })
+  ];
 }
