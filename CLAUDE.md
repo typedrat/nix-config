@@ -138,6 +138,8 @@ The terranix wrapper automatically:
 - **Flake outputs**: `flake/` (modular flake-parts configuration)
 - **System configs**: `systems/{hyperion,iserlohn,ulysses}/`
 - **NixOS modules**: `modules/nixos/`
+- **Home Manager modules**: `modules/home-manager/` (core/, cli/, desktop/, hardware/, theming/)
+- **Shared option definitions**: `modules/shared/users/` (cli.nix, gui.nix, etc.)
 - **User configs**: `users/awilliams/`
 - **Custom packages**: `packages/`
 - **Secrets**: `secrets/` (SOPS encrypted)
@@ -157,7 +159,17 @@ The terranix wrapper automatically:
   - `home/` - Home Assistant and IoT
   - `monitoring/` - Grafana, Prometheus, Loki, and exporters
 - NixOS modules use `rat.*` namespace for configuration options
-- Home Manager modules are separate in `modules/home-manager/`
+- Home Manager modules are organized in `modules/home-manager/` by domain:
+  - `core/` - Foundational modules (accounts, impermanence, SOPS, XDG, MIME)
+  - `cli/` - CLI tools and shell config (`development/`, `networking/`, `shell/`, `tools/`, `ai.nix`)
+  - `desktop/` - GUI applications (`browsers/`, `chat/`, `development/`, `gaming/`, `hyprland/`, `media/`, `productivity/`, `terminals/`)
+  - `hardware/` - Hardware-specific config (security keys, OpenRGB, CoolerControl)
+  - `theming/` - Visual theming (Catppuccin, KDE colors, cursors, Steam)
+- Home Manager modules use three-level cascading enable options:
+  - System-level: `rat.gui.enable`, `rat.gui.development.enable`
+  - User-level: `rat.users.<name>.gui.enable`, `rat.users.<name>.gui.development.enable`
+  - Per-app: `rat.users.<name>.gui.development.vscode.enable`
+- Option sub-keys match directory names: `development`, `gaming`, `terminals` (not `devtools`, `games`, `terminal`)
 
 ### Nixpkgs/Home-Manager Patches
 
