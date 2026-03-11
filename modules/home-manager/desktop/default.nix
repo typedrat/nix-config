@@ -2,14 +2,13 @@
   imports = [
     ./browsers
     ./chat
-    ./devtools
+    ./development
     ./easyeffects
-    ./games
-    ./ghostty
+    ./gaming
     ./hyprland
     ./media
     ./productivity
-    ./wezterm
+    ./terminals
     ./claude-desktop.nix
     ./gnome-keyring.nix
     ./graphics.nix
