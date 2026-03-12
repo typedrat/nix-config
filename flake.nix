@@ -31,9 +31,9 @@
       flake = false;
     };
 
-    # update claude-code from 2.1.70 to 2.1.72 (NixOS/nixpkgs#498470)
-    nixpkgs-patch-498470 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/498470.diff";
+    # update claude-code from 2.1.70 to 2.1.74 (NixOS/nixpkgs#499165)
+    nixpkgs-patch-499165 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/499165.diff";
       flake = false;
     };
     #endregion
