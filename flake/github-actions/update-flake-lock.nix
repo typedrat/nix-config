@@ -2,10 +2,16 @@
   name = "Update flake.lock";
 
   on = {
+    push.branches = ["master"];
     workflowDispatch = {};
     schedule = [
       {cron = "0 20 * * *";}
     ];
+  };
+
+  concurrency = {
+    group = "nix-updates";
+    cancelInProgress = false;
   };
 
   jobs = {

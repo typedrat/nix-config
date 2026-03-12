@@ -2,11 +2,17 @@
   name = "Update packages";
 
   on = {
+    push.branches = ["master"];
     workflowDispatch = {};
     # Run 1 hour after flake.lock update (0 20 * * *) to use fresh nixpkgs
     schedule = [
       {cron = "0 21 * * *";}
     ];
+  };
+
+  concurrency = {
+    group = "nix-updates";
+    cancelInProgress = false;
   };
 
   jobs = {
