@@ -153,11 +153,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # TODO: temporary path reference until FlakeHub raises the 75MB archive size
-    # limit (LFS-tracked .ttc gets stripped from the source tarball). Revert to:
-    # url = "https://flakehub.com/f/typedrat/nix-fonts/*";
     typedrat-fonts = {
-      url = "path:/home/awilliams/Development/nix-fonts";
+      url = "https://flakehub.com/f/typedrat/nix-fonts/*";
     };
     #endregion
 

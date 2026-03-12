@@ -22,20 +22,35 @@
         "type": "github"
       }
     },
+    "apple-color-emoji-ttc": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-Qdl2ejyvMhRfBg0FVWriXYFj1ocgLZrz46/O1oc2ChA=",
+        "type": "file",
+        "url": "https://zipline.thisratis.gay/u/YIP2Ri.ttc"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://zipline.thisratis.gay/u/YIP2Ri.ttc"
+      }
+    },
     "apple-emoji": {
       "inputs": {
         "nixpkgs": [
           "typedrat-fonts",
           "nixpkgs"
         ],
-        "ttc": "ttc"
+        "ttc": [
+          "typedrat-fonts",
+          "apple-color-emoji-ttc"
+        ]
       },
       "locked": {
-        "lastModified": 1771532394,
-        "narHash": "sha256-xw2IuYLOukUEFj0kQtVCm82wAAv4FLrtoJS1kb+UK6I=",
+        "lastModified": 1772747337,
+        "narHash": "sha256-WY4Yc/8V+eVyVgoCHEaQyW6EitHnB3dc1F2hW/N95Fo=",
         "owner": "samuelngs",
         "repo": "apple-emoji-ttf",
-        "rev": "2aa12422962f1e915e08aa587cdad6f812a25eef",
+        "rev": "c7fdcac57946f5a34256b7d267acc5c1cde444c7",
         "type": "github"
       },
       "original": {
@@ -850,12 +865,12 @@
         "nixpkgs-lib": "nixpkgs-lib_9"
       },
       "locked": {
-        "lastModified": 1769996383,
-        "narHash": "sha256-AnYjnFWgS49RlqX7LrC4uA+sCCDBj0Ry/WOJ5XWAsa0=",
-        "rev": "57928607ea566b5db3ad13af0e57e921e6b12381",
-        "revCount": 442,
+        "lastModified": 1772408722,
+        "narHash": "sha256-rHuJtdcOjK7rAHpHphUb1iCvgkU3GpfvicLMwwnfMT0=",
+        "rev": "f20dc5d9b8027381c474144ecabc9034d6a839a3",
+        "revCount": 445,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/hercules-ci/flake-parts/0.1.442%2Brev-57928607ea566b5db3ad13af0e57e921e6b12381/019c1cea-7090-7d32-9a74-9794d2b26381/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/hercules-ci/flake-parts/0.1.445%2Brev-f20dc5d9b8027381c474144ecabc9034d6a839a3/019cad18-ffd9-70a0-90f8-be89e5f67bbd/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -2237,11 +2252,11 @@
     },
     "nixpkgs-lib_9": {
       "locked": {
-        "lastModified": 1769909678,
-        "narHash": "sha256-cBEymOf4/o3FD5AZnzC3J9hLbiZ+QDT/KDuyHXVJOpM=",
+        "lastModified": 1772328832,
+        "narHash": "sha256-e+/T/pmEkLP6BHhYjx6GmwP5ivonQQn0bJdH9YrRB+Q=",
         "owner": "nix-community",
         "repo": "nixpkgs.lib",
-        "rev": "72716169fe93074c333e8d0173151350670b824c",
+        "rev": "c185c7a5e5dd8f9add5b2f8ebeff00888b070742",
         "type": "github"
       },
       "original": {
@@ -2385,12 +2400,12 @@
     },
     "nixpkgs_15": {
       "locked": {
-        "lastModified": 1771848320,
-        "narHash": "sha256-0MAd+0mun3K/Ns8JATeHT1sX28faLII5hVLq0L3BdZU=",
-        "rev": "2fc6539b481e1d2569f25f8799236694180c0993",
-        "revCount": 953160,
+        "lastModified": 1773122722,
+        "narHash": "sha256-FIqHByVqxCprNjor1NqF80F2QQoiiyqanNNefdlvOg4=",
+        "rev": "62dc67aa6a52b4364dd75994ec00b51fbf474e50",
+        "revCount": 961274,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.1.953160%2Brev-2fc6539b481e1d2569f25f8799236694180c0993/019c8e05-d2f6-7c7e-9ead-612154b18bfb/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.1.961274%2Brev-62dc67aa6a52b4364dd75994ec00b51fbf474e50/019ce10c-4cfe-748f-9b4e-6faba8c0de34/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -3241,35 +3256,24 @@
         "type": "github"
       }
     },
-    "ttc": {
-      "flake": false,
-      "locked": {
-        "path": "path:./Apple Color Emoji.ttc",
-        "type": "path"
-      },
-      "original": {
-        "path": "path:./Apple Color Emoji.ttc",
-        "type": "path"
-      },
-      "parent": [
-        "typedrat-fonts",
-        "apple-emoji"
-      ]
-    },
     "typedrat-fonts": {
       "inputs": {
+        "apple-color-emoji-ttc": "apple-color-emoji-ttc",
         "apple-emoji": "apple-emoji",
         "flake-parts": "flake-parts_15",
         "nixpkgs": "nixpkgs_15"
       },
       "locked": {
-        "narHash": "sha256-7u3Q00uC/9b1a4aFpc92Xn0fPGTyka7k95FIs9G32q0=",
-        "path": "/home/awilliams/Development/nix-fonts",
-        "type": "path"
+        "lastModified": 1773350237,
+        "narHash": "sha256-blbXvBJTs9itZpNcjQ+r+zdr8Bm03eR0McqX1Im/iT4=",
+        "rev": "34b4cbe2aae8b2a46940376f18073262c4d13675",
+        "revCount": 17,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/typedrat/nix-fonts/0.1.17%2Brev-34b4cbe2aae8b2a46940376f18073262c4d13675/019ce3ff-e1cf-7769-bf3c-ac2c96c765d6/source.tar.gz"
       },
       "original": {
-        "path": "/home/awilliams/Development/nix-fonts",
-        "type": "path"
+        "type": "tarball",
+        "url": "https://flakehub.com/f/typedrat/nix-fonts/%2A"
       }
     },
     "uv2nix": {
