@@ -46,13 +46,15 @@ in {
     };
 
     resource = {
-      authentik_outpost_provider_attachment = lib.mapAttrs' (name: provider: {
-        name = "embedded-outpost-${name}";
-        value = {
-          outpost = "\${ data.authentik_outpost.embedded-outpost.id }";
-          protocol_provider = provider;
-        };
-      }) config.authentik.outposts.proxy.providers;
+      authentik_outpost_provider_attachment =
+        lib.mapAttrs' (name: provider: {
+          name = "embedded-outpost-${name}";
+          value = {
+            outpost = "\${ data.authentik_outpost.embedded-outpost.id }";
+            protocol_provider = provider;
+          };
+        })
+        config.authentik.outposts.proxy.providers;
 
       authentik_outpost.ldap = {
         name = "LDAP Outpost";
