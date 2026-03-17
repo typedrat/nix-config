@@ -30,12 +30,6 @@
       url = "https://github.com/NixOS/nixpkgs/pull/490985.diff";
       flake = false;
     };
-
-    # update claude-code from 2.1.70 to 2.1.74 (NixOS/nixpkgs#499165)
-    nixpkgs-patch-499165 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/499165.diff";
-      flake = false;
-    };
     #endregion
 
     #region home-manager patches

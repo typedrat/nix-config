@@ -115,7 +115,7 @@
       autobrr.enable = true;
       configarr.enable = true;
       cross-seed.enable = true;
-      dispatcharr.enable = true;
+      dispatcharr.enable = false;
       lidarr.enable = true;
       prowlarr.enable = true;
       radarr.enable = true;
