@@ -24,8 +24,12 @@
       # Apple TV
       "apple_tv"
 
-      # Denon AVR
+      # Chromecast
+      "cast"
+
+      # Denon AVR / HEOS
       "denonavr"
+      "heos"
 
       # Electricity Maps
       "co2signal"
@@ -39,8 +43,9 @@
       # Magic Home
       "flux_led"
 
-      # Homekit
+      # HomeKit
       "homekit"
+      "homekit_controller"
 
       # Jellyfin
       "jellyfin"
@@ -53,6 +58,9 @@
 
       # Vizio TV
       "vizio"
+
+      # Zigbee Home Automation
+      "zha"
     ];
 
     config = {
