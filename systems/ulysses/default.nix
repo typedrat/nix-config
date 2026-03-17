@@ -93,6 +93,13 @@
         cores = 16;
         threads = 32;
       };
+
+      # NVIDIA RTX 5090
+      gpu = {
+        vendor = "nvidia";
+        vram = 32;
+      };
+
       nvidia = {
         enable = true;
         cuda.enable = true;
@@ -130,6 +137,7 @@
     # GUI
     gui = {
       enable = true;
+      kde.enable = true;
       hyprland = {
         primaryMonitor = "DP-1";
         tvMonitor = "HDMI-A-1";
