@@ -5,6 +5,7 @@
     ./development
     ./gaming
     ./hyprland
+    ./kde
     ./media
     ./productivity
     ./terminals
