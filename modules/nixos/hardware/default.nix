@@ -28,6 +28,23 @@ in {
       };
     };
 
+    gpu = {
+      vendor = options.mkOption {
+        type = let
+          vendorEnum = types.enum ["nvidia" "amd" "intel"];
+        in
+          types.either vendorEnum (types.listOf vendorEnum);
+        description = "GPU vendor(s)";
+        example = "nvidia";
+      };
+
+      vram = options.mkOption {
+        type = types.ints.positive;
+        description = "GPU VRAM in gigabytes";
+        example = 16;
+      };
+    };
+
     network.mainInterface = options.mkOption {
       type = types.nullOr types.str;
       description = "The main network interface";

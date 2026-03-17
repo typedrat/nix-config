@@ -18,6 +18,12 @@
       threads = 16;
     };
 
+    # RX 5700XT
+    hardware.gpu = {
+      vendor = "amd";
+      vram = 8;
+    };
+
     boot.loader = "lanzaboote";
 
     gaming = {

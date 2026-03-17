@@ -8,7 +8,17 @@
   cfg = config.rat.hardware.nvidia;
 in {
   options.rat.hardware.nvidia = {
-    enable = mkEnableOption "NVIDIA GPU support with Hyprland/Wayland optimizations";
+    enable = mkEnableOption "NVIDIA GPU support with Hyprland/Wayland optimizations"
+      // {
+        default = let
+          gpuCfg = config.rat.hardware.gpu;
+          vendors =
+            if builtins.isList gpuCfg.vendor
+            then gpuCfg.vendor
+            else [gpuCfg.vendor];
+        in
+          builtins.elem "nvidia" vendors;
+      };
 
     open = mkOption {
       type = types.bool;

@@ -27,6 +27,12 @@
       threads = 28;
     };
 
+    # Quadro P1000
+    hardware.gpu = {
+      vendor = "nvidia";
+      vram = 4;
+    };
+
     boot.loader = "lanzaboote";
 
     hardware.nvidia = {
