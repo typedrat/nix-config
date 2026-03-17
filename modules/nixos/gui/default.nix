@@ -11,11 +11,18 @@ in {
     ./gnome-keyring.nix
     ./greeter
     ./hyprland.nix
+    ./kde.nix
     ./plymouth.nix
   ];
 
   options.rat.gui = {
     enable = mkEnableOption "gui";
+
+    defaultSession = mkOption {
+      default = "hyprland-uwsm";
+      type = types.enum ["hyprland-uwsm" "plasma"];
+      description = "The default desktop session for the display manager";
+    };
 
     greeter.variant = mkOption {
       default = "tuigreet";
@@ -30,6 +37,8 @@ in {
   };
 
   config = mkIf config.rat.gui.enable {
+    services.displayManager.defaultSession = config.rat.gui.defaultSession;
+
     boot = {
       extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
       kernelModules = ["v4l2loopback"];

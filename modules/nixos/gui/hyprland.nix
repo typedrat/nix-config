@@ -7,8 +7,11 @@
 }: let
   inherit (lib.modules) mkIf;
   inherit (lib) options types;
+  cfg = config.rat.gui;
 in {
   options.rat.gui.hyprland = {
+    enable = options.mkEnableOption "Hyprland window manager" // {default = true;};
+
     monitors = options.mkOption {
       type = types.listOf types.str;
       default = [];
@@ -44,17 +47,13 @@ in {
     };
   };
 
-  config = mkIf config.rat.gui.enable {
+  config = mkIf (cfg.enable && cfg.hyprland.enable) {
     programs.hyprland = {
       enable = true;
       withUWSM = true;
 
       package = inputs'.hyprland.packages.hyprland;
       portalPackage = inputs'.hyprland.packages.xdg-desktop-portal-hyprland;
-    };
-
-    services.displayManager = {
-      defaultSession = "hyprland-uwsm";
     };
 
     security.pam.services.hyprlock = {};
@@ -65,6 +64,9 @@ in {
         config.programs.hyprland.portalPackage
         xdg-desktop-portal-gtk
       ];
+      config.hyprland = {
+        default = ["hyprland" "gtk"];
+      };
     };
   };
 }
