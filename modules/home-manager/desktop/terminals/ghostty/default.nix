@@ -36,9 +36,9 @@ in {
       pkgs.xdg-terminal-exec
     ];
 
-    rat.kdeglobals.General = {
-      TerminalApplication = "ghostty";
-      TerminalService = "com.mitchellh.ghostty.desktop";
+    programs.plasma.configFile."kdeglobals".General = {
+      TerminalApplication.value = "ghostty";
+      TerminalService.value = "com.mitchellh.ghostty.desktop";
     };
 
     xdg.configFile."xdg-terminals.list".text = ''

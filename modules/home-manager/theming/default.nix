@@ -13,12 +13,16 @@
   guiCfg = userCfg.gui or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
+
+  capitalizeFirst = str:
+    (lib.toUpper (builtins.substring 0 1 str))
+    + (builtins.substring 1 (builtins.stringLength str) str);
 in {
   imports = [
     inputs.catppuccin.homeModules.catppuccin
+    inputs.plasma-manager.homeModules.plasma-manager
 
     ./steam.nix
-    ./kde-colors.nix
   ];
 
   config = modules.mkIf themingCfg.enable (modules.mkMerge [
@@ -81,6 +85,17 @@ in {
         platformTheme.name = "kvantum";
         style.name = "kvantum";
       };
+
+      # KDE color scheme via plasma-manager (replaces kde-colors.nix + kdeglobals.nix)
+      programs.plasma.workspace.colorScheme = "Catppuccin${capitalizeFirst config.catppuccin.flavor}${capitalizeFirst config.catppuccin.accent}";
+
+      home.packages = [
+        (pkgs.catppuccin-kde.override {
+          flavour = [config.catppuccin.flavor];
+          accents = [config.catppuccin.accent];
+          winDecStyles = ["modern"];
+        })
+      ];
     })
   ]);
 }
