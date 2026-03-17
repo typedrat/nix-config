@@ -19,65 +19,66 @@
   flavorName = capitalizeFirst config.catppuccin.flavor;
   accentName = capitalizeFirst config.catppuccin.accent;
 in {
-  config = modules.mkIf (
-    guiCfg.enable
-    && kdeCfg.enable
-    && osConfig.rat.gui.kde.enable
-  ) {
-    programs.plasma = {
-      enable = true;
-      overrideConfig = false;
+  config =
+    modules.mkIf (
+      guiCfg.enable
+      && kdeCfg.enable
+      && osConfig.rat.gui.kde.enable
+    ) {
+      programs.plasma = {
+        enable = true;
+        overrideConfig = false;
 
-      workspace = {
-        theme = "default";
-        lookAndFeel = "Catppuccin-${flavorName}-${accentName}";
-        windowDecorations = {
-          library = "org.kde.kwin.aurorae";
-          theme = "__aurorae__svg__Catppuccin${flavorName}-Modern";
+        workspace = {
+          theme = "default";
+          lookAndFeel = "Catppuccin-${flavorName}-${accentName}";
+          windowDecorations = {
+            library = "org.kde.kwin.aurorae";
+            theme = "__aurorae__svg__Catppuccin${flavorName}-Modern";
+          };
+          splashScreen.theme = "Catppuccin-${flavorName}-${accentName}";
         };
-        splashScreen.theme = "Catppuccin-${flavorName}-${accentName}";
+
+        fonts = {
+          general = {
+            family = "SF Pro Display";
+            pointSize = 13;
+          };
+          fixedWidth = {
+            family = "SF Mono";
+            pointSize = 12;
+          };
+        };
+
+        kwin = {
+          effects = {
+            translucency.enable = true;
+            blur.enable = true;
+          };
+        };
+
+        configFile = {
+          kdeglobals = {
+            KDE.AnimationDurationFactor = 0.5;
+          };
+        };
       };
 
-      fonts = {
-        general = {
-          family = "SF Pro Display";
-          pointSize = 13;
-        };
-        fixedWidth = {
-          family = "SF Mono";
-          pointSize = 12;
-        };
-      };
-
-      kwin = {
-        effects = {
-          translucency.enable = true;
-          blur.enable = true;
-        };
-      };
-
-      configFile = {
-        kdeglobals = {
-          KDE.AnimationDurationFactor = 0.5;
-        };
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [
+          ".local/share/baloo"
+          ".local/share/kactivitymanagerd"
+          ".local/share/kwalletd"
+          ".local/share/kscreen"
+          ".config/kde.org"
+          ".config/kdedefaults"
+        ];
+        files = [
+          ".config/kwinrc"
+          ".config/plasma-org.kde.plasma.desktop-appletsrc"
+          ".config/plasmashellrc"
+          ".config/kconf_updaterc"
+        ];
       };
     };
-
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".local/share/baloo"
-        ".local/share/kactivitymanagerd"
-        ".local/share/kwalletd"
-        ".local/share/kscreen"
-        ".config/kde.org"
-        ".config/kdedefaults"
-      ];
-      files = [
-        ".config/kwinrc"
-        ".config/plasma-org.kde.plasma.desktop-appletsrc"
-        ".config/plasmashellrc"
-        ".config/kconf_updaterc"
-      ];
-    };
-  };
 }

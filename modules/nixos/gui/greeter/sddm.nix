@@ -16,8 +16,7 @@ in {
       };
     })
     (mkIf (cfg.enable && cfg.greeter.variant == "sddm" && cfg.hyprland.enable) {
-      services.displayManager.sddm.settings.Wayland.CompositorCommand =
-        "${lib.getExe config.programs.hyprland.package}";
+      services.displayManager.sddm.settings.Wayland.CompositorCommand = "${lib.getExe config.programs.hyprland.package}";
     })
     (mkIf (cfg.enable && cfg.greeter.variant == "sddm" && impermanenceCfg.enable) {
       environment.persistence.${impermanenceCfg.persistDir} = {
