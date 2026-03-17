@@ -13,8 +13,11 @@ in {
         enable = true;
         wayland.enable = true;
         settings.General.GreeterEnvironment = "QT_WAYLAND_SHELL_INTEGRATION=layer-shell";
-        settings.Wayland.CompositorCommand = "${lib.getExe config.programs.hyprland.package}";
       };
+    })
+    (mkIf (cfg.enable && cfg.greeter.variant == "sddm" && cfg.hyprland.enable) {
+      services.displayManager.sddm.settings.Wayland.CompositorCommand =
+        "${lib.getExe config.programs.hyprland.package}";
     })
     (mkIf (cfg.enable && cfg.greeter.variant == "sddm" && impermanenceCfg.enable) {
       environment.persistence.${impermanenceCfg.persistDir} = {
