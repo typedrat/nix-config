@@ -56,6 +56,9 @@
       # SMUD
       "opower"
 
+      # TP-Link Kasa Smart
+      "tplink"
+
       # Vizio TV
       "vizio"
 
