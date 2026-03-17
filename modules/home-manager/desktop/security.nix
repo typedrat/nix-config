@@ -19,9 +19,9 @@ in {
         directories = [".local/share/Bitwarden"];
       };
 
-      home.packages = with pkgs; [
-        bitwarden-desktop
-      ];
+      # home.packages = with pkgs; [
+      #   bitwarden-desktop
+      # ];
     })
 
     # GNOME Keyring
