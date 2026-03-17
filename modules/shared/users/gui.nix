@@ -112,6 +112,10 @@
         };
       };
 
+      kde = {
+        enable = options.mkEnableOption "KDE Plasma configuration" // {default = true;};
+      };
+
       chat = {
         enable = options.mkEnableOption "chat clients" // {default = true;};
         discord.enable = options.mkEnableOption "Discord" // {default = true;};
