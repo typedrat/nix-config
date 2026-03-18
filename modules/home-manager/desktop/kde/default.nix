@@ -54,6 +54,22 @@ in {
           family = "SF Mono";
           pointSize = 12;
         };
+        small = {
+          family = "SF Pro Text";
+          pointSize = 9;
+        };
+        toolbar = {
+          family = "SF Pro Text";
+          pointSize = 11;
+        };
+        menu = {
+          family = "SF Pro Text";
+          pointSize = 11;
+        };
+        windowTitle = {
+          family = "SF Pro Display";
+          pointSize = 11;
+        };
       };
 
       # --- Window Manager ---
