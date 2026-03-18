@@ -78,7 +78,7 @@ in {
         {
           location = "bottom";
           height = 32;
-          floating = true;
+          floating = false;
           screen = 1; # DP-1 only (primary monitor)
           widgets = [
             "org.kde.plasma.kickoff"
