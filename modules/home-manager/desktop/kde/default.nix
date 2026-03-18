@@ -224,6 +224,12 @@ in {
       };
     };
 
+    # Hide Blueman applet in KDE (Plasma has native Bluetooth support)
+    xdg.configFile."autostart/blueman.desktop".text = ''
+      [Desktop Entry]
+      Hidden=true
+    '';
+
     # Spectacle for screenshots (replaces hyprshot)
     home.packages = with pkgs; [
       kdePackages.spectacle
