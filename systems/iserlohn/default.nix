@@ -120,6 +120,48 @@
 
       autobrr.enable = true;
       configarr.enable = true;
+      jellarr = {
+        enable = true;
+
+        libraries = [
+          {
+            name = "Movies";
+            collectionType = "movies";
+            paths = ["/mnt/media/movies"];
+          }
+          {
+            name = "TV Shows";
+            collectionType = "tvshows";
+            paths = ["/mnt/media/tv-shows"];
+          }
+          {
+            name = "TV Slop";
+            collectionType = "tvshows";
+            paths = ["/mnt/media/tv-slop"];
+          }
+          {
+            name = "Anime";
+            collectionType = "tvshows";
+            paths = ["/mnt/media/anime" "/mnt/media/anime-movies"];
+          }
+          {
+            name = "Music";
+            collectionType = "music";
+            paths = ["/mnt/media/music"];
+          }
+        ];
+
+        plugins = {
+          ldap.enable = true;
+          sso = {
+            enable = true;
+            providers.authentik = {
+              oidEndpoint = "https://auth.thisratis.gay/application/o/jellyfin/.well-known/openid-configuration";
+            };
+          };
+          shokofin.enable = true;
+        };
+      };
       cross-seed.enable = true;
       dispatcharr.enable = false;
       lidarr.enable = true;
