@@ -159,7 +159,7 @@ in {
 
     rat.services.jellarr._jellarrPluginRepos = [
       {
-        name = "SSO-Auth";
+        name = "SSO Authentication";
         url = "https://raw.githubusercontent.com/9p4/jellyfin-plugin-sso/manifest-release/manifest.json";
         enabled = true;
       }
@@ -167,7 +167,7 @@ in {
 
     rat.services.jellarr._jellarrPlugins = [
       {
-        name = "SSO-Auth";
+        name = "SSO Authentication";
         configuration = {
           SamlConfigs = {};
           OidConfigs = lib.mapAttrs mkProviderConfig cfg.providers;
