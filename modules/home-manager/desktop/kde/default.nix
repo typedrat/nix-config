@@ -72,6 +72,25 @@ in {
         };
       };
 
+      # --- Panel ---
+
+      panels = [
+        {
+          location = "bottom";
+          height = 32;
+          floating = true;
+          widgets = [
+            "org.kde.plasma.kickoff"
+            "org.kde.plasma.pager"
+            "org.kde.plasma.icontasks"
+            "org.kde.plasma.marginsseparator"
+            "org.kde.plasma.systemtray"
+            "org.kde.plasma.digitalclock"
+            "org.kde.plasma.showdesktop"
+          ];
+        }
+      ];
+
       # --- Window Manager ---
 
       kwin = {
@@ -193,6 +212,13 @@ in {
       configFile = {
         kdeglobals = {
           KDE.AnimationDurationFactor = 0.5;
+        };
+        kwinrc = {
+          Windows = {
+            # Focus follows mouse, no delay (tiling WM behavior)
+            FocusPolicy = "FocusFollowsMouse";
+            DelayFocusInterval = 0;
+          };
         };
       };
     };
