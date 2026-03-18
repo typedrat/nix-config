@@ -121,10 +121,12 @@
     DoNotValidateEndpoints = provCfg.doNotValidateEndpoints;
     DoNotValidateIssuerName = provCfg.doNotValidateIssuerName;
     DisableHttps = provCfg.disableHttps;
-    FolderRoleMapping = map (m: {
-      Role = m.role;
-      Folders = m.folders;
-    }) provCfg.folderRoleMapping;
+    FolderRoleMapping =
+      map (m: {
+        Role = m.role;
+        Folders = m.folders;
+      })
+      provCfg.folderRoleMapping;
   };
 in {
   options.rat.services.jellarr.plugins.sso = {

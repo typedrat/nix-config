@@ -32,22 +32,24 @@
     }
     // lib.optionalAttrs cfg.encoding.enable {
       encoding = {
-        hardwareAccelerationType = cfg.encoding.hardwareAccelerationType;
-        hardwareDecodingCodecs = cfg.encoding.hardwareDecodingCodecs;
-        enableDecodingColorDepth10Hevc = cfg.encoding.enableDecodingColorDepth10Hevc;
-        enableDecodingColorDepth10HevcRext = cfg.encoding.enableDecodingColorDepth10HevcRext;
-        enableDecodingColorDepth12HevcRext = cfg.encoding.enableDecodingColorDepth12HevcRext;
-        enableDecodingColorDepth10Vp9 = cfg.encoding.enableDecodingColorDepth10Vp9;
-        allowHevcEncoding = cfg.encoding.allowHevcEncoding;
-        allowAv1Encoding = cfg.encoding.allowAv1Encoding;
-        enableHardwareEncoding = cfg.encoding.enableHardwareEncoding;
+        inherit (cfg.encoding) hardwareAccelerationType;
+        inherit (cfg.encoding) hardwareDecodingCodecs;
+        inherit (cfg.encoding) enableDecodingColorDepth10Hevc;
+        inherit (cfg.encoding) enableDecodingColorDepth10HevcRext;
+        inherit (cfg.encoding) enableDecodingColorDepth12HevcRext;
+        inherit (cfg.encoding) enableDecodingColorDepth10Vp9;
+        inherit (cfg.encoding) allowHevcEncoding;
+        inherit (cfg.encoding) allowAv1Encoding;
+        inherit (cfg.encoding) enableHardwareEncoding;
       };
     }
     // {
-      library.virtualFolders = map (l: {
-        inherit (l) name collectionType;
-        libraryOptions.pathInfos = map (p: {path = p;}) l.paths;
-      }) cfg.libraries;
+      library.virtualFolders =
+        map (l: {
+          inherit (l) name collectionType;
+          libraryOptions.pathInfos = map (p: {path = p;}) l.paths;
+        })
+        cfg.libraries;
       branding =
         {inherit (cfg.branding) splashscreenEnabled;}
         // lib.optionalAttrs (cfg.branding.loginDisclaimer != null) {inherit (cfg.branding) loginDisclaimer;}
