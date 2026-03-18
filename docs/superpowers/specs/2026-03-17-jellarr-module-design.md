@@ -56,6 +56,8 @@ Added to the `#region Software Outside of Nixpkgs` section.
 
 #### Encoding (`rat.services.jellarr.encoding`)
 
+Note: defaults are tuned for Pascal-generation NVIDIA GPUs (Quadro P1000 on iserlohn). Override for different hardware.
+
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `.enable` | bool | `true` | Enable encoding config |
@@ -89,9 +91,9 @@ List of submodules:
 
 ### Internal Mechanism: `_jellarrPlugins`
 
-An internal option (`types.listOf types.attrs`, default `[]`) that plugin sub-modules append to via list concatenation. Each element is an attrset with `name` (string) and optionally `configuration` (attrset). The base module collects all entries and renders them into the `plugins:` section of the YAML template.
+An internal option (`types.listOf (types.submodule { name = types.str; configuration = types.nullOr types.attrs; })`, default `[]`) that plugin sub-modules append to via list concatenation. The base module collects all entries and renders them into the `plugins:` section of the YAML template.
 
-Similarly, `_jellarrPluginRepos` (same type) collects plugin repository entries (`name`, `url`, `enabled`) conditionally added by each plugin sub-module.
+Similarly, `_jellarrPluginRepos` collects plugin repository entries (submodule with `name`, `url`, `enabled`) conditionally added by each plugin sub-module.
 
 ### Service Wiring
 
@@ -101,33 +103,41 @@ Similarly, `_jellarrPluginRepos` (same type) collects plugin repository entries 
 - `systemd.tmpfiles.rules` — ensure `/var/lib/jellarr` exists with correct ownership
 
 **SOPS secrets:**
-- All secrets from `secrets/jellyfin.yaml` (API key, LDAP bind password, SSO credentials, Shokofin API key)
+
+All secrets sourced from `secrets/jellyfin.yaml` (relative path from module: `../../../../../secrets/jellyfin.yaml`). The `jellarr/*` keys are new additions to this existing file (which already contains `clientId` and `clientSecret` for terraform/authentik — no conflicts since the new keys are under the `jellarr/` namespace).
+
+Declarations — reuses existing secrets where possible:
+- `sops.secrets."jellarr/apiKey"` — new, in `secrets/jellyfin.yaml` (owner: `jellarr`, mode: `0400`)
+- `sops.secrets."jellarr/shokofin/apiKey"` — new, in `secrets/jellyfin.yaml` (owner: `jellarr`)
+- LDAP bind password: reuses `sops.secrets."authentik/ldap/password"` from `secrets/authentik.yaml` (already declared by authentik module)
+- SSO client ID/secret: reuses `clientId` and `clientSecret` from `secrets/jellyfin.yaml` (already used by terraform)
 - `sops.templates."jellarr.yml"` — full config YAML with SOPS placeholders, owned by `jellarr:jellarr`, mode `0400`
-- `sops.templates."jellarr.env"` — environment file containing `JELLARR_API_KEY=<placeholder>`
+- `sops.templates."jellarr.env"` — environment file containing `JELLARR_API_KEY=${config.sops.placeholder."jellarr/apiKey"}`
 
 **Bootstrap service (`systemd.services.jellarr-bootstrap`):**
 - Type: oneshot, runs before `jellarr.service`
 - After: `jellyfin.service`
+- User/Group: `jellyfin`/`media` (runs as Jellyfin's user to have write access to its DB)
 - Inserts the API key into Jellyfin's SQLite DB (`${config.services.jellyfin.dataDir}/data/jellyfin.db`) using `sqlite3`
-- Uses the API key from SOPS secret file
+- Reads the raw API key value from `config.sops.secrets."jellarr/apiKey".path`
 - Idempotent: checks if key already exists before inserting
 - `pkgs.sqlite` in service `path`
 
 **Main service (`systemd.services.jellarr`):**
 - Type: oneshot
 - After: `jellyfin.service`, `jellarr-bootstrap.service`, `network-online.target`
+- Wants: `jellyfin.service`, `jellarr-bootstrap.service`
 - Requires: `network-online.target`
 - User/Group: `jellarr`
 - WorkingDirectory: `/var/lib/jellarr`
 - EnvironmentFile: SOPS template `jellarr.env`
-- preStart: health-check Jellyfin via curl (120s timeout, 1s interval) against `config.links.jellyfin.url`
+- preStart: health-check Jellyfin via curl (120s timeout, 1s interval) against `config.links.jellyfin.url`, then install config via `install -m 0400 ${config.sops.templates."jellarr.yml".path} /var/lib/jellarr/config/config.yml`
 - ExecStart: `${inputs'.jellarr.packages.default}/bin/jellarr`
-- Config installed via symlink or copy from SOPS template path to `${dataDir}/config/config.yml` in preStart
 - `pkgs.curl` in service `path`
 
 **Timer (`systemd.timers.jellarr`):**
 - OnCalendar: `daily`
-- RandomizedDelaySec: `5m`
+- RandomizedDelaySec: `5m` (avoids thundering herd with other daily timers like configarr)
 - Persistent: `true`
 - WantedBy: `timers.target`
 
@@ -218,7 +228,7 @@ The `library.virtualFolders[].libraryOptions.pathInfos` structure matches Jellar
 
 ### Secrets
 
-LDAP bind password from SOPS (`secrets/jellyfin.yaml`), key `jellarr/ldap/bindPassword`, injected via `config.sops.placeholder`.
+LDAP bind password reuses the existing `authentik/ldap/password` secret from `secrets/authentik.yaml` (already declared by the authentik module), injected via `config.sops.placeholder."authentik/ldap/password"`.
 
 ### Generated Plugin Config
 
@@ -254,8 +264,6 @@ LDAP bind password from SOPS (`secrets/jellyfin.yaml`), key `jellarr/ldap/bindPa
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `.oidEndpoint` | string | — | OIDC discovery endpoint |
-| `.oidClientId` | string | — | Client ID (SOPS placeholder) |
-| `.oidSecret` | string | — | Client secret (SOPS placeholder) |
 | `.enabled` | bool | `true` | Provider enabled |
 | `.enableAuthorization` | bool | `true` | Enable authorization |
 | `.enableAllFolders` | bool | `true` | Grant all library access |
@@ -272,7 +280,7 @@ LDAP bind password from SOPS (`secrets/jellyfin.yaml`), key `jellarr/ldap/bindPa
 
 ### Secrets
 
-`oidClientId` and `oidSecret` from SOPS (`secrets/jellyfin.yaml`), keys `jellarr/sso/clientId` and `jellarr/sso/clientSecret`.
+`oidClientId` and `oidSecret` are not exposed as options — they reuse the existing `clientId` and `clientSecret` keys from `secrets/jellyfin.yaml` (already used by terraform/authentik for the Jellyfin OAuth2 provider), injected via `config.sops.placeholder."jellyfin/clientId"` and `config.sops.placeholder."jellyfin/clientSecret"`. The module declares the necessary `sops.secrets` entries pointing at `secrets/jellyfin.yaml`.
 
 ### Generated Plugin Config
 
@@ -438,8 +446,7 @@ jellarr = {
       enable = true;
       providers.authentik = {
         oidEndpoint = "https://auth.thisratis.gay/application/o/jellyfin/.well-known/openid-configuration";
-        oidClientId = config.sops.placeholder."jellarr/sso/clientId";
-        oidSecret = config.sops.placeholder."jellarr/sso/clientSecret";
+        # oidClientId and oidSecret auto-sourced from SOPS: jellarr/sso/authentik/clientId, jellarr/sso/authentik/clientSecret
       };
     };
     shokofin.enable = true;
@@ -447,24 +454,25 @@ jellarr = {
 };
 ```
 
-## Secrets Required in `secrets/jellyfin.yaml`
+## Secrets
 
-All keys use a `jellarr/` prefix for namespacing:
+### New keys to add to `secrets/jellyfin.yaml`
 
 ```yaml
 # Jellarr API key (used for both bootstrap DB injection and runtime auth)
 jellarr/apiKey: ...
 
-# LDAP bind password (Authentik ldap-search service account)
-jellarr/ldap/bindPassword: ...
-
-# SSO OIDC credentials (from Authentik OAuth2 provider)
-jellarr/sso/clientId: ...
-jellarr/sso/clientSecret: ...
-
 # Shokofin API key (from Shoko Server)
 jellarr/shokofin/apiKey: ...
 ```
+
+### Existing secrets reused (no changes needed)
+
+| Secret | File | Key | Used by |
+|--------|------|-----|---------|
+| SSO client ID | `secrets/jellyfin.yaml` | `clientId` | Terraform + Jellarr SSO plugin |
+| SSO client secret | `secrets/jellyfin.yaml` | `clientSecret` | Terraform + Jellarr SSO plugin |
+| LDAP bind password | `secrets/authentik.yaml` | `ldap/password` | Authentik module + Jellarr LDAP plugin |
 
 ## Plugin Repository Management
 
