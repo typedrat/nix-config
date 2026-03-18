@@ -39,6 +39,14 @@ in {
       # Kubernetes tools
       kubectl
       kubectl-cnpg
+      kubectl-explore
+      kubectl-images
+      kubectl-klock
+      kubectl-ktop
+      kubectl-neat
+      kubectl-tree
+      kubectl-view-allocations
+      kubectl-view-secret
       kubernetes-helm
       cilium-cli
 
