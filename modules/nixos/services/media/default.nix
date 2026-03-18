@@ -1,6 +1,7 @@
 {
   imports = [
     ./dispatcharr
+    ./jellarr
     ./autobrr.nix
     ./configarr.nix
     ./cross-seed.nix
