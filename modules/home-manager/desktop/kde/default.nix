@@ -38,11 +38,6 @@ in {
       workspace = {
         theme = "default";
         lookAndFeel = "Catppuccin-${flavorName}-${accentName}";
-        windowDecorations = {
-          library = "org.kde.kwin.aurorae";
-          theme = "__aurorae__svg__Catppuccin${flavorName}-Modern";
-        };
-        splashScreen.theme = "Catppuccin-${flavorName}-${accentName}";
       };
 
       fonts = {
