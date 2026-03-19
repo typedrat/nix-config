@@ -12,7 +12,7 @@ in {
 
     server = options.mkOption {
       type = types.str;
-      default = "localhost";
+      default = "127.0.0.1";
       description = "LDAP server hostname.";
     };
 

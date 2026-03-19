@@ -204,7 +204,7 @@ in {
         sopsFile = ../../../../../secrets/jellyfin.yaml;
         key = "jellarr/apiKey";
         owner = "jellarr";
-        group = "jellyfin";
+        group = "media";
         mode = "0440";
       };
 
