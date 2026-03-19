@@ -42,7 +42,7 @@ in {
 
     bindUser = options.mkOption {
       type = types.str;
-      default = "cn=ldap-search,ou=users,dc=ldap,dc=goauthentik,dc=io";
+      default = "cn=ldap-search,ou=users,OU=jellyfin,DC=ldap,DC=goauthentik,DC=io";
       description = "DN of the LDAP user used for binding/searching.";
     };
 
