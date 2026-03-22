@@ -137,6 +137,7 @@
     # GUI
     gui = {
       enable = true;
+      browsers.chromium.enable = true;
       kde.enable = true;
       hyprland = {
         primaryMonitor = "DP-1";

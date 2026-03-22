@@ -8,6 +8,7 @@
   inherit (lib.options) mkEnableOption mkOption;
 in {
   imports = [
+    ./chromium.nix
     ./gnome-keyring.nix
     ./greeter
     ./hyprland.nix

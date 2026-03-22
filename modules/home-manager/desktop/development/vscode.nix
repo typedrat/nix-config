@@ -58,7 +58,7 @@ in {
           "workbench.colorTheme" = lib.mkForce "Catppuccin Frappé";
           "workbench.iconTheme" = "catppuccin-frappe";
 
-          "cline.chromeExecutablePath" = lib.getExe config.programs.brave.package;
+          "cline.chromeExecutablePath" = lib.getExe config.programs.google-chrome.package;
           "dev.containers.dockerSocketPath" = "/run/user/${toString osConfig.users.users.${config.home.username}.uid}/docker.sock";
           "mise.checkForNewMiseVersion" = false;
           "nix.enableLanguageServer" = true;
