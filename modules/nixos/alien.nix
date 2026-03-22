@@ -20,12 +20,31 @@ in {
 
     programs.nix-ld.enable = true;
     programs.nix-ld.libraries = with pkgs; [
+      alsa-lib
+      at-spi2-atk
+      atk
+      cairo
+      cups
+      dbus
       expat
       fontconfig
       freetype
       glib
       libGL
+      libgbm
       libxcb
+      libxkbcommon
+      mesa
+      nspr
+      nss
+      pango
+      systemdMinimal
+      libX11
+      libXcomposite
+      libXdamage
+      libXext
+      libXfixes
+      libXrandr
     ];
   };
 }

@@ -23,7 +23,10 @@ in {
     xdg.userDirs.extraConfig.XDG_AI_DIR = "$HOME/AI";
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = ["AI"];
+      directories = [
+        "AI"
+        ".gstack"
+      ];
     };
 
     sops.secrets = lib.mkIf hasUserSecrets {

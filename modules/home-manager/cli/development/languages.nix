@@ -23,6 +23,7 @@ in {
         ".config/ipython"
         ".local/share/pnpm"
         ".local/state/pnpm"
+        ".cache/ms-playwright"
         ".cache/uv"
       ];
     };
@@ -52,6 +53,7 @@ in {
         ]))
 
       # JavaScript/Node.js
+      bun
       nodejs
 
       # Java
