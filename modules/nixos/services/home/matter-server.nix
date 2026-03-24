@@ -41,6 +41,17 @@ in {
         port = config.links.matter-server.port;
         inherit (cfg) logLevel extraArgs;
       };
+
+      # The upstream module uses DynamicUser which breaks impermanence
+      # because systemd's dynamic user/group IDs don't match the static
+      # UIDs that impermanence bind-mounts expect.
+      systemd.services.matter-server.serviceConfig.DynamicUser = lib.mkForce false;
+      users.users.matter-server = {
+        isSystemUser = true;
+        group = "matter-server";
+        home = "/var/lib/matter-server";
+      };
+      users.groups.matter-server = {};
     })
 
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
