@@ -1,4 +1,6 @@
 {pkgs, ...}: {
+  rat.services.matter-server.enable = true;
+
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;
@@ -46,6 +48,9 @@
       # HomeKit
       "homekit"
       "homekit_controller"
+
+      # Matter
+      "matter"
 
       # Jellyfin
       "jellyfin"
