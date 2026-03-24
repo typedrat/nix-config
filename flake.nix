@@ -36,6 +36,12 @@
       url = "https://github.com/NixOS/nixpkgs/pull/494791.diff";
       flake = false;
     };
+
+    # python3Packages.asyncstdlib: 3.13.3 -> 3.14.0 (NixOS/nixpkgs#501837)
+    nixpkgs-patch-501837 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/501837.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches
