@@ -30,6 +30,12 @@
       url = "https://github.com/NixOS/nixpkgs/pull/490985.diff";
       flake = false;
     };
+
+    # pkl: 0.29.1 -> 0.31.0 (NixOS/nixpkgs#494791)
+    nixpkgs-patch-494791 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/494791.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches
