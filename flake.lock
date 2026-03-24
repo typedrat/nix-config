@@ -2345,6 +2345,30 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/494791.diff"
       }
     },
+    "nixpkgs-patch-501837": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-MuSg0XmqDjXpx3DAzkjKLeuLMrTBDmD20eNOLb9mQy4=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/501837.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/501837.diff"
+      }
+    },
+    "nixpkgs-patch-502729": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-C/SWmOMd4N5obhUrRTIcPTSGJ9rctPjmvndiN4iu/sw=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/502729.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/502729.diff"
+      }
+    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -2882,6 +2906,8 @@
         "nixpkgs": "nixpkgs_13",
         "nixpkgs-patch-490985": "nixpkgs-patch-490985",
         "nixpkgs-patch-494791": "nixpkgs-patch-494791",
+        "nixpkgs-patch-501837": "nixpkgs-patch-501837",
+        "nixpkgs-patch-502729": "nixpkgs-patch-502729",
         "nixvirt": "nixvirt",
         "plasma-manager": "plasma-manager",
         "pyprland": "pyprland",

@@ -42,6 +42,12 @@
       url = "https://github.com/NixOS/nixpkgs/pull/501837.diff";
       flake = false;
     };
+
+    # python3Packages.radios: relax pycountry version constraint (NixOS/nixpkgs#502729)
+    nixpkgs-patch-502729 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/502729.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches
