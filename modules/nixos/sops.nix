@@ -32,7 +32,7 @@ in {
 
     sops = {
       defaultSopsFile = ../../secrets/default.yaml;
-      age.sshKeyPaths = builtins.map (x: x.path) (
+      age.sshKeyPaths = map (x: x.path) (
         builtins.filter (x: x.type == "ed25519") config.services.openssh.hostKeys
       );
 
