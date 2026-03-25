@@ -168,7 +168,7 @@
         libreoffice.enable = options.mkEnableOption "LibreOffice" // {default = true;};
         sioyek.enable = options.mkEnableOption "Sioyek PDF reader" // {default = true;};
         kicad.enable = options.mkEnableOption "KiCad" // {default = true;};
-        freecad.enable = options.mkEnableOption "FreeCAD" // {default = true;};
+        freecad.enable = options.mkEnableOption "FreeCAD";
         printing3d.enable = options.mkEnableOption "3D printing tools" // {default = true;};
         krita = {
           enable = options.mkEnableOption "Krita";
