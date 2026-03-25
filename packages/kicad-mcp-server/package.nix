@@ -10,8 +10,7 @@
   pythonEnv = python3.withPackages (ps:
     with ps; [
       kicad # pcbnew SWIG bindings
-      # TODO: re-enable when protoletariat is fixed (https://github.com/NixOS/nixpkgs/issues/498062)
-      # kicad-python # IPC backend (kipy)
+      kicad-python # IPC backend (kipy)
       kicad-skip
       pillow
       cairosvg

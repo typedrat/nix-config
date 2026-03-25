@@ -20,14 +20,6 @@ python3.pkgs.buildPythonApplication rec {
     python3.pkgs.setuptools
   ];
 
-  nativeBuildInputs = [
-    python3.pkgs.pythonRelaxDepsHook
-  ];
-
-  # comfy-cli pins click<=8.1.8 due to old typer incompatibility (github.com/Comfy-Org/comfy-cli/issues/266)
-  # but typer 0.16.0+ works with newer click, and nixpkgs has typer 0.21.0
-  pythonRelaxDeps = ["click"];
-
   dependencies = with python3.pkgs; [
     charset-normalizer
     click
