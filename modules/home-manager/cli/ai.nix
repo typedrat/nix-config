@@ -59,6 +59,7 @@ in {
 
     programs.peon-ping = modules.mkIf peonPingCfg.enable {
       enable = true;
+      package = inputs'.peon-ping.packages.default;
       installPacks = peonPingCfg.packs;
     };
 
