@@ -16,18 +16,33 @@ function findNixFiles(dir) {
   return results;
 }
 
-// Scan for GitHub issue/PR references (owner/repo#number)
-const refPattern = /[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+#[0-9]+/g;
+// Scan for GitHub issue/PR references:
+//   owner/repo#number  OR  https://github.com/owner/repo/(issues|pull)/number
+const shortRefPattern = /[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+#[0-9]+/g;
+const urlRefPattern = /https?:\/\/(?:redirect\.)?github\.com\/([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)\/(?:issues|pull)\/([0-9]+)/g;
 const locations = new Map();
 
 for (const file of findNixFiles(".")) {
   const lines = fs.readFileSync(file, "utf-8").split("\n");
   for (let i = 0; i < lines.length; i++) {
-    for (const m of lines[i].matchAll(refPattern)) {
-      const ref = m[0];
+    const line = lines[i];
+    const relPath = file.replace(/^\.\//, "");
+    const loc = `\`${relPath}:${i + 1}\``;
+
+    // Collect URL refs first so we can skip short refs that overlap
+    const urlRefs = new Set();
+    for (const m of line.matchAll(urlRefPattern)) {
+      const ref = `${m[1]}#${m[2]}`;
+      urlRefs.add(ref);
       if (!locations.has(ref)) locations.set(ref, []);
-      const relPath = file.replace(/^\.\//, "");
-      locations.get(ref).push(`\`${relPath}:${i + 1}\``);
+      locations.get(ref).push(loc);
+    }
+
+    for (const m of line.matchAll(shortRefPattern)) {
+      const ref = m[0];
+      if (urlRefs.has(ref)) continue; // already captured from URL form
+      if (!locations.has(ref)) locations.set(ref, []);
+      locations.get(ref).push(loc);
     }
   }
 }
@@ -146,7 +161,7 @@ for (const ref of refs) {
   const locs = locations.get(ref) || [];
 
   let body = `<!-- track-issues:${ref} -->\n`;
-  body += `@${owner} **[${ref}](https://github.com/${ownerRepo}/issues/${num})** has been resolved (${ri.status}). Locations that may need cleanup:\n`;
+  body += `@${owner} **[${ref}](https://redirect.github.com/${ownerRepo}/issues/${num})** has been resolved (${ri.status}). Locations that may need cleanup:\n`;
   for (const loc of locs) {
     body += `- ${loc}\n`;
   }
@@ -197,7 +212,7 @@ for (const ref of refs) {
 
   const ownerRepo = ref.slice(0, ref.indexOf("#"));
   const num = ref.slice(ref.indexOf("#") + 1);
-  const link = `[${ref}](https://github.com/${ownerRepo}/issues/${num})`;
+  const link = `[${ref}](https://redirect.github.com/${ownerRepo}/issues/${num})`;
   const locs = (locations.get(ref) || []).join(" ");
 
   if (ri.state === "closed") {
