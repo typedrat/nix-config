@@ -19,7 +19,7 @@ function findNixFiles(dir) {
 // Scan for GitHub issue/PR references:
 //   owner/repo#number  OR  https://github.com/owner/repo/(issues|pull)/number
 const shortRefPattern = /[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+#[0-9]+/g;
-const urlRefPattern = /https?:\/\/(?:redirect\.)?github\.com\/([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)\/(?:issues|pull)\/([0-9]+)/g;
+const urlRefPattern = /(?:https?:\/\/)?(?:redirect\.)?github\.com\/([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)\/(?:issues|pull)\/([0-9]+)/g;
 const locations = new Map();
 
 for (const file of findNixFiles(".")) {
