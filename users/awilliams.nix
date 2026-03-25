@@ -5,6 +5,7 @@
   ...
 }: let
   hostname = config.networking.hostName;
+  inherit (pkgs) fetchFromGitHub;
 in {
   rat.users.awilliams = {
     uid = 1000;
@@ -29,6 +30,39 @@ in {
     ];
 
     cli.enable = true;
+    cli.ai.peon-ping.packs = [
+      "glados"
+      "ocarina_of_time"
+      {
+        name = "bender";
+        src = fetchFromGitHub {
+          owner = "ravenrs";
+          repo = "peon-ping-futurama-bender-";
+          rev = "main";
+          hash = "sha256-TnBHFbFUZb6Y6feGlLeL0i9o391SA9nyiHSTas4QLLs=";
+        };
+      }
+      {
+        name = "solaire";
+        src = fetchFromGitHub {
+          owner = "jmfiebak";
+          repo = "openpeon-solaire-sound-pack";
+          rev = "main";
+          hash = "sha256-ZM4EnGJR3i9BsRZdFiSrn7kInHJouULkc4oRySct6/U=";
+        };
+      }
+      {
+        name = "moira";
+        src =
+          fetchFromGitHub {
+            owner = "heron--";
+            repo = "overwatch-peon-pings";
+            rev = "main";
+            hash = "sha256-3cj7bH/rpM9srhLwhLa90dM8EnFdJslFMFcVxol6Dps=";
+          }
+          + "/moira";
+      }
+    ];
     theming.enable = true;
 
     # Security key support (GPG with hardware key)

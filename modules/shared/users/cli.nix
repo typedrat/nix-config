@@ -26,6 +26,27 @@
 
       ai = {
         enable = options.mkEnableOption "AI tools and configuration" // {default = true;};
+
+        peon-ping = {
+          enable = options.mkEnableOption "peon-ping AI agent notifications";
+
+          packs = options.mkOption {
+            type = types.listOf (types.either types.str (types.submodule {
+              options = {
+                name = options.mkOption {
+                  type = types.str;
+                  description = "Name of the sound pack (used as directory name)";
+                };
+                src = options.mkOption {
+                  type = types.either types.package types.path;
+                  description = "Source for the pack (fetchFromGitHub, fetchzip, path, etc.)";
+                };
+              };
+            }));
+            default = [];
+            description = "Sound packs to install (built-in names as strings, or {name, src} for third-party)";
+          };
+        };
       };
 
       networking = {

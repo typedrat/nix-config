@@ -1,6 +1,7 @@
 {
   config,
   osConfig,
+  inputs,
   inputs',
   pkgs,
   lib,
@@ -18,7 +19,12 @@
   hasNvidia = osConfig.rat.hardware.nvidia.enable;
   gpuVram = osConfig.rat.hardware.gpu.vram;
   hasLargeVram = gpuVram >= 16;
+  peonPingCfg = cliCfg.ai.peon-ping or {};
 in {
+  imports = [
+    inputs.peon-ping.homeManagerModules.default
+  ];
+
   config = modules.mkIf (cliCfg.enable && cliCfg.ai.enable) {
     xdg.userDirs.extraConfig.XDG_AI_DIR = "$HOME/AI";
 
@@ -49,6 +55,11 @@ in {
     programs.comfy-cli = {
       enable = true;
       package = pkgs.comfy-cli;
+    };
+
+    programs.peon-ping = modules.mkIf peonPingCfg.enable {
+      enable = true;
+      installPacks = peonPingCfg.packs;
     };
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''

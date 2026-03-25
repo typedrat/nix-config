@@ -181,6 +181,7 @@
       extraGroups = ["comfyui"];
       cli = {
         enable = true;
+        ai.peon-ping.enable = true;
       };
       gui = {
         enable = true;

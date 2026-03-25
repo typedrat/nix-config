@@ -257,6 +257,11 @@
       url = "https://flakehub.com/f/nixified-ai/flake/*";
     };
 
+    peon-ping = {
+      url = "github:PeonPing/peon-ping";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     style-search = {
       url = "github:typedrat/style-search";
       inputs.nixpkgs.follows = "nixpkgs";
