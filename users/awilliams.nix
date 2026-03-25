@@ -29,22 +29,30 @@ in {
     ];
 
     cli.enable = true;
-    cli.ai.peon-ping.packs = [
-      "glados"
-      "ocarina_of_time"
-      {
-        name = "bender";
-        src = pkgs.peon-ping-packs.bender;
-      }
-      {
-        name = "solaire";
-        src = pkgs.peon-ping-packs.solaire;
-      }
-      {
-        name = "moira";
-        src = pkgs.peon-ping-packs.overwatch.moira;
-      }
-    ];
+    cli.ai.peon-ping = {
+      packs = [
+        "glados"
+        "ocarina_of_time"
+        {
+          name = "bender";
+          src = pkgs.peon-ping-packs.bender;
+        }
+        {
+          name = "solaire";
+          src = pkgs.peon-ping-packs.solaire;
+        }
+        {
+          name = "moira";
+          src = pkgs.peon-ping-packs.overwatch.moira;
+        }
+      ];
+      settings = {
+        default_pack = "glados";
+        pack_rotation = [];
+        pack_rotation_mode = "random";
+        categories."task.acknowledge" = true;
+      };
+    };
     theming.enable = true;
 
     # Security key support (GPG with hardware key)

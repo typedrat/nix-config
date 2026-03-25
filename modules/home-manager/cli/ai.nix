@@ -20,6 +20,7 @@
   gpuVram = osConfig.rat.hardware.gpu.vram;
   hasLargeVram = gpuVram >= 16;
   peonPingCfg = cliCfg.ai.peon-ping or {};
+  peonSettings = peonPingCfg.settings or {};
 in {
   imports = [
     inputs.peon-ping.homeManagerModules.default
@@ -61,6 +62,7 @@ in {
       enable = true;
       package = inputs'.peon-ping.packages.default;
       installPacks = peonPingCfg.packs;
+      settings = lib.filterAttrs (_: v: v != null) peonSettings;
     };
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''

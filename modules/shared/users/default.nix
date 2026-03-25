@@ -1,7 +1,7 @@
 {
   imports = [
+    ./cli
     ./account.nix
-    ./cli.nix
     ./email.nix
     ./environment.nix
     ./git.nix

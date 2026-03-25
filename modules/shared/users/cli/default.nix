@@ -1,0 +1,38 @@
+{lib, ...}: let
+  inherit (lib) options types;
+in {
+  imports = [
+    ./ai.nix
+  ];
+
+  options.rat.users = options.mkOption {
+    type = types.attrsOf (types.submodule {
+      options.cli = {
+        enable = options.mkEnableOption "CLI tools and configuration";
+
+        shell = {
+          enable = options.mkEnableOption "shell configuration" // {default = true;};
+        };
+
+        tools = {
+          enable = options.mkEnableOption "CLI development tools" // {default = true;};
+          core.enable = options.mkEnableOption "core shell tools (bat, fzf, etc.)" // {default = true;};
+          git.enable = options.mkEnableOption "git tools (lazygit, difftastic)" // {default = true;};
+          monitoring.enable = options.mkEnableOption "system monitoring tools" // {default = true;};
+          nix.enable = options.mkEnableOption "Nix ecosystem tools" // {default = true;};
+          media.enable = options.mkEnableOption "media processing tools" // {default = true;};
+          archiving.enable = options.mkEnableOption "archive/compression tools" // {default = true;};
+          secrets.enable = options.mkEnableOption "crypto and secrets tools" // {default = true;};
+        };
+
+        development = {
+          enable = options.mkEnableOption "development CLI tools" // {default = true;};
+        };
+
+        networking = {
+          enable = options.mkEnableOption "networking tools" // {default = true;};
+        };
+      };
+    });
+  };
+}
