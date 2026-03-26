@@ -6,11 +6,12 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) modules;
   inherit (config.home) username;
-  userCfg = osConfig.rat.users.${username} or {};
-  cliCfg = userCfg.cli or {};
+  userCfg = osConfig.rat.users.${username} or { };
+  cliCfg = userCfg.cli or { };
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
@@ -19,9 +20,10 @@
   hasNvidia = osConfig.rat.hardware.nvidia.enable;
   gpuVram = osConfig.rat.hardware.gpu.vram;
   hasLargeVram = gpuVram >= 16;
-  peonPingCfg = cliCfg.ai.peon-ping or {};
-  peonSettings = peonPingCfg.settings or {};
-in {
+  peonPingCfg = cliCfg.ai.peon-ping or { };
+  peonSettings = peonPingCfg.settings or { };
+in
+{
   imports = [
     inputs.peon-ping.homeManagerModules.default
   ];
@@ -32,14 +34,15 @@ in {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         "AI"
+        ".config/opencode"
         ".gstack"
       ];
     };
 
     sops.secrets = lib.mkIf hasUserSecrets {
-      civitaiApiToken = {};
-      hfToken = {};
-      openrouterApiKey = {};
+      civitaiApiToken = { };
+      hfToken = { };
+      openrouterApiKey = { };
     };
 
     home.packages =
@@ -58,7 +61,16 @@ in {
       package = pkgs.comfy-cli;
     };
 
-    programs.opencode.enable = true;
+    programs.opencode = {
+      enable = true;
+      settings = {
+        theme = "catppuccin-frappe";
+        plugin = [
+          "@ex-machina/opencode-anthropic-auth"
+          "superpowers@git+https://github.com/obra/superpowers.git"
+        ];
+      };
+    };
 
     programs.peon-ping = modules.mkIf peonPingCfg.enable {
       enable = true;
@@ -67,10 +79,12 @@ in {
       settings = lib.filterAttrs (_: v: v != null) peonSettings;
     };
 
-    programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
-      export CIVITAI_API_TOKEN=$(cat ${config.sops.secrets.civitaiApiToken.path})
-      export HF_TOKEN=$(cat ${config.sops.secrets.hfToken.path})
-      export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
-    '');
+    programs.zsh.initContent = lib.mkIf hasUserSecrets (
+      lib.mkBefore ''
+        export CIVITAI_API_TOKEN=$(cat ${config.sops.secrets.civitaiApiToken.path})
+        export HF_TOKEN=$(cat ${config.sops.secrets.hfToken.path})
+        export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
+      ''
+    );
   };
 }
