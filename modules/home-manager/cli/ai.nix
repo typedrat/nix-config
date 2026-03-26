@@ -58,6 +58,8 @@ in {
       package = pkgs.comfy-cli;
     };
 
+    programs.opencode.enable = true;
+
     programs.peon-ping = modules.mkIf peonPingCfg.enable {
       enable = true;
       package = inputs'.peon-ping.packages.default;
