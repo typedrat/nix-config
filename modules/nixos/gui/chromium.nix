@@ -37,12 +37,14 @@
 
   nmhJson = name: value: {
     "chromium/native-messaging-hosts/${name}.json".text = builtins.toJSON value;
-    "opt/chrome/native-messaging-hosts/${name}.json".text = builtins.toJSON (value // {
-      path = builtins.replaceStrings
-        ["/etc/chromium/native-messaging-hosts/"]
-        ["/etc/opt/chrome/native-messaging-hosts/"]
-        value.path;
-    });
+    "opt/chrome/native-messaging-hosts/${name}.json".text = builtins.toJSON (value
+      // {
+        path =
+          builtins.replaceStrings
+          ["/etc/chromium/native-messaging-hosts/"]
+          ["/etc/opt/chrome/native-messaging-hosts/"]
+          value.path;
+      });
   };
 in {
   options.rat.gui.browsers.chromium = {

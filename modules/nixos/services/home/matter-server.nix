@@ -38,7 +38,7 @@ in {
 
       services.matter-server = {
         enable = true;
-        port = config.links.matter-server.port;
+        inherit (config.links.matter-server) port;
         inherit (cfg) logLevel extraArgs;
       };
 

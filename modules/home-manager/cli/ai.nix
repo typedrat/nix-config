@@ -6,12 +6,11 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) modules;
   inherit (config.home) username;
-  userCfg = osConfig.rat.users.${username} or { };
-  cliCfg = userCfg.cli or { };
+  userCfg = osConfig.rat.users.${username} or {};
+  cliCfg = userCfg.cli or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
@@ -20,10 +19,9 @@ let
   hasNvidia = osConfig.rat.hardware.nvidia.enable;
   gpuVram = osConfig.rat.hardware.gpu.vram;
   hasLargeVram = gpuVram >= 16;
-  peonPingCfg = cliCfg.ai.peon-ping or { };
-  peonSettings = peonPingCfg.settings or { };
-in
-{
+  peonPingCfg = cliCfg.ai.peon-ping or {};
+  peonSettings = peonPingCfg.settings or {};
+in {
   imports = [
     inputs.peon-ping.homeManagerModules.default
   ];
@@ -40,9 +38,9 @@ in
     };
 
     sops.secrets = lib.mkIf hasUserSecrets {
-      civitaiApiToken = { };
-      hfToken = { };
-      openrouterApiKey = { };
+      civitaiApiToken = {};
+      hfToken = {};
+      openrouterApiKey = {};
     };
 
     home.packages =
