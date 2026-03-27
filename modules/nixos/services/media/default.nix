@@ -8,6 +8,7 @@
     ./jellyfin.nix
     ./lidarr.nix
     ./prowlarr.nix
+    ./qui.nix
     ./radarr.nix
     ./radarr-anime.nix
     ./romm.nix

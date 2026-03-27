@@ -194,6 +194,7 @@
         enable = true;
         downloadDir = "/mnt/media/torrents";
       };
+      qui.enable = true;
 
       matrix-synapse.enable = true;
       element.enable = true;
