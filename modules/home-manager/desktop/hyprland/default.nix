@@ -57,7 +57,9 @@ in {
   config = modules.mkIf (guiCfg.enable && hyprlandCfg.enable) {
     nix.settings = {
       extra-substituters = ["https://hyprland.cachix.org"];
-      extra-trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+      extra-trusted-public-keys = [
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      ];
     };
 
     home.packages = with pkgs; [
@@ -204,6 +206,37 @@ in {
         ".config/waytrogen"
         ".config/nomacs"
         ".local/share/nomacs"
+
+        # Dolphin
+        ".local/share/dolphin"
+        ".local/share/kfileplaces"
+
+        # Okular
+        ".local/share/okular"
+
+        # Recently used files (cross-desktop)
+        ".local/share/RecentDocuments"
+      ];
+      files = [
+        # Dolphin
+        ".config/dolphinrc"
+
+        # Okular
+        ".config/okularrc"
+        ".config/okularpartrc"
+
+        # Ark
+        ".config/arkrc"
+
+        # KIO framework (file dialogs)
+        ".config/kiorc"
+        ".config/kioslaverc"
+
+        # Qt file dialog state (last-used directory, sidebar bookmarks)
+        ".config/QtProject.conf"
+
+        # Recently used files (freedesktop)
+        ".local/share/recently-used.xbel"
       ];
     };
   };
