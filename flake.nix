@@ -31,21 +31,33 @@
       flake = false;
     };
 
-    # pkl: 0.29.1 -> 0.31.0 (NixOS/nixpkgs#494791)
-    nixpkgs-patch-494791 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/494791.diff";
+    # claude-code: 2.1.88 -> 2.1.89 (NixOS/nixpkgs#505561)
+    nixpkgs-patch-505561 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/505561.diff";
       flake = false;
     };
 
-    # python3Packages.asyncstdlib: 3.13.3 -> 3.14.0 (NixOS/nixpkgs#501837)
-    nixpkgs-patch-501837 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/501837.diff";
+    # claude-code: populate meta.sourceProvenance (NixOS/nixpkgs#505479)
+    nixpkgs-patch-505479 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/505479.diff";
       flake = false;
     };
 
-    # python3Packages.radios: relax pycountry version constraint (NixOS/nixpkgs#502729)
-    nixpkgs-patch-502729 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/502729.diff";
+    # claude-code: 2.1.89 -> 2.1.90 (NixOS/nixpkgs#505911)
+    nixpkgs-patch-505911 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/505911.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.90 -> 2.1.91 (NixOS/nixpkgs#506340)
+    nixpkgs-patch-506340 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/506340.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.91 -> 2.1.92 (NixOS/nixpkgs#506537)
+    nixpkgs-patch-506537 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/506537.diff";
       flake = false;
     };
     #endregion

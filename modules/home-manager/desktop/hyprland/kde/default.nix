@@ -41,7 +41,7 @@ in {
 
     xdg.configFile."menus/applications.menu".text = builtins.readFile ./applications.menu;
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+    home.persistence.${persistDir} = modules.mkIf (impermanenceCfg.home.enable && !osConfig.rat.gui.kde.enable) {
       directories = [
         # Akonadi PIM (Merkuro calendar/contacts data)
         ".local/share/akonadi"

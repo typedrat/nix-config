@@ -20,9 +20,8 @@ in {
     };
 
     home.packages = with pkgs; [
-      claude-code-bin
+      claude-code
       cclogviewer
-      happy-coder
     ];
 
     # Add ~/.local/bin to PATH
@@ -32,12 +31,9 @@ in {
 
     programs.git.ignores = [
       ".claude/settings.local.json"
+      "AGENTS.local.md"
       "CLAUDE.local.md"
     ];
-    home.file = {
-      # Symlink claude-code to ~/.local/bin to shut up the native install check
-      ".local/bin/claude".source = getExe pkgs.claude-code-bin;
-    };
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})

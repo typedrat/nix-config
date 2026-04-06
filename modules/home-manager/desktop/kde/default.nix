@@ -255,38 +255,7 @@ in {
         # Recently used files (cross-desktop)
         ".local/share/RecentDocuments"
       ];
-      files = [
-        ".config/kwinrc"
-        ".config/plasma-org.kde.plasma.desktop-appletsrc"
-        ".config/plasmashellrc"
-        ".config/kconf_updaterc"
-
-        # Dolphin
-        ".config/dolphinrc"
-
-        # Okular
-        ".config/okularrc"
-        ".config/okularpartrc"
-
-        # Ark
-        ".config/arkrc"
-
-        # Spectacle (screenshot tool)
-        ".config/spectaclerc"
-
-        # Baloo file indexer config (prevents full re-index every boot)
-        ".config/baloofilerc"
-
-        # KIO framework (file dialogs)
-        ".config/kiorc"
-        ".config/kioslaverc"
-
-        # Qt file dialog state (last-used directory, sidebar bookmarks)
-        ".config/QtProject.conf"
-
-        # Recently used files (freedesktop)
-        ".local/share/recently-used.xbel"
-      ];
+      files = [];
     };
   };
 }

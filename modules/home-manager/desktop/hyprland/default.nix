@@ -199,45 +199,26 @@ in {
     };
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".config/fcitx5"
-        ".config/pulse"
-        ".local/state/wireplumber"
-        ".config/waytrogen"
-        ".config/nomacs"
-        ".local/share/nomacs"
+      directories =
+        [
+          ".config/fcitx5"
+          ".config/pulse"
+          ".local/state/wireplumber"
+          ".config/waytrogen"
+          ".config/nomacs"
+          ".local/share/nomacs"
+        ]
+        ++ lib.optionals (!osConfig.rat.gui.kde.enable) [
+          # Dolphin
+          ".local/share/dolphin"
+          ".local/share/kfileplaces"
 
-        # Dolphin
-        ".local/share/dolphin"
-        ".local/share/kfileplaces"
+          # Okular
+          ".local/share/okular"
 
-        # Okular
-        ".local/share/okular"
-
-        # Recently used files (cross-desktop)
-        ".local/share/RecentDocuments"
-      ];
-      files = [
-        # Dolphin
-        ".config/dolphinrc"
-
-        # Okular
-        ".config/okularrc"
-        ".config/okularpartrc"
-
-        # Ark
-        ".config/arkrc"
-
-        # KIO framework (file dialogs)
-        ".config/kiorc"
-        ".config/kioslaverc"
-
-        # Qt file dialog state (last-used directory, sidebar bookmarks)
-        ".config/QtProject.conf"
-
-        # Recently used files (freedesktop)
-        ".local/share/recently-used.xbel"
-      ];
+          # Recently used files (cross-desktop)
+          ".local/share/RecentDocuments"
+        ];
     };
   };
 }

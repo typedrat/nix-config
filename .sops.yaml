@@ -2,7 +2,7 @@ keys:
   - &admin_alexis age179gy6lwjjw3xm7wq6qxk4g0fh9skzujst7lau6qaw3356t6rddrsackn6f
   - &host_hyperion age1dln7w6394nl0rj63uq3slhp4l2v52mv75ty88xr8lgcrysxqqaeqkmkjd0
   - &host_iserlohn age1kfrtrhkhvesrzv0dr28e9023w63zu7cy0s0tvy2avsx9kmyhwvaq205vjh
-  - &host_ulysses age1jxqhe0g0fufygvknlhm7rak76wpvljzqyj28pm3lhwugmryye5as05gwy0
+  - &host_ulysses age15xaf2cq8ch0rnjm3jefss9un5ypllxfcu0m9kg0suj9au4gdc5fsfzxyx3
 creation_rules:
   - path_regex: secrets\/(?:[^\/]+\/)*[^\/]+\.(?:yaml|json|env|ini)$
     key_groups:
