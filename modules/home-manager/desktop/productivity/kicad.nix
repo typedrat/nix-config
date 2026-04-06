@@ -21,8 +21,9 @@ in {
     home.packages = [
       (pkgs.kicad.override {
         addons = with pkgs.kicadAddons; [
-          kikit
-          kikit-library
+          # TODO: re-enable once upstream adds KiCAD 10 compatibility
+          # kikit
+          # kikit-library
         ];
       })
     ];
