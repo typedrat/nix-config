@@ -21,12 +21,6 @@ in {
       default = "info";
       description = "Verbosity of logs from the Matter server.";
     };
-
-    extraArgs = options.mkOption {
-      type = types.listOf types.str;
-      default = [];
-      description = "Extra arguments to pass to the matter-server executable.";
-    };
   };
 
   config = modules.mkMerge [
@@ -39,7 +33,7 @@ in {
       services.matter-server = {
         enable = true;
         inherit (config.links.matter-server) port;
-        inherit (cfg) logLevel extraArgs;
+        inherit (cfg) logLevel;
       };
 
       # The upstream module uses DynamicUser which breaks impermanence
