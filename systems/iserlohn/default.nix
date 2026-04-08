@@ -40,6 +40,7 @@
       open = false;
       powerManagement.enable = false;
       cuda.enable = true;
+      package = "legacy_580";
     };
 
     impermanence = {

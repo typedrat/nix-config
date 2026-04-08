@@ -84,8 +84,8 @@ in {
         # Static assets are served by lighttpd, not by librespeed-rust.
         assets_path = pkgs.writeTextDir "index.html" "";
         # PostgreSQL for result image generation.
-        database_type = "postgresql";
-        database_file = "host=/run/postgresql dbname=librespeed";
+        database_type = "postgres";
+        database_file = "postgresql:///librespeed?host=/run/postgresql";
       };
     };
 

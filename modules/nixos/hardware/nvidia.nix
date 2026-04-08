@@ -36,6 +36,27 @@ in {
       description = "Enable NVIDIA power management for suspend/resume support";
     };
 
+    package = mkOption {
+      type = types.enum [
+        "stable"
+        "production"
+        "beta"
+        "vulkan_beta"
+        "dc"
+        "dc_570"
+        "dc_580"
+        "dc_590"
+        "latest"
+        "legacy_340"
+        "legacy_390"
+        "legacy_470"
+        "legacy_535"
+        "legacy_580"
+      ];
+      default = "stable";
+      description = "NVIDIA driver package to use from linuxPackages.nvidiaPackages";
+    };
+
     cuda.enable = mkOption {
       type = types.bool;
       default = false;
@@ -47,6 +68,7 @@ in {
     # Core NVIDIA driver configuration
     hardware.nvidia = {
       inherit (cfg) open;
+      package = config.boot.kernelPackages.nvidiaPackages.${cfg.package};
       nvidiaPersistenced = true;
       modesetting.enable = true;
       powerManagement.enable = cfg.powerManagement.enable;
