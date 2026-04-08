@@ -11,8 +11,7 @@
     ./qui.nix
     ./radarr.nix
     ./radarr-anime.nix
-    ./readarr.nix
-    ./readarr-audiobooks.nix
+    ./chaptarr.nix
     ./romm.nix
     ./shoko.nix
     ./sonarr.nix

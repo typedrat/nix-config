@@ -15,7 +15,7 @@
         description = "The directory where Readarr instance ${name} stores its data files.";
       };
 
-      package = lib.mkPackageOption pkgs "readarr" {};
+      package = lib.mkPackageOption pkgs "chaptarr" {};
 
       openFirewall = lib.mkOption {
         type = lib.types.bool;
@@ -83,7 +83,7 @@ in {
         default = "/var/lib/readarr/";
         description = "The directory where Readarr stores its data files (deprecated).";
       };
-      package = lib.mkPackageOption pkgs "readarr" {};
+      package = lib.mkPackageOption pkgs "chaptarr" {};
       openFirewall = lib.mkOption {
         type = lib.types.bool;
         default = false;
@@ -134,13 +134,13 @@ in {
           description = "Readarr (${name})";
           after = ["network.target"];
           wantedBy = ["multi-user.target"];
-          environment = servarr.mkServarrSettingsEnvVars "READARR" instance.settings;
+          environment = servarr.mkServarrSettingsEnvVars "CHAPTARR" instance.settings;
           serviceConfig = {
             Type = "simple";
             User = instance.user;
             Group = instance.group;
             EnvironmentFile = instance.environmentFiles;
-            ExecStart = "${instance.package}/bin/Readarr -nobrowser -data='${instance.dataDir}'";
+            ExecStart = "${instance.package}/bin/Chaptarr -nobrowser -data='${instance.dataDir}'";
             Restart = "on-failure";
           };
         })

@@ -1,27 +1,13 @@
 {
-  authentik.applications = {
-    readarr = {
-      name = "Readarr";
-      group = "Torrents";
-      icon = "https://raw.githubusercontent.com/Readarr/Readarr/refs/heads/develop/Logo/Readarr.svg";
-      description = "Book organizer/manager for usenet and torrent users.";
-      accessGroups = ["discord-sysop"];
+  authentik.applications.chaptarr = {
+    name = "Chaptarr";
+    group = "Torrents";
+    icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/chaptarr.svg";
+    description = "Audiobook and e-book organizer/manager for usenet and torrent users.";
+    accessGroups = ["discord-sysop"];
 
-      proxy = {
-        externalHost = "https://readarr.thisratis.gay";
-      };
-    };
-
-    "readarr-audiobooks" = {
-      name = "Readarr (Audiobooks)";
-      group = "Torrents";
-      icon = "https://raw.githubusercontent.com/Readarr/Readarr/refs/heads/develop/Logo/Readarr.svg";
-      description = "Audiobook organizer/manager for usenet and torrent users.";
-      accessGroups = ["discord-sysop"];
-
-      proxy = {
-        externalHost = "https://readarr-audiobooks.thisratis.gay";
-      };
+    proxy = {
+      externalHost = "https://chaptarr.thisratis.gay";
     };
   };
 }

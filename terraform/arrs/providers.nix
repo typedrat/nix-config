@@ -33,17 +33,10 @@
         alias = "anime";
       }
     ];
-    readarr = [
-      {
-        api_key = "\${ data.sops_file.arrs.data[\"readarr.apiKey\"] }";
-        inherit (links.readarr) url;
-      }
-      {
-        api_key = "\${ data.sops_file.arrs.data[\"readarr-audiobooks.apiKey\"] }";
-        inherit (links.readarr-audiobooks) url;
-        alias = "audiobooks";
-      }
-    ];
+    readarr = {
+      api_key = "\${ data.sops_file.arrs.data[\"chaptarr.apiKey\"] }";
+      inherit (links.chaptarr) url;
+    };
     sonarr = [
       {
         api_key = "\${ data.sops_file.arrs.data[\"sonarr.apiKey\"] }";

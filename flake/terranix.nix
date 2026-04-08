@@ -24,8 +24,7 @@
                 "prowlarr"
                 "radarr"
                 "radarr-anime"
-                "readarr"
-                "readarr-audiobooks"
+                "chaptarr"
                 "sonarr"
                 "sonarr-anime"
               ];

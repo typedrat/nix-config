@@ -4,15 +4,15 @@
   ...
 }: let
   inherit (lib) modules options types;
-  cfg = config.rat.services.readarr;
+  cfg = config.rat.services.chaptarr;
   impermanenceCfg = config.rat.impermanence;
 in {
-  options.rat.services.readarr = {
-    enable = options.mkEnableOption "Readarr";
+  options.rat.services.chaptarr = {
+    enable = options.mkEnableOption "Chaptarr";
     subdomain = options.mkOption {
       type = types.str;
-      default = "readarr";
-      description = "The subdomain for Readarr";
+      default = "chaptarr";
+      description = "The subdomain for Chaptarr";
     };
   };
 
@@ -23,20 +23,20 @@ in {
         settings = {
           auth.method = "External";
 
-          server.port = config.links.readarr.port;
+          server.port = config.links.chaptarr.port;
 
           postgres = {
             host = "localhost";
             inherit (config.links.postgres) port;
-            user = "readarr";
-            maindb = "readarr";
-            logdb = "readarr-log";
-            cachedb = "readarr-cache";
+            user = "chaptarr";
+            maindb = "chaptarr";
+            logdb = "chaptarr-log";
+            cachedb = "chaptarr-cache";
           };
         };
 
         environmentFiles = [
-          config.sops.templates."readarr.env".path
+          config.sops.templates."chaptarr.env".path
         ];
       };
 
@@ -44,9 +44,9 @@ in {
         enable = true;
 
         users = {
-          readarr = {
-            passwordFile = config.sops.secrets."readarr/db/password".path;
-            ownedDatabases = ["readarr" "readarr-log" "readarr-cache"];
+          chaptarr = {
+            passwordFile = config.sops.secrets."chaptarr/db/password".path;
+            ownedDatabases = ["chaptarr" "chaptarr-log" "chaptarr-cache"];
           };
         };
       };
@@ -57,36 +57,36 @@ in {
 
       users.users.readarr-default.extraGroups = ["media"];
 
-      sops.secrets."readarr/db/password" = {
+      sops.secrets."chaptarr/db/password" = {
         sopsFile = ../../../../secrets/arrs.yaml;
-        key = "readarr/db/password";
+        key = "chaptarr/db/password";
         restartUnits = ["postgresql.service" "readarr-default.service"];
         owner = "postgres";
       };
 
-      sops.secrets."readarr/apiKey" = {
+      sops.secrets."chaptarr/apiKey" = {
         sopsFile = ../../../../secrets/arrs.yaml;
-        key = "readarr/apiKey";
+        key = "chaptarr/apiKey";
         restartUnits = ["readarr-default.service"];
       };
 
-      sops.templates."readarr.env" = {
+      sops.templates."chaptarr.env" = {
         content = lib.toShellVars {
-          READARR__AUTH__APIKEY = "${config.sops.placeholder."readarr/apiKey"}";
-          READARR__POSTGRES__PASSWORD = "${config.sops.placeholder."readarr/db/password"}";
+          CHAPTARR__AUTH__APIKEY = "${config.sops.placeholder."chaptarr/apiKey"}";
+          CHAPTARR__POSTGRES__PASSWORD = "${config.sops.placeholder."chaptarr/db/password"}";
         };
 
         restartUnits = ["readarr-default.service"];
       };
 
-      links.readarr = {
+      links.chaptarr = {
         protocol = "http";
       };
 
-      rat.services.traefik.routes.readarr = {
+      rat.services.traefik.routes.chaptarr = {
         enable = true;
         inherit (cfg) subdomain;
-        serviceUrl = config.links.readarr.url;
+        serviceUrl = config.links.chaptarr.url;
 
         authentik = true;
         theme-park = {
