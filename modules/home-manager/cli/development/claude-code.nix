@@ -29,6 +29,10 @@ in {
       "${homeDirectory}/.local/bin"
     ];
 
+    home.sessionVariables = {
+      "CLAUDE_CODE_NO_FLICKER" = 1;
+    };
+
     programs.git.ignores = [
       ".claude/settings.local.json"
       "AGENTS.local.md"
