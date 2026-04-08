@@ -13,7 +13,7 @@
     ./zfspv-pool.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_hardened;
+  boot.kernelPackages = pkgs.linuxPackages;
 
   disko.devices.disk.main.device = "/dev/disk/by-id/ata-ADATA_SU800_2L412L2HHEK9";
 
