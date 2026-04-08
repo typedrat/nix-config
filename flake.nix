@@ -31,35 +31,12 @@
       flake = false;
     };
 
-    # claude-code: 2.1.88 -> 2.1.89 (NixOS/nixpkgs#505561)
-    nixpkgs-patch-505561 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/505561.diff";
+    # opencode: 1.3.13 -> 1.4.0 (NixOS/nixpkgs#507779)
+    nixpkgs-patch-507779 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/507779.diff";
       flake = false;
     };
 
-    # claude-code: populate meta.sourceProvenance (NixOS/nixpkgs#505479)
-    nixpkgs-patch-505479 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/505479.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.89 -> 2.1.90 (NixOS/nixpkgs#505911)
-    nixpkgs-patch-505911 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/505911.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.90 -> 2.1.91 (NixOS/nixpkgs#506340)
-    nixpkgs-patch-506340 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/506340.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.91 -> 2.1.92 (NixOS/nixpkgs#506537)
-    nixpkgs-patch-506537 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/506537.diff";
-      flake = false;
-    };
     #endregion
 
     #region home-manager patches
@@ -294,9 +271,10 @@
     #endregion
   };
 
-  outputs = {flake-parts, ...} @ inputs:
-    flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = [./flake];
+  outputs =
+    { flake-parts, ... }@inputs:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [ ./flake ];
 
       systems = [
         "aarch64-darwin"
