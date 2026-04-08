@@ -16,6 +16,7 @@
     ./prowlarr.nix
     ./qbittorrent.nix
     ./radarr.nix
+    ./readarr.nix
     ./romm.nix
     ./sillytavern.nix
     ./sonarr.nix

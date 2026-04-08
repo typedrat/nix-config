@@ -168,6 +168,8 @@
       prowlarr.enable = true;
       radarr.enable = true;
       radarr.anime.enable = true;
+      readarr.enable = true;
+      readarr.audiobooks.enable = true;
 
       romm = {
         enable = true;

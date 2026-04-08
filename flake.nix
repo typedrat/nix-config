@@ -271,10 +271,9 @@
     #endregion
   };
 
-  outputs =
-    { flake-parts, ... }@inputs:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ./flake ];
+  outputs = {flake-parts, ...} @ inputs:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      imports = [./flake];
 
       systems = [
         "aarch64-darwin"

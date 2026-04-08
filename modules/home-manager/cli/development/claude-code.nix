@@ -5,7 +5,7 @@
   lib,
   ...
 }: let
-  inherit (lib) modules getExe;
+  inherit (lib) modules;
   inherit (config.home) username homeDirectory;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};

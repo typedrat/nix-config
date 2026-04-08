@@ -9,6 +9,9 @@
     radarr = {
       source = "devopsarr/radarr";
     };
+    readarr = {
+      source = "devopsarr/readarr";
+    };
     sonarr = {
       source = "devopsarr/sonarr";
     };
@@ -28,6 +31,17 @@
         api_key = "\${ data.sops_file.arrs.data[\"radarr-anime.apiKey\"] }";
         inherit (links.radarr-anime) url;
         alias = "anime";
+      }
+    ];
+    readarr = [
+      {
+        api_key = "\${ data.sops_file.arrs.data[\"readarr.apiKey\"] }";
+        inherit (links.readarr) url;
+      }
+      {
+        api_key = "\${ data.sops_file.arrs.data[\"readarr-audiobooks.apiKey\"] }";
+        inherit (links.readarr-audiobooks) url;
+        alias = "audiobooks";
       }
     ];
     sonarr = [

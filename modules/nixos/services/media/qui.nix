@@ -2,13 +2,11 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) modules options types;
   cfg = config.rat.services.qui;
   impermanenceCfg = config.rat.impermanence;
-in
-{
+in {
   options.rat.services.qui = {
     enable = options.mkEnableOption "qui";
     subdomain = options.mkOption {
@@ -61,7 +59,7 @@ in
       };
 
       systemd.services.qui = {
-        after = [ "qbittorrent.service" ];
+        after = ["qbittorrent.service"];
       };
     })
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
