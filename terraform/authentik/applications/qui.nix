@@ -1,7 +1,7 @@
 {
   authentik.applications.qui = {
     name = "qui";
-    group = "Downloads";
+    group = "Torrents";
     icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/qui.svg";
     description = "Download management interface for qBittorrent";
     accessGroups = [ "discord-user" ];
