@@ -43,6 +43,10 @@ in {
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})
     '');
 
+    home.file.".claude/hooks/peon-ping/peon.sh" = modules.mkIf config.programs.peon-ping.enable {
+      source = "${config.programs.peon-ping.package}/share/peon-ping/peon.sh";
+    };
+
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".claude"
