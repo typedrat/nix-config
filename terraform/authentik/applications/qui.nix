@@ -4,10 +4,10 @@
     group = "Media";
     icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/qui.svg";
     description = "Download management interface for qBittorrent";
-    accessGroups = ["discord-user"];
+    accessGroups = [ "discord-user" ];
 
     oauth2 = {
-      clientId = "\${ data.sops_file.qui.data[\"oidcClientId\"] }";
+      clientId = "qui";
       clientSecret = "\${ data.sops_file.qui.data[\"oidcClientSecret\"] }";
       launchUrl = "https://qui.thisratis.gay/";
       redirectUris = [
