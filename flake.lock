@@ -74,11 +74,11 @@
         "sf-pro": "sf-pro"
       },
       "locked": {
-        "lastModified": 1772251183,
-        "narHash": "sha256-Zfr9trB8LaesfpupugDgXPqC4F25MO18kyMyb9b2PkM=",
+        "lastModified": 1775780043,
+        "narHash": "sha256-gjSmzLF1WaxZ1128suHgT5lp6qbjv+qy4NIuE8dEUXM=",
         "owner": "Lyndeno",
         "repo": "apple-fonts.nix",
-        "rev": "f8dad87c2cb956695d18c1f36360322d8a0b7d63",
+        "rev": "ecb843051893bdf34fd4f9c0ec664e356e2251a6",
         "type": "github"
       },
       "original": {
@@ -1297,11 +1297,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775777809,
-        "narHash": "sha256-2Tr3ivwdaTRJ0jyICnE2qXJHlPcl4NSOpBVGfChPZMw=",
+        "lastModified": 1775779786,
+        "narHash": "sha256-rNdhnAdIKg0IpFwLCy6lVc+amSHRXWp4DMtQKsB1bGw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "0f9090a77c7af9eafcc79394ac3d258a438f722d",
+        "rev": "0eddb2cc1abc5692935308c5efb4035c023bddc7",
         "type": "github"
       },
       "original": {
