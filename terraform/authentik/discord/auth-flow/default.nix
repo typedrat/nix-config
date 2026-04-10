@@ -1,4 +1,5 @@
-{lib, ...}: {
+{ lib, ... }:
+{
   resource = {
     authentik_flow."discord-auth" = rec {
       name = "Authenticate with Discord";
@@ -22,8 +23,8 @@
     authentik_policy_expression."discord-auth-policy-guild-sync" = {
       name = "discord-authentication-policy-guild-sync";
       expression = lib.concatLines [
-        "GUILD_ID = \"\${data.sops_file.authentik.data[\"discord.guildId\"]}\""
-        "GUILD_NAME = \"\${data.sops_file.authentik.data[\"discord.guildName\"]}\""
+        "GUILD_ID = \"\${local.discord_guild_id}\""
+        "GUILD_NAME = \"\${local.discord_guild_name}\""
         (builtins.readFile ./guild-sync.py)
       ];
     };
