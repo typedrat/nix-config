@@ -281,6 +281,11 @@ Always test system changes safely:
 5. Check `nix flake check` for basic validation (may take a while)
 6. Use `--show-trace` flag for debugging evaluation errors
 
+## Local Source Repositories
+
+- **nixpkgs source**: `~/Development/nixpkgs` — Local checkout of the nixpkgs repository. Use this when you need to look up package definitions, NixOS module implementations, or service option details.
+- **home-manager source**: `~/Development/home-manager` — Local checkout of the home-manager repository. Use this when you need to look up home-manager module implementations or option definitions.
+
 ## Additional Notes
 
 - Both systems use ZFS with the `rpool` pool name

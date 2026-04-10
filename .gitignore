@@ -1,5 +1,6 @@
 result
 nohup.out
+.worktrees/
 terraform/.terraform
 terraform/.terraform.lock.hcl
 terraform/.terraform_ssh_tunnel.pid
