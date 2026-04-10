@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "~/Development/nixpkgs/**": "allow",
+      "~/Development/home-manager/**": "allow",
+      "/nix/store/**": "allow"
+    }
+  }
+}
