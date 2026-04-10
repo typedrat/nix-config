@@ -1,6 +1,6 @@
 {
   authentik.applications.qui = {
-    name = "Qui";
+    name = "qui";
     group = "Media";
     icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/qui.svg";
     description = "Download management interface for qBittorrent";
