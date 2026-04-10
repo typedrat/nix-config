@@ -2,10 +2,10 @@
   authentik.applications = {
     radarr = {
       name = "Radarr";
-      group = "Torrents";
+      group = "Media";
       icon = "https://raw.githubusercontent.com/Radarr/Radarr/refs/heads/develop/Logo/Radarr.svg";
       description = "Movie organizer/manager for usenet and torrent users.";
-      accessGroups = ["discord-sysop"];
+      accessGroups = [ "discord-sysop" ];
 
       proxy = {
         externalHost = "https://radarr.thisratis.gay";
@@ -14,10 +14,10 @@
 
     "radarr-anime" = {
       name = "Radarr (Anime)";
-      group = "Torrents";
+      group = "Media";
       icon = "https://raw.githubusercontent.com/Radarr/Radarr/refs/heads/develop/Logo/Radarr.svg";
       description = "Movie organizer/manager for usenet and torrent users.";
-      accessGroups = ["discord-sysop"];
+      accessGroups = [ "discord-sysop" ];
 
       proxy = {
         externalHost = "https://radarr-anime.thisratis.gay";
