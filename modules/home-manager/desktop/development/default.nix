@@ -4,14 +4,17 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) modules;
   inherit (config.home) username;
-  userCfg = osConfig.rat.users.${username} or {};
-  guiCfg = userCfg.gui or {};
-  developmentCfg = guiCfg.development or {};
-in {
+  userCfg = osConfig.rat.users.${username} or { };
+  guiCfg = userCfg.gui or { };
+  developmentCfg = guiCfg.development or { };
+in
+{
   imports = [
+    ./ghidra.nix
     ./imhex.nix
     ./vscode.nix
     ./zed.nix
