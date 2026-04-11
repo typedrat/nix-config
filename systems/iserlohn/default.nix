@@ -167,7 +167,7 @@
           shokofin.enable = true;
         };
       };
-      cross-seed.enable = true;
+      cross-seed.enable = false;
       dispatcharr.enable = false;
       lidarr.enable = true;
       prowlarr.enable = true;

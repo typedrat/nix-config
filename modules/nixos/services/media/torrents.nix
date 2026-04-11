@@ -7,6 +7,7 @@
 let
   inherit (lib) modules options types;
   cfg = config.rat.services.torrents;
+  crossSeedCfg = config.rat.services.cross-seed;
   impermanenceCfg = config.rat.impermanence;
 in
 {
@@ -67,11 +68,6 @@ in
               MemoryWorkingSetLimit = 4096;
             };
 
-            AutoRun = {
-              enabled = true;
-              program = "${config.sops.templates."trigger-cross-seed.sh".path} %I";
-            };
-
             BitTorrent.Session = {
               AddTorrentStopped = false;
               AsyncIOThreadsCount = 112;
@@ -124,18 +120,6 @@ in
           };
         };
 
-        sops.templates."trigger-cross-seed.sh" = {
-          content = ''
-            #!${pkgs.bash}/bin/sh
-            ${lib.getExe pkgs.curl} -XPOST "${config.links.cross-seed.url}/api/webhook?apikey=${
-              config.sops.placeholder."cross-seed/apiKey"
-            }" -d "infoHash=$1" -d "includeSingleEpisodes=true"
-          '';
-          owner = config.services.qbittorrent.user;
-          inherit (config.services.qbittorrent) group;
-          mode = "0700";
-        };
-
         links = {
           qbittorrent = {
             protocol = "tcp";
@@ -153,6 +137,24 @@ in
 
           authentik = true;
           theme-park.app = "vuetorrent";
+        };
+      })
+      (modules.mkIf (cfg.enable && crossSeedCfg.enable) {
+        services.qbittorrent.serverConfig.AutoRun = {
+          enabled = true;
+          program = "${config.sops.templates."trigger-cross-seed.sh".path} %I";
+        };
+
+        sops.templates."trigger-cross-seed.sh" = {
+          content = ''
+            #!${pkgs.bash}/bin/sh
+            ${lib.getExe pkgs.curl} -XPOST "${config.links.cross-seed.url}/api/webhook?apikey=${
+              config.sops.placeholder."cross-seed/apiKey"
+            }" -d "infoHash=$1" -d "includeSingleEpisodes=true"
+          '';
+          owner = config.services.qbittorrent.user;
+          inherit (config.services.qbittorrent) group;
+          mode = "0700";
         };
       })
       (modules.mkIf (cfg.enable && impermanenceCfg.enable) {

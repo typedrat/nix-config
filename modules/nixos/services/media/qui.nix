@@ -28,6 +28,10 @@ in
           assertion = config.rat.services.torrents.enable;
           message = "qui requires torrents to be enabled";
         }
+        {
+          assertion = !config.rat.services.cross-seed.enable;
+          message = "qui and cross-seed are mutually exclusive";
+        }
       ];
 
       services.qui = {

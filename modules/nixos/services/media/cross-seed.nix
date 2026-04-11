@@ -3,13 +3,16 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) lists modules options;
   cfg = config.rat.services.cross-seed;
   impermanenceCfg = config.rat.impermanence;
 
-  mkCrossSeedSecrets = path: secrets:
-    builtins.listToAttrs (builtins.map (secret: {
+  mkCrossSeedSecrets =
+    path: secrets:
+    builtins.listToAttrs (
+      builtins.map (secret: {
         name = "cross-seed/${secret}";
         value = {
           sopsFile = path;
@@ -18,9 +21,10 @@
           inherit (config.services.cross-seed) group;
           mode = "0740";
         };
-      })
-      secrets);
-in {
+      }) secrets
+    );
+in
+{
   options.rat.services.cross-seed = {
     enable = options.mkEnableOption "`cross-seed`";
   };
@@ -31,6 +35,10 @@ in {
         {
           assertion = config.rat.services.torrents.enable;
           message = "cross-seed requires torrents to be enabled";
+        }
+        {
+          assertion = !config.rat.services.qui.enable;
+          message = "cross-seed and qui are mutually exclusive";
         }
       ];
 
@@ -88,18 +96,25 @@ in {
         content = builtins.toJSON {
           apiKey = config.sops.placeholder."cross-seed/apiKey";
 
-          torznab =
-            builtins.map (id: "${config.links.prowlarr.url}/${builtins.toString id}/api?apikey=${config.sops.placeholder."cross-seed/prowlarr/apiKey"}")
-            (lists.range 1 12);
+          torznab = builtins.map (
+            id:
+            "${config.links.prowlarr.url}/${builtins.toString id}/api?apikey=${
+              config.sops.placeholder."cross-seed/prowlarr/apiKey"
+            }"
+          ) (lists.range 1 12);
 
           sonarr = [
             "${config.links.sonarr.url}/?apikey=${config.sops.placeholder."cross-seed/sonarr/apiKey"}"
-            "${config.links.sonarr-anime.url}/?apikey=${config.sops.placeholder."cross-seed/sonarr-anime/apiKey"}"
+            "${config.links.sonarr-anime.url}/?apikey=${
+              config.sops.placeholder."cross-seed/sonarr-anime/apiKey"
+            }"
           ];
 
           radarr = [
             "${config.links.radarr.url}/?apikey=${config.sops.placeholder."cross-seed/radarr/apiKey"}"
-            "${config.links.radarr-anime.url}/?apikey=${config.sops.placeholder."cross-seed/radarr-anime/apiKey"}"
+            "${config.links.radarr-anime.url}/?apikey=${
+              config.sops.placeholder."cross-seed/radarr-anime/apiKey"
+            }"
           ];
 
           qbittorrentUrl = config.links.qbittorrent-webui.url;
@@ -107,7 +122,7 @@ in {
 
         owner = config.services.cross-seed.user;
         inherit (config.services.cross-seed) group;
-        restartUnits = ["cross-seed.service"];
+        restartUnits = [ "cross-seed.service" ];
       };
 
       links.cross-seed = {
