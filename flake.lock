@@ -538,11 +538,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1775793785,
-        "narHash": "sha256-lLJpttuuF9sbmwM7GuNJ2/mKVqbim4Wla3rl/eMjAZo=",
+        "lastModified": 1775880170,
+        "narHash": "sha256-63PLZ7lspPAqpV/+d0oNtDHLCWQf1MVFRG2DOeDK+nU=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "65415051e904355712fc63e7a0bd14f20eddbe28",
+        "rev": "28b164d30b5ab6820ef7e17281ae55c539ae9ff5",
         "type": "gitlab"
       },
       "original": {
@@ -1918,12 +1918,12 @@
         ]
       },
       "locked": {
-        "lastModified": 1775790837,
-        "narHash": "sha256-RAHjn8sjgfF3D17BaV8iv69o3P+L9aCuE36PFwzoqHU=",
-        "rev": "c913e0b9525311f103b7e1463ebb0f28c6865d8d",
-        "revCount": 2138,
+        "lastModified": 1775877051,
+        "narHash": "sha256-wpSQm2PD/w4uRo2wb8utk0b5hOBkkg/CZ1xICY+qB7M=",
+        "rev": "08b4f3633471874c8894632ade1b78d75dbda002",
+        "revCount": 2139,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/oxalica/rust-overlay/0.1.2138%2Brev-c913e0b9525311f103b7e1463ebb0f28c6865d8d/019d7563-ee21-75b6-99ab-33ff25c28216/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/oxalica/rust-overlay/0.1.2139%2Brev-08b4f3633471874c8894632ade1b78d75dbda002/019d7a87-6694-7837-8633-1feb884d125e/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -1938,11 +1938,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775852220,
-        "narHash": "sha256-0xVv8B/64JKY4DsZDICKSoaP1yv7jThpyEp7oulZTYc=",
+        "lastModified": 1775874630,
+        "narHash": "sha256-3zcZig0CS5xNlVF93g1u63iMT64VEhnoeVknauu7tnc=",
         "owner": "ggml-org",
         "repo": "llama.cpp",
-        "rev": "05b3caaa485bd242ad431447e35c988285365e9a",
+        "rev": "a29e4c0b7b23e020107058480dabbe03b7cba6e1",
         "type": "github"
       },
       "original": {
@@ -2004,11 +2004,11 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1775784599,
-        "narHash": "sha256-2L+UQ/qF7qmNk4tMCWe39H7MiUU0+KGCB8HM9mFhZdQ=",
+        "lastModified": 1775872502,
+        "narHash": "sha256-XMYmB4qAdD76kILj9zuFnSg2D9QeVEjRpYmOwE8gRGs=",
         "ref": "refs/heads/main",
-        "rev": "322a9ab13ecd491aaed8542674d7756d5b05ea6c",
-        "revCount": 619,
+        "rev": "d25eb8203b1dbe3090546e49145a6a069bcf403b",
+        "revCount": 622,
         "type": "git",
         "url": "https://git.theless.one/nanoyaki/nanopkgs.git"
       },
@@ -2669,11 +2669,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774915545,
-        "narHash": "sha256-COT4l/+ZddGBvrDVfPf7MEOJxV8EDKame6/aRnNIKcY=",
+        "lastModified": 1775856943,
+        "narHash": "sha256-b7Mp7P+q2Md5AGt4rjHfMcBykzMumFTen10ST++AuTU=",
         "owner": "nix-community",
         "repo": "plasma-manager",
-        "rev": "f3177b3c69fb3f03201098d7fe8ab6422cce7fc1",
+        "rev": "a524a6160e6df89f7673ba293cf7d78b559eb1a5",
         "type": "github"
       },
       "original": {
@@ -3505,11 +3505,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775791637,
-        "narHash": "sha256-+ZTApiNa7d+3Aqhgs940fbUatQmqTqfzyCMoYnPSBlY=",
+        "lastModified": 1775875897,
+        "narHash": "sha256-/6yiKV+yW1b1bvM5QxfAovW5nu7JHMfW+1HTCBchrlk=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "231042b6c37c7cecc16b5af8c130f9cd1e48dea4",
+        "rev": "517e9639fc0830315bb88af02d5dcacfb96aa342",
         "type": "github"
       },
       "original": {
