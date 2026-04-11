@@ -1,33 +1,6 @@
-{hf, ...}: [
-  # ControlNet (SDXL)
-  (hf {
-    name = "xinsir-controlnet-union-sdxl-1.0-promax.safetensors";
-    url = "https://huggingface.co/xinsir/controlnet-union-sdxl-1.0/resolve/main/diffusion_pytorch_model_promax.safetensors";
-    hash = "sha256-n64uUMtDG/y+BYIrWewiKN9UXvJ/cR3qiUnp9O2ffNw=";
-    installPath = "controlnet";
-  })
-  (hf {
-    name = "control_v1p_sdxl_qrcode_monster.safetensors";
-    url = "https://huggingface.co/monster-labs/control_v1p_sdxl_qrcode_monster/resolve/main/diffusion_pytorch_model.safetensors";
-    hash = "sha256-EeSbTicvq9pgCUs1vm/T4hXlUSESEJOOOB0nSX/SIVw=";
-    installPath = "controlnet";
-  })
-
-  # ControlNet (Flux)
-  (hf {
-    name = "FLUX.1-dev-ControlNet-Union-Pro-2.0-fp8.safetensors";
-    url = "https://huggingface.co/ABDALLALSWAITI/FLUX.1-dev-ControlNet-Union-Pro-2.0-fp8/resolve/main/diffusion_pytorch_model.safetensors";
-    hash = "sha256-OT/Copi5P/458ts/DSzhHfumLUS3qjwd0zgNShvgTes=";
-    installPath = "controlnet";
-  })
-  (hf {
-    name = "FLUX.1-dev-Controlnet-Inpainting-Beta.safetensors";
-    url = "https://huggingface.co/alimama-creative/FLUX.1-dev-Controlnet-Inpainting-Beta/resolve/main/diffusion_pytorch_model.safetensors";
-    hash = "sha256-ykbF97XeAsrufAafKu2/Yor43vhXgxnOrjvhWI1EhEg=";
-    installPath = "controlnet";
-  })
-
-  # ControlNet (Illustrious/NoobAI)
+{ hf, ... }:
+[
+  # ControlNet
   (hf {
     name = "noobaiInpainting_v10.fp16.safetensors";
     url = "https://huggingface.co/Acly/NoobAI-Inpainting/resolve/main/noobaiInpainting_v10.fp16.safetensors";
@@ -81,5 +54,29 @@
     url = "https://huggingface.co/Eugeoter/noob-sdxl-controlnet-tile/resolve/main/diffusion_pytorch_model.fp16.safetensors";
     hash = "sha256-1tZ28pFTNXrI1Xcn41uO3AkKpN5X6GG4eIcv9FxDJhU=";
     installPath = "controlnet";
+  })
+
+  # CLIP Vision
+  (hf {
+    name = "clip-vision_vit-g.safetensors";
+    url = "https://huggingface.co/h94/IP-Adapter/resolve/main/sdxl_models/image_encoder/model.safetensors";
+    hash = "sha256-ZXcj4J9Gp8OVffZRYBAp9msXSK+xK0GYFjMPFu1F1k0=";
+    installPath = "clip_vision";
+  })
+
+  # IP-Adapter
+  (hf {
+    name = "noobIPAMARK1_mark1.safetensors";
+    url = "https://huggingface.co/r3gm/noob-ipa/resolve/main/model_G/noobIPAMARK1_mark1.safetensors";
+    hash = "sha256-XNtqAL4bEleXRbW+0Me4PwhpBz2Khk+ozVCpNWYBkZo=";
+    installPath = "ipadapter";
+  })
+
+  # Checkpoints
+  (hf {
+    name = "novaAnimeXL_ilV125.safetensors";
+    url = "https://huggingface.co/Acly/SD-Checkpoints/resolve/main/novaAnimeXL_ilV125.safetensors";
+    hash = "sha256-vRV+Yt5zHb0bWwChFPX1wTeBTs5OFigbNxSLh95/TUg=";
+    installPath = "checkpoints";
   })
 ]

@@ -2,56 +2,54 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (pkgs) fetchResource fetchair;
   inherit (pkgs.nixified-ai) models;
 
   # Helper to create model derivation with comfyui install path
-  hf = {
-    name,
-    url,
-    hash,
-    installPath,
-  }:
+  hf =
+    {
+      name,
+      url,
+      hash,
+      installPath,
+    }:
     fetchResource {
       inherit name url hash;
-      passthru.comfyui.installPaths = [installPath];
+      passthru.comfyui.installPaths = [ installPath ];
     };
 
   # Helper for CivitAI models using AIR URN
-  civitai = {
-    name,
-    air,
-    sha256,
-    installPath,
-  }:
+  civitai =
+    {
+      name,
+      air,
+      sha256,
+      installPath,
+    }:
     fetchair {
       inherit name air sha256;
-      passthru.comfyui.installPaths = [installPath];
+      passthru.comfyui.installPaths = [ installPath ];
     };
 
   # Recursively collect all .nix files from ./models/ subdirectories
-  collectModels = dir: let
-    contents = builtins.readDir dir;
-    nixFiles = lib.filterAttrs (n: v: v == "regular" && lib.hasSuffix ".nix" n) contents;
-    subDirs = lib.filterAttrs (_n: v: v == "directory") contents;
-    modelLists =
-      lib.mapAttrsToList (
-        name: _:
-          import (dir + "/${name}") {inherit hf civitai models;}
-      )
-      nixFiles;
-    subDirModels =
-      lib.mapAttrsToList (
-        name: _:
-          collectModels (dir + "/${name}")
-      )
-      subDirs;
-  in
+  collectModels =
+    dir:
+    let
+      contents = builtins.readDir dir;
+      nixFiles = lib.filterAttrs (n: v: v == "regular" && lib.hasSuffix ".nix" n) contents;
+      subDirs = lib.filterAttrs (_n: v: v == "directory") contents;
+      modelLists = lib.mapAttrsToList (
+        name: _: import (dir + "/${name}") { inherit hf civitai models; }
+      ) nixFiles;
+      subDirModels = lib.mapAttrsToList (name: _: collectModels (dir + "/${name}")) subDirs;
+    in
     lib.flatten (modelLists ++ subDirModels);
 
   allModels = collectModels ./models;
-in {
+in
+{
   rat.services.comfyui = {
     enable = true;
     autoStart = false;
@@ -69,33 +67,13 @@ in {
     customNodes = with pkgs.comfyuiPackages; [
       comfyui-automatic-cfg
       comfyui-essentials
+      comfyui-gguf
       comfyui-impact-pack
       comfyui-impact-subpack
+      comfyui-kjnodes
       comfyui-pythongosssss-custom-scripts
       comfyui-res4lyf
       comfyui-rgthree
-
-      # Overridden for LTX-2 support
-      (pkgs.comfyuiLib.mkComfyUICustomNode {
-        pname = "comfyui-gguf";
-        version = "unstable-2026-01-12";
-        src = pkgs.fetchFromGitHub {
-          owner = "city96";
-          repo = "ComfyUI-GGUF";
-          rev = "6ea2651e7df66d7585f6ffee804b20e92fb38b8a";
-          hash = "sha256-/ZwecgxTTMo9J1whdEJci8lEkOy/yP+UmjbpOAA3BvU=";
-        };
-      })
-      (pkgs.comfyuiLib.mkComfyUICustomNode {
-        pname = "comfyui-kjnodes";
-        version = "unstable-2026-01-24";
-        src = pkgs.fetchFromGitHub {
-          owner = "kijai";
-          repo = "ComfyUI-KJNodes";
-          rev = "f91daf93293ab7fb28836159595a5b088c86313a";
-          hash = "sha256-V0bw/osQAfc2i3AMnt7vypTA6+paJ/rdvVxfE9nXe6Y=";
-        };
-      })
       (pkgs.comfyuiLib.mkComfyUICustomNode {
         pname = "comfyui-ltxvideo";
         version = "unstable-2026-01-15";
@@ -127,7 +105,7 @@ in {
       (pkgs.comfyuiLib.mkComfyUICustomNode {
         pname = "comfyui-prompt-control";
         version = "unstable-2025-01-06";
-        propagatedBuildInputs = with pkgs.python3Packages; [lark];
+        propagatedBuildInputs = with pkgs.python3Packages; [ lark ];
         src = pkgs.fetchFromGitHub {
           owner = "asagi4";
           repo = "comfyui-prompt-control";

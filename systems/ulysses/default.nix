@@ -2,10 +2,11 @@
   lib,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     ./alsa-ucm-conf.nix
-    # ./comfyui
+    ./comfyui
     ./disko-config.nix
     ./superio.nix
     ./wireplumber.nix
@@ -19,16 +20,16 @@
   # --- Boot ---
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
-  boot.binfmt.emulatedSystems = ["aarch64-linux"];
-  boot.supportedFilesystems = ["ntfs"];
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  boot.supportedFilesystems = [ "ntfs" ];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
-  boot.blacklistedKernelModules = ["battery"];
+  boot.blacklistedKernelModules = [ "battery" ];
 
   # --- Hardware ---
 
   hardware.facter.reportPath = ./facter.json;
   # Don't load amdgpu in initrd - it changes monitor enumeration order
-  hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce ["nvidia"];
+  hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce [ "nvidia" ];
 
   # --- Extra filesystems ---
 
@@ -36,13 +37,16 @@
   fileSystems."/mnt/hyperion-home" = {
     device = "zpool/safe/hyperion-home";
     fsType = "zfs";
-    options = ["nofail"];
+    options = [ "nofail" ];
   };
 
   fileSystems."/home/awilliams/mnt/hyperion-home" = {
     device = "/mnt/hyperion-home/awilliams";
     fsType = "none";
-    options = ["bind" "nofail"];
+    options = [
+      "bind"
+      "nofail"
+    ];
   };
 
   # Not currently installed.
@@ -178,7 +182,7 @@
     # User configuration
     users.awilliams = {
       enable = true;
-      extraGroups = ["comfyui"];
+      extraGroups = [ "comfyui" ];
       cli = {
         enable = true;
         ai.peon-ping.enable = true;
