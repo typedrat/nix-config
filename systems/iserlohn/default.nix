@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   imports = [
     ./disko-config.nix
     ./hardware-configuration.nix
@@ -128,27 +129,30 @@
           {
             name = "Movies";
             collectionType = "movies";
-            paths = ["/mnt/media/movies"];
+            paths = [ "/mnt/media/movies" ];
           }
           {
             name = "TV Shows";
             collectionType = "tvshows";
-            paths = ["/mnt/media/tv-shows"];
+            paths = [ "/mnt/media/tv-shows" ];
           }
           {
             name = "TV Slop";
             collectionType = "tvshows";
-            paths = ["/mnt/media/tv-slop"];
+            paths = [ "/mnt/media/tv-slop" ];
           }
           {
             name = "Anime";
             collectionType = "tvshows";
-            paths = ["/mnt/media/anime" "/mnt/media/anime-movies"];
+            paths = [
+              "/mnt/media/anime"
+              "/mnt/media/anime-movies"
+            ];
           }
           {
             name = "Music";
             collectionType = "music";
-            paths = ["/mnt/media/music"];
+            paths = [ "/mnt/media/music" ];
           }
         ];
 
@@ -195,6 +199,72 @@
       torrents = {
         enable = true;
         downloadDir = "/mnt/media/torrents";
+        categories = {
+          lidarr = {
+            name = "Lidarr";
+            savePath = "music";
+          };
+          lidarr-imported = {
+            name = "Lidarr (Imported)";
+            savePath = "music";
+          };
+
+          sonarr = {
+            name = "Sonarr";
+            savePath = "tv-shows";
+          };
+          sonarr-imported = {
+            name = "Sonarr (Imported)";
+            savePath = "tv-shows";
+          };
+          sonarr-anime = {
+            name = "Sonarr (Anime)";
+            savePath = "anime";
+          };
+          sonarr-anime-imported = {
+            name = "Sonarr (Anime - Imported)";
+            savePath = "anime";
+          };
+
+          radarr = {
+            name = "Radarr";
+            savePath = "movies";
+          };
+          radarr-imported = {
+            name = "Radarr (Imported)";
+            savePath = "movies";
+          };
+          radarr-anime = {
+            name = "Radarr (Anime)";
+            savePath = "anime-movies";
+          };
+          radarr-anime-imported = {
+            name = "Radarr (Anime - Imported)";
+            savePath = "anime-movies";
+          };
+
+          chaptarr = {
+            name = "Chaptarr";
+            savePath = "books";
+          };
+          chaptarr-imported = {
+            name = "Chaptarr (Imported)";
+            savePath = "books";
+          };
+
+          cross-seed = {
+            name = "Cross-Seed";
+            savePath = "cross-seed";
+          };
+          games = {
+            name = "Games";
+            savePath = "games";
+          };
+          software = {
+            name = "Software";
+            savePath = "software";
+          };
+        };
       };
       qui.enable = true;
 
@@ -215,7 +285,7 @@
     # User configuration (system-specific overrides)
     users.awilliams = {
       enable = true;
-      extraGroups = lib.mkAfter ["libvirtd"];
+      extraGroups = lib.mkAfter [ "libvirtd" ];
       gui.enable = false;
     };
 

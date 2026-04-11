@@ -3,11 +3,13 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   inherit (lib) modules options types;
   cfg = config.rat.services.torrents;
   impermanenceCfg = config.rat.impermanence;
-in {
+in
+{
   options.rat.services.torrents = {
     enable = options.mkEnableOption "Torrent services";
     downloadDir = options.mkOption {
@@ -19,145 +21,149 @@ in {
       default = "qbittorrent";
       description = "The subdomain for the Web UI interface.";
     };
-  };
-
-  config = modules.mkMerge [
-    (modules.mkIf cfg.enable {
-      services.qbittorrent = {
-        enable = true;
-        group = "media";
-
-        torrentingPort = config.links.qbittorrent.port;
-        webuiPort = config.links.qbittorrent-webui.port;
-        openFirewall = true;
-
-        serverConfig = {
-          Application = {
-            MemoryWorkingSetLimit = 4096;
-          };
-
-          AutoRun = {
-            enabled = true;
-            program = "${config.sops.templates."trigger-cross-seed.sh".path} %I";
-          };
-
-          BitTorrent.Session = {
-            AddTorrentStopped = false;
-            AsyncIOThreadsCount = 112;
-            CheckingMemUsageSize = 1024;
-            ConnectionSpeed = 200;
-            DefaultSavePath = "/mnt/media/torrents";
-            DisableAutoTMMByDefault = false;
-            DisableAutoTMMTriggers.CategorySavePathChanged = false;
-            DiskQueueSize = 4194304;
-            FilePoolSize = 5000;
-            HashingThreadsCount = 14;
-            MaxConnections = -1;
-            MaxConnectionsPerTorrent = -1;
-            MaxUploads = -1;
-            MaxUploadsPerTorrent = -1;
-            Port = 42069;
-            QueueingSystemEnabled = false;
-            RequestQueueSize = 2000;
-            ResumeDataStorageType = "SQLite";
-            SendBufferLowWatermark = 1024;
-            SendBufferWatermark = 4096;
-            SendBufferWatermarkFactor = 100;
-            SuggestMode = true;
-          };
-
-          LegalNotice.Accepted = true;
-
-          Preferences = {
-            General.Locale = "en";
-            WebUI = {
-              Enabled = true;
-              LocalHostAuth = false;
-              AlternativeUIEnabled = true;
-              RootFolder = "${pkgs.vuetorrent}/share/vuetorrent";
-              ReverseProxySupportEnabled = false;
+    categories = options.mkOption {
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            name = options.mkOption {
+              type = types.str;
+              description = "Display name for the category in qBittorrent.";
+            };
+            savePath = options.mkOption {
+              type = types.str;
+              description = "Save path relative to downloadDir.";
             };
           };
+        }
+      );
+      default = { };
+      description = "qBittorrent download categories. Keys are category identifiers, savePath is relative to downloadDir.";
+    };
+  };
+
+  config =
+    let
+      categoriesFile = pkgs.writeText "categories.json" (
+        builtins.toJSON (
+          lib.mapAttrs (_: cat: {
+            inherit (cat) name;
+            savePath = "${toString cfg.downloadDir}/${cat.savePath}";
+          }) cfg.categories
+        )
+      );
+    in
+    modules.mkMerge [
+      (modules.mkIf cfg.enable {
+        services.qbittorrent = {
+          enable = true;
+          group = "media";
+
+          torrentingPort = config.links.qbittorrent.port;
+          webuiPort = config.links.qbittorrent-webui.port;
+          openFirewall = true;
+
+          serverConfig = {
+            Application = {
+              MemoryWorkingSetLimit = 4096;
+            };
+
+            AutoRun = {
+              enabled = true;
+              program = "${config.sops.templates."trigger-cross-seed.sh".path} %I";
+            };
+
+            BitTorrent.Session = {
+              AddTorrentStopped = false;
+              AsyncIOThreadsCount = 112;
+              CheckingMemUsageSize = 1024;
+              ConnectionSpeed = 200;
+              DefaultSavePath = "/mnt/media/torrents";
+              DisableAutoTMMByDefault = false;
+              DisableAutoTMMTriggers.CategorySavePathChanged = false;
+              DiskQueueSize = 4194304;
+              FilePoolSize = 5000;
+              HashingThreadsCount = 14;
+              MaxConnections = -1;
+              MaxConnectionsPerTorrent = -1;
+              MaxUploads = -1;
+              MaxUploadsPerTorrent = -1;
+              Port = 42069;
+              QueueingSystemEnabled = false;
+              RequestQueueSize = 2000;
+              ResumeDataStorageType = "SQLite";
+              SendBufferLowWatermark = 1024;
+              SendBufferWatermark = 4096;
+              SendBufferWatermarkFactor = 100;
+              SuggestMode = true;
+            };
+
+            LegalNotice.Accepted = true;
+
+            Preferences = {
+              General.Locale = "en";
+              WebUI = {
+                Enabled = true;
+                LocalHostAuth = false;
+                AlternativeUIEnabled = true;
+                RootFolder = "${pkgs.vuetorrent}/share/vuetorrent";
+                ReverseProxySupportEnabled = false;
+              };
+            };
+          };
+
         };
-      };
 
-      sops.templates."trigger-cross-seed.sh" = {
-        content = ''
-          #!${pkgs.bash}/bin/sh
-          ${lib.getExe pkgs.curl} -XPOST "${config.links.cross-seed.url}/api/webhook?apikey=${config.sops.placeholder."cross-seed/apiKey"}" -d "infoHash=$1" -d "includeSingleEpisodes=true"
-        '';
-        owner = config.services.qbittorrent.user;
-        inherit (config.services.qbittorrent) group;
-        mode = "0700";
-      };
+        systemd.services.qbittorrent.restartTriggers = [ categoriesFile ];
 
-      links = {
-        qbittorrent = {
-          protocol = "tcp";
-          port = 42069;
-        };
-        qbittorrent-webui = {
-          protocol = "http";
-        };
-      };
-
-      system.activationScripts.symlinkQbitCategories = let
-        mkCategory = name: savePath: {
-          inherit name;
-          savePath = "/mnt/media/torrents/${savePath}";
+        systemd.tmpfiles.settings.qbittorrent-categories = modules.mkIf (cfg.categories != { }) {
+          "${config.services.qbittorrent.profileDir}/qBittorrent/config/categories.json"."C+" = {
+            mode = "600";
+            user = config.services.qbittorrent.user;
+            inherit (config.services.qbittorrent) group;
+            argument = toString categoriesFile;
+          };
         };
 
-        qbitCategories = pkgs.writeText "categories.json" (builtins.toJSON {
-          lidarr = mkCategory "Lidarr" "music";
-          lidarr-imported = mkCategory "Lidarr (Imported)" "music";
+        sops.templates."trigger-cross-seed.sh" = {
+          content = ''
+            #!${pkgs.bash}/bin/sh
+            ${lib.getExe pkgs.curl} -XPOST "${config.links.cross-seed.url}/api/webhook?apikey=${
+              config.sops.placeholder."cross-seed/apiKey"
+            }" -d "infoHash=$1" -d "includeSingleEpisodes=true"
+          '';
+          owner = config.services.qbittorrent.user;
+          inherit (config.services.qbittorrent) group;
+          mode = "0700";
+        };
 
-          sonarr = mkCategory "Sonarr" "tv-shows";
-          sonarr-imported = mkCategory "Sonarr (Imported)" "tv-shows";
-          sonarr-anime = mkCategory "Sonarr (Anime)" "anime";
-          sonarr-anime-imported = mkCategory "Sonarr (Anime - Imported)" "anime";
+        links = {
+          qbittorrent = {
+            protocol = "tcp";
+            port = 42069;
+          };
+          qbittorrent-webui = {
+            protocol = "http";
+          };
+        };
 
-          radarr = mkCategory "Radarr" "movies";
-          radarr-imported = mkCategory "Radarr (Imported)" "movies";
-          radarr-anime = mkCategory "Radarr (Anime)" "anime-movies";
-          radarr-anime-imported = mkCategory "Radarr (Anime - Imported)" "anime-movies";
-        });
-      in {
-        deps = [];
-        text = ''
-          source_file="${qbitCategories}"
-          target_file="${config.services.qbittorrent.profileDir}/qBittorrent/config/categories.json"
-          target_dir="$(${pkgs.coreutils}/bin/dirname "$target_file")"
+        rat.services.traefik.routes.qbittorrent-webui = {
+          enable = true;
+          inherit (cfg) subdomain;
+          serviceUrl = config.links.qbittorrent-webui.url;
 
-          echo "Ensuring directory $target_dir exists..."
-          ${pkgs.coreutils}/bin/mkdir -p "$target_dir"
-
-          echo "Creating symlink $target_file -> $source_file"
-          ${pkgs.coreutils}/bin/ln -sf "$source_file" "$target_file"
-
-          qbitUser="${config.services.qbittorrent.user}"
-          qbitGroup="${config.services.qbittorrent.group}"
-          ${pkgs.coreutils}/bin/chown "''${qbitUser}:''${qbitGroup}" "$target_dir"
-        '';
-      };
-
-      rat.services.traefik.routes.qbittorrent-webui = {
-        enable = true;
-        inherit (cfg) subdomain;
-        serviceUrl = config.links.qbittorrent-webui.url;
-
-        authentik = true;
-        theme-park.app = "vuetorrent";
-      };
-    })
-    (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
-      environment.persistence.${impermanenceCfg.persistDir} = {
-        directories = [
-          {
-            directory = config.services.qbittorrent.profileDir;
-            inherit (config.services.qbittorrent) user group;
-          }
-        ];
-      };
-    })
-  ];
+          authentik = true;
+          theme-park.app = "vuetorrent";
+        };
+      })
+      (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
+        environment.persistence.${impermanenceCfg.persistDir} = {
+          directories = [
+            {
+              directory = config.services.qbittorrent.profileDir;
+              inherit (config.services.qbittorrent) user group;
+            }
+          ];
+        };
+      })
+    ];
 }
