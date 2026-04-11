@@ -1938,11 +1938,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775874630,
-        "narHash": "sha256-3zcZig0CS5xNlVF93g1u63iMT64VEhnoeVknauu7tnc=",
+        "lastModified": 1775892222,
+        "narHash": "sha256-7FRCK04pQYGMnGwekJRTSHql8Ba9O6RhY75EEprTDjY=",
         "owner": "ggml-org",
         "repo": "llama.cpp",
-        "rev": "a29e4c0b7b23e020107058480dabbe03b7cba6e1",
+        "rev": "865ff06b2ffa2f91f30cbec1f8c73d66cc6642aa",
         "type": "github"
       },
       "original": {
@@ -2127,12 +2127,12 @@
         "nixpkgs": "nixpkgs_11"
       },
       "locked": {
-        "lastModified": 1775840303,
-        "narHash": "sha256-B6jQx16dSG8MDKj+Iu8Iee7YHvm9H9SlTqesIZBDSD4=",
-        "rev": "c93e1736729aa58adea5385b27941e8d49147a34",
-        "revCount": 331,
+        "lastModified": 1775889759,
+        "narHash": "sha256-dIlQ17BlxzjYGx9Vj7CmL/aqWlvt7S0nlsiPBo1nrJI=",
+        "rev": "2f8e7106ca8bd3e57bfc531bdf2589b6a9913378",
+        "revCount": 333,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/nixified-ai/flake/0.1.331%2Brev-c93e1736729aa58adea5385b27941e8d49147a34/019d7855-9dfb-7196-b876-cd22a77f13b5/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/nixified-ai/flake/0.1.333%2Brev-2f8e7106ca8bd3e57bfc531bdf2589b6a9913378/019d7b48-92e4-7a08-9346-40a3ec7fcc39/source.tar.gz"
       },
       "original": {
         "type": "tarball",
