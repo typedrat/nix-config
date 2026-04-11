@@ -89,6 +89,7 @@ in {
         plugin = [
           "@ex-machina/opencode-anthropic-auth@1.4.0"
           "@morphllm/opencode-morph-plugin"
+          "opencode-pty"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
 
