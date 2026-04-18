@@ -17,7 +17,10 @@
 in {
   config = modules.mkIf (cliCfg.enable && cliCfg.shell.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".local/state/zsh" ".zsh"];
+      directories = [
+        ".local/state/zsh"
+        ".zsh"
+      ];
     };
     sops.secrets = lib.mkIf hasUserSecrets {
       miseGithubToken = {};
@@ -38,14 +41,32 @@ in {
         }
       ];
 
-      initContent = lib.mkBefore (''
+      initContent = lib.mkBefore (
+        ''
           source ~/.p10k.zsh
           bindkey "^[[1;5C" forward-word
           bindkey "^[[1;5D" backward-word
+
+          # Auto-add node_modules/.bin to PATH based on current directory
+          autoload -Uz add-zsh-hook
+          _node_bins_update() {
+            # Strip previously-added node_modules/.bin entries
+            local clean_path=("''${(@)path:#*/node_modules/.bin}")
+            local bins=()
+            local dir="$PWD"
+            while [[ "$dir" != "/" ]]; do
+              [[ -d "$dir/node_modules/.bin" ]] && bins+=("$dir/node_modules/.bin")
+              dir="''${dir:h}"
+            done
+            path=("''${bins[@]}" "''${clean_path[@]}")
+          }
+          add-zsh-hook chpwd _node_bins_update
+          _node_bins_update  # run once for initial directory
         ''
         + lib.optionalString hasUserSecrets ''
           export MISE_GITHUB_TOKEN=$(cat ${config.sops.secrets.miseGithubToken.path})
-        '');
+        ''
+      );
 
       history.size = 10000;
     };
