@@ -1,5 +1,4 @@
-{ hf, ... }:
-[
+{hf, ...}: [
   # SD 1.x / 2.x
   (hf {
     name = "taesd_decoder.pth";

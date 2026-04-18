@@ -1,5 +1,4 @@
-{ hf, ... }:
-[
+{hf, ...}: [
   # Text Encoders
   (hf {
     name = "Qwen3-4B-Q4_K_M.gguf";

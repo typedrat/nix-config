@@ -4,7 +4,7 @@
     group = "Torrents";
     icon = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/qui.svg";
     description = "Download management interface for qBittorrent";
-    accessGroups = [ "discord-user" ];
+    accessGroups = ["discord-user"];
 
     oauth2 = {
       clientId = "qui";

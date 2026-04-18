@@ -28,8 +28,8 @@
 
       authentik_stage_identification."default-authentication-identification" = {
         name = "default-authentication-identification";
-        user_fields = [ ];
-        sources = [ "\${ authentik_source_oauth.discord.uuid }" ];
+        user_fields = [];
+        sources = ["\${ authentik_source_oauth.discord.uuid }"];
       };
     };
   };

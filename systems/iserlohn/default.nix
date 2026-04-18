@@ -2,8 +2,7 @@
   pkgs,
   lib,
   ...
-}:
-{
+}: {
   imports = [
     ./disko-config.nix
     ./hardware-configuration.nix
@@ -129,17 +128,17 @@
           {
             name = "Movies";
             collectionType = "movies";
-            paths = [ "/mnt/media/movies" ];
+            paths = ["/mnt/media/movies"];
           }
           {
             name = "TV Shows";
             collectionType = "tvshows";
-            paths = [ "/mnt/media/tv-shows" ];
+            paths = ["/mnt/media/tv-shows"];
           }
           {
             name = "TV Slop";
             collectionType = "tvshows";
-            paths = [ "/mnt/media/tv-slop" ];
+            paths = ["/mnt/media/tv-slop"];
           }
           {
             name = "Anime";
@@ -152,7 +151,7 @@
           {
             name = "Music";
             collectionType = "music";
-            paths = [ "/mnt/media/music" ];
+            paths = ["/mnt/media/music"];
           }
         ];
 
@@ -285,7 +284,7 @@
     # User configuration (system-specific overrides)
     users.awilliams = {
       enable = true;
-      extraGroups = lib.mkAfter [ "libvirtd" ];
+      extraGroups = lib.mkAfter ["libvirtd"];
       gui.enable = false;
     };
 

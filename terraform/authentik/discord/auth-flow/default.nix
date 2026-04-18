@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{lib, ...}: {
   resource = {
     authentik_flow."discord-auth" = rec {
       name = "Authenticate with Discord";

@@ -3,14 +3,12 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) modules options types;
   cfg = config.rat.services.torrents;
   crossSeedCfg = config.rat.services.cross-seed;
   impermanenceCfg = config.rat.impermanence;
-in
-{
+in {
   options.rat.services.torrents = {
     enable = options.mkEnableOption "Torrent services";
     downloadDir = options.mkOption {
@@ -37,22 +35,22 @@ in
           };
         }
       );
-      default = { };
+      default = {};
       description = "qBittorrent download categories. Keys are category identifiers, savePath is relative to downloadDir.";
     };
   };
 
-  config =
-    let
-      categoriesFile = pkgs.writeText "categories.json" (
-        builtins.toJSON (
-          lib.mapAttrs (_: cat: {
-            inherit (cat) name;
-            savePath = "${toString cfg.downloadDir}/${cat.savePath}";
-          }) cfg.categories
-        )
-      );
-    in
+  config = let
+    categoriesFile = pkgs.writeText "categories.json" (
+      builtins.toJSON (
+        lib.mapAttrs (_: cat: {
+          inherit (cat) name;
+          savePath = "${toString cfg.downloadDir}/${cat.savePath}";
+        })
+        cfg.categories
+      )
+    );
+  in
     modules.mkMerge [
       (modules.mkIf cfg.enable {
         services.qbittorrent = {
@@ -106,15 +104,14 @@ in
               };
             };
           };
-
         };
 
-        systemd.services.qbittorrent.restartTriggers = [ categoriesFile ];
+        systemd.services.qbittorrent.restartTriggers = [categoriesFile];
 
-        systemd.tmpfiles.settings.qbittorrent-categories = modules.mkIf (cfg.categories != { }) {
+        systemd.tmpfiles.settings.qbittorrent-categories = modules.mkIf (cfg.categories != {}) {
           "${config.services.qbittorrent.profileDir}/qBittorrent/config/categories.json"."C+" = {
             mode = "600";
-            user = config.services.qbittorrent.user;
+            inherit (config.services.qbittorrent) user;
             inherit (config.services.qbittorrent) group;
             argument = toString categoriesFile;
           };

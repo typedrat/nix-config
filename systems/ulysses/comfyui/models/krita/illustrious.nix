@@ -1,5 +1,4 @@
-{ hf, ... }:
-[
+{hf, ...}: [
   # ControlNet
   (hf {
     name = "noobaiInpainting_v10.fp16.safetensors";

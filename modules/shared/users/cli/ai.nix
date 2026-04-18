@@ -1,15 +1,15 @@
-{ lib, ... }:
-let
+{lib, ...}: let
   inherit (lib) options types;
-in
-{
+in {
   options.rat.users = options.mkOption {
     type = types.attrsOf (
       types.submodule {
         options.cli.ai = {
-          enable = options.mkEnableOption "AI tools and configuration" // {
-            default = true;
-          };
+          enable =
+            options.mkEnableOption "AI tools and configuration"
+            // {
+              default = true;
+            };
 
           morphCompactTokenLimit = options.mkOption {
             type = types.ints.positive;
@@ -37,7 +37,7 @@ in
                   }
                 )
               );
-              default = [ ];
+              default = [];
               description = "Sound packs to install (built-in names as strings, or {name, src} for third-party)";
             };
 
@@ -148,13 +148,13 @@ in
 
               notification_templates = options.mkOption {
                 type = types.attrsOf types.str;
-                default = { };
+                default = {};
                 description = "Custom notification message formats per event type";
               };
 
               project_name_map = options.mkOption {
                 type = types.attrsOf types.str;
-                default = { };
+                default = {};
                 description = "Map directory paths to display labels for notifications";
               };
 
@@ -163,28 +163,40 @@ in
               categories = options.mkOption {
                 type = types.submodule {
                   options = {
-                    "session.start" = options.mkEnableOption "greeting sounds on session start" // {
-                      default = true;
-                    };
-                    "task.complete" = options.mkEnableOption "success sounds on task completion" // {
-                      default = true;
-                    };
-                    "task.error" = options.mkEnableOption "error sounds on task failure" // {
-                      default = true;
-                    };
-                    "input.required" = options.mkEnableOption "request sounds when permission is needed" // {
-                      default = true;
-                    };
-                    "resource.limit" = options.mkEnableOption "resource limit warning sounds" // {
-                      default = true;
-                    };
-                    "user.spam" = options.mkEnableOption "spam detection sounds for rapid prompts" // {
-                      default = true;
-                    };
+                    "session.start" =
+                      options.mkEnableOption "greeting sounds on session start"
+                      // {
+                        default = true;
+                      };
+                    "task.complete" =
+                      options.mkEnableOption "success sounds on task completion"
+                      // {
+                        default = true;
+                      };
+                    "task.error" =
+                      options.mkEnableOption "error sounds on task failure"
+                      // {
+                        default = true;
+                      };
+                    "input.required" =
+                      options.mkEnableOption "request sounds when permission is needed"
+                      // {
+                        default = true;
+                      };
+                    "resource.limit" =
+                      options.mkEnableOption "resource limit warning sounds"
+                      // {
+                        default = true;
+                      };
+                    "user.spam" =
+                      options.mkEnableOption "spam detection sounds for rapid prompts"
+                      // {
+                        default = true;
+                      };
                     "task.acknowledge" = options.mkEnableOption "acknowledgement sounds";
                   };
                 };
-                default = { };
+                default = {};
                 description = "Toggle individual CESP sound event categories";
               };
 
@@ -224,7 +236,7 @@ in
 
               pack_rotation = options.mkOption {
                 type = types.listOf types.str;
-                default = [ ];
+                default = [];
                 description = "List of pack names to rotate between";
               };
 
@@ -261,7 +273,7 @@ in
                     };
                   }
                 );
-                default = [ ];
+                default = [];
                 description = "Bind specific directory patterns to sound packs";
                 example = [
                   {
@@ -277,7 +289,7 @@ in
                 type = types.submodule {
                   options.enabled = options.mkEnableOption "mobile push notifications";
                 };
-                default = { };
+                default = {};
                 description = "Mobile push notification settings (configure via `peon mobile`)";
               };
             };

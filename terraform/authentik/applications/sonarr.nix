@@ -5,7 +5,7 @@
       group = "Media";
       icon = "https://raw.githubusercontent.com/Sonarr/Sonarr/refs/heads/develop/Logo/Sonarr.svg";
       description = "Sonarr is an internet PVR for Usenet and Torrents.";
-      accessGroups = [ "discord-sysop" ];
+      accessGroups = ["discord-sysop"];
 
       proxy = {
         externalHost = "https://sonarr.thisratis.gay";
@@ -17,7 +17,7 @@
       group = "Media";
       icon = "https://raw.githubusercontent.com/Sonarr/Sonarr/refs/heads/develop/Logo/Sonarr.svg";
       description = "Sonarr is an internet PVR for Usenet and Torrents.";
-      accessGroups = [ "discord-sysop" ];
+      accessGroups = ["discord-sysop"];
 
       proxy = {
         externalHost = "https://sonarr-anime.thisratis.gay";

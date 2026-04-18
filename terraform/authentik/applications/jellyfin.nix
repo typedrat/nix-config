@@ -4,7 +4,7 @@
     group = "Media";
     icon = "https://raw.githubusercontent.com/loganmarchione/homelab-svg-assets/refs/heads/main/assets/jellyfin.svg";
     description = "The Free Software Media System.";
-    accessGroups = [ "discord-user" ];
+    accessGroups = ["discord-user"];
 
     oauth2 = {
       clientId = "\${ data.sops_file.jellyfin.data[\"clientId\"] }";

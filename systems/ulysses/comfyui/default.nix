@@ -2,54 +2,50 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   inherit (pkgs) fetchResource fetchair;
   inherit (pkgs.nixified-ai) models;
 
   # Helper to create model derivation with comfyui install path
-  hf =
-    {
-      name,
-      url,
-      hash,
-      installPath,
-    }:
+  hf = {
+    name,
+    url,
+    hash,
+    installPath,
+  }:
     fetchResource {
       inherit name url hash;
-      passthru.comfyui.installPaths = [ installPath ];
+      passthru.comfyui.installPaths = [installPath];
     };
 
   # Helper for CivitAI models using AIR URN
-  civitai =
-    {
-      name,
-      air,
-      sha256,
-      installPath,
-    }:
+  civitai = {
+    name,
+    air,
+    sha256,
+    installPath,
+  }:
     fetchair {
       inherit name air sha256;
-      passthru.comfyui.installPaths = [ installPath ];
+      passthru.comfyui.installPaths = [installPath];
     };
 
   # Recursively collect all .nix files from ./models/ subdirectories
-  collectModels =
-    dir:
-    let
-      contents = builtins.readDir dir;
-      nixFiles = lib.filterAttrs (n: v: v == "regular" && lib.hasSuffix ".nix" n) contents;
-      subDirs = lib.filterAttrs (_n: v: v == "directory") contents;
-      modelLists = lib.mapAttrsToList (
-        name: _: import (dir + "/${name}") { inherit hf civitai models; }
-      ) nixFiles;
-      subDirModels = lib.mapAttrsToList (name: _: collectModels (dir + "/${name}")) subDirs;
-    in
+  collectModels = dir: let
+    contents = builtins.readDir dir;
+    nixFiles = lib.filterAttrs (n: v: v == "regular" && lib.hasSuffix ".nix" n) contents;
+    subDirs = lib.filterAttrs (_n: v: v == "directory") contents;
+    modelLists =
+      lib.mapAttrsToList (
+        name: _: import (dir + "/${name}") {inherit hf civitai models;}
+      )
+      nixFiles;
+    subDirModels = lib.mapAttrsToList (name: _: collectModels (dir + "/${name}")) subDirs;
+  in
     lib.flatten (modelLists ++ subDirModels);
 
   allModels = collectModels ./models;
-in
-{
+in {
   rat.services.comfyui = {
     enable = true;
     autoStart = false;
@@ -105,7 +101,7 @@ in
       (pkgs.comfyuiLib.mkComfyUICustomNode {
         pname = "comfyui-prompt-control";
         version = "unstable-2025-01-06";
-        propagatedBuildInputs = with pkgs.python3Packages; [ lark ];
+        propagatedBuildInputs = with pkgs.python3Packages; [lark];
         src = pkgs.fetchFromGitHub {
           owner = "asagi4";
           repo = "comfyui-prompt-control";

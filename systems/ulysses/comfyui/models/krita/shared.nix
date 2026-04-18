@@ -1,5 +1,4 @@
-{ hf, ... }:
-[
+{hf, ...}: [
   # Upscalers
   (hf {
     name = "4x_NMKD-Superscale-SP_178000_G.pth";

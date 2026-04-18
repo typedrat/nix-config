@@ -3,14 +3,12 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) lists modules options;
   cfg = config.rat.services.cross-seed;
   impermanenceCfg = config.rat.impermanence;
 
-  mkCrossSeedSecrets =
-    path: secrets:
+  mkCrossSeedSecrets = path: secrets:
     builtins.listToAttrs (
       builtins.map (secret: {
         name = "cross-seed/${secret}";
@@ -21,10 +19,10 @@ let
           inherit (config.services.cross-seed) group;
           mode = "0740";
         };
-      }) secrets
+      })
+      secrets
     );
-in
-{
+in {
   options.rat.services.cross-seed = {
     enable = options.mkEnableOption "`cross-seed`";
   };
@@ -97,8 +95,7 @@ in
           apiKey = config.sops.placeholder."cross-seed/apiKey";
 
           torznab = builtins.map (
-            id:
-            "${config.links.prowlarr.url}/${builtins.toString id}/api?apikey=${
+            id: "${config.links.prowlarr.url}/${builtins.toString id}/api?apikey=${
               config.sops.placeholder."cross-seed/prowlarr/apiKey"
             }"
           ) (lists.range 1 12);
@@ -122,7 +119,7 @@ in
 
         owner = config.services.cross-seed.user;
         inherit (config.services.cross-seed) group;
-        restartUnits = [ "cross-seed.service" ];
+        restartUnits = ["cross-seed.service"];
       };
 
       links.cross-seed = {

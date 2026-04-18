@@ -1,5 +1,4 @@
-{ hf, ... }:
-[
+{hf, ...}: [
   # Model Patches
   (hf {
     name = "Z-Image-Turbo-Fun-Controlnet-Union-2.1-lite-2601-8steps.safetensors";
