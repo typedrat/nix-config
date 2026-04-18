@@ -1,17 +1,16 @@
 {
   config,
   lib,
+  pkgs,
   ...
-}:
-let
+}: let
   inherit (lib) modules options types;
   cfg = config.rat.services.qui;
   impermanenceCfg = config.rat.impermanence;
   authentikCfg = config.rat.services.authentik;
 
   inherit (config.rat.services) domainName;
-in
-{
+in {
   options.rat.services.qui = {
     enable = options.mkEnableOption "qui";
     subdomain = options.mkOption {
@@ -36,6 +35,7 @@ in
 
       services.qui = {
         enable = true;
+        package = pkgs.qui-bin;
         group = "media";
 
         secretFile = config.sops.secrets."qui/sessionSecret".path;
@@ -73,7 +73,7 @@ in
       };
 
       systemd.services.qui = {
-        after = [ "qbittorrent.service" ];
+        after = ["qbittorrent.service"];
 
         serviceConfig = {
           LoadCredential = [
