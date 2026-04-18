@@ -10,6 +10,7 @@
     ./services
     ./theming
     ./virtualisation
+    ./networking
     ./alien.nix
     ./appimage.nix
     ./avahi.nix
@@ -33,6 +34,6 @@
     ];
 
     programs.zsh.enable = true;
-    environment.pathsToLink = ["/share/zsh"];
+    environment.pathsToLink = [ "/share/zsh" ];
   };
 }
