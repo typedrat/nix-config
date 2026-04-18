@@ -33,7 +33,14 @@ in {
       directories = [
         "AI"
         ".config/opencode"
+        ".local/share/opencode"
+        ".local/state/opencode"
         ".gstack"
+        ".openpeon"
+
+        # yes, this is where the authentication data for OpenCode lives
+        # I want to shove a copy of the XDG specification up someone's asshole.
+        ".cache/opencode"
       ];
     };
 
@@ -87,9 +94,10 @@ in {
 
       settings = {
         plugin = [
-          "@ex-machina/opencode-anthropic-auth@1.4.0"
+          "@ex-machina/opencode-anthropic-auth@1.7.4"
           "@morphllm/opencode-morph-plugin"
           "opencode-pty"
+          "opencode-websearch"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
 
