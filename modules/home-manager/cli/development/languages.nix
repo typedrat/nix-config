@@ -25,6 +25,7 @@ in {
         ".local/state/pnpm"
         ".cache/ms-playwright"
         ".cache/uv"
+        ".local/share/uv"
       ];
     };
     home.packages = with pkgs; [
@@ -39,18 +40,20 @@ in {
       ])
 
       # Python with common data science packages
-      (python3.withPackages (ps:
-        with ps; [
-          ipython
-          matplotlib
-          numpy
-          pandas
-          polars
-          pynput
-          scipy
-          seaborn
-          sympy
-        ]))
+      (python3.withPackages (
+        ps:
+          with ps; [
+            ipython
+            matplotlib
+            numpy
+            pandas
+            polars
+            pynput
+            scipy
+            seaborn
+            sympy
+          ]
+      ))
 
       # JavaScript/Node.js
       bun
