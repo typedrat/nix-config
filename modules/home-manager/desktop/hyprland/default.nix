@@ -62,20 +62,22 @@ in {
       ];
     };
 
-    home.packages = with pkgs; [
-      hyprpolkitagent
-      mpvpaper
-      waytrogen
-      hyprpicker
-      hyprshot
-      playerctl
-      libsForQt5.qt5ct
-      kdePackages.qt6ct
-      nomacs-qt6
-      kdePackages.okular
-      kdePackages.dolphin
-      kdePackages.ark
-    ];
+    home.packages = with pkgs;
+      [
+        hyprpolkitagent
+        mpvpaper
+        waytrogen
+        hyprpicker
+        hyprshot
+        playerctl
+        libsForQt5.qt5ct
+        kdePackages.qt6ct
+        nomacs-qt6
+        kdePackages.okular
+        kdePackages.dolphin
+        kdePackages.ark
+      ]
+      ++ lib.optional osConfig.rat.networking.networkManager.enable networkmanagerapplet;
 
     wayland.windowManager.hyprland = {
       enable = true;
@@ -115,15 +117,24 @@ in {
           "ALT, mouse:272, movewindow"
         ];
 
+        # Only Hyprland-specific entries here. Generic app autostarts
+        # (steam, discord, jellyfin-mpv-shim, openrgb, coolercontrol) are
+        # declared once in modules/home-manager/desktop/kde/default.nix via
+        # programs.plasma.startup.startupScript, which plasma-manager compiles
+        # into an XDG autostart .desktop. systemd-xdg-autostart-generator
+        # picks that up in both Plasma and Hyprland+uwsm sessions, so declaring
+        # them here too caused double-launches. Steam and Discord hid this
+        # with their own single-instance locks; openrgb and jellyfin-mpv-shim
+        # don't have singletons, so their second instances were visible.
+        #
+        # nm-applet is also omitted: its .desktop from the networkmanagerapplet
+        # package already ships with `NotShowIn=KDE;GNOME;COSMIC;`, which
+        # systemd-xdg-autostart-generator honors. Result: one instance under
+        # Hyprland, zero under Plasma (where the native nm widget replaces it).
         exec-once =
           [
             "uwsm app -- waytrogen --restore"
           ]
-          ++ lib.optional osConfig.programs.steam.enable "uwsm app -- zsh -c 'STEAM_FRAME_FORCE_CLOSE=1 steam -silent'"
-          ++ lib.optional guiCfg.chat.discord.enable "uwsm app -- discord --start-minimized"
-          ++ lib.optional guiCfg.media.enable "uwsm app -- jellyfin-mpv-shim"
-          ++ lib.optional osConfig.rat.hardware.openrgb.enable "uwsm app -- openrgb --startminimized"
-          ++ lib.optional osConfig.programs.coolercontrol.enable "uwsm app -- coolercontrol"
           ++ lib.optional (tvMonitor != null) "tv-power on";
 
         general = {
