@@ -31,12 +31,23 @@
       flake = false;
     };
 
-    # opencode: 1.4.0 -> 1.4.3 (NixOS/nixpkgs#508574)
-    nixpkgs-patch-508574 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/508574.diff";
+    # opencode: 1.4.3 -> 1.4.6 (NixOS/nixpkgs#510138)
+    nixpkgs-patch-510138 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/510138.diff";
       flake = false;
     };
 
+    # opencode: 1.4.6 -> 1.4.10 (NixOS/nixpkgs#510746)
+    nixpkgs-patch-510746 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/510746.diff";
+      flake = false;
+    };
+
+    # opencode: 1.4.10 -> 1.4.11 (NixOS/nixpkgs#511138)
+    nixpkgs-patch-511138 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/511138.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches
@@ -240,6 +251,7 @@
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     nixified-ai = {
