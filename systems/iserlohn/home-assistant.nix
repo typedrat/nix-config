@@ -1,4 +1,20 @@
 {pkgs, ...}: {
+  # Patch zha-quirks to add SONOFF MINI DUO (ZB2GS) and MINI DUO-L (ZB2GS-L) support
+  # zigpy/zha-device-handlers#4902 — ZB2GS-L no-neutral variant (depends on #4742)
+  services.home-assistant.package = pkgs.home-assistant.override {
+    packageOverrides = _self: super: {
+      zha-quirks = super.zha-quirks.overridePythonAttrs (oldAttrs: {
+        patches =
+          (oldAttrs.patches or [])
+          ++ [
+            (pkgs.fetchpatch {
+              url = "https://github.com/zigpy/zha-device-handlers/pull/4902.diff";
+              hash = "sha256-rbT4UsFdi/jSkcN+rBui5stVI0daHrQGg84e9kug1OI=";
+            })
+          ];
+      });
+    };
+  };
   rat.services.matter-server.enable = true;
 
   rat.services.home-assistant = {
@@ -52,6 +68,10 @@
 
       # Matter
       "matter"
+
+      # Model Context Protocol
+      "mcp"
+      "mcp_server"
 
       # Jellyfin
       "jellyfin"
