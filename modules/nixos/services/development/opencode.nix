@@ -2,8 +2,7 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (lib) modules options types;
   cfg = config.rat.opencode;
 
@@ -11,8 +10,7 @@ let
   anyUserHasOpencode = lib.any (
     userCfg: userCfg.enable && (userCfg.cli.enable or false) && (userCfg.cli.ai.enable or false)
   ) (lib.attrValues config.rat.users);
-in
-{
+in {
   options.rat.opencode = {
     enable = options.mkOption {
       type = types.bool;
@@ -35,6 +33,6 @@ in
   };
 
   config = modules.mkIf (cfg.enable && cfg.openFirewall) {
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
+    networking.firewall.allowedTCPPorts = [cfg.port];
   };
 }

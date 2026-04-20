@@ -5,12 +5,12 @@
   autoPatchelfHook,
   nix-update-script,
 }: let
-  version = "1.16.1";
+  version = "1.17.0";
 
   sources = {
     x86_64-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_x86_64.tar.gz";
-      hash = "sha256-P0HzQPUWFPXD1UKb8RtJxMQYrtiy+V21SMPaazU4wj0=";
+      hash = "sha256-WUB3DKkQ8WjHo9xfcIuhLS37OPxPL1z5i4sih0AcRzc=";
     };
     aarch64-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_arm64.tar.gz";
