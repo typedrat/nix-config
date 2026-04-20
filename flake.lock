@@ -376,11 +376,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776633718,
-        "narHash": "sha256-jaeJc6JGQGK3CAcfQoREtKLAOeCbiQweztn1RNNb0wU=",
+        "lastModified": 1776655012,
+        "narHash": "sha256-bzAZnjMUqwBut4Q0jZqSlSL4JgZDXY1zoNcWLXj6ILk=",
         "owner": "aaddrick",
         "repo": "claude-desktop-debian",
-        "rev": "f829d3bf5f87e2a77aa3790c3f3834ccdf0efd0e",
+        "rev": "2d6a645c76178defc8671ce57bac4262c2f0f62c",
         "type": "github"
       },
       "original": {
@@ -2741,11 +2741,11 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1776453727,
-        "narHash": "sha256-8oyXmWBNDJfod3TUvUGdfOhAbOcBiMfH5k58opm4HsQ=",
+        "lastModified": 1776651011,
+        "narHash": "sha256-0S5KPwzJHHGWhy0qPHR/DvVqIfKg9SYDzSIV3+zl9sE=",
         "owner": "hyprland-community",
         "repo": "pyprland",
-        "rev": "2ee0b71bfe79014e3992753f5628c4891365aec0",
+        "rev": "4f483bcd5bce6344965a98bb362f6400654c87e4",
         "type": "github"
       },
       "original": {
