@@ -376,11 +376,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776615929,
+        "lastModified": 1776633718,
         "narHash": "sha256-jaeJc6JGQGK3CAcfQoREtKLAOeCbiQweztn1RNNb0wU=",
         "owner": "aaddrick",
         "repo": "claude-desktop-debian",
-        "rev": "44cd5a6c245b6a6bc6d638eef29fc2454e0b685a",
+        "rev": "f829d3bf5f87e2a77aa3790c3f3834ccdf0efd0e",
         "type": "github"
       },
       "original": {
@@ -1917,11 +1917,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776616019,
-        "narHash": "sha256-TSb7z/QUpY9XOJGrebHYuRCQRyiMrmRMIiw40yZweZA=",
+        "lastModified": 1776638503,
+        "narHash": "sha256-kEJ/v0RtBQmnnRufxW1JnwOfHsQb39H/uWAXd1KDfps=",
         "owner": "ggml-org",
         "repo": "llama.cpp",
-        "rev": "4eac5b45095a4e8a1ff1cce4f6d030e0872fb4ad",
+        "rev": "e365e658f07b63371489570dfde597f199b26c23",
         "type": "github"
       },
       "original": {
@@ -3597,11 +3597,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776616911,
-        "narHash": "sha256-k12p9yCvP6owKzpb9KHZAzPQA0FZGGnmvjcxlrFNIug=",
+        "lastModified": 1776638237,
+        "narHash": "sha256-dZGuVerSxZG/9ljBKcXQXkpBt5djkVoLzHeZVycip8U=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "46f4f5d45de271f685d8fb64944ccbbdfbbf5dab",
+        "rev": "75cc7559281e65e7a9ee54cbc301a4fe96e474f2",
         "type": "github"
       },
       "original": {
