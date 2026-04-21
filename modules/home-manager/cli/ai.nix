@@ -60,7 +60,7 @@ in {
       ++ lib.optional (hasNvidia && hasLargeVram) inputs'.llama-cpp.packages.cuda;
 
     home.sessionVariables = {
-      HF_HUB_ENABLE_HF_TRANSFER = "1";
+      HF_XET_HIGH_PERFORMANCE = "1";
       MORPH_COMPACT_TOKEN_LIMIT = toString cliCfg.ai.morphCompactTokenLimit;
     };
 
@@ -100,6 +100,14 @@ in {
           "opencode-websearch"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
+
+        permission = {
+          external_directory = {
+            "/tmp/**" = "allow";
+            "~/.claude/skills/**" = "allow";
+            "~/Development/gstack/**" = "allow";
+          };
+        };
 
         instructions = [
           "node_modules/@morphllm/opencode-morph-plugin/instructions/morph-tools.md"
