@@ -199,70 +199,25 @@
         enable = true;
         downloadDir = "/mnt/media/torrents";
         categories = {
-          lidarr = {
-            name = "Lidarr";
-            savePath = "music";
-          };
-          lidarr-imported = {
-            name = "Lidarr (Imported)";
-            savePath = "music";
-          };
+          lidarr.savePath = "music";
+          lidarr-imported.savePath = "music";
 
-          sonarr = {
-            name = "Sonarr";
-            savePath = "tv-shows";
-          };
-          sonarr-imported = {
-            name = "Sonarr (Imported)";
-            savePath = "tv-shows";
-          };
-          sonarr-anime = {
-            name = "Sonarr (Anime)";
-            savePath = "anime";
-          };
-          sonarr-anime-imported = {
-            name = "Sonarr (Anime - Imported)";
-            savePath = "anime";
-          };
+          sonarr.savePath = "tv-shows";
+          sonarr-imported.savePath = "tv-shows";
+          sonarr-anime.savePath = "anime";
+          sonarr-anime-imported.savePath = "anime";
 
-          radarr = {
-            name = "Radarr";
-            savePath = "movies";
-          };
-          radarr-imported = {
-            name = "Radarr (Imported)";
-            savePath = "movies";
-          };
-          radarr-anime = {
-            name = "Radarr (Anime)";
-            savePath = "anime-movies";
-          };
-          radarr-anime-imported = {
-            name = "Radarr (Anime - Imported)";
-            savePath = "anime-movies";
-          };
+          radarr.savePath = "movies";
+          radarr-imported.savePath = "movies";
+          radarr-anime.savePath = "anime-movies";
+          radarr-anime-imported.savePath = "anime-movies";
 
-          chaptarr = {
-            name = "Chaptarr";
-            savePath = "books";
-          };
-          chaptarr-imported = {
-            name = "Chaptarr (Imported)";
-            savePath = "books";
-          };
+          chaptarr.savePath = "books";
+          chaptarr-imported.savePath = "books";
 
-          cross-seed = {
-            name = "Cross-Seed";
-            savePath = "cross-seed";
-          };
-          games = {
-            name = "Games";
-            savePath = "games";
-          };
-          software = {
-            name = "Software";
-            savePath = "software";
-          };
+          cross-seed.savePath = "cross-seed";
+          games.savePath = "games";
+          software.savePath = "software";
         };
       };
       qui.enable = true;
