@@ -31,21 +31,9 @@
       flake = false;
     };
 
-    # opencode: 1.4.3 -> 1.4.6 (NixOS/nixpkgs#510138)
-    nixpkgs-patch-510138 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/510138.diff";
-      flake = false;
-    };
-
-    # opencode: 1.4.6 -> 1.4.10 (NixOS/nixpkgs#510746)
-    nixpkgs-patch-510746 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/510746.diff";
-      flake = false;
-    };
-
-    # opencode: 1.4.10 -> 1.4.11 (NixOS/nixpkgs#511138)
-    nixpkgs-patch-511138 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/511138.diff";
+    # opencode: 1.4.11 -> 1.14.18 (NixOS/nixpkgs#511588)
+    nixpkgs-patch-511588 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/511588.diff";
       flake = false;
     };
     #endregion
