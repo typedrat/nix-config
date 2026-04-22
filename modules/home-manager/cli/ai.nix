@@ -94,7 +94,7 @@ in {
 
       settings = {
         plugin = [
-          "@ex-machina/opencode-anthropic-auth@1.7.4"
+          "@ex-machina/opencode-anthropic-auth@1.7.5"
           "@morphllm/opencode-morph-plugin"
           "opencode-pty"
           "opencode-websearch"
