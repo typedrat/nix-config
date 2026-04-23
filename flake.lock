@@ -376,11 +376,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776943878,
-        "narHash": "sha256-zHbPam86GqMo8z94N0cUoixjmBMTFvDxwyFnIhyBNGA=",
+        "lastModified": 1776948761,
+        "narHash": "sha256-JE+ixpguVmoG+QXeC8xxwz1E0zHnwfo7b5Sro79CRks=",
         "owner": "aaddrick",
         "repo": "claude-desktop-debian",
-        "rev": "4fb076ec1240aec85a1dcd2323a4dbcb80fcb42b",
+        "rev": "0bcf7a473fbf2cf06d5a52cd991860b9f1853070",
         "type": "github"
       },
       "original": {
@@ -1297,11 +1297,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776904464,
-        "narHash": "sha256-sBUCj7/4d3Hoevpu3oQp8ccJNA1EDeVmFi1F8O6VJro=",
+        "lastModified": 1776950293,
+        "narHash": "sha256-t6KMARLILjPuTBSRoYanUxV+FU50IFZ7L5XVdOcdtaY=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "667b3c47325441e6a444faaf405bba76ec70338a",
+        "rev": "6837e0d6c5eda81fd26308489799fbf83a160465",
         "type": "github"
       },
       "original": {
@@ -1917,11 +1917,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776934046,
-        "narHash": "sha256-ykZYY/Ta6VNKzJTGUkEvSSvLf/SiAD7OpPby8LbsgnM=",
+        "lastModified": 1776951538,
+        "narHash": "sha256-fLxxA2rnUgH5oNvYi6003XBulEOKib9LDufTxtVsLSg=",
         "owner": "ggml-org",
         "repo": "llama.cpp",
-        "rev": "550d684bd13132d4af744cee64c1a3acb0ceaf09",
+        "rev": "0949beb5a3fc02adf0558d0f6736f1011c10891c",
         "type": "github"
       },
       "original": {
