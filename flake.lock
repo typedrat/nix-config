@@ -376,11 +376,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776956791,
-        "narHash": "sha256-VNdLDL6auUK+HQUQlK/2QuVVnVj30cuP59dWoSjpkD8=",
+        "lastModified": 1776975956,
+        "narHash": "sha256-3YFv2Xrq6nnF391afLCL2toF6aJYDz7JjPZK8syRHJE=",
         "owner": "aaddrick",
         "repo": "claude-desktop-debian",
-        "rev": "de19c1bb36c85486404d3f7d3bba4d3bc4fb4931",
+        "rev": "9b4f051f09dcac657ffb0fc432164efdadce81b5",
         "type": "github"
       },
       "original": {
@@ -1917,11 +1917,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776962347,
-        "narHash": "sha256-2AtyOMhaXG+IdHhGHdbd7+0ORijCaDuykb+xtbEVGgo=",
+        "lastModified": 1776974890,
+        "narHash": "sha256-hoZRfXI6BMWK5Lj4coNW2rjUsHjMx+lvGy8KY/5+jzA=",
         "owner": "ggml-org",
         "repo": "llama.cpp",
-        "rev": "c78fb909b23758f5e418cf98a69bc8a0ef142fb8",
+        "rev": "187a45637054881ecacf17f8e2f6f8f2ba7df1c7",
         "type": "github"
       },
       "original": {
