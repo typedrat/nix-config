@@ -4,6 +4,14 @@
     "nixos": {
       "type": "local",
       "command": ["uvx", "mcp-nixos"]
+    },
+    "home-assistant": {
+      "type": "remote",
+      "url": "https://home.thisratis.gay/api/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:HOME_ASSISTANT_TOKEN}"
+      },
+      "oauth": false
     }
   },
   "permission": {

@@ -50,6 +50,7 @@ in {
       morphApiKey = {};
       openrouterApiKey = {};
       answerOverflowKey = {};
+      homeAssistantToken = {};
     };
 
     home.packages =
@@ -198,6 +199,7 @@ in {
         export MORPH_API_KEY=$(cat ${config.sops.secrets.morphApiKey.path})
         export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
         export ANSWER_OVERFLOW_KEY=$(cat ${config.sops.secrets.answerOverflowKey.path})
+        export HOME_ASSISTANT_TOKEN=$(cat ${config.sops.secrets.homeAssistantToken.path})
       ''
     );
   };
