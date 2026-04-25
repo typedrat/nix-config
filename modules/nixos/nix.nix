@@ -22,6 +22,13 @@
             doCheck = !prev.stdenv.hostPlatform.isi686;
           };
         })
+
+        # Remove unsupported environment warning popup
+        (_final: prev: {
+          bottles = prev.bottles.override {
+            removeWarningPopup = true;
+          };
+        })
       ];
 
       config = {
