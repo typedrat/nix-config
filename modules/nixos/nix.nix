@@ -12,9 +12,14 @@
       overlays = [
         inputs.vscode-extensions.overlays.default
 
+        (_final: _prev: {
+          nix = inputs'.nix.packages.default;
+        })
+
+        # Disable openldap tests on i686 to fix build (https://github.com/NixOS/nixpkgs/issues/513245)
         (_final: prev: {
-          nix-update = prev.nix-update.override {
-            nix = inputs'.nix.packages.default;
+          openldap = prev.openldap.overrideAttrs {
+            doCheck = !prev.stdenv.hostPlatform.isi686;
           };
         })
       ];
