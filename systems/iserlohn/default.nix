@@ -156,11 +156,15 @@
         ];
 
         plugins = {
-          ldap.enable = true;
+          ldap = {
+            enable = true;
+            adminFilter = "(memberOf=cn=Discord Sysops,ou=groups,OU=jellyfin,DC=ldap,DC=goauthentik,DC=io)";
+          };
           sso = {
             enable = true;
             providers.authentik = {
               oidEndpoint = "https://auth.thisratis.gay/application/o/jellyfin/.well-known/openid-configuration";
+              adminRoles = ["Discord Sysops"];
             };
           };
           shokofin.enable = true;
