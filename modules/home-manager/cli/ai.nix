@@ -130,10 +130,10 @@ in {
 
         agent = {
           build = {
-            model = "anthropic/claude-opus-4-6";
+            model = "anthropic/claude-opus-4-7";
           };
           plan = {
-            model = "anthropic/claude-opus-4-6";
+            model = "anthropic/claude-opus-4-7";
           };
           explore = {
             model = "anthropic/claude-haiku-4-5";
