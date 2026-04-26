@@ -25,7 +25,7 @@ in {
       directories = [".config/krita" ".local/share/krita"];
     };
 
-    home.packages = [pkgs.krita];
+    home.packages = [pkgs.krita5];
 
     # Krita only looks for pykrita plugins in ~/.local/share/krita/pykrita/
     # Symlink the plugin there
