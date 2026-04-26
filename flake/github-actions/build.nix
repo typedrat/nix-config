@@ -37,7 +37,6 @@
         }
         {uses = "DeterminateSystems/determinate-nix-action@v3";}
         {uses = "DeterminateSystems/flakehub-cache-action@main";}
-        {uses = "DeterminateSystems/flake-checker-action@main";}
         {
           id = "build";
           name = "Build \${{ matrix.host }}";
