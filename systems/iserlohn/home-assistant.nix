@@ -238,6 +238,114 @@
             {action = "script.sunrise_wakeup";}
           ];
         }
+
+        # Sync bathroom wall switches → devices (detach relay mode)
+        # The SONOFF MINI's detach mode is all-or-nothing, so both
+        # the light and fan switches need HA automations to work.
+        {
+          alias = "Bathroom Switch → Vanity On";
+          id = "bathroom_switch_vanity_on";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "binary_sensor.bathroom_light_switch";
+              to = "on";
+            }
+          ];
+          action = [
+            {
+              action = "light.turn_on";
+              target.entity_id = "light.bathroom_vanity_light";
+            }
+          ];
+        }
+        {
+          alias = "Bathroom Switch → Vanity Off";
+          id = "bathroom_switch_vanity_off";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "binary_sensor.bathroom_light_switch";
+              to = "off";
+            }
+          ];
+           action = [
+            {
+              action = "light.turn_off";
+              target.entity_id = "light.bathroom_vanity_light";
+            }
+          ];
+        }
+        {
+          alias = "Bathroom Switch → Fan On";
+          id = "bathroom_switch_fan_on";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "binary_sensor.bathroom_fan_switch";
+              to = "on";
+            }
+          ];
+          action = [
+            {
+              action = "fan.turn_on";
+              target.entity_id = "fan.bathroom_fan";
+            }
+          ];
+        }
+        {
+          alias = "Bathroom Switch → Fan Off";
+          id = "bathroom_switch_fan_off";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "binary_sensor.bathroom_fan_switch";
+              to = "off";
+            }
+          ];
+          action = [
+            {
+              action = "fan.turn_off";
+              target.entity_id = "fan.bathroom_fan";
+            }
+          ];
+        }
+
+        # Sync 3D printer chamber light → riser light
+        {
+          alias = "Centauri Chamber → Riser On";
+          id = "centauri_chamber_riser_on";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "light.centauri_carbon_chamber_light";
+              to = "on";
+            }
+          ];
+          action = [
+            {
+              action = "light.turn_on";
+              target.entity_id = "light.centauri_carbon_riser_light";
+            }
+          ];
+        }
+        {
+          alias = "Centauri Chamber → Riser Off";
+          id = "centauri_chamber_riser_off";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "light.centauri_carbon_chamber_light";
+              to = "off";
+            }
+          ];
+          action = [
+            {
+              action = "light.turn_off";
+              target.entity_id = "light.centauri_carbon_riser_light";
+            }
+          ];
+        }
       ];
     };
   };
