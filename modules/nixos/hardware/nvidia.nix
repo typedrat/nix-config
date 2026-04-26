@@ -110,6 +110,13 @@ in {
 
       # Point Vulkan loader directly at the NVIDIA ICD
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+
+      # Qt WebEngine 6.10.2 incorrectly detects GBM as unsupported with NVIDIA
+      # open kernel modules and falls back to a Vulkan rendering path that
+      # deadlocks during Chromium initialization. Force-enabling GBM works
+      # around this since the open modules do support GBM properly.
+      # (NixOS/nixpkgs#508998)
+      QTWEBENGINE_FORCE_USE_GBM = "1";
     };
 
     # CUDA and license configuration
