@@ -269,7 +269,7 @@
               to = "off";
             }
           ];
-           action = [
+          action = [
             {
               action = "light.turn_off";
               target.entity_id = "light.bathroom_vanity_light";
