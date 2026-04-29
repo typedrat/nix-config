@@ -26,6 +26,14 @@ in
     paths = [unwrapped];
 
     postBuild = ''
+      # Remove GGML headers, shared libs, and cmake config leaked by
+      # krita-vision-tools' in-tree GGML build. These cause file collisions
+      # with llama-cpp in home-manager's buildEnv. Krita's own binaries use
+      # RPATH to the unwrapped store path, so these symlinks are unnecessary.
+      rm -rf "$out/include"
+      rm -f "$out/lib"/libggml*.so*
+      rm -rf "$out/lib/cmake/ggml"
+
       wrapQtApp "$out/bin/krita" \
         --prefix PYTHONPATH : "$PYTHONPATH" \
         --set KRITA_PLUGIN_PATH "$out/lib/kritaplugins"

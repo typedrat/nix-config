@@ -1512,15 +1512,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1777220105,
-        "narHash": "sha256-M9JZK+8GVKAIVdQpcCG/49zBF3ylxO8zxW+hVjM5QpE=",
+        "lastModified": 1771865848,
+        "narHash": "sha256-xwNa+1D8WPsDnJtUofDrtyDCZKZotbUymzV/R5s+M0I=",
         "owner": "hyprwm",
         "repo": "hyprland-plugins",
-        "rev": "dbe221941a5095e1b381ac460a152cf173b108b8",
+        "rev": "b85a56b9531013c79f2f3846fd6ee2ff014b8960",
         "type": "github"
       },
       "original": {
         "owner": "hyprwm",
+        "ref": "b85a56b953",
         "repo": "hyprland-plugins",
         "type": "github"
       }
@@ -2353,6 +2354,42 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/513165.diff"
       }
     },
+    "nixpkgs-patch-discord-01-507728": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-0kiqlMVghbeJfQ/7zRj3AwWf5zUOzlbfS5BqBIcep3U=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/507728.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/507728.diff"
+      }
+    },
+    "nixpkgs-patch-discord-02-506089": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-dwmB9Vmmd1yl2ABBvin7hSBRTB/avuE87PAyAxHhnYc=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/506089.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/506089.diff"
+      }
+    },
+    "nixpkgs-patch-vencord-1-14-10": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-p9edI3dIb3IxTJc2BmgTkY409hzdXMcIG08q1VIHoTM=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/commit/3d730cb1ecb627c085a7b585d7e644239965797e.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/commit/3d730cb1ecb627c085a7b585d7e644239965797e.diff"
+      }
+    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -2913,6 +2950,9 @@
         "nixpkgs-patch-490985": "nixpkgs-patch-490985",
         "nixpkgs-patch-512466": "nixpkgs-patch-512466",
         "nixpkgs-patch-513165": "nixpkgs-patch-513165",
+        "nixpkgs-patch-discord-01-507728": "nixpkgs-patch-discord-01-507728",
+        "nixpkgs-patch-discord-02-506089": "nixpkgs-patch-discord-02-506089",
+        "nixpkgs-patch-vencord-1-14-10": "nixpkgs-patch-vencord-1-14-10",
         "nixvirt": "nixvirt",
         "peon-ping": "peon-ping",
         "plasma-manager": "plasma-manager",

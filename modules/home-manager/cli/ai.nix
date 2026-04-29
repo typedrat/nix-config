@@ -96,7 +96,6 @@ in {
       settings = {
         plugin = [
           "@ex-machina/opencode-anthropic-auth@1.7.5"
-          "@morphllm/opencode-morph-plugin"
           "opencode-pty"
           "opencode-websearch"
           "superpowers@git+https://github.com/obra/superpowers.git"
@@ -109,10 +108,6 @@ in {
             "~/Development/gstack/**" = "allow";
           };
         };
-
-        instructions = [
-          "node_modules/@morphllm/opencode-morph-plugin/instructions/morph-tools.md"
-        ];
 
         mcp = {
           answeroverflow = {
@@ -162,9 +157,9 @@ in {
         '';
         opus = ''
           ---
-          description: Most capable agent using Claude Opus 4.6
+          description: Most capable agent using Claude Opus 4.7
           mode: subagent
-          model: anthropic/claude-opus-4-6
+          model: anthropic/claude-opus-4-7
           ---
           You are an expert coding assistant powered by Claude Opus.
           Prioritize depth, correctness, and thorough analysis. Good for complex tasks, architecture decisions, and difficult debugging.
@@ -173,7 +168,7 @@ in {
           ---
           description: OpenAI GPT-5.4 agent
           mode: subagent
-          model: openai/gpt-5.4
+          model: openai/gpt-5.5
           ---
           You are a coding assistant powered by OpenAI GPT-5.4.
           Leverage your strengths in code generation, reasoning, and problem-solving.

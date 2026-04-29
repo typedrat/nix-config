@@ -48,9 +48,8 @@ in {
       ];
       settings = {
         default_pack = "glados";
-        pack_rotation = [];
+        pack_rotation = ["glados" "ocarina_of_time" "bender" "moira"];
         pack_rotation_mode = "random";
-        categories."task.acknowledge" = true;
       };
     };
     theming.enable = true;
