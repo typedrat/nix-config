@@ -19,6 +19,8 @@
   hasNvidia = osConfig.rat.hardware.nvidia.enable;
   gpuVram = osConfig.rat.hardware.gpu.vram;
   hasLargeVram = gpuVram >= 16;
+  guiCfg = userCfg.gui or {};
+  hasChromium = (guiCfg.enable or false) && (guiCfg.browsers.chromium.enable or false);
   peonPingCfg = cliCfg.ai.peon-ping or {};
   peonSettings = peonPingCfg.settings or {};
 in {
@@ -60,10 +62,14 @@ in {
       ])
       ++ lib.optional (hasNvidia && hasLargeVram) inputs'.llama-cpp.packages.cuda;
 
-    home.sessionVariables = {
-      HF_XET_HIGH_PERFORMANCE = "1";
-      MORPH_COMPACT_TOKEN_LIMIT = toString cliCfg.ai.morphCompactTokenLimit;
-    };
+    home.sessionVariables =
+      {
+        HF_XET_HIGH_PERFORMANCE = "1";
+        MORPH_COMPACT_TOKEN_LIMIT = toString cliCfg.ai.morphCompactTokenLimit;
+      }
+      // lib.optionalAttrs hasChromium {
+        GSTACK_CHROMIUM_PATH = lib.getExe config.programs.google-chrome.package;
+      };
 
     programs.comfy-cli = {
       enable = true;
