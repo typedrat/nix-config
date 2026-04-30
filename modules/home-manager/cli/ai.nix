@@ -60,7 +60,7 @@ in {
         llm
         python3Packages.huggingface-hub
       ])
-      ++ lib.optional (hasNvidia && hasLargeVram) inputs'.llama-cpp.packages.cuda;
+      ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp;
 
     home.sessionVariables =
       {
