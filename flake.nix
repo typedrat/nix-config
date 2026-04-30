@@ -31,37 +31,10 @@
       flake = false;
     };
 
-    # opencode: 1.4.19 -> 1.14.20 (NixOS/nixpkgs#512466)
-    nixpkgs-patch-512466 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/512466.diff";
-      flake = false;
-    };
-
-    # opencode: 1.4.20 -> 1.14.24 (NixOS/nixpkgs#513165)
-    nixpkgs-patch-513165 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/513165.diff";
-      flake = false;
-    };
-
-    # discord: fetch distros at build time to fix discord-development 0.0.235+ install (NixOS/nixpkgs#507728)
-    # NOTE: numeric prefix forces apply-order; #506089 (Krisp) is rebased on top of this PR.
-    nixpkgs-patch-discord-01-507728 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/507728.diff";
-      flake = false;
-    };
-
     # discord: add Krisp patcher to bypass signature check for noise cancellation (NixOS/nixpkgs#506089)
-    # NOTE: depends on #507728's source refactor; must apply after it.
-    nixpkgs-patch-discord-02-506089 = {
+    # Rebased on top of #507728, which is now in nixos-unstable.
+    nixpkgs-patch-506089 = {
       url = "https://github.com/NixOS/nixpkgs/pull/506089.diff";
-      flake = false;
-    };
-
-    # vencord: 1.14.7 -> 1.14.10 — required for compatibility with current Discord
-    # client (1.14.7's webpack patches break silently against newer Discord builds).
-    # Already merged on master as 3d730cb1ecb6 but not yet in our pinned channel.
-    nixpkgs-patch-vencord-1-14-10 = {
-      url = "https://github.com/NixOS/nixpkgs/commit/3d730cb1ecb627c085a7b585d7e644239965797e.diff";
       flake = false;
     };
     #endregion
