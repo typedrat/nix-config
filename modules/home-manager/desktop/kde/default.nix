@@ -22,6 +22,24 @@
   accentName = capitalizeFirst config.catppuccin.accent;
 
   useVicinae = launcherVariant == "vicinae";
+
+  # Wrap an autostart command in its own transient systemd scope so each
+  # app gets an isolated cgroup. Without this, plasma-manager's run_all.sh
+  # forks every autostarted app (Discord, Steam, OpenRGB, ...) into the
+  # single `app-plasma\x2dmanager\x2dautostart@autostart.service` unit.
+  # That unit has the systemd default `OOMPolicy=stop`, so any sibling
+  # getting OOM-killed (e.g. a runaway vicinae extension) chain-kills the
+  # rest. Wrapping with systemd-run gives each app its own unit/cgroup so
+  # they fail independently. `--scope` runs in the caller's context (no
+  # forking daemon), `--collect` auto-removes the unit on exit so we
+  # don't leak failed-state units, `--quiet` suppresses the "Running
+  # scope as unit ..." stderr that would otherwise spam the journal on
+  # every login.
+  autostartScope = unit: cmd: ''
+    systemd-run --user --scope --quiet --collect \
+      --unit=autostart-${unit} --slice=app-graphical.slice \
+      ${cmd} &
+  '';
 in {
   config = modules.mkIf (guiCfg.enable && kdeCfg.enable && osConfig.rat.gui.kde.enable) {
     programs.plasma = {
@@ -154,47 +172,35 @@ in {
 
       # --- Startup Scripts ---
 
+      # Each autostart runs in its own transient systemd scope (see
+      # autostartScope above) so a runaway sibling can't chain-kill the
+      # rest of the autostarted apps via OOMPolicy=stop on the shared
+      # plasma-manager-autostart unit.
       startup.startupScript = lib.mkMerge [
-        # Vicinae autostart
         (lib.mkIf useVicinae {
-          vicinae = {
-            text = "vicinae &";
-          };
+          vicinae.text = autostartScope "vicinae" "vicinae";
         })
 
-        # Steam autostart
         (lib.mkIf osConfig.programs.steam.enable {
-          steam = {
-            text = "STEAM_FRAME_FORCE_CLOSE=1 steam -silent &";
-          };
+          # STEAM_FRAME_FORCE_CLOSE=1 belongs in the wrapped command's
+          # environment, not the systemd-run invocation, so use `env`.
+          steam.text = autostartScope "steam" "env STEAM_FRAME_FORCE_CLOSE=1 steam -silent";
         })
 
-        # Discord autostart
         (lib.mkIf guiCfg.chat.discord.enable {
-          discord = {
-            text = "discord --start-minimized &";
-          };
+          discord.text = autostartScope "discord" "discord --start-minimized";
         })
 
-        # Jellyfin MPV shim
         (lib.mkIf guiCfg.media.enable {
-          jellyfin-mpv-shim = {
-            text = "jellyfin-mpv-shim &";
-          };
+          jellyfin-mpv-shim.text = autostartScope "jellyfin-mpv-shim" "jellyfin-mpv-shim";
         })
 
-        # OpenRGB
         (lib.mkIf osConfig.rat.hardware.openrgb.enable {
-          openrgb = {
-            text = "openrgb --startminimized &";
-          };
+          openrgb.text = autostartScope "openrgb" "openrgb --startminimized";
         })
 
-        # CoolerControl
         (lib.mkIf osConfig.programs.coolercontrol.enable {
-          coolercontrol = {
-            text = "coolercontrol &";
-          };
+          coolercontrol.text = autostartScope "coolercontrol" "coolercontrol";
         })
       ];
 
