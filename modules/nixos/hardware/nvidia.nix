@@ -140,6 +140,17 @@ in {
         zfp = prev.zfp.override {
           stdenv = final.cudaPackages.backendStdenv;
         };
+
+        # Mozilla mach (firefox/thunderbird) hardcodes onnxruntime as a build
+        # input. With cudaSupport=true globally this drags cudnn/nccl/cufft into
+        # the closure. firefox-unwrapped is built by cache.nixos-cuda.org so it
+        # substitutes fine, but thunderbird-unwrapped is not on either cache,
+        # forcing a multi-hour from-source rebuild on every nixpkgs bump.
+        # Pin thunderbird's onnxruntime to the non-CUDA build to match Hydra's
+        # cache.nixos.org hash for thunderbird-unwrapped.
+        thunderbird-unwrapped = prev.thunderbird-unwrapped.override {
+          onnxruntime = prev.onnxruntime.override { cudaSupport = false; };
+        };
       })
     ];
 
