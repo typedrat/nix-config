@@ -1,6 +1,11 @@
 {pkgs, ...}: {
   # Patch zha-quirks to add SONOFF MINI DUO (ZB2GS) and MINI DUO-L (ZB2GS-L) support
   # zigpy/zha-device-handlers#4902 — ZB2GS-L no-neutral variant (depends on #4742)
+  #
+  # We can't bump nixpkgs' zha-quirks to 1.2.0 in lockstep because that requires
+  # zha 1.3.0 too (zha 1.1.2 hard-pins zha-quirks==1.1.1) and zha 1.3.0 isn't in
+  # nixpkgs yet. So instead, cherry-pick just the upstream PR diff onto the
+  # 1.1.1 source.
   services.home-assistant.package = pkgs.home-assistant.override {
     packageOverrides = _self: super: {
       zha-quirks = super.zha-quirks.overridePythonAttrs (oldAttrs: {
@@ -15,6 +20,7 @@
       });
     };
   };
+
   rat.services.matter-server.enable = true;
 
   rat.services.home-assistant = {
