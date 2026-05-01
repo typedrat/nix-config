@@ -101,6 +101,66 @@
     config = {
       default_config = {};
 
+      # HomeKit-friendly wrapper for the Vizio TV that hides the firehose of
+      # FAST/streaming sources the TV advertises. The Vizio integration
+      # publishes ~300 sources (FAST channels, streaming apps, etc.) and
+      # HomeKit truncates to 90 alphabetically, surfacing garbage like
+      # "Bill Perry BMX" in the input picker. This wrapper exposes only the
+      # five physical HDMI inputs; the underlying media_player.alexis_tv
+      # retains the full source_list for direct use.
+      media_player = [
+        {
+          platform = "universal";
+          name = "Alexis TV HomeKit";
+          unique_id = "alexis_tv_homekit";
+          children = ["media_player.alexis_tv"];
+          device_class = "tv";
+          attributes = {
+            state = "media_player.alexis_tv";
+            source = "media_player.alexis_tv|source";
+            volume_level = "media_player.alexis_tv|volume_level";
+            is_volume_muted = "media_player.alexis_tv|is_volume_muted";
+            supported_features = "media_player.alexis_tv|supported_features";
+          };
+          commands = {
+            select_source = {
+              action = "media_player.select_source";
+              target.entity_id = "media_player.alexis_tv";
+              data.source = "{{ source }}";
+            };
+            turn_on.action = "media_player.turn_on";
+            turn_off.action = "media_player.turn_off";
+            volume_up.action = "media_player.volume_up";
+            volume_down.action = "media_player.volume_down";
+            volume_mute = {
+              action = "media_player.volume_mute";
+              target.entity_id = "media_player.alexis_tv";
+              data.is_volume_muted = "{{ is_volume_muted }}";
+            };
+            volume_set = {
+              action = "media_player.volume_set";
+              target.entity_id = "media_player.alexis_tv";
+              data.volume_level = "{{ volume_level }}";
+            };
+          };
+        }
+      ];
+
+      # Override the wrapper's source_list with just the physical HDMI inputs.
+      # The universal media_player would otherwise inherit the full 300-source
+      # list from its child.
+      homeassistant.customize = {
+        "media_player.alexis_tv_homekit" = {
+          source_list = [
+            "HDMI-1"
+            "HDMI-2"
+            "HDMI-3"
+            "HDMI-4"
+            "HDMI-5"
+          ];
+        };
+      };
+
       waste_collection_schedule = {
         sources = [
           {
@@ -360,5 +420,16 @@
   networking.firewall.allowedTCPPorts = [
     3030
     3031
+  ];
+
+  # HomeKit accessories listen on TCP ports starting at 21063, with each
+  # additional bridge/accessory taking the next sequential port. Opening a
+  # generous range here means new HomeKit entries pair without firewall
+  # changes. mDNS discovery uses UDP 5353, which avahi already opens.
+  networking.firewall.allowedTCPPortRanges = [
+    {
+      from = 21063;
+      to = 21149;
+    }
   ];
 }
