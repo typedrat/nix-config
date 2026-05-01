@@ -34,6 +34,7 @@ in {
       uv
 
       # VCS and GitHub
+      ghui
       github-to-sops
 
       # Docker tools
