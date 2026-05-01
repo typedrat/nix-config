@@ -12,17 +12,16 @@
 }:
 rustPlatform.buildRustPackage rec {
   pname = "keyfork";
-  version = "0.3.4";
+  version = "0.3.6";
 
   src = fetchgit {
     url = "https://git.distrust.co/public/keyfork";
     rev = "keyfork-v${version}";
-    hash = "sha256-lJ2sOJUVnlZNWaU84zYyABnzOu9F0bZTW8/2PkNVlfQ=";
+    hash = "sha256-9WKHEseblmRjmCZr+wofGHF+aVZb8gUTwJphzH3JDn0=";
   };
 
   cargoLock = {
     lockFile = "${src}/Cargo.lock";
-    allowBuiltinFetchGit = true;
   };
 
   nativeBuildInputs = [

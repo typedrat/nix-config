@@ -149,7 +149,7 @@ in {
         # Pin thunderbird's onnxruntime to the non-CUDA build to match Hydra's
         # cache.nixos.org hash for thunderbird-unwrapped.
         thunderbird-unwrapped = prev.thunderbird-unwrapped.override {
-          onnxruntime = prev.onnxruntime.override { cudaSupport = false; };
+          onnxruntime = prev.onnxruntime.override {cudaSupport = false;};
         };
       })
     ];
