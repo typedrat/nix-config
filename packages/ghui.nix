@@ -9,13 +9,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "ghui";
-  version = "0.4.6";
+  version = "0.6.0";
 
   src = fetchFromGitHub {
     owner = "kitlangton";
     repo = "ghui";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-jMi2Pc2VTpj0cZ2zXqtunG0FxcglCNEt9WzWnwxq+Js=";
+    hash = "sha256-WrhpSA29vcX6K101E2TiBPkEq72ZuBDFEImFGUMjE5c=";
   };
 
   nativeBuildInputs = [
