@@ -172,6 +172,7 @@
     };
 
     # Software
+    flatpak.enable = true;
     java.enable = true;
     nix-ld.enable = true;
     virtualisation.docker.enable = true;

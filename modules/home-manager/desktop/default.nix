@@ -10,6 +10,7 @@
     ./productivity
     ./terminals
     ./ai.nix
+    ./flatpak.nix
     ./security.nix
     ./utilities.nix
   ];

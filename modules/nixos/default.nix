@@ -14,6 +14,7 @@
     ./alien.nix
     ./appimage.nix
     ./avahi.nix
+    ./flatpak.nix
     ./impermanence.nix
     ./java.nix
     ./nix.nix
