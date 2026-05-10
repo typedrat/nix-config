@@ -22,7 +22,20 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
-  boot.blacklistedKernelModules = ["battery"];
+  # Also blacklist amdgpu - this system uses NVIDIA exclusively, and amdgpu being loaded
+  # affects monitor enumeration order.
+  boot.blacklistedKernelModules = [
+    "battery"
+    "amdgpu"
+  ];
+
+  # --- Session variables ---
+
+  # Force GLVND to use the NVIDIA EGL vendor library. Without this, applications
+  # may pick up a non-NVIDIA EGL implementation when multiple are present.
+  environment.sessionVariables = {
+    __EGL_VENDOR_LIBRARY_FILENAMES = "/run/opengl-driver/share/glvnd/egl_vendor.d/10_nvidia.json";
+  };
 
   # --- Hardware ---
 
