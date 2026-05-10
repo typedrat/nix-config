@@ -19,13 +19,6 @@ in {
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;
-
-      # GE-Proton (and other custom Proton builds) are managed via ProtonPlus
-      # (see environment.systemPackages below). This gives us multi-version
-      # flexibility, faster hotfix uptake, and access to Proton-CachyOS / tkg
-      # builds that aren't packaged in nixpkgs. Versions install to
-      # ~/.local/share/Steam/compatibilitytools.d/ which is persisted by
-      # the home-manager gaming module's impermanence config.
     };
 
     hardware = {
@@ -38,6 +31,7 @@ in {
     environment.systemPackages = with pkgs; [
       protonplus
       protontricks
+      steamtinkerlaunch
     ];
   };
 }
