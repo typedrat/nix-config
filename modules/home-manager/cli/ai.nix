@@ -101,7 +101,7 @@ in {
 
       settings = {
         plugin = [
-          "@ex-machina/opencode-anthropic-auth@1.7.5"
+          "@ex-machina/opencode-anthropic-auth@1.8.0"
           "opencode-pty"
           "opencode-websearch"
           "superpowers@git+https://github.com/obra/superpowers.git"
