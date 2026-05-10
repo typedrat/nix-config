@@ -37,6 +37,30 @@
       url = "https://github.com/NixOS/nixpkgs/pull/506089.diff";
       flake = false;
     };
+
+    # zed-editor: 1.0.0 -> 1.0.1 (NixOS/nixpkgs#517228)
+    nixpkgs-patch-517228 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/517228.diff";
+      flake = false;
+    };
+
+    # zed-editor: 1.0.1 -> 1.1.5 (NixOS/nixpkgs#517362)
+    nixpkgs-patch-517362 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/517362.diff";
+      flake = false;
+    };
+
+    # zed-editor: 1.1.5 -> 1.1.6 (NixOS/nixpkgs#517586)
+    nixpkgs-patch-517586 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/517586.diff";
+      flake = false;
+    };
+
+    # zed-editor: 1.1.6 -> 1.1.7 (NixOS/nixpkgs#518209)
+    nixpkgs-patch-518209 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/518209.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches
