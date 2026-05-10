@@ -20,6 +20,7 @@ in {
       strace
       sysstat
       usbutils
+      vulkan-tools
     ];
 
     programs.bottom.enable = true;
