@@ -108,8 +108,13 @@ in {
       LIBVA_DRIVER_NAME = "nvidia";
       NVD_BACKEND = "direct";
 
-      # Point Vulkan loader directly at the NVIDIA ICD
-      VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json";
+      # Point Vulkan loader directly at the NVIDIA ICD.
+      # NOTE: NVIDIA's ICD is named nvidia_icd.json (no arch suffix). Mesa
+      # drivers use *.x86_64.json, but the proprietary NVIDIA driver does not.
+      # Pointing VK_DRIVER_FILES at a missing file causes the Vulkan loader to
+      # find zero ICDs (it disables default search when this is set), which
+      # breaks every Vulkan app — including Zed's blade renderer.
+      VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
 
       # Qt WebEngine 6.10.2 incorrectly detects GBM as unsupported with NVIDIA
       # open kernel modules and falls back to a Vulkan rendering path that
