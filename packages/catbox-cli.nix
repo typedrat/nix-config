@@ -9,16 +9,16 @@
 }:
 rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "catbox-cli";
-  version = "0-unstable-2025-07-10";
+  version = "0-unstable-2026-05-11";
 
   src = fetchFromGitHub {
     owner = "JustSimplyKyle";
     repo = "catbox-cli";
-    rev = "9b19dc2ee2d058cd758ff1afa85eb01dc9320a2e";
-    hash = "sha256-ZZt/j3ehX7nKpTX3BJMb4lDQOgFCIMXNJM9HrA4Ddlc=";
+    rev = "c0788d8946dc178f36132c822b8709c819b4cb7a";
+    hash = "sha256-8ubSEO1LQsi/fjyV6qxJVy30uhPC+AwxJd4HKVly0/A=";
   };
 
-  cargoHash = "sha256-X0CQnBki90gjPNMdnbwNt1ImWXdMTQHDpak4/wB9nwU=";
+  cargoHash = "sha256-Cr3/+54GdJFlPRP3PW42MMpXNIoeZnde3U6xfhpupOM=";
 
   nativeBuildInputs = [
     pkg-config
