@@ -61,6 +61,24 @@
       url = "https://github.com/NixOS/nixpkgs/pull/518209.diff";
       flake = false;
     };
+
+    # opencode: 1.14.31 -> 1.14.35 (NixOS/nixpkgs#516748)
+    nixpkgs-patch-516748 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/516748.diff";
+      flake = false;
+    };
+
+    # opencode: remove unused models-dev dependency from nativeBuildInputs (NixOS/nixpkgs#517064)
+    nixpkgs-patch-517064 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/517064.diff";
+      flake = false;
+    };
+
+    # opencode{,-desktop}: 1.14.35 -> 1.14.48 (NixOS/nixpkgs#519007)
+    nixpkgs-patch-519007 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/519007.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches

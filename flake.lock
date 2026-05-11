@@ -2291,6 +2291,30 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/506089.diff"
       }
     },
+    "nixpkgs-patch-516748": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-pj9a2PGRndIN7Ltp6toCvY8lgCbvPSdxiGrnpqkSVnM=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/516748.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/516748.diff"
+      }
+    },
+    "nixpkgs-patch-517064": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-d3pQDVoXT+RP2JxqC97QrIYRcJ6j8JULL3jkIw+eEjg=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/517064.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/517064.diff"
+      }
+    },
     "nixpkgs-patch-517228": {
       "flake": false,
       "locked": {
@@ -2337,6 +2361,18 @@
       "original": {
         "type": "file",
         "url": "https://github.com/NixOS/nixpkgs/pull/518209.diff"
+      }
+    },
+    "nixpkgs-patch-519007": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-p+hgMGHWnjwZUMZ1UBS6OV1zm/20/r8aVrBbAE2Iscg=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/519007.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/519007.diff"
       }
     },
     "nixpkgs-regression": {
@@ -2881,10 +2917,13 @@
         "nixpkgs": "nixpkgs_12",
         "nixpkgs-patch-490985": "nixpkgs-patch-490985",
         "nixpkgs-patch-506089": "nixpkgs-patch-506089",
+        "nixpkgs-patch-516748": "nixpkgs-patch-516748",
+        "nixpkgs-patch-517064": "nixpkgs-patch-517064",
         "nixpkgs-patch-517228": "nixpkgs-patch-517228",
         "nixpkgs-patch-517362": "nixpkgs-patch-517362",
         "nixpkgs-patch-517586": "nixpkgs-patch-517586",
         "nixpkgs-patch-518209": "nixpkgs-patch-518209",
+        "nixpkgs-patch-519007": "nixpkgs-patch-519007",
         "nixvirt": "nixvirt",
         "peon-ping": "peon-ping",
         "plasma-manager": "plasma-manager",
