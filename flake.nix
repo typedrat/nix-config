@@ -79,6 +79,12 @@
       url = "https://github.com/NixOS/nixpkgs/pull/519007.diff";
       flake = false;
     };
+
+    # opencode-desktop: fix empty window and missing desktop entry (NixOS/nixpkgs@306470b)
+    nixpkgs-patch-commit-306470b = {
+      url = "https://github.com/NixOS/nixpkgs/commit/306470bf7cc8d55f2860f1cf70a801aad43cbd21.patch";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches

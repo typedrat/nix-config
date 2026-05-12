@@ -2375,6 +2375,18 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/519007.diff"
       }
     },
+    "nixpkgs-patch-commit-306470b": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-6qDjWYjAgMi4r6RC0IJ9WdQ8IdG4SbWPAlwLxnpMJMk=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/commit/306470bf7cc8d55f2860f1cf70a801aad43cbd21.patch"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/commit/306470bf7cc8d55f2860f1cf70a801aad43cbd21.patch"
+      }
+    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -2924,6 +2936,7 @@
         "nixpkgs-patch-517586": "nixpkgs-patch-517586",
         "nixpkgs-patch-518209": "nixpkgs-patch-518209",
         "nixpkgs-patch-519007": "nixpkgs-patch-519007",
+        "nixpkgs-patch-commit-306470b": "nixpkgs-patch-commit-306470b",
         "nixvirt": "nixvirt",
         "peon-ping": "peon-ping",
         "plasma-manager": "plasma-manager",
