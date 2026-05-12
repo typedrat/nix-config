@@ -563,11 +563,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1778472179,
-        "narHash": "sha256-mYUH8EIYO15YBYq/N4nSJvAHP/oMn/5CxkmhHN2tCBU=",
+        "lastModified": 1778558563,
+        "narHash": "sha256-pT6KVIDxQYymtHC9ix6U/NTBUYJhYRX81Ou/9nAUSgc=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "5ba32df13fe1314313f7377638e6e21ff13b4485",
+        "rev": "f52067bf63247b39b81917d34d74f7c0a9344f05",
         "type": "gitlab"
       },
       "original": {
@@ -1959,12 +1959,12 @@
         ]
       },
       "locked": {
-        "lastModified": 1778469574,
-        "narHash": "sha256-NTZzJ7xJvMXOonYqut3WLUhryeZj5QuuL0ANcqS7d30=",
-        "rev": "4852a8aa041c94af55e136cde5b8b6d42c3563e8",
-        "revCount": 2170,
+        "lastModified": 1778555852,
+        "narHash": "sha256-55EmwooVAS4UpA0oWd5wilKPRqCiHD5BAej9QiNwheY=",
+        "rev": "f29b0f7a9f367e0056b716f8aa137cb41e784444",
+        "revCount": 2171,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/oxalica/rust-overlay/0.1.2170%2Brev-4852a8aa041c94af55e136cde5b8b6d42c3563e8/019e1513-cf7e-7990-8da3-1eeae3dc0350/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/oxalica/rust-overlay/0.1.2171%2Brev-f29b0f7a9f367e0056b716f8aa137cb41e784444/019e1a3a-9d35-75b3-8cd2-3679c46d4145/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -3657,11 +3657,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778472085,
-        "narHash": "sha256-NlBm4uiTIEJb/FCPBnh7xJNvuDOzk15k1vEOniqDHoA=",
+        "lastModified": 1778557443,
+        "narHash": "sha256-qEuXvPhodUbNuPr+KMxLHZce2WyyWJ5jRAycj3QFgKk=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "7e5f123b1b2cb998c2e2781ec6758015ec1ae189",
+        "rev": "e72d00151cdb46021f9c7a189c83d1582b0572c9",
         "type": "github"
       },
       "original": {
@@ -3744,11 +3744,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778552812,
-        "narHash": "sha256-RLpmdBq2BG1WOxdXPZnb7AHJOfrJ0ShuxcQi7rUbsqU=",
+        "lastModified": 1778554891,
+        "narHash": "sha256-v525DBLiHVkmdAJklOX7QRk8fvyRJ9CSZEJXX0HgqgI=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "a66aa1f977e0d2d4db2a6db9f06c2d1bb124e36e",
+        "rev": "d00c640d4b15bf88528a3127a4905efe3dd7c9e8",
         "type": "github"
       },
       "original": {
