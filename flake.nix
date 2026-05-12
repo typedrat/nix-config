@@ -272,6 +272,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hunk = {
+      url = "github:modem-dev/hunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     jellarr = {
       url = "github:venkyr77/jellarr";
       inputs.nixpkgs.follows = "nixpkgs";

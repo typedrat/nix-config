@@ -17,6 +17,7 @@ in {
     ./claude-code.nix
     ./cloud.nix
     ./git-spice.nix
+    ./hunk.nix
     ./languages.nix
     ./nix-tools.nix
   ];

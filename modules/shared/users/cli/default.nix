@@ -27,6 +27,11 @@ in {
 
         development = {
           enable = options.mkEnableOption "development CLI tools" // {default = true;};
+
+          hunk = {
+            enable = options.mkEnableOption "hunk, a review-first terminal diff viewer" // {default = true;};
+            gitIntegration.enable = options.mkEnableOption "using hunk as the default git pager";
+          };
         };
 
         networking = {
