@@ -216,11 +216,9 @@
           smartGaps.enable = true;
         };
         terminals.ghostty.enable = true;
-        productivity = {
-          krita = {
-            enable = true;
-            aiDiffusion.enable = true;
-          };
+        productivity.krita = {
+          enable = true;
+          aiDiffusion.enable = true;
         };
       };
     };
