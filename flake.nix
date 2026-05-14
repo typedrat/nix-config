@@ -38,30 +38,6 @@
       flake = false;
     };
 
-    # zed-editor: 1.0.0 -> 1.0.1 (NixOS/nixpkgs#517228)
-    nixpkgs-patch-517228 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/517228.diff";
-      flake = false;
-    };
-
-    # zed-editor: 1.0.1 -> 1.1.5 (NixOS/nixpkgs#517362)
-    nixpkgs-patch-517362 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/517362.diff";
-      flake = false;
-    };
-
-    # zed-editor: 1.1.5 -> 1.1.6 (NixOS/nixpkgs#517586)
-    nixpkgs-patch-517586 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/517586.diff";
-      flake = false;
-    };
-
-    # zed-editor: 1.1.6 -> 1.1.7 (NixOS/nixpkgs#518209)
-    nixpkgs-patch-518209 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/518209.diff";
-      flake = false;
-    };
-
     # opencode: 1.14.31 -> 1.14.35 (NixOS/nixpkgs#516748)
     nixpkgs-patch-516748 = {
       url = "https://github.com/NixOS/nixpkgs/pull/516748.diff";
@@ -85,6 +61,48 @@
       url = "https://github.com/NixOS/nixpkgs/commit/306470bf7cc8d55f2860f1cf70a801aad43cbd21.patch";
       flake = false;
     };
+
+    # claude-code: 2.1.123 -> 2.1.128 (NixOS/nixpkgs#516768)
+    nixpkgs-patch-516768 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/516768.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.128 -> 2.1.131 (NixOS/nixpkgs#517227)
+    nixpkgs-patch-517227 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/517227.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.131 -> 2.1.133 (NixOS/nixpkgs#517950)
+    nixpkgs-patch-517950 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/517950.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.133 -> 2.1.137 (NixOS/nixpkgs#518277)
+    nixpkgs-patch-518277 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/518277.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.137 -> 2.1.138 (NixOS/nixpkgs#518949)
+    nixpkgs-patch-518949 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/518949.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.138 -> 2.1.140 (NixOS/nixpkgs#519672)
+    nixpkgs-patch-519672 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/519672.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.140 -> 2.1.141 (NixOS/nixpkgs#520026)
+    nixpkgs-patch-520026 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/520026.diff";
+      flake = false;
+    };
     #endregion
 
     #region home-manager patches
@@ -99,7 +117,7 @@
 
     flake-root.url = "https://flakehub.com/f/srid/flake-root/*";
 
-    files.url = "github:mightyiam/files";
+    files.url = "github:mightyiam/files/3039848";
 
     github-actions-nix.url = "https://flakehub.com/f/synapdeck/github-actions-nix/*";
 

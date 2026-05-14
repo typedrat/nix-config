@@ -20,7 +20,10 @@ in {
     };
 
     home.packages = with pkgs; [
-      claude-code
+      # nixpkgs' claude-code with skrabe's system-prompt + system-
+      # reminder overrides applied via tweakcc-fixed at build time.
+      # See packages/claude-code-patched.nix.
+      claude-code-patched
       cclogviewer
     ];
 

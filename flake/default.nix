@@ -1,5 +1,7 @@
 {
   imports = [
+    ../modules/extra/flake-parts/patched-nixpkgs.nix
+
     ./github-actions
     ./devshell.nix
     ./formatter.nix

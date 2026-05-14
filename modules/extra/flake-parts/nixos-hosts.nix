@@ -48,7 +48,9 @@ in
         # Unpatched pkgs — used only to run applyPatches itself.
         pkgs = import inputs.nixpkgs {inherit system;};
 
-        # nixpkgs patching
+        # nixpkgs patching — discovered by patched-nixpkgs.nix too, so
+        # legacyPackages and NixOS systems can never observe different
+        # patch sets.
         nixpkgsPatches = patcher.patchesFromInputs {
           inherit inputs pkgs;
           prefix = "nixpkgs-patch-";

@@ -109,9 +109,11 @@ in {
 
         permission = {
           external_directory = {
+            "/nix/store/**" = "allow";
             "/tmp/**" = "allow";
             "~/.claude/skills/**" = "allow";
             "~/Development/gstack/**" = "allow";
+            "~/.gstack/**" = "allow";
           };
         };
 
