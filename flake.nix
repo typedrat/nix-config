@@ -38,51 +38,21 @@
       flake = false;
     };
 
-    # opencode: 1.14.31 -> 1.14.35 (NixOS/nixpkgs#516748)
-    nixpkgs-patch-516748 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/516748.diff";
-      flake = false;
-    };
-
-    # opencode: remove unused models-dev dependency from nativeBuildInputs (NixOS/nixpkgs#517064)
-    nixpkgs-patch-517064 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/517064.diff";
-      flake = false;
-    };
-
     # opencode{,-desktop}: 1.14.35 -> 1.14.48 (NixOS/nixpkgs#519007)
     nixpkgs-patch-519007 = {
       url = "https://github.com/NixOS/nixpkgs/pull/519007.diff";
       flake = false;
     };
 
+    # opencode: 1.14.48 -> 1.15.0 (NixOS/nixpkgs#520459)
+    nixpkgs-patch-520459 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/520459.diff";
+      flake = false;
+    };
+
     # opencode-desktop: fix empty window and missing desktop entry (NixOS/nixpkgs@306470b)
     nixpkgs-patch-commit-306470b = {
       url = "https://github.com/NixOS/nixpkgs/commit/306470bf7cc8d55f2860f1cf70a801aad43cbd21.patch";
-      flake = false;
-    };
-
-    # claude-code: 2.1.123 -> 2.1.128 (NixOS/nixpkgs#516768)
-    nixpkgs-patch-516768 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/516768.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.128 -> 2.1.131 (NixOS/nixpkgs#517227)
-    nixpkgs-patch-517227 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/517227.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.131 -> 2.1.133 (NixOS/nixpkgs#517950)
-    nixpkgs-patch-517950 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/517950.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.133 -> 2.1.137 (NixOS/nixpkgs#518277)
-    nixpkgs-patch-518277 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/518277.diff";
       flake = false;
     };
 
