@@ -44,15 +44,15 @@
       flake = false;
     };
 
-    # opencode: 1.14.48 -> 1.15.0 (NixOS/nixpkgs#520459)
-    nixpkgs-patch-520459 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/520459.diff";
+    # opencode-desktop: fix empty window and missing desktop entry (NixOS/nixpkgs#519438)
+    nixpkgs-patch-519438 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/519438.diff";
       flake = false;
     };
 
-    # opencode-desktop: fix empty window and missing desktop entry (NixOS/nixpkgs@306470b)
-    nixpkgs-patch-commit-306470b = {
-      url = "https://github.com/NixOS/nixpkgs/commit/306470bf7cc8d55f2860f1cf70a801aad43cbd21.patch";
+    # opencode: 1.14.48 -> 1.15.0 (NixOS/nixpkgs#520459)
+    nixpkgs-patch-520459 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/520459.diff";
       flake = false;
     };
 

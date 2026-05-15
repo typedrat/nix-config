@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  pkgs,
   lib,
   ...
 }: let
@@ -25,6 +24,8 @@ in {
     })
 
     # GNOME Keyring
+    # Seahorse itself is installed system-wide via programs.seahorse.enable
+    # in modules/nixos/gui/gnome-keyring.nix.
     (modules.mkIf guiCfg.enable {
       home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
         directories = [
@@ -34,8 +35,6 @@ in {
           }
         ];
       };
-
-      home.packages = [pkgs.seahorse];
 
       services.gnome-keyring = {
         enable = true;

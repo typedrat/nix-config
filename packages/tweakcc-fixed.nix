@@ -76,7 +76,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook preInstall
 
     mkdir -p $out/lib/tweakcc-fixed $out/bin
-    cp -R dist node_modules package.json $out/lib/tweakcc-fixed/
+    # `data/prompts/` is resolved at runtime; without it tweakcc-fixed
+    # falls back to fetching from GitHub, which fails in offline contexts.
+    cp -R dist node_modules package.json data $out/lib/tweakcc-fixed/
 
     makeBinaryWrapper ${lib.getExe nodejs} $out/bin/tweakcc-fixed \
       --add-flags "$out/lib/tweakcc-fixed/dist/index.mjs"
