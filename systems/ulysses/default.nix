@@ -161,7 +161,12 @@
         primaryMonitor = "DP-1";
         tvMonitor = "HDMI-A-1";
         monitors = [
-          "DP-1,3840x2160@60.0,0x1080,1.0"
+          # vrr=1: always-on VRR (G-SYNC Compatible / FreeSync).
+          # The S2725QS has a 48-120Hz VRR range. Always-on gives smoother
+          # desktop scrolling and reliable VRR in borderless-windowed games
+          # (where vrr=2's fullscreen detection can miss). Drop to vrr=2 if
+          # this specific panel turns out to flicker on the desktop.
+          "DP-1,3840x2160@120.0,0x1080,1.0,vrr,1"
           "HDMI-A-1,1920x1080@60.0,960x0,1.0"
         ];
         workspaces = [
