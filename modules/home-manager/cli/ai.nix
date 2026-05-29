@@ -101,7 +101,6 @@ in {
 
       settings = {
         plugin = [
-          "@ex-machina/opencode-anthropic-auth@1.8.0"
           "opencode-pty"
           "opencode-websearch"
           "superpowers@git+https://github.com/obra/superpowers.git"
@@ -133,10 +132,10 @@ in {
 
         agent = {
           build = {
-            model = "anthropic/claude-opus-4-7";
+            model = "anthropic/claude-opus-4-8";
           };
           plan = {
-            model = "anthropic/claude-opus-4-7";
+            model = "anthropic/claude-opus-4-8";
           };
           explore = {
             model = "anthropic/claude-haiku-4-5";
@@ -165,9 +164,9 @@ in {
         '';
         opus = ''
           ---
-          description: Most capable agent using Claude Opus 4.7
+          description: Most capable agent using Claude Opus 4.8
           mode: subagent
-          model: anthropic/claude-opus-4-7
+          model: anthropic/claude-opus-4-8
           ---
           You are an expert coding assistant powered by Claude Opus.
           Prioritize depth, correctness, and thorough analysis. Good for complex tasks, architecture decisions, and difficult debugging.
@@ -182,6 +181,10 @@ in {
           Leverage your strengths in code generation, reasoning, and problem-solving.
         '';
       };
+    };
+
+    home.file.".config/opencode/plugins/opencode-anthropic-auth.js" = {
+      source = "${pkgs.opencode-anthropic-auth}/share/opencode/plugins/opencode-anthropic-auth.js";
     };
 
     home.file.".config/opencode/plugins/peon-ping.ts" = modules.mkIf config.programs.peon-ping.enable {
