@@ -86,12 +86,11 @@ in {
     services.traefik = {
       enable = true;
 
-      # Use a non-default path to work around upstream isDefault value-equality check
-      # that fails when dynamic.files is set but dynamic.dir matches its default value.
-      dynamic.dir = "/var/lib/traefik/conf.d";
-
-      static.settings = {
+      staticConfigOptions = {
         entryPoints = {
+          # Override the upstream module's default `http` entrypoint
+          http = lib.mkForce {};
+
           web = {
             address = ":80";
             http.redirections.entryPoint = {
@@ -132,7 +131,7 @@ in {
         };
       };
 
-      dynamic.files."config".settings = {
+      dynamicConfigOptions = {
         tls.certificates = [
           {
             certFile = "/var/lib/acme/${domainName}-rsa4096/fullchain.pem";
