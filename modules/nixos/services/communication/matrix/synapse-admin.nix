@@ -15,7 +15,7 @@ in {
       description = "Whether to enable Synapse Admin at the /admin subpath of the Matrix server";
     };
 
-    package = options.mkPackageOption pkgs "synapse-admin-etkecc" {};
+    package = options.mkPackageOption pkgs "ketesa" {};
   };
 
   config = modules.mkIf (cfg.enable && synapseCfg.enable) {
