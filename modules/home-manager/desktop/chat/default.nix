@@ -12,7 +12,7 @@
   chatCfg = guiCfg.chat or {};
 in {
   imports = [
-    ./discord
+    ./discord.nix
     ./element.nix
   ];
 
