@@ -1,0 +1,32 @@
+From: typedrat <local-patch>
+Subject: rustPlatform.importCargoLock: download crates from static.crates.io
+
+crates.io has begun returning HTTP 403 from /api/v1/crates/.../download
+for requests without a User-Agent header (a known long-standing crates.io
+policy that is now strictly enforced). Nix's fetchurl does not send a UA,
+which breaks every importCargoLock-based build (fenix's rust-analyzer,
+local crates importing third-party Cargo.lock files, etc.).
+
+Mirrors the fix in NixOS/nixpkgs#525067 (fetchCrate) for the legacy
+importCargoLock path. static.crates.io is the CDN backing the same data
+and does not require a User-Agent.
+
+This patch is local to typedrat/nix-config until an equivalent upstream
+PR lands.
+
+---
+ pkgs/build-support/rust/import-cargo-lock.nix | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pkgs/build-support/rust/import-cargo-lock.nix b/pkgs/build-support/rust/import-cargo-lock.nix
+--- a/pkgs/build-support/rust/import-cargo-lock.nix
++++ b/pkgs/build-support/rust/import-cargo-lock.nix
+@@ -130,7 +130,7 @@
+     };
+ 
+   registries = {
+-    "https://github.com/rust-lang/crates.io-index" = "https://crates.io/api/v1/crates";
++    "https://github.com/rust-lang/crates.io-index" = "https://static.crates.io/crates";
+   }
+   // extraRegistries;
+ 

@@ -189,6 +189,28 @@ The same pattern works for home-manager patches using the `home-manager-patch-` 
 
 When adding a patch, fetch the PR details to write a useful comment describing what it does.
 
+**Checking which nixpkgs commit is actually in use:**
+
+The root `nixpkgs` input uses FlakeHub's semver URL (`flakehub.com/f/NixOS/nixpkgs/0.1`), which resolves to a specific pinned commit of nixos-unstable. To find that commit, you **must** follow the root node's input mapping in the lock file — do NOT just read `.locks.nodes.nixpkgs.locked.rev`, because that key often belongs to a different transitive nixpkgs (e.g. attic's pinned old nixpkgs) and will give a misleading answer.
+
+The correct lookup is two steps:
+
+```bash
+# 1. Find which lock node the root's `nixpkgs` input points to (e.g. "nixpkgs_12")
+nix flake metadata --json | jq -r '.locks.nodes.root.inputs.nixpkgs'
+
+# 2. Read that node's locked rev
+nix flake metadata --json | jq -r '.locks.nodes.<node-name>.locked.rev'
+```
+
+Or as a one-liner:
+
+```bash
+nix flake metadata --json | jq -r '.locks.nodes[.locks.nodes.root.inputs.nixpkgs].locked.rev'
+```
+
+Use this when deciding whether a merged nixpkgs PR is already in your locked nixpkgs (and therefore whether its patch entry under `#region nixpkgs patches` can be removed). To confirm a merged PR is included, compare its merge commit to the root nixpkgs rev with `gh api repos/NixOS/nixpkgs/compare/<merge-sha>...<root-nixpkgs-rev>` — a `behind_by: 0` result means the merge commit is an ancestor and the patch is safe to drop.
+
 ### Secret Management
 
 - All secrets use SOPS encryption stored in `secrets/`

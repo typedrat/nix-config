@@ -25,54 +25,24 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # manually apply NixOS/nixpkgs#490985 to fix Traefik configuration
-    nixpkgs-patch-490985 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/490985.diff";
+    # fetchCrate: download crates from static.crates.io (NixOS/nixpkgs#525067)
+    # crates.io now blocks requests without a User-Agent (returns 403 from
+    # /api/v1/crates/.../download), breaking every fetchCrate build. The fix
+    # bypasses the redirect and fetches from static.crates.io directly.
+    nixpkgs-patch-525067 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/525067.diff";
       flake = false;
     };
 
-    # discord: add Krisp patcher to bypass signature check for noise cancellation (NixOS/nixpkgs#506089)
-    # Rebased on top of #507728, which is now in nixos-unstable.
-    nixpkgs-patch-506089 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/506089.diff";
+    # rustPlatform.importCargoLock: download crates from static.crates.io (local)
+    # Mirror of #525067 for the legacy importCargoLock path, which fenix uses
+    # to build rust-analyzer-nightly. No upstream PR exists yet; remove once
+    # one lands and is in our pinned nixpkgs.
+    nixpkgs-patch-import-cargo-lock-static-crates-io = {
+      url = "path:./patches/nixpkgs-import-cargo-lock-static-crates-io.patch";
       flake = false;
     };
 
-    # opencode{,-desktop}: 1.14.35 -> 1.14.48 (NixOS/nixpkgs#519007)
-    nixpkgs-patch-519007 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/519007.diff";
-      flake = false;
-    };
-
-    # opencode-desktop: fix empty window and missing desktop entry (NixOS/nixpkgs#519438)
-    nixpkgs-patch-519438 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/519438.diff";
-      flake = false;
-    };
-
-    # opencode: 1.14.48 -> 1.15.0 (NixOS/nixpkgs#520459)
-    nixpkgs-patch-520459 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/520459.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.137 -> 2.1.138 (NixOS/nixpkgs#518949)
-    nixpkgs-patch-518949 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/518949.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.138 -> 2.1.140 (NixOS/nixpkgs#519672)
-    nixpkgs-patch-519672 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/519672.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.140 -> 2.1.141 (NixOS/nixpkgs#520026)
-    nixpkgs-patch-520026 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/520026.diff";
-      flake = false;
-    };
     #endregion
 
     #region home-manager patches
