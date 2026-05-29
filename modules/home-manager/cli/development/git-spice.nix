@@ -29,21 +29,15 @@ in {
       GIT_SPICE_NO_GS_WARNING = 1;
     };
 
-    programs.zsh.plugins = [
-      {
-        name = "git-spice-completions";
-
-        src =
-          pkgs.runCommandWith {
-            name = "git-spice-zsh-completion";
-            derivationArgs = {
-              nativeBuildInputs = [pkgs.gitMinimal];
-            };
-          } ''
-            mkdir -p $out
-            ${lib.getExe pkgs.git-spice} shell completion zsh > $out/_gs
-          '';
-      }
-    ];
+    # git-spice's `gs shell completion zsh` emits bash-compat completion
+    # (bashcompinit + `complete -C`), not a real zsh `_gs` function. Dropping
+    # it into fpath as `_gs` therefore doesn't work: autoload expects the file
+    # to define a `_gs` function, which it doesn't. Eval it from initContent
+    # instead so bashcompinit gets wired up at shell start.
+    programs.zsh.initContent = ''
+      if (( $+commands[gs] )); then
+        eval "$(${lib.getExe pkgs.git-spice} shell completion zsh)"
+      fi
+    '';
   };
 }
