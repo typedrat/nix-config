@@ -51,7 +51,13 @@ in {
       services.shoko = {
         enable = true;
         package = inputs'.nanopkgs.packages.shoko;
-        webui = inputs'.nanopkgs.packages.shoko-webui;
+        # nanopkgs computed the `pnpmDeps` hash against `pkgs.pnpm`, which has
+        # since moved from pnpm 10 to a pnpm 11 alpha in nixpkgs. The two pnpm
+        # versions produce different store layouts, so the hash mismatches.
+        # Pin pnpm_10 explicitly until nanopkgs updates the hash for pnpm 11.
+        webui = inputs'.nanopkgs.packages.shoko-webui.override {
+          pnpm = pkgs.pnpm_10;
+        };
       };
 
       systemd.services.shoko = {

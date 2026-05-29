@@ -9,6 +9,20 @@
   cfg = config.rat.services.jellarr;
   impermanenceCfg = config.rat.impermanence;
 
+  # Upstream jellarr pins `pnpmDeps` with `fetcherVersion = 1`, which does not
+  # apply the file-permission normalisation introduced for fetcherVersion >= 2
+  # (see nixpkgs PR #350063). The resulting hash therefore drifts depending on
+  # the build host's umask/permission state, causing FOD hash mismatches on
+  # rebuilds. Bump to `fetcherVersion = 3` for stable, host-independent hashes
+  # and override `pnpmDeps` accordingly until upstream migrates.
+  jellarrPackage = inputs'.jellarr.packages.default.overrideAttrs (old: {
+    pnpmDeps = pkgs.fetchPnpmDeps {
+      fetcherVersion = 3;
+      inherit (old) pname version src;
+      hash = "sha256-n0Msdv5pdnM6KVG/j3ixzZM81LK3gKHsdKLH7A1EqHQ=";
+    };
+  });
+
   jellarrConfig =
     {
       version = 1;
@@ -292,7 +306,7 @@ in {
           install -m 0400 ${config.sops.templates."jellarr.yml".path} /var/lib/jellarr/config/config.yml
         '';
         script = ''
-          exec ${inputs'.jellarr.packages.default}/bin/jellarr
+          exec ${jellarrPackage}/bin/jellarr
         '';
       };
 
