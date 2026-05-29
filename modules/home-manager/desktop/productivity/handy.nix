@@ -99,7 +99,7 @@ in {
     # Bind Super+O to toggle dictation as a convenience alongside the native
     # push-to-talk shortcut. Shells out to the running instance via the CLI.
     wayland.windowManager.hyprland.settings.bind = modules.mkIf hyprlandEnabled (modules.mkAfter [
-      "$main_mod, o, exec, handy --toggle-transcription"
+      "$main_mod, o, global, handy:transcribe"
     ]);
 
     # Declaratively enforce the settings that control the shortcut backend and
