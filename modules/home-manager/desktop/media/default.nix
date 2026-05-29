@@ -23,7 +23,7 @@ in {
 
   config = modules.mkIf (guiCfg.enable && mediaCfg.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/jellyfin-mpv-shim"];
+      directories = [".config/jellyfin-mpv-shim" ".local/share/jellyfin-desktop"];
     };
 
     home.packages = with pkgs; [
