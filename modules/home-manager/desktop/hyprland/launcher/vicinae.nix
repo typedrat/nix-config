@@ -76,12 +76,6 @@ in {
             match:namespace = vicinae
             no_anim = on
           }
-
-          windowrule {
-            name = vicinae-no-hyprbars
-            match:title = ^Vicinae Launcher$
-            hyprbars:no_bar = 1
-          }
         '';
       };
     };

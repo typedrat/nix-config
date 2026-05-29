@@ -177,23 +177,12 @@
     #endregion
 
     #region Hyprland
-    # Pinned before renderer refactor (a585801+) which broke both the .pc
-    # include paths and the plugin API. Must be after b88813c7 (EventBus
-    # refactor) which hyprland-plugins b85a56b depends on.
-    # hyprwm/hyprland-plugins#627
-    #
-    # NOTE: hyprland-plugins is ALSO pinned. Without it, the daily
-    # update-flake-lock workflow advances plugins past the pinned Hyprland
-    # rev, which produces a build that runs but aborts at runtime in
-    # local__configValuePopulate when hyprbars calls addConfigValueV2
-    # (chase-hyprland commit dbe22194 targets post-#13817 Hyprland API,
-    # not 8685fd7b). Lift both pins together when ready to move forward.
-    hyprland.url = "github:hyprwm/Hyprland/8685fd7b";
+    hyprland.url = "github:hyprwm/Hyprland";
 
     hyprlock.url = "github:hyprwm/hyprlock";
 
     hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins/b85a56b953";
+      url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
 

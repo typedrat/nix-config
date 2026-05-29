@@ -12,6 +12,10 @@
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
   hyprbarsCfg = hyprlandCfg.hyprbars or {};
+
+  palette = (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${config.catppuccin.flavor}.colors;
+  mkRgb = color: "rgb(${lib.removePrefix "#" palette.${color}.hex})";
+  mkRgba = color: alpha: "rgba(${lib.removePrefix "#" palette.${color}.hex}${alpha})";
 in {
   config =
     modules.mkIf (
@@ -27,19 +31,19 @@ in {
         settings = {
           plugin = {
             hyprbars = {
-              bar_height = 30;
+              bar_height = 36;
               bar_precedence_over_border = true;
               bar_text_font = "SF Pro Display";
-              bar_text_size = 10;
-              bar_color = "rgba($baseAlphaa0)";
+              bar_text_size = 16;
+              bar_color = mkRgba "base" "a0";
               bar_blur = true;
-              "col.text" = "$text";
+              "col.text" = mkRgb "text";
 
               bar_buttons_alignment = "right";
               hyprbars-button = [
-                "$red, 20, 󰖭, hyprctl dispatch killactive, $base"
-                "$yellow, 20, 󰖰, hyprctl dispatch movetoworkspacesilent special:minimized, $base"
-                "$green, 20, 󰘖, hyprctl dispatch fullscreen 1, $base"
+                "${mkRgb "red"}, 20, 󰖭, hyprctl dispatch killactive, ${mkRgb "base"}"
+                "${mkRgb "yellow"}, 20, 󰖰, hyprctl dispatch movetoworkspacesilent special:minimized, ${mkRgb "base"}"
+                "${mkRgb "green"}, 20, 󰘖, hyprctl dispatch fullscreen 1, ${mkRgb "base"}"
               ];
             };
           };
