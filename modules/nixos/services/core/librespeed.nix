@@ -6,6 +6,7 @@
 }: let
   inherit (lib) modules options types;
   cfg = config.rat.services.librespeed;
+  impermanenceCfg = config.rat.impermanence;
 
   inherit (config.rat.services) domainName;
 
@@ -50,96 +51,102 @@ in {
     };
   };
 
-  config = modules.mkIf cfg.enable {
-    links = {
-      librespeed = {
-        protocol = "http";
+  config = modules.mkMerge [
+    (modules.mkIf cfg.enable {
+      links = {
+        librespeed = {
+          protocol = "http";
+        };
+        librespeed-backend = {
+          protocol = "http";
+        };
       };
-      librespeed-backend = {
-        protocol = "http";
-      };
-    };
 
-    services.librespeed = {
-      enable = true;
-
-      frontend = {
+      services.librespeed = {
         enable = true;
-        contactEmail = "admin@${domainName}";
-        pageTitle = "LibreSpeed";
-        useNginx = false;
 
-        servers = [
-          {
-            name = domain;
-            server = "//${domain}";
-          }
-        ];
+        frontend = {
+          enable = true;
+          contactEmail = "admin@${domainName}";
+          pageTitle = "LibreSpeed";
+          useNginx = false;
+
+          servers = [
+            {
+              name = domain;
+              server = "//${domain}";
+            }
+          ];
+        };
+
+        settings = {
+          bind_address = "127.0.0.1";
+          listen_port = config.links.librespeed-backend.port;
+          base_url = "backend";
+          # Static assets are served by lighttpd, not by librespeed-rust.
+          assets_path = pkgs.writeTextDir "index.html" "";
+          # SQLite for telemetry / result image generation. librespeed-rust's
+          # postgres/mysql code paths require TCP with hostname+name+username+
+          # password (no unix-socket peer auth), which isn't worth the setup
+          # for a speed test results table. The DB lives under StateDirectory.
+          database_type = "sqlite";
+          database_file = "/var/lib/librespeed/speedtest.sqlite";
+        };
       };
 
-      settings = {
-        bind_address = "127.0.0.1";
-        listen_port = config.links.librespeed-backend.port;
-        base_url = "backend";
-        # Static assets are served by lighttpd, not by librespeed-rust.
-        assets_path = pkgs.writeTextDir "index.html" "";
-        # PostgreSQL for result image generation.
-        database_type = "postgres";
-        database_file = "postgresql:///librespeed?host=/run/postgresql";
-      };
-    };
+      # Serve static frontend assets via lighttpd (shared instance with theme-park).
+      services.lighttpd.extraConfig = ''
+        $SERVER["socket"] == "127.0.0.1:${toString config.links.librespeed.port}" {
+          server.document-root = "${librespeedAssets}"
+        }
+      '';
 
-    # Serve static frontend assets via lighttpd (shared instance with theme-park).
-    services.lighttpd.extraConfig = ''
-      $SERVER["socket"] == "127.0.0.1:${toString config.links.librespeed.port}" {
-        server.document-root = "${librespeedAssets}"
-      }
-    '';
+      rat.services.traefik.routes = {
+        # Static frontend (lower priority via shorter rule).
+        librespeed = {
+          enable = true;
+          inherit (cfg) subdomain;
+          serviceUrl = config.links.librespeed.url;
+          authentik = false;
+          theme-park.app = "librespeed";
+        };
 
-    rat.services.traefik.routes = {
-      # Static frontend (lower priority via shorter rule).
-      librespeed = {
-        enable = true;
-        inherit (cfg) subdomain;
-        serviceUrl = config.links.librespeed.url;
-        authentik = false;
-        theme-park.app = "librespeed";
+        # Backend API (higher priority via PathPrefix, no response buffering).
+        librespeed-backend = {
+          enable = true;
+          inherit (cfg) subdomain;
+          path = "/backend/";
+          serviceUrl = config.links.librespeed-backend.url;
+          authentik = false;
+        };
       };
 
-      # Backend API (higher priority via PathPrefix, no response buffering).
-      librespeed-backend = {
-        enable = true;
-        inherit (cfg) subdomain;
-        path = "/backend/";
-        serviceUrl = config.links.librespeed-backend.url;
-        authentik = false;
+      # Disable response buffering on the backend route for accurate speed test results
+      # (replicates nginx proxy_buffering off / proxy_request_buffering off).
+      services.traefik.dynamicConfigOptions.http.services.librespeed-backend.loadBalancer.responseForwarding.flushInterval = "-1ms";
+
+      # Use a static user so the SQLite database under StateDirectory has stable
+      # ownership across rebuilds and impermanence rollbacks. DynamicUser would
+      # otherwise allocate a fresh UID per activation and leave the existing
+      # /var/lib/librespeed inaccessible.
+      systemd.services.librespeed.serviceConfig.DynamicUser = lib.mkForce false;
+      systemd.services.librespeed.serviceConfig.User = "librespeed";
+      systemd.services.librespeed.serviceConfig.Group = "librespeed";
+
+      users.users.librespeed = {
+        isSystemUser = true;
+        group = "librespeed";
       };
-    };
-
-    # Disable response buffering on the backend route for accurate speed test results
-    # (replicates nginx proxy_buffering off / proxy_request_buffering off).
-    services.traefik.dynamic.files."config".settings.http.services.librespeed-backend.loadBalancer.responseForwarding.flushInterval = "-1ms";
-
-    services.postgresql = {
-      ensureDatabases = ["librespeed"];
-      ensureUsers = [
+      users.groups.librespeed = {};
+    })
+    (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
+      environment.persistence.${impermanenceCfg.persistDir}.directories = [
         {
-          name = "librespeed";
-          ensureDBOwnership = true;
+          directory = "/var/lib/librespeed";
+          user = "librespeed";
+          group = "librespeed";
         }
       ];
-    };
-
-    systemd.services.librespeed = {
-      after = ["postgresql.service"];
-      requires = ["postgresql.service"];
-      serviceConfig.DynamicUser = lib.mkForce false;
-    };
-
-    users.users.librespeed = {
-      isSystemUser = true;
-      group = "librespeed";
-    };
-    users.groups.librespeed = {};
-  };
+    })
+  ];
 }
