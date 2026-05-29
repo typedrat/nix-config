@@ -2590,6 +2590,30 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-523270": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-noSkv3CeF4tskPx+p24A/Id6EVjO/fPY+N4CVGLBluE=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/523270.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/523270.diff"
+      }
+    },
+    "nixpkgs-patch-524685": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-7JlehYjVbxDRmSU1mj3OgvNj4Djkr2EnZmeLlgCZLTs=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/524685.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/524685.diff"
+      }
+    },
     "nixpkgs-patch-525067": {
       "flake": false,
       "locked": {
@@ -2600,6 +2624,18 @@
       "original": {
         "type": "file",
         "url": "https://github.com/NixOS/nixpkgs/pull/525067.diff"
+      }
+    },
+    "nixpkgs-patch-525486": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-5qqDbFyGYLH1xFAdKAUotFldWS1Hq2lHVDnknH3uQ+k=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/525486.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/525486.diff"
       }
     },
     "nixpkgs-patch-import-cargo-lock-static-crates-io": {
@@ -3154,7 +3190,10 @@
         "nixified-ai": "nixified-ai",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_12",
+        "nixpkgs-patch-523270": "nixpkgs-patch-523270",
+        "nixpkgs-patch-524685": "nixpkgs-patch-524685",
         "nixpkgs-patch-525067": "nixpkgs-patch-525067",
+        "nixpkgs-patch-525486": "nixpkgs-patch-525486",
         "nixpkgs-patch-import-cargo-lock-static-crates-io": "nixpkgs-patch-import-cargo-lock-static-crates-io",
         "nixvirt": "nixvirt",
         "peon-ping": "peon-ping",
