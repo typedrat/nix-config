@@ -50,6 +50,10 @@
 
         permittedInsecurePackages = [
           "olm-3.2.16"
+          # github-runner bundles nodejs_20 for the Actions Node 20 runtime;
+          # nodejs 20 is EOL but still required by GitHub Actions itself.
+          "nodejs-20.20.2"
+          "nodejs-slim-20.20.2"
         ];
       };
     };

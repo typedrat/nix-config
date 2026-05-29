@@ -45,6 +45,11 @@ in {
 
     boot.supportedFilesystems = ["zfs"];
 
+    # Adopt the 26.11 default explicitly. All our hosts have a ZFS root, and
+    # we never want a half-imported pool from another machine to silently
+    # come along for the ride.
+    boot.zfs.forceImportRoot = false;
+
     environment.systemPackages = [
       cfg.package
     ];
