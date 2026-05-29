@@ -1,7 +1,6 @@
 {
   osConfig,
   pkgs,
-  inputs',
   lib,
   ...
 }: let
@@ -27,7 +26,7 @@ in {
     };
 
     home.packages = [
-      inputs'.claude-desktop-debian.packages.claude-desktop
+      # inputs'.claude-desktop-debian.packages.claude-desktop
       opencode-desktop
     ];
   };
