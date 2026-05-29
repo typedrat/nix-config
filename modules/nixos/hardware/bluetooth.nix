@@ -27,6 +27,12 @@ in {
             Experimental = true;
           };
         };
+        # Allow non-bonded HID devices to connect. Xbox-mode controllers
+        # (e.g. the GuliKit in its Xbox Wireless mode) pair but report
+        # Bonded: no, so BlueZ's input plugin otherwise rejects the HID
+        # connection with "Rejected connection from !bonded device" and
+        # no gamepad input device is ever created.
+        input.General.ClassicBondedOnly = false;
       };
 
       services.blueman.enable = mkIf config.rat.gui.enable true;
