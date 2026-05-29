@@ -15,6 +15,7 @@
     ./appimage.nix
     ./avahi.nix
     ./flatpak.nix
+    ./handy.nix
     ./impermanence.nix
     ./java.nix
     ./nix.nix

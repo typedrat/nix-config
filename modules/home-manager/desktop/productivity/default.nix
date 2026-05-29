@@ -4,6 +4,7 @@
     ./blender.nix
     ./freecad.nix
     ./gimp.nix
+    ./handy.nix
     ./imgbrd-grabber.nix
     ./inkscape.nix
     ./kicad.nix

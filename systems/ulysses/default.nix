@@ -221,6 +221,7 @@
           smartGaps.enable = true;
         };
         terminals.ghostty.enable = true;
+        productivity.handy.enable = true;
         productivity.krita = {
           enable = true;
           aiDiffusion.enable = true;

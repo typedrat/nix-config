@@ -224,6 +224,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Handy: free, offline, extensible speech-to-text. Ships its own flake with
+    # a package, a NixOS module (programs.handy: /dev/uinput udev rule for
+    # rdev's global-hotkey grab) and an HM module (services.handy: autostart).
+    handy = {
+      url = "github:cjpais/Handy";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hunk = {
       url = "github:modem-dev/hunk";
       inputs.nixpkgs.follows = "nixpkgs";

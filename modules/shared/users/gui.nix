@@ -167,6 +167,35 @@
         obsidian.enable = options.mkEnableOption "Obsidian" // {default = true;};
         libreoffice.enable = options.mkEnableOption "LibreOffice" // {default = true;};
         sioyek.enable = options.mkEnableOption "Sioyek PDF reader" // {default = true;};
+        handy = {
+          enable = options.mkEnableOption "Handy offline speech-to-text";
+          keyboardImplementation = options.mkOption {
+            type = types.enum ["tauri" "handy_keys" "portal"];
+            default = "portal";
+            description = ''
+              Handy's global-shortcut backend:
+                - "portal": xdg-desktop-portal GlobalShortcuts, the native
+                  Wayland mechanism (works via xdg-desktop-portal-hyprland and
+                  KDE). Full press+release, so push-to-talk works, with no
+                  device-access plumbing. Requires the patched package
+                  (cjpais/Handy#1287). Recommended on Wayland.
+                - "handy_keys": evdev backend; reports release as well as press
+                  (push-to-talk works) and works under Wayland, but needs
+                  /dev/input access (uinput module + "input" group).
+                - "tauri": X11 XGrabKey; press-only and does not grab globally
+                  on Wayland.
+            '';
+          };
+          pushToTalk =
+            options.mkEnableOption "push-to-talk mode (hold the shortcut to record, release to stop)"
+            // {default = true;};
+          shortcut = options.mkOption {
+            type = types.str;
+            default = "ctrl+space";
+            example = "super+o";
+            description = "Transcribe shortcut in Handy's hotkey syntax (e.g. \"ctrl+space\", \"alt\", \"super+o\").";
+          };
+        };
         kicad.enable = options.mkEnableOption "KiCad" // {default = true;};
         freecad.enable = options.mkEnableOption "FreeCAD";
         printing3d.enable = options.mkEnableOption "3D printing tools" // {default = true;};
