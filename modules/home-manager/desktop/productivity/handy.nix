@@ -5,8 +5,8 @@
 # per-user bits: autostart service, compositor keybind, persisted state, and
 # declarative management of Handy's settings.
 #
-# Settings are stored by tauri-plugin-store in
-#   ~/.config/com.pais.handy/settings_store.json
+# Settings are stored by tauri-plugin-store in the app-data dir
+#   ~/.local/share/com.pais.handy/settings_store.json
 # under a top-level "settings" key. Handy rewrites that file at runtime (it
 # backfills post-process providers and missing bindings on launch), so we
 # cannot hand it a read-only Nix symlink. Instead an activation script
@@ -106,7 +106,7 @@ in {
     # push-to-talk. See the header comment for why this is a merge rather than
     # a managed file.
     home.activation.handySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      handyStore="${config.xdg.configHome}/com.pais.handy/settings_store.json"
+      handyStore="${config.xdg.dataHome}/com.pais.handy/settings_store.json"
       $DRY_RUN_CMD mkdir -p "$(dirname "$handyStore")"
 
       # Seed a valid baseline if the store is missing or not parseable.
@@ -126,10 +126,11 @@ in {
       fi
     '';
 
-    # Persist config and downloaded models (Whisper/Parakeet weights are
+    # Persist the app-data dir, which holds the settings store, transcription
+    # history, recordings, and downloaded models (Whisper/Parakeet weights are
     # hundreds of MB up to ~1.6GB) across the ephemeral-home reboots.
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/com.pais.handy"];
+      directories = [".local/share/com.pais.handy"];
     };
   };
 }
