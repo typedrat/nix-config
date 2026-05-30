@@ -22,7 +22,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     (fetchpatch {
       name = "opencode-anthropic-auth-pr-150.patch";
       url = "https://github.com/ex-machina-co/opencode-anthropic-auth/pull/150.diff";
-      hash = "sha256-KgaRXjfgsTCKrId/NNAJtad4sHJa/RvXgcoeAu+sd0M=";
+      hash = "sha256-RQAqrLySOvDhh8w4OSkVHp4UkPBLHNoRQToqUZXwbKA=";
     })
   ];
 
