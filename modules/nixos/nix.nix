@@ -43,6 +43,36 @@
               })
             ];
         })
+
+        # nodejs 20 (bundled by github-runner for the Actions Node 20 runtime)
+        # fails its check phase on this host: test-fs-readdir-ucs2 creates a file
+        # with an invalid UCS-2 byte sequence as its name, but iserlohn's ZFS
+        # datasets use utf8only=on, so the kernel rejects the open() with EILSEQ.
+        # The test only treats EINVAL as "filesystem doesn't support UCS-2 -> skip".
+        # Upstream declined to fix this (NixOS maintainer typedrat's report,
+        # https://github.com/nodejs/node/issues/57209, closed as not planned), so
+        # patch the test to also skip on EILSEQ.
+        #
+        # The check phase runs in nodejs-slim_20 (the real build); nodejs_20 is
+        # just a symlinkJoin wrapper over it, so we must patch the slim derivation
+        # and rebuild the wrapper from the patched slim.
+        (_final: prev: let
+          nodejs-slim_20 = prev.nodejs-slim_20.overrideAttrs (oldAttrs: {
+            postPatch =
+              (oldAttrs.postPatch or "")
+              + ''
+                substituteInPlace test/parallel/test-fs-readdir-ucs2.js \
+                  --replace-fail \
+                    "if (e.code === 'EINVAL')" \
+                    "if (e.code === 'EINVAL' || e.code === 'EILSEQ')"
+              '';
+          });
+        in {
+          inherit nodejs-slim_20;
+          # nodejs_20 = callPackage symlink.nix { nodejs-slim = nodejs-slim_20; },
+          # so rebuild the symlinkJoin wrapper against the patched slim derivation.
+          nodejs_20 = prev.nodejs_20.override {nodejs-slim = nodejs-slim_20;};
+        })
       ];
 
       config = {
