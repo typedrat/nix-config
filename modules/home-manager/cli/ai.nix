@@ -66,6 +66,7 @@ in {
       {
         HF_XET_HIGH_PERFORMANCE = "1";
         MORPH_COMPACT_TOKEN_LIMIT = toString cliCfg.ai.morphCompactTokenLimit;
+        OPENCODE_EXPERIMENTAL = "1";
       }
       // lib.optionalAttrs hasChromium {
         GSTACK_CHROMIUM_PATH = lib.getExe config.programs.google-chrome.package;
