@@ -1,15 +1,11 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: let
   inherit (lib) modules options types;
   cfg = config.rat.services.home-assistant;
   impermanenceCfg = config.rat.impermanence;
-  inherit (config.services.home-assistant) configDir;
-
-  catppuccinTheme = pkgs.catppuccin-home-assistant;
 in {
   imports = [
     ./authentik.nix
@@ -196,26 +192,6 @@ in {
           }
         ];
       };
-    })
-
-    # Catppuccin theme integration
-    (modules.mkIf cfg.enable {
-      # Tell Home Assistant to load themes from the themes directory
-      rat.services.home-assistant.config.frontend.themes = "!include_dir_merge_named themes";
-
-      # Symlink Catppuccin theme directory into the HA config directory
-      systemd.tmpfiles.rules = let
-        themeDir = "${catppuccinTheme}/share/home-assistant/themes";
-        targetDir =
-          if impermanenceCfg.enable
-          then "/persist${configDir}/themes"
-          else "${configDir}/themes";
-      in [
-        "L+ ${targetDir} - - - - ${themeDir}"
-      ];
-
-      # Restart Home Assistant when the theme changes
-      systemd.services.home-assistant.restartTriggers = [catppuccinTheme];
     })
   ];
 }

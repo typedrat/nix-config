@@ -22,6 +22,12 @@ in {
 
   config = {
     catppuccin = {
+      # catppuccin/nix is moving to an explicit autoEnable model. Setting both
+      # `enable` and `autoEnable` to true preserves the previous behavior (all
+      # ports auto-enrolled) and silences the migration warning.
+      enable = true;
+      autoEnable = true;
+
       flavor = lib.mkDefault "frappe";
       accent = lib.mkDefault "lavender";
 

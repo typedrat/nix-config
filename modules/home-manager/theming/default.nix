@@ -101,7 +101,10 @@ in {
         };
 
         catppuccin = {
+          # See modules/nixos/theming/default.nix: set both enable and autoEnable
+          # to preserve auto-enrollment of ports under catppuccin/nix's new model.
           enable = true;
+          autoEnable = true;
           inherit (osConfig.catppuccin) flavor;
           inherit (osConfig.catppuccin) accent;
         };
