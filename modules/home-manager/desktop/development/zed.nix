@@ -135,11 +135,11 @@ in {
 
         ui_font_family = builtins.head osConfig.fonts.fontconfig.defaultFonts.sansSerif;
         ui_font_fallbacks = builtins.tail osConfig.fonts.fontconfig.defaultFonts.sansSerif;
-        ui_font_size = 13 * (4.0 / 3.0);
+        ui_font_size = 16;
 
         buffer_font_family = builtins.head osConfig.fonts.fontconfig.defaultFonts.monospace;
         buffer_font_fallbacks = builtins.tail osConfig.fonts.fontconfig.defaultFonts.monospace;
-        buffer_font_size = 14 * (4.0 / 3.0);
+        buffer_font_size = 14;
       };
     };
 
