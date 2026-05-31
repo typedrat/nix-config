@@ -117,19 +117,45 @@ in {
           };
         };
 
-        mcp = {
-          answeroverflow = {
-            type = "remote";
-            url = "https://www.answeroverflow.com/mcp";
-            headers = {
-              X-API-Key = "{env:ANSWER_OVERFLOW_KEY}";
+        mcp =
+          {
+            answeroverflow = {
+              type = "remote";
+              url = "https://www.answeroverflow.com/mcp";
+              headers = {
+                X-API-Key = "{env:ANSWER_OVERFLOW_KEY}";
+              };
+            };
+            context7 = {
+              type = "remote";
+              url = "https://mcp.context7.com/mcp/oauth";
+            };
+          }
+          // lib.optionalAttrs hasChromium {
+            # https://github.com/ChromeDevTools/chrome-devtools-mcp
+            # Drives the user's real Chrome via --autoConnect: it attaches to an
+            # already-running Chrome (>= 144) using the default profile rather than
+            # launching its own. Requires a one-time opt-in in Chrome at
+            # chrome://inspect/#remote-debugging. If Chrome is not running, browser
+            # tool calls fail (the server will not spawn a browser on its own).
+            chrome-devtools = {
+              type = "local";
+              command = [
+                "npx"
+                "-y"
+                "chrome-devtools-mcp@latest"
+                "--autoConnect"
+                "--executablePath=${lib.getExe config.programs.google-chrome.package}"
+                # No phoning home: disable CrUX field-data lookups and usage stats.
+                "--no-performance-crux"
+                "--no-usage-statistics"
+              ];
+              environment = {
+                CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS = "1";
+                CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS = "1";
+              };
             };
           };
-          context7 = {
-            type = "remote";
-            url = "https://mcp.context7.com/mcp/oauth";
-          };
-        };
 
         agent = {
           build = {
