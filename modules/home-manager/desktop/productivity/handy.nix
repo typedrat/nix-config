@@ -94,7 +94,10 @@ in {
   config = modules.mkIf handyEnabled {
     # Autostart the Handy background service on login (systemd user service
     # provided by the upstream HM module).
-    services.handy.enable = true;
+    services.handy = {
+      enable = true;
+      inherit (osConfig.programs.handy) package;
+    };
 
     # Bind Super+O to toggle dictation as a convenience alongside the native
     # push-to-talk shortcut. Shells out to the running instance via the CLI.
