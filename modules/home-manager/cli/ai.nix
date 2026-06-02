@@ -103,7 +103,6 @@ in {
       settings = {
         plugin = [
           "opencode-pty"
-          "opencode-websearch"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
 
@@ -145,7 +144,6 @@ in {
                 "-y"
                 "chrome-devtools-mcp@latest"
                 "--autoConnect"
-                "--executablePath=${lib.getExe config.programs.google-chrome.package}"
                 # No phoning home: disable CrUX field-data lookups and usage stats.
                 "--no-performance-crux"
                 "--no-usage-statistics"
