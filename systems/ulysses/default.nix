@@ -187,6 +187,13 @@
       enable = true;
       animeGameLaunchers.enable = true;
       steam.enable = true;
+      sunshine = {
+        enable = true;
+        users = ["awilliams"];
+        encoder = "nvenc"; # RTX 5090
+        # Streams a dedicated headless display (default name "sunshine") so the
+        # physical monitors stay on your work while you game remotely.
+      };
     };
 
     # Software

@@ -18,6 +18,7 @@ in {
     ./retroarch.nix
     ./sgdboop.nix
     ./skyscraper.nix
+    ./sunshine.nix
     ./xmage.nix
   ];
 
