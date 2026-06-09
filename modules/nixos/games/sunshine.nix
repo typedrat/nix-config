@@ -127,10 +127,15 @@ in {
       extraGroups = ["uinput" "sunshine"];
     });
 
-    # SOPS-decrypted hashed credential JSON, group-readable, in /run (tmpfs).
-    # Path defaults to /run/secrets/sunshine/credentials.
-    sops.secrets."sunshine/credentials" = {
-      sopsFile = ../../../secrets/sunshine.yaml;
+    # SOPS-decrypted credential JSON ({username,salt,password}), group-readable,
+    # in /run (tmpfs). This is exactly the format Sunshine's credentials_file
+    # expects. format="json" with key="" decrypts the whole file rather than
+    # extracting a single key out of it.
+    # Path defaults to /run/secrets/sunshine-credentials.
+    sops.secrets."sunshine-credentials" = {
+      sopsFile = ../../../secrets/sunshine.json;
+      format = "json";
+      key = "";
       mode = "0440";
       group = "sunshine";
     };
