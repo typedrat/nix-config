@@ -9,6 +9,7 @@ in {
   imports = [
     ./aagl.nix
     ./steam.nix
+    ./sunshine.nix
   ];
 
   options.rat = {
