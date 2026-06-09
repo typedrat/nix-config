@@ -6,7 +6,7 @@
 }: let
   inherit (lib.options) mkEnableOption mkOption;
   inherit (lib.modules) mkIf;
-  inherit (lib) types genAttrs optional;
+  inherit (lib) types genAttrs optional optionalAttrs;
   cfg = config.rat.gaming.sunshine;
 
   # On-demand Hyprland headless output management. The headless output name
@@ -93,6 +93,37 @@
       esac
     '';
   };
+
+  # Default Moonlight app list: Steam Big Picture (switches the existing Steam
+  # instance into Big Picture on the virtual display) plus a plain Desktop app.
+  # Both drive the on-demand Hyprland headless output via the script above.
+  defaultApplications = {
+    env.PATH = "$(PATH):${pkgs.hyprland}/bin";
+    apps = [
+      {
+        name = "Steam Big Picture";
+        prep-cmd = [
+          {
+            do = "${virtualDisplay}/bin/sunshine-virtual-display create-steam";
+            undo = "${virtualDisplay}/bin/sunshine-virtual-display destroy-steam";
+          }
+        ];
+        auto-detach = "true";
+        exclude-global-prep-cmd = "false";
+      }
+      {
+        name = "Desktop (Virtual Display)";
+        prep-cmd = [
+          {
+            do = "${virtualDisplay}/bin/sunshine-virtual-display create";
+            undo = "${virtualDisplay}/bin/sunshine-virtual-display destroy";
+          }
+        ];
+        auto-detach = "true";
+        exclude-global-prep-cmd = "false";
+      }
+    ];
+  };
 in {
   options.rat.gaming.sunshine = {
     enable = mkEnableOption "Sunshine game streaming host";
@@ -113,6 +144,29 @@ in {
       type = types.bool;
       default = true;
       description = "Open the LAN firewall ports Sunshine/Moonlight require.";
+    };
+
+    encoder = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      example = "nvenc";
+      description = ''
+        Video encoder Sunshine should use (e.g. "nvenc" for NVIDIA, "vaapi"
+        for AMD/Intel). This is GPU-specific, so it is set per-host. When
+        `null`, Sunshine autodetects.
+      '';
+    };
+
+    applications = mkOption {
+      type = types.attrs;
+      default = defaultApplications;
+      defaultText = "the Steam Big Picture + Desktop virtual-display apps";
+      description = ''
+        Moonlight applications, rendered into Sunshine's apps.json. Defaults to
+        a "Steam Big Picture" app and a "Desktop (Virtual Display)" app, both
+        driving the on-demand Hyprland virtual display. Override per-host to
+        customise the exposed app list. See `services.sunshine.applications`.
+      '';
     };
   };
 
@@ -138,6 +192,24 @@ in {
       key = "";
       mode = "0440";
       group = "sunshine";
+    };
+
+    services.sunshine = {
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true; # required for KMS/DRM screen capture on Wayland
+      inherit (cfg) openFirewall;
+
+      settings =
+        {
+          sunshine_name = config.networking.hostName;
+          credentials_file = config.sops.secrets."sunshine-credentials".path;
+        }
+        // optionalAttrs (cfg.encoder != null) {
+          inherit (cfg) encoder;
+        };
+
+      inherit (cfg) applications;
     };
 
     # Non-fatal guard: Sunshine still streams video without input injection,
