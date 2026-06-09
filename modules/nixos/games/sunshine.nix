@@ -31,6 +31,16 @@ in {
   };
 
   config = mkIf (config.rat.gaming.enable && cfg.enable) {
+    # Dedicated group for credential-file access (distinct from uinput, even
+    # though the user set overlaps today — credential access != input access).
+    users.groups.sunshine = {};
+
+    # Grant each permitted user uinput access (input injection) and sunshine
+    # group membership (credentials_file read).
+    users.users = genAttrs cfg.users (_: {
+      extraGroups = ["uinput" "sunshine"];
+    });
+
     # Non-fatal guard: Sunshine still streams video without input injection,
     # but Moonlight gamepad/keyboard/mouse will silently fail.
     warnings = optional (cfg.users == []) ''
