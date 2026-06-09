@@ -2,6 +2,7 @@
   config,
   osConfig,
   lib,
+  self',
   ...
 }: let
   inherit (lib.modules) mkIf mkMerge;
@@ -48,6 +49,10 @@ in {
           ".local/share/mergiraf"
         ];
       };
+
+      home.packages = [
+        self'.packages.git-merged-branches
+      ];
 
       programs.difftastic = {
         enable = true;

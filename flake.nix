@@ -25,45 +25,9 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # fetchCrate: download crates from static.crates.io (NixOS/nixpkgs#525067)
-    # crates.io now blocks requests without a User-Agent (returns 403 from
-    # /api/v1/crates/.../download), breaking every fetchCrate build. The fix
-    # bypasses the redirect and fetches from static.crates.io directly.
-    nixpkgs-patch-525067 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/525067.diff";
-      flake = false;
-    };
-
-    # rustPlatform.importCargoLock: download crates from static.crates.io (local)
-    # Mirror of #525067 for the legacy importCargoLock path, which fenix uses
-    # to build rust-analyzer-nightly. No upstream PR exists yet; remove once
-    # one lands and is in our pinned nixpkgs.
-    nixpkgs-patch-import-cargo-lock-static-crates-io = {
-      url = "path:./patches/nixpkgs-import-cargo-lock-static-crates-io.patch";
-      flake = false;
-    };
-
-    # opencode: 1.15.7 -> 1.15.10 (NixOS/nixpkgs#523270)
-    # First of three sequential opencode bumps applied in lexicographic order
-    # (523270 -> 524685 -> 525486), starting from the 1.15.7 in our pinned
-    # nixpkgs. Also drops x86_64-darwin from platforms. Remove all three once
-    # our pinned nixpkgs reaches 1.15.12.
-    nixpkgs-patch-523270 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/523270.diff";
-      flake = false;
-    };
-
-    # opencode: 1.15.10 -> 1.15.11 (NixOS/nixpkgs#524685)
-    # Stacks on top of #523270.
-    nixpkgs-patch-524685 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/524685.diff";
-      flake = false;
-    };
-
-    # opencode: 1.15.11 -> 1.15.12 (NixOS/nixpkgs#525486)
-    # Stacks on top of #524685.
-    nixpkgs-patch-525486 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/525486.diff";
+    # opencode: 1.15.13 -> 1.16.2 (NixOS/nixpkgs#528519)
+    nixpkgs-patch-528519 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/528519.diff";
       flake = false;
     };
 
