@@ -1,12 +1,73 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib.options) mkEnableOption mkOption;
   inherit (lib.modules) mkIf;
   inherit (lib) types genAttrs optional optionalAttrs;
   cfg = config.rat.gaming.sunshine;
+
+  # On client connect: open Steam Big Picture and move its window onto the
+  # `stream` workspace (which the home-manager session pins to the headless
+  # output Sunshine captures). We move the window imperatively via hyprctl
+  # rather than a Hyprland windowrule, because rules matching class:steam can
+  # thrash the compositor (hyprwm/Hyprland#4722). The Big Picture window is
+  # class=steam, title="Steam Big Picture Mode".
+  connectScript = pkgs.writeShellApplication {
+    name = "sunshine-connect";
+    runtimeInputs = with pkgs; [hyprland jq steam];
+    text = ''
+      set -euo pipefail
+
+      # Ensure Steam is running (cold start), then request Big Picture.
+      if ! pgrep -x steam >/dev/null 2>&1; then
+        steam -silent >/dev/null 2>&1 &
+        # Wait for Steam to come up before asking for Big Picture.
+        for _ in $(seq 1 30); do
+          pgrep -x steam >/dev/null 2>&1 && break
+          sleep 1
+        done
+      fi
+
+      steam steam://open/bigpicture >/dev/null 2>&1 || true
+
+      # Poll for the Big Picture window and move it to the stream workspace.
+      for _ in $(seq 1 20); do
+        addr="$(hyprctl clients -j \
+          | jq -r '.[] | select(.class == "steam" and .title == "Steam Big Picture Mode") | .address' \
+          | head -n1)"
+        if [ -n "$addr" ]; then
+          hyprctl dispatch movetoworkspacesilent "name:stream,address:$addr"
+          exit 0
+        fi
+        sleep 0.5
+      done
+
+      echo "sunshine-connect: Big Picture window not found within timeout" >&2
+    '';
+  };
+
+  # On client disconnect: leave Big Picture (returns the shared Steam instance
+  # to its normal desktop state).
+  disconnectScript = pkgs.writeShellApplication {
+    name = "sunshine-disconnect";
+    runtimeInputs = with pkgs; [steam];
+    text = ''
+      set -euo pipefail
+      steam steam://close/bigpicture >/dev/null 2>&1 || true
+    '';
+  };
+
+  # Sunshine global_prep_cmd value: run on every stream connect/disconnect.
+  globalPrepCmd = builtins.toJSON [
+    {
+      do = "${connectScript}/bin/sunshine-connect";
+      undo = "${disconnectScript}/bin/sunshine-disconnect";
+      elevated = false;
+    }
+  ];
 in {
   options.rat.gaming.sunshine = {
     enable = mkEnableOption "Sunshine game streaming host";
@@ -80,6 +141,9 @@ in {
           # wlroots screen-copy backend: required to capture a Hyprland output.
           capture = "wlr";
           output_name = cfg.headlessName;
+          # On connect, open Steam Big Picture on the stream workspace; on
+          # disconnect, close it.
+          global_prep_cmd = globalPrepCmd;
         }
         // optionalAttrs (cfg.encoder != null) {
           inherit (cfg) encoder;
