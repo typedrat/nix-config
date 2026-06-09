@@ -180,7 +180,11 @@
     hyprlock.url = "github:hyprwm/hyprlock";
 
     hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
+      # hyprbars: fix build after hyprland state/monitor refactor (0aa7a84).
+      # Upstream hyprwm/hyprland-plugins hasn't merged the fix yet; track the
+      # PR branch until hyprwm/hyprland-plugins#677 lands, then revert to
+      # github:hyprwm/hyprland-plugins.
+      url = "github:LionHeartP/hyprland-plugins/08ee1d6228c039617dd4a5fc7ad228c93053e368";
       inputs.hyprland.follows = "hyprland";
     };
 
