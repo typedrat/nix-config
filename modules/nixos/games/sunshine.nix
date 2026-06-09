@@ -41,6 +41,14 @@ in {
       extraGroups = ["uinput" "sunshine"];
     });
 
+    # SOPS-decrypted hashed credential JSON, group-readable, in /run (tmpfs).
+    # Path defaults to /run/secrets/sunshine/credentials.
+    sops.secrets."sunshine/credentials" = {
+      sopsFile = ../../../secrets/sunshine.yaml;
+      mode = "0440";
+      group = "sunshine";
+    };
+
     # Non-fatal guard: Sunshine still streams video without input injection,
     # but Moonlight gamepad/keyboard/mouse will silently fail.
     warnings = optional (cfg.users == []) ''
