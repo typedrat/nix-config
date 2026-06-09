@@ -31,6 +31,16 @@
       flake = false;
     };
 
+    # sunshine: 2025.924.154138 -> 2026.516.143833. The version in nixpkgs is
+    # ~1yr stale with unfixed security vulnerabilities (upstream label
+    # "1.severity: security"). Upstream refactored their build (prebuilt ffmpeg
+    # fetch, boost 1.89 pin, renamed systemd unit, new build deps), so this is a
+    # package rework rather than a simple version bump. (NixOS/nixpkgs#521906)
+    nixpkgs-patch-521906 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/521906.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches

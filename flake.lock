@@ -2573,6 +2573,18 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-521906": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-oWwk3h4F/qKO7Bc3kP2ZDVN/Uf671uR0cqThj1D3JfI=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/521906.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/521906.diff"
+      }
+    },
     "nixpkgs-patch-528519": {
       "flake": false,
       "locked": {
@@ -3125,6 +3137,7 @@
         "nixified-ai": "nixified-ai",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_12",
+        "nixpkgs-patch-521906": "nixpkgs-patch-521906",
         "nixpkgs-patch-528519": "nixpkgs-patch-528519",
         "nixvirt": "nixvirt",
         "peon-ping": "peon-ping",
