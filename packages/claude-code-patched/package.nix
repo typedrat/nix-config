@@ -16,8 +16,8 @@
   promptOverrides = fetchFromGitHub {
     owner = "skrabe";
     repo = "lobotomized-claude-code";
-    rev = "3e7800df7712660268763d5c391dd8420822d6a4";
-    hash = "sha256-u8VC8qXB2Ofa4eb7rCRiNp7tD/4qpaFkLkIscsox1go=";
+    rev = "411f5e637da1f696bec13d2411e8c7ab3838199c";
+    hash = "sha256-8frd3IMRmEdMnp4on366Aewo6QDogZMJEJF7Kfsbqz4=";
   };
 in
   # Override claude-code itself rather than wrapping its output, so the
@@ -44,7 +44,7 @@ in
         # tweakcc seeds defaults into system-prompts/ and system-reminders/
         # on first --apply, so they must be writable — symlinks back to
         # the immutable prompt-overrides source are insufficient.
-        cp -RL ${promptOverrides}/system-prompts  "$TWEAKCC_CONFIG_DIR/system-prompts"
+        cp -RL ${promptOverrides}/system-prompts-opus-4-8  "$TWEAKCC_CONFIG_DIR/system-prompts"
         cp -RL ${promptOverrides}/system-reminders "$TWEAKCC_CONFIG_DIR/system-reminders"
         chmod -R u+w "$TWEAKCC_CONFIG_DIR/system-prompts" "$TWEAKCC_CONFIG_DIR/system-reminders"
 
@@ -61,6 +61,25 @@ in
         export TWEAKCC_CC_INSTALLATION_PATH="$out/bin/.claude-wrapped"
         ${lib.getExe tweakcc-fixed} --apply
       '';
+
+    # tweakcc's own post-repack startup check is disabled (it runs before
+    # autoPatchelf, see tweakcc-fixed.nix). Re-assert that the patched binary
+    # actually boots here instead, after autoPatchelf has fixed the ELF
+    # interpreter — this is the phase where `claude --version` can really run.
+    doInstallCheck = true;
+    installCheckPhase = ''
+      runHook preInstallCheck
+
+      echo "Verifying patched claude-code boots..."
+      version="$($out/bin/claude --version)"
+      echo "$version"
+      case "$version" in
+        *"Claude Code"*) ;;
+        *) echo "claude --version did not report a Claude Code version" >&2; exit 1 ;;
+      esac
+
+      runHook postInstallCheck
+    '';
 
     passthru =
       (prev.passthru or {})

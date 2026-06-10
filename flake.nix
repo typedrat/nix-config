@@ -41,6 +41,16 @@
       flake = false;
     };
 
+    nixpkgs-patch-527425 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/527425.diff";
+      flake = false;
+    };
+
+    nixpkgs-patch-529792 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/529792.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches

@@ -17,20 +17,20 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   # that Claude Code 2.1.x ships with, so native-binary extraction fails on
   # the Nix `claude-code` package. Tracking `main` until skrabe cuts a new
   # tag with the upstream v4.0.13 merge.
-  version = "0-unstable-2026-06-04";
+  version = "0-unstable-2026-06-09";
 
   src = fetchFromGitHub {
     owner = "skrabe";
     repo = "tweakcc-fixed";
-    rev = "e51587ded874a5317035dd60ad67a0977f31d41d";
-    hash = "sha256-MsUuTrb2j/CJZGcV2CU3wMBjDXMSEoPKEPj5dK81ZNU=";
+    rev = "1304bda2272cad8f411865ba7762d0f361004755";
+    hash = "sha256-GVpxWrD3OlKP9iAE59CkbDIAx9BUEKISqNV8Y9Qr3Ls=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     pnpm = pnpm_10;
-    fetcherVersion = 2;
-    hash = "sha256-IECGektWlYDHY4Iljx5U5TJFLBiiT+kke6AgPIMnDgE=";
+    fetcherVersion = 3;
+    hash = "sha256-nLgbq3FMFNFC3sdFOUTalypd6V2LlvR4LZqQBL1MJPg=";
   };
 
   nativeBuildInputs =
@@ -54,6 +54,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   # safe to leave the musl-only libc dep unsatisfied. Pattern covers
   # x86_64, aarch64, and any future musl arches.
   autoPatchelfIgnoreMissingDeps = ["libc.musl-*.so.*"];
+
+  # Upstream tweakcc (ef4657d, in this rev) added a post-repack sanity check
+  # that spawns the patched binary with `--version` to confirm it boots. That
+  # check is a false positive under Nix: claude-code-patched runs tweakcc in
+  # preFixup — *before* autoPatchelfHook rewrites the ELF interpreter to the
+  # Nix store path (deliberate ordering, since LIEF can't parse a post-
+  # autoPatchelf ELF). The binary therefore can't start inside the build
+  # sandbox even though it runs fine once the build completes. Drop the check;
+  # claude-code-patched verifies `claude --version` itself after the full build.
+  postPatch = ''
+    substituteInPlace src/patches/index.ts \
+      --replace-fail \
+        "assertNativeBinaryStarts(tempBinaryPath);" \
+        "/* assertNativeBinaryStarts disabled: false positive pre-autoPatchelf under Nix */"
+  '';
 
   buildPhase = ''
     runHook preBuild
