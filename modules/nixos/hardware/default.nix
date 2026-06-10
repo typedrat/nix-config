@@ -4,6 +4,7 @@ in {
   imports = [
     ./audio.nix
     ./bluetooth.nix
+    ./nintendo-switch.nix
     ./nvidia.nix
     ./openrgb.nix
     ./printing.nix
