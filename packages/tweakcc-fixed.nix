@@ -17,13 +17,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   # that Claude Code 2.1.x ships with, so native-binary extraction fails on
   # the Nix `claude-code` package. Tracking `main` until skrabe cuts a new
   # tag with the upstream v4.0.13 merge.
-  version = "0-unstable-2026-06-09";
+  version = "2.0.1-unstable-2026-06-11";
 
   src = fetchFromGitHub {
     owner = "skrabe";
     repo = "tweakcc-fixed";
-    rev = "1304bda2272cad8f411865ba7762d0f361004755";
-    hash = "sha256-GVpxWrD3OlKP9iAE59CkbDIAx9BUEKISqNV8Y9Qr3Ls=";
+    rev = "3c29532c081bc5a8eda8dbd5026398eec2c6d595";
+    hash = "sha256-4mKXUum7tqZHOfm7cXNdJvDkqvl/izOAg9hnvmozfAM=";
   };
 
   pnpmDeps = fetchPnpmDeps {
