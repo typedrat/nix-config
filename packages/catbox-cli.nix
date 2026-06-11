@@ -9,7 +9,7 @@
 }:
 rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "catbox-cli";
-  version = "0-unstable-2026-05-11";
+  version = "0.2.0-unstable-2026-05-11";
 
   src = fetchFromGitHub {
     owner = "JustSimplyKyle";
