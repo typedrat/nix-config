@@ -25,12 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # opencode: 1.15.13 -> 1.16.2 (NixOS/nixpkgs#528519)
-    nixpkgs-patch-528519 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/528519.diff";
-      flake = false;
-    };
-
     # sunshine: 2025.924.154138 -> 2026.516.143833. The version in nixpkgs is
     # ~1yr stale with unfixed security vulnerabilities (upstream label
     # "1.severity: security"). Upstream refactored their build (prebuilt ffmpeg
@@ -38,11 +32,6 @@
     # package rework rather than a simple version bump. (NixOS/nixpkgs#521906)
     nixpkgs-patch-521906 = {
       url = "https://github.com/NixOS/nixpkgs/pull/521906.diff";
-      flake = false;
-    };
-
-    nixpkgs-patch-527425 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/527425.diff";
       flake = false;
     };
 
@@ -98,6 +87,19 @@
     microvm = {
       url = "github:astro/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Upstream out-of-tree driver source (patches + firmware extraction
+    # scripts) for the MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 +
+    # Bluetooth combo card on ulysses. Mainline mt7925e already drives the WiFi
+    # half, but the BT half (USB 0489:e110) has no in-kernel btusb device ID
+    # yet. modules/nixos/hardware/mt7927.nix consumes this source to build
+    # patched btusb/btmtk + mt7925e and extract the BT/WiFi firmware, letting us
+    # drop the external Realtek dongle whose USB autosuspend was severing the
+    # gamepad link mid-session.
+    mediatek-mt7927-dkms = {
+      url = "github:jetm/mediatek-mt7927-dkms";
+      flake = false;
     };
 
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";

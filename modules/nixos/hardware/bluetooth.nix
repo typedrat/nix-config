@@ -25,13 +25,16 @@ in {
           General = {
             Enable = "Source,Sink,Media,Socket";
             Experimental = true;
+            # Faster page-scan interval so paired devices reconnect quicker
+            # after they wake. Costs a little adapter power, irrelevant on a
+            # desktop.
+            FastConnectable = true;
           };
         };
-        # Allow non-bonded HID devices to connect. Xbox-mode controllers
-        # (e.g. the GuliKit in its Xbox Wireless mode) pair but report
-        # Bonded: no, so BlueZ's input plugin otherwise rejects the HID
-        # connection with "Rejected connection from !bonded device" and
-        # no gamepad input device is ever created.
+        # Allow non-bonded classic HID devices to connect. Some controllers
+        # pair but report Bonded: no, and BlueZ's input plugin otherwise
+        # rejects the HID connection with "Rejected connection from !bonded
+        # device" so no input device is ever created.
         input.General.ClassicBondedOnly = false;
       };
 

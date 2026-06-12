@@ -46,12 +46,27 @@ in {
 
       hardware.xpadneo.enable = true;
       programs.gamemode.enable = true;
-      # GuliKit ES Pro - fix rumble being constantly on
-      boot.extraModprobeConfig = let
-        gulikitEsProMAC = "06:71:10:21:29:B3";
-      in ''
-        options hid_xpadneo quirks=${gulikitEsProMAC}:7
-      '';
+
+      # Nintendo Switch Pro Controller support via the in-kernel hid-nintendo
+      # driver, which exposes both the buttons/axes and a full 6-axis IMU
+      # (accel/gyro) device on its own. Used for the GuliKit ES Pro in NS mode
+      # (wired, or wireless via the GuliKit Goku 2 dongle), which enumerates as
+      # a 057e:2009 Pro Controller with a full 6-axis IMU device.
+      #
+      # joycond + joycond-cemuhook are intentionally NOT enabled. For a single
+      # Pro Controller they are counter-productive:
+      #   - joycond EVIOCGRAB's the device and re-presents it under a different
+      #     name, which changes SDL's CRC-derived joystick GUID and breaks any
+      #     emulator profile bound to the raw device.
+      #   - joycond's udev rules lock the controller's /dev/hidrawN node to
+      #     root-only (0600, uaccess stripped) to keep Steam out, which also
+      #     blocks SDL's HIDAPI Nintendo backend from opening the device.
+      # Without joycond, SDL owns the raw hidraw node and decodes gyro/accel
+      # itself (SDL-native motion), which Eden/yuzu read directly — no cemuhook
+      # UDP bridge required. joycond is only worth enabling to combine two
+      # single Joy-Cons into one virtual pad, which is not our use case.
+      # services.joycond.enable = true;
+      # programs.joycond-cemuhook.enable = true;
     })
   ];
 }

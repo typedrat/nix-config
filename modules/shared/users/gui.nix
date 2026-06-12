@@ -133,6 +133,7 @@
         enable = options.mkEnableOption "gaming applications" // {default = true;};
         xmage.enable = options.mkEnableOption "XMage" // {default = true;};
         sgdboop.enable = options.mkEnableOption "SGDBoop" // {default = true;};
+        eden.enable = options.mkEnableOption "Eden Switch emulator";
         retroarch = {
           enable = options.mkEnableOption "RetroArch emulator frontend";
           cores = options.mkOption {

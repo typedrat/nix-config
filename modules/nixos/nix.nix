@@ -16,7 +16,7 @@
           nix = inputs'.nix.packages.default;
         })
 
-        # Disable openldap tests on i686 to fix build (https://github.com/NixOS/nixpkgs/issues/513245)
+        # Disable openldap tests on i686
         (_final: prev: {
           openldap = prev.openldap.overrideAttrs {
             doCheck = !prev.stdenv.hostPlatform.isi686;
@@ -49,9 +49,8 @@
         # with an invalid UCS-2 byte sequence as its name, but iserlohn's ZFS
         # datasets use utf8only=on, so the kernel rejects the open() with EILSEQ.
         # The test only treats EINVAL as "filesystem doesn't support UCS-2 -> skip".
-        # Upstream declined to fix this (NixOS maintainer typedrat's report,
-        # https://github.com/nodejs/node/issues/57209, closed as not planned), so
-        # patch the test to also skip on EILSEQ.
+        # Upstream declined to fix this (NixOS maintainer typedrat's report, #57209,
+        # was closed as not planned), so patch the test to also skip on EILSEQ.
         #
         # The check phase runs in nodejs-slim_20 (the real build); nodejs_20 is
         # just a symlinkJoin wrapper over it, so we must patch the slim derivation

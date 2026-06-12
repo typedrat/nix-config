@@ -1,5 +1,6 @@
 {
   osConfig,
+  inputs',
   pkgs,
   lib,
   ...
@@ -9,8 +10,7 @@
   inherit (impermanenceCfg) persistDir;
 
   # Enable autoHideMenuBar on the main window to hide the GTK menu bar
-  # decoration on Linux (press Alt to reveal). Upstream PR:
-  # https://github.com/anomalyco/opencode/pull/17243
+  # decoration on Linux (press Alt to reveal).
   opencode-desktop = pkgs.opencode-desktop.overrideAttrs (old: {
     postPatch =
       (old.postPatch or "")
@@ -26,7 +26,7 @@ in {
     };
 
     home.packages = [
-      # inputs'.claude-desktop-debian.packages.claude-desktop
+      inputs'.claude-desktop-debian.packages.claude-desktop
       opencode-desktop
     ];
   };

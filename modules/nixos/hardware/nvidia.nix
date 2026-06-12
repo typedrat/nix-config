@@ -116,11 +116,10 @@ in {
       # breaks every Vulkan app — including Zed's blade renderer.
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
 
-      # Qt WebEngine 6.10.2 incorrectly detects GBM as unsupported with NVIDIA
-      # open kernel modules and falls back to a Vulkan rendering path that
-      # deadlocks during Chromium initialization. Force-enabling GBM works
-      # around this since the open modules do support GBM properly.
-      # (NixOS/nixpkgs#508998)
+      # Qt WebEngine incorrectly detects GBM as unsupported with NVIDIA open
+      # kernel modules and falls back to a Vulkan rendering path that deadlocks
+      # during Chromium initialization. Force-enabling GBM works around this
+      # since the open modules do support GBM properly.
       QTWEBENGINE_FORCE_USE_GBM = "1";
     };
 

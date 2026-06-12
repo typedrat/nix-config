@@ -1,4 +1,5 @@
 {
+  inputs,
   lib,
   pkgs,
   ...
@@ -42,6 +43,19 @@
   hardware.facter.reportPath = ./facter.json;
   # Don't load amdgpu in initrd - it changes monitor enumeration order
   hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce ["nvidia"];
+
+  # MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 + Bluetooth combo card.
+  # Builds out-of-tree patched btusb/btmtk (for BT USB 0489:e110, not yet in
+  # mainline) and patched mt7925e/mt7921e (320MHz EHT fixes), plus extracts the
+  # BT/WiFi firmware. This replaces the external Realtek RTL8761B dongle, whose
+  # USB autosuspend was severing the GuliKit controller's Bluetooth link
+  # ~1 minute into use. disableAspm fixes a PCIe ASPM "stuck upload" issue.
+  rat.hardware.mt7927 = {
+    enable = true;
+    enableWifi = true;
+    enableBluetooth = true;
+    disableAspm = true;
+  };
 
   # --- Extra filesystems ---
 
@@ -217,6 +231,7 @@
       };
       gui = {
         enable = true;
+        gaming.eden.enable = true;
         hyprland = {
           launcher.variant = "vicinae";
           idle.mediaInhibit = true;
@@ -228,12 +243,12 @@
           pyprland.enable = true;
           smartGaps.enable = true;
         };
-        terminals.ghostty.enable = true;
         productivity.handy.enable = true;
         productivity.krita = {
           enable = true;
           aiDiffusion.enable = true;
         };
+        terminals.ghostty.enable = true;
       };
     };
   };

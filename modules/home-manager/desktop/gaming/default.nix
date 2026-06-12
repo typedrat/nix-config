@@ -15,6 +15,7 @@
 in {
   imports = [
     ./anime-game-launchers.nix
+    ./eden.nix
     ./retroarch.nix
     ./sgdboop.nix
     ./skyscraper.nix

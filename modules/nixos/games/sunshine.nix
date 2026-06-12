@@ -13,8 +13,8 @@
   # `stream` workspace (which the home-manager session pins to the headless
   # output Sunshine captures). We move the window imperatively via hyprctl
   # rather than a Hyprland windowrule, because rules matching class:steam can
-  # thrash the compositor (hyprwm/Hyprland#4722). The Big Picture window is
-  # class=steam, title="Steam Big Picture Mode".
+  # thrash the compositor. The Big Picture window is class=steam,
+  # title="Steam Big Picture Mode".
   connectScript = pkgs.writeShellApplication {
     name = "sunshine-connect";
     runtimeInputs = with pkgs; [hyprland jq steam];
