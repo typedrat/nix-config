@@ -9,6 +9,7 @@
       adaptive_lighting
       elegoo_printer
       localtuya
+      moonraker
       waste_collection_schedule
     ];
 
