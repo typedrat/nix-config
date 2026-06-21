@@ -40,6 +40,9 @@ in {
         ".gstack"
         ".openpeon"
 
+        # HuggingFace model/dataset cache — large downloads worth persisting
+        ".cache/huggingface"
+
         # yes, this is where the authentication data for OpenCode lives
         # I want to shove a copy of the XDG specification up someone's asshole.
         ".cache/opencode"
