@@ -45,6 +45,8 @@ in {
         ".config/pegasus-frontend"
         ".config/rom-organizer"
         ".local/share/wine"
+        # Native GOG/GameMaker game saves (e.g. Mina the Hollower)
+        ".local/share/Yacht Club Games"
         "Games"
       ];
     };
