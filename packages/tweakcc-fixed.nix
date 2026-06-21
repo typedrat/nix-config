@@ -4,7 +4,7 @@
   stdenvNoCC,
   fetchFromGitHub,
   nodejs,
-  pnpm_10,
+  pnpm,
   fetchPnpmDeps,
   pnpmConfigHook,
   autoPatchelfHook,
@@ -13,30 +13,26 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tweakcc-fixed";
-  # Latest tag (v4.0.11) predates the Bun >=1.3 `.bun` ELF section support
-  # that Claude Code 2.1.x ships with, so native-binary extraction fails on
-  # the Nix `claude-code` package. Tracking `main` until skrabe cuts a new
-  # tag with the upstream v4.0.13 merge.
-  version = "0-unstable-2026-06-09";
+  version = "2.0.12";
 
   src = fetchFromGitHub {
     owner = "skrabe";
     repo = "tweakcc-fixed";
-    rev = "1304bda2272cad8f411865ba7762d0f361004755";
-    hash = "sha256-GVpxWrD3OlKP9iAE59CkbDIAx9BUEKISqNV8Y9Qr3Ls=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-n2Hq5c+U8Qk8UMwDxrlN/Socbh6OH/Rno/byMnDPXCU=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
-    pnpm = pnpm_10;
+    inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-nLgbq3FMFNFC3sdFOUTalypd6V2LlvR4LZqQBL1MJPg=";
+    hash = "sha256-g1lOWbUNCBtsb/AUjB5uKcjNegk0B2gtllnw4YAyDf0=";
   };
 
   nativeBuildInputs =
     [
       nodejs
-      pnpm_10
+      pnpm
       pnpmConfigHook
       makeBinaryWrapper
     ]
