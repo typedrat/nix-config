@@ -48,8 +48,16 @@ in {
                 ++ lib.optional logoutEnabled "custom/wlogout";
 
               "hyprland/workspaces" = {
-                "persistent-workspaces" = {
-                  "*" = 6;
+                # Only show the numbered workspaces (1-6) that are bound to the
+                # primary monitor. The previous `"*" = 6` wildcard told waybar to
+                # create 6 persistent slots on *every* output, which collided with
+                # the per-monitor workspace bindings (named `tv` workspace on the
+                # secondary, headless `sunshine` output, etc.) and caused the bar
+                # to render stray workspaces (7, 8, ...) with gaps. Pinning the
+                # persistent set to this bar's own output (the primary monitor)
+                # keeps the numbering as 1-6.
+                "persistent-workspaces" = lib.optionalAttrs (primaryMonitor != null) {
+                  ${primaryMonitor} = [1 2 3 4 5 6];
                 };
               };
 
