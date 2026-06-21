@@ -4,7 +4,7 @@
   fetchFromGitHub,
   cmake,
   pkg-config,
-  libsForQt5,
+  qt5,
   nix-update-script,
 }:
 stdenv.mkDerivation rec {
@@ -21,11 +21,11 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     cmake
     pkg-config
-    libsForQt5.qt5.wrapQtAppsHook
+    qt5.wrapQtAppsHook
   ];
 
   buildInputs = [
-    libsForQt5.qt5.qtbase
+    qt5.qtbase
   ];
 
   passthru.updateScript = nix-update-script {
