@@ -29,9 +29,6 @@ in {
       # not first-class config.
       config = {
         useQuickCss = true;
-        themeLinks = [
-          "https://catppuccin.github.io/discord/dist/catppuccin-frappe-lavender.theme.css"
-        ];
         plugins = {
           sendTimestamps.enable = true;
           readAllNotificationsButton.enable = true;
