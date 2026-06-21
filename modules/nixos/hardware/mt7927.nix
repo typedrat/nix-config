@@ -30,7 +30,9 @@
   matchPkgbuild = re: let
     m = builtins.match ".*${re}.*" pkgbuild;
   in
-    if m != null then builtins.head m else null;
+    if m != null
+    then builtins.head m
+    else null;
 
   mt76KVer = matchPkgbuild "_mt76_kver='([^']+)'";
   driverFilename = matchPkgbuild "_driver_filename='([^']+)'";

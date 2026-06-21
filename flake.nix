@@ -108,19 +108,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Upstream out-of-tree driver source (patches + firmware extraction
-    # scripts) for the MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 +
-    # Bluetooth combo card on ulysses. Mainline mt7925e already drives the WiFi
-    # half, but the BT half (USB 0489:e110) has no in-kernel btusb device ID
-    # yet. modules/nixos/hardware/mt7927.nix consumes this source to build
-    # patched btusb/btmtk + mt7925e and extract the BT/WiFi firmware, letting us
-    # drop the external Realtek dongle whose USB autosuspend was severing the
-    # gamepad link mid-session.
-    mediatek-mt7927-dkms = {
-      url = "github:jetm/mediatek-mt7927-dkms";
-      flake = false;
-    };
-
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
 
     nixvirt = {
@@ -269,6 +256,11 @@
     jellarr = {
       url = "github:venkyr77/jellarr";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    mediatek-mt7927-dkms = {
+      url = "github:jetm/mediatek-mt7927-dkms";
+      flake = false;
     };
 
     mlnx-ofed-nixos = {
