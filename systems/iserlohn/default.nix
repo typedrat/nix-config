@@ -119,7 +119,7 @@
         };
       };
 
-      autobrr.enable = true;
+      # autobrr.enable = true;
       configarr.enable = true;
       jellarr = {
         enable = true;
