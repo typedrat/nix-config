@@ -1687,17 +1687,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1780939515,
-        "narHash": "sha256-CiPds1pXXLd1MivcbxeVr+v6KpQgntha6Fp3rEfEfyc=",
-        "owner": "LionHeartP",
+        "lastModified": 1781442805,
+        "narHash": "sha256-Kt56e6Bq2sfqN8yq1RHsS6z+8QKCZelmhaeQQRtZyqU=",
+        "owner": "hyprwm",
         "repo": "hyprland-plugins",
-        "rev": "08ee1d6228c039617dd4a5fc7ad228c93053e368",
+        "rev": "1f90c674d51a1ef83c725cd6d02280b4c969fdf7",
         "type": "github"
       },
       "original": {
-        "owner": "LionHeartP",
+        "owner": "hyprwm",
         "repo": "hyprland-plugins",
-        "rev": "08ee1d6228c039617dd4a5fc7ad228c93053e368",
         "type": "github"
       }
     },
