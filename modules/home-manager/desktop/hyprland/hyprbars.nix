@@ -48,6 +48,17 @@ in {
             };
           };
         };
+
+        extraConfig = ''
+          # Ghidra spawns transient child windows (titled win16, win17, ...)
+          # that should not get a titlebar of their own.
+          windowrule {
+            name = ghidra-no-bar
+            match:initial_class = ^(ghidra-Ghidra)$
+            match:initial_title = ^(win\d+)$
+            hyprbars:no_bar = on
+          }
+        '';
       };
     };
 }
