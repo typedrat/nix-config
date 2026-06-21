@@ -9,15 +9,11 @@
   # tweaks are reproducible across hosts.
   tweakccConfig ? ./config.json,
 }: let
-  # skrabe/lobotomized-claude-code: slim, less-CAPS-heavy rewrites of
-  # Claude Code's system prompts and per-turn injections tuned for
-  # Opus 4.7. Not actually lobotomy — just stripping over-the-top
-  # prompt engineering and shrinking the always-injected fragments.
   promptOverrides = fetchFromGitHub {
     owner = "skrabe";
     repo = "lobotomized-claude-code";
-    rev = "411f5e637da1f696bec13d2411e8c7ab3838199c";
-    hash = "sha256-8frd3IMRmEdMnp4on366Aewo6QDogZMJEJF7Kfsbqz4=";
+    rev = "fd98b5fc614a17316e46ccaedf9ce65d9c97742b";
+    hash = "sha256-Q82Z19HvPZ2lxBq0z3yfzxDy3YfbJeDEdBoD+NPF+5w=";
   };
 in
   # Override claude-code itself rather than wrapping its output, so the
