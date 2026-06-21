@@ -85,6 +85,18 @@
   colorSchemeName = "Catppuccin${capitalizeFirst config.catppuccin.flavor}${capitalizeFirst config.catppuccin.accent}";
   colorSchemeFile = "${catppuccinKde}/share/color-schemes/${colorSchemeName}.colors";
   colorSchemeData = parseKdeColorScheme colorSchemeFile;
+
+  # The catppuccin gtk.icon module installs a Catppuccin-tinted Papirus icon
+  # theme but only wires it into GTK (gtk.iconTheme). Qt/KDE apps like Dolphin
+  # read their icon theme from kdeglobals [Icons] Theme=, which we don't
+  # otherwise set, so KDE falls back to a stale `Theme=breeze` in
+  # ~/.config/kdedefaults/kdeglobals (generic blue Breeze folders). Match the
+  # GTK icon theme here so Qt apps use the same Catppuccin Papirus icons. Latte
+  # uses the light variant; every other flavor uses the dark one.
+  iconThemeName =
+    if config.catppuccin.flavor == "latte"
+    then "Papirus-Light"
+    else "Papirus-Dark";
 in {
   imports = [
     inputs.catppuccin.homeModules.catppuccin
@@ -158,12 +170,32 @@ in {
           style.name = "kvantum";
         };
 
-        # KDE color scheme: write color values directly into kdeglobals via
-        # plasma-manager's configFile, rather than relying on plasma-apply-colorscheme
-        # at runtime (which silently no-ops under Hyprland without a Plasma session).
-        programs.plasma.configFile.kdeglobals = colorSchemeData;
+        # KDE color scheme: write color values directly into kdeglobals as a
+        # static baseline. plasma-manager's apply-themes autostart (which DOES
+        # run under Hyprland+uwsm) also applies the scheme at runtime via
+        # plasma-apply-colorscheme once workspace.colorScheme is set in the KDE
+        # module, but writing the colors here guarantees correct values even on
+        # the very first login before that script runs.
+        #
+        # Also pin the icon theme so Qt/KDE apps (Dolphin, etc.) don't inherit a
+        # stale `Theme=breeze` from ~/.config/kdedefaults/kdeglobals on first
+        # run; the apply-themes script keeps it in sync afterwards via
+        # plasma-changeicons (driven by workspace.iconTheme).
+        programs.plasma.configFile.kdeglobals =
+          colorSchemeData
+          // {
+            Icons.Theme = iconThemeName;
+          };
 
-        home.packages = [catppuccinKde];
+        home.packages = [
+          catppuccinKde
+
+          # Adwaita is GTK's de-facto default fallback icon theme. Papirus-Dark
+          # inherits breeze-dark,hicolor (not Adwaita), so GTK apps like Inkscape
+          # that request icons absent from Papirus/breeze/hicolor render blank
+          # without it. Installing it provides the missing backup icon set.
+          pkgs.adwaita-icon-theme
+        ];
       })
     ]
   );

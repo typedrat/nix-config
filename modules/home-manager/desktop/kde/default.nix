@@ -21,6 +21,15 @@
   flavorName = capitalizeFirst config.catppuccin.flavor;
   accentName = capitalizeFirst config.catppuccin.accent;
 
+  colorSchemeName = "Catppuccin${flavorName}${accentName}";
+
+  # Matches the Catppuccin gtk.icon module's Papirus variant selection: latte
+  # (light) gets Papirus-Light, every other flavor gets Papirus-Dark.
+  iconThemeName =
+    if config.catppuccin.flavor == "latte"
+    then "Papirus-Light"
+    else "Papirus-Dark";
+
   useVicinae = launcherVariant == "vicinae";
 
   # Wrap an autostart command in its own transient systemd scope so each
@@ -48,9 +57,18 @@ in {
 
       # --- Appearance ---
 
+      # plasma-manager compiles these into its apply-themes autostart script,
+      # which DOES run under Hyprland+uwsm (systemd-xdg-autostart-generator
+      # starts it despite the X-KDE-autostart-condition=ksmserver line). Setting
+      # colorScheme and iconTheme here adds the missing `plasma-apply-colorscheme`
+      # and `plasma-changeicons` invocations to that script, so Qt/KDE apps like
+      # Dolphin actually pick up the Catppuccin color scheme and Papirus icons
+      # instead of falling back to the default (light) palette and Breeze icons.
       workspace = {
         theme = "default";
         lookAndFeel = "Catppuccin-${flavorName}-${accentName}";
+        colorScheme = colorSchemeName;
+        iconTheme = iconThemeName;
       };
 
       fonts = {
@@ -217,6 +235,17 @@ in {
             DelayFocusInterval = 0;
           };
         };
+        # KDE apps support a per-application color-scheme override under
+        # [UiSettings] ColorScheme. When unset ("Default"), Dolphin ignores the
+        # global kdeglobals color scheme and renders the built-in default
+        # palette, which clashes with Kvantum's dark backgrounds (dark text on
+        # dark background). This is independent of the global scheme: even with
+        # plasma-apply-colorscheme correctly applying Catppuccin globally,
+        # Dolphin on "Default" still renders wrong (verified empirically). Pin
+        # the per-app override so Dolphin matches the rest of the desktop.
+        dolphinrc = {
+          UiSettings.ColorScheme = colorSchemeName;
+        };
       };
     };
 
@@ -261,7 +290,18 @@ in {
         # Recently used files (cross-desktop)
         ".local/share/RecentDocuments"
       ];
-      files = [];
+      files = [
+        # Dolphin Places sidebar bookmarks (AI, Development, Games, etc.).
+        # This is the actual store for Places; the kfileplaces dir above is a
+        # legacy/empty path. Persist so manual Places edits survive impermanence.
+        ".local/share/user-places.xbel"
+
+        # Freedesktop recently-used files list (Dolphin/GTK "Recent files").
+        # The "Modified Today/Yesterday" timeline entries in Places are backed
+        # by the already-persisted Baloo index + kactivitymanagerd; this file is
+        # the cross-app recent-documents list, which otherwise resets on wipe.
+        ".local/share/recently-used.xbel"
+      ];
     };
   };
 }
