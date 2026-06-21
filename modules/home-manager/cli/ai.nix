@@ -102,6 +102,7 @@ in {
 
       settings = {
         plugin = [
+          "@ex-machina/opencode-anthropic-auth@1.8.1"
           "opencode-pty"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
@@ -206,10 +207,6 @@ in {
           Leverage your strengths in code generation, reasoning, and problem-solving.
         '';
       };
-    };
-
-    home.file.".config/opencode/plugins/opencode-anthropic-auth.js" = {
-      source = "${pkgs.opencode-anthropic-auth}/share/opencode/plugins/opencode-anthropic-auth.js";
     };
 
     home.file.".config/opencode/plugins/peon-ping.ts" = modules.mkIf config.programs.peon-ping.enable {
