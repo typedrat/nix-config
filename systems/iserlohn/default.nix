@@ -107,8 +107,6 @@
         exporters.ipmi.enable = true;
       };
 
-      attic.enable = false;
-
       github-runner = {
         enable = true;
 

@@ -91,7 +91,6 @@
       settings = {
         experimental-features = "nix-command flakes";
         trusted-users = ["awilliams"];
-        netrc-file = config.sops.templates.netrc.path;
       };
 
       # Trim old Nix generations to free up space.
@@ -114,10 +113,6 @@
           key = "miseGithubToken";
         };
         hfToken = {};
-        "attic/cacheToken" = {
-          sopsFile = ../../secrets/attic.yaml;
-          key = "cacheToken";
-        };
       };
 
       templates = {
@@ -128,14 +123,6 @@
               "github.com" = config.sops.placeholder.github-api-key;
             });
           mode = "0444";
-        };
-
-        netrc = {
-          content = ''
-            machine ${config.rat.services.attic.subdomain}.${config.rat.services.domainName}
-            password ${config.sops.placeholder."attic/cacheToken"}
-          '';
-          mode = "0440";
         };
 
         nix-daemon-env = {

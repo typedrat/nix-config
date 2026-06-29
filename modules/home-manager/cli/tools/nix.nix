@@ -2,7 +2,6 @@
   config,
   osConfig,
   inputs,
-  inputs',
   pkgs,
   lib,
   ...
@@ -41,7 +40,6 @@ in {
         nix-tree
         nix-update
         nixpkgs-review
-        inputs'.attic.packages.attic-client
       ];
 
       programs.nix-index = {

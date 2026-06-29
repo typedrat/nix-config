@@ -45,7 +45,6 @@ The server (`iserlohn`) runs a comprehensive media, development, and home automa
   - Download: qBittorrent, autobrr, cross-seed
   - Configuration: configarr
 - **Development**:
-  - Attic binary cache
   - GitHub Actions runner
   - Hydra CI (available but not currently enabled)
 - **Monitoring**: Grafana, Prometheus, Loki with custom exporters (exportarr, authentik, traefik, qbittorrent, ipmi, postgres, node, zfs)
@@ -191,7 +190,7 @@ When adding a patch, fetch the PR details to write a useful comment describing w
 
 **Checking which nixpkgs commit is actually in use:**
 
-The root `nixpkgs` input uses FlakeHub's semver URL (`flakehub.com/f/NixOS/nixpkgs/0.1`), which resolves to a specific pinned commit of nixos-unstable. To find that commit, you **must** follow the root node's input mapping in the lock file — do NOT just read `.locks.nodes.nixpkgs.locked.rev`, because that key often belongs to a different transitive nixpkgs (e.g. attic's pinned old nixpkgs) and will give a misleading answer.
+The root `nixpkgs` input uses FlakeHub's semver URL (`flakehub.com/f/NixOS/nixpkgs/0.1`), which resolves to a specific pinned commit of nixos-unstable. To find that commit, you **must** follow the root node's input mapping in the lock file — do NOT just read `.locks.nodes.nixpkgs.locked.rev`, because that key often belongs to a different transitive nixpkgs (e.g. a dependency's pinned older nixpkgs) and will give a misleading answer.
 
 The correct lookup is two steps:
 
@@ -281,7 +280,6 @@ The configuration uses several important flake inputs:
   - `pyprland` - Hyprland extensions in Python
 
 - **External Software**:
-  - `attic` - Binary cache server
   - `authentik-nix` - Authentik SSO
   - `anime-game-launcher` - Game launcher
   - `zen-browser` - Zen browser
