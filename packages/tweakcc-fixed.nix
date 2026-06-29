@@ -13,13 +13,19 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tweakcc-fixed";
-  version = "2.0.12";
+  version = "2.3.2";
 
+  # Tracks skrabe/tweakcc-fixed upstream. We previously pinned a typedrat fork
+  # carrying a \uXXXX-escape fix for injected non-ASCII glyphs (raw multibyte
+  # UTF-8 — spinner phases, verb accents, the "patches applied" notice bar/check
+  # — spliced into CC's cli.js renders as mojibake because Bun stores modules as
+  # Latin-1). That fix landed upstream in v2.0.13 (escapes to match esbuild's
+  # charset=ascii output), so the fork has been retired in favour of upstream.
   src = fetchFromGitHub {
     owner = "skrabe";
     repo = "tweakcc-fixed";
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-n2Hq5c+U8Qk8UMwDxrlN/Socbh6OH/Rno/byMnDPXCU=";
+    rev = "v${finalAttrs.version}";
+    hash = "sha256-lqd5lKDNYsY8jw/e7VryMLCALIPaeJuWfZSW3ziWxpc=";
   };
 
   pnpmDeps = fetchPnpmDeps {
@@ -51,8 +57,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   # x86_64, aarch64, and any future musl arches.
   autoPatchelfIgnoreMissingDeps = ["libc.musl-*.so.*"];
 
-  # Upstream tweakcc (ef4657d, in this rev) added a post-repack sanity check
-  # that spawns the patched binary with `--version` to confirm it boots. That
+  # Upstream tweakcc-fixed added a post-repack sanity check that spawns the
+  # patched binary with `--version` to confirm it boots. That
   # check is a false positive under Nix: claude-code-patched runs tweakcc in
   # preFixup — *before* autoPatchelfHook rewrites the ELF interpreter to the
   # Nix store path (deliberate ordering, since LIEF can't parse a post-
@@ -98,7 +104,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   passthru.updateScript = nix-update-script {
-    extraArgs = ["--flake" "--version=branch"];
+    extraArgs = ["--flake"];
   };
 
   meta = {
