@@ -41,9 +41,9 @@
   kernelTarballSha256 = matchPkgbuild "sha256sums=\\('([a-f0-9]+)'";
 
   # Patch sets, applied in the same order as the upstream Makefile's `sources`
-  # target. WiFi: mt7902 compat patch first, then mt7927-wifi-* sorted. BT:
-  # mt6639-bt-[0-9]* sorted, then the compat patch. readDir + sort reproduces
-  # the Makefile's shell-glob ordering deterministically.
+  # target. WiFi: the whole mt7927-wifi-* glob (numbered patches first, then the
+  # compat-* shims). BT: mt6639-bt-[0-9]* sorted, then the compat patch. readDir
+  # + sort reproduces the Makefile's shell-glob ordering deterministically.
   patchFiles = builtins.attrNames (builtins.readDir repoSrc);
   sortedMatching = re:
     map (n: "${repoSrc}/${n}")
@@ -51,8 +51,7 @@
       (builtins.filter (n: builtins.match re n != null) patchFiles));
 
   wifiPatches =
-    ["${repoSrc}/mt7902-wifi-6.19.patch"]
-    ++ sortedMatching "mt7927-wifi-[0-9].*\\.patch"
+    sortedMatching "mt7927-wifi-[0-9].*\\.patch"
     ++ sortedMatching "mt7927-wifi-compat-.*\\.patch";
 
   btPatches =
@@ -121,8 +120,8 @@
     src = linuxDrivers;
     nativeBuildInputs = kernel.moduleBuildDependencies ++ [pkgs.python3 pkgs.perl pkgs.kmod];
     # Unpack only the mt76 driver subtree from the kernel tarball, then apply
-    # the WiFi patch series (mt7902 compat + mt7927-wifi-* + compat) the same
-    # way the upstream Makefile does.
+    # the WiFi patch series (mt7927-wifi-* numbered + compat) the same way the
+    # upstream Makefile does.
     unpackPhase = ''
       runHook preUnpack
       tar -xf ${linuxDrivers} \
