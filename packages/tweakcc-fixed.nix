@@ -13,7 +13,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tweakcc-fixed";
-  version = "2.3.2";
+  version = "2.5.1";
 
   # Tracks skrabe/tweakcc-fixed upstream. We previously pinned a typedrat fork
   # carrying a \uXXXX-escape fix for injected non-ASCII glyphs (raw multibyte
@@ -25,7 +25,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "skrabe";
     repo = "tweakcc-fixed";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-lqd5lKDNYsY8jw/e7VryMLCALIPaeJuWfZSW3ziWxpc=";
+    hash = "sha256-FKx4C0Z4A9W3Leuc6mzqG/w/FioQMdAAmEOfFoHv28k=";
   };
 
   pnpmDeps = fetchPnpmDeps {
