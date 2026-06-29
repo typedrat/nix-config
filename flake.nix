@@ -25,40 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # sunshine: 2025.924.154138 -> 2026.516.143833. The version in nixpkgs is
-    # ~1yr stale with unfixed security vulnerabilities (upstream label
-    # "1.severity: security"). Upstream refactored their build (prebuilt ffmpeg
-    # fetch, boost 1.89 pin, renamed systemd unit, new build deps), so this is a
-    # package rework rather than a simple version bump. (NixOS/nixpkgs#521906)
-    nixpkgs-patch-521906 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/521906.diff";
-      flake = false;
-    };
-
-    # perlPackages.DBDCSV: fix build, 0.60 -> 0.62. The packaged version fails
-    # to build against the current DBI; this backports the upstream build fix
-    # and bumps DBD::CSV to 0.62. (NixOS/nixpkgs#531173)
-    nixpkgs-patch-531173 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/531173.diff";
-      flake = false;
-    };
-
-    # claude-code: manifest 2.1.177 -> 2.1.179. Merged upstream but not yet
-    # in our locked nixpkgs. Applied before #534041 to chain the version/hash
-    # updates. (NixOS/nixpkgs#532545)
-    nixpkgs-patch-532545 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/532545.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.179 -> 2.1.185. Routine version bump (mine) that builds
-    # on top of #532545 (its diff context expects the 2.1.179 state), so it
-    # must apply after it. (NixOS/nixpkgs#534041)
-    nixpkgs-patch-534041 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/534041.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
@@ -223,12 +189,6 @@
       url = "github:aaddrick/claude-desktop-debian";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
-    };
-
-    attic = {
-      url = "https://flakehub.com/f/zhaofengli/attic/*";
-      # `attic` doesn't build against current Nix, so we have to use an old `nixpkgs` for it.
-      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
     authentik-nix = {
