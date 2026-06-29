@@ -1,7 +1,7 @@
 {
-  "ccVersion": "2.1.185",
+  "ccVersion": "2.1.191",
   "ccInstallationPath": null,
-  "lastModified": "2026-06-19T03:04:30.305Z",
+  "lastModified": "2026-06-28T00:36:30.337Z",
   "changesApplied": false,
   "settings": {
     "themes": [
@@ -666,9 +666,18 @@
       ]
     },
     "thinkingStyle": {
-      "updateInterval": 120,
-      "phases": ["·", "✢", "✳", "✶", "✻", "*"],
-      "reverseMirror": true
+      "updateInterval": 80,
+      "phases": [
+        "🌑",
+        "🌒",
+        "🌓",
+        "🌔",
+        "🌕",
+        "🌖",
+        "🌗",
+        "🌘"
+      ],
+      "reverseMirror": false
     },
     "userMessageDisplay": {
       "format": " > {} ",
@@ -686,7 +695,7 @@
     },
     "misc": {
       "showTweakccVersion": true,
-      "showPatchesApplied": true,
+      "showPatchesApplied": false,
       "expandThinkingBlocks": true,
       "enableConversationTitle": true,
       "hideStartupBanner": false,
@@ -720,9 +729,11 @@
       "enableVoiceConciseOutput": true,
       "enableChannelsMode": false,
       "maxEffortDefault": false,
-      "autoModeClassifierModel": "default",
+      "autoModeClassifierModel": "sonnet",
       "suppressDeferredTools": false,
-      "claudemdContextOncePerConversation": true
+      "claudemdContextOncePerConversation": true,
+      "swapRipgrepForFff": false,
+      "autonomousOperationAllModels": false
     },
     "toolsets": [],
     "defaultToolset": null,
@@ -742,6 +753,40 @@
       "IFLOW.md",
       "WARP.md",
       "copilot-instructions.md"
-    ]
+    ],
+    "complexityRouter": {
+      "enabled": false,
+      "pinPerTask": true,
+      "messageCap": 100000,
+      "assistantCap": 100000,
+      "timeoutMs": 15000,
+      "systemPrompt": "You are a difficulty router for an AI coding agent. Each turn you get a compact running SUMMARY of the session, a CONTEXT block (the model in use and the level you assigned last turn), the most recent exchange (the previous user message and the assistant reply), and the user NEW message. Do two things and output ONLY a JSON object with the keys level and summary - no prose, no code fence.\n\n# level\nPick the integer effort level (0 = least effort, {MAX} = most) for the NEW message, judged IN CONTEXT of the summary, the context block, and the recent exchange:\n{LEVELS}\n\nHow to judge:\n- A short or vague prompt does NOT mean an easy task. A terse follow-up (now do the same, fix it, continue, keep going, ok next) inherits the difficulty of the work it continues - score it like that ongoing work, reading the summary and recent exchange to see what is actually being built, not like a fresh trivial request.\n- Conversely, a genuinely new, self-contained simple request (rename a variable, fix a typo, bump a version, answer a quick question) is low even in the middle of a hard session.\n- Watch for hidden complexity behind simple wording: concurrency, security, distributed state, performance or correctness constraints, cross-file or multi-module impact, niche toolchains, specialized domains.\n- Errors, failed attempts, active debugging, or a very large prior assistant turn (shown by an omitted-from-the-middle marker) in the recent exchange or the summary are strong evidence the work needs careful reasoning - lean higher.\n- The CONTEXT block shows the level you assigned last turn; use it for continuity - hold effort steady while the same work continues, and only drop when the NEW message clearly starts something simpler. The model in use is your calibration baseline: the level is the thinking depth for THAT model.\n- When unsure, do NOT default to the top. Default to the standard middle level and let clear signals push it up or down. The top level ({MAX}) is rare - reserve it for exactly what its description says, not for ordinary hard work.\n\n# summary\nOutput an updated running summary - a terse TL;DR of the session in the fewest words that still capture what was done and how hard it has been. Fold the most recent exchange into the prior summary as one short line (what this turn did and its complexity), then compress: keep the task or goal, key decisions, files or systems touched, unresolved threads, and difficulty signals (errors, retries, large changes); mark resolved items resolved and drop anything that will not affect future routing. It is a routing aid, not documentation - favor brevity.",
+      "levels": [
+        {
+          "id": "routine",
+          "label": "Routine",
+          "help": "Mechanical, well-scoped work: a rename, formatting, a search, a version bump, a one-line or single-file edit, or a direct factual question with a known answer",
+          "effort": "low"
+        },
+        {
+          "id": "standard",
+          "label": "Standard",
+          "help": "The everyday coding workflow: implement a normal feature, a localized change, a moderate bug fix, ordinary tool/file work. The default when the task is ordinary or you are unsure",
+          "effort": "medium"
+        },
+        {
+          "id": "hard",
+          "label": "Hard",
+          "help": "Demanding work that needs careful reasoning: architecture/design, cross-file or multi-module refactors, root-cause debugging, security/concurrency/performance review. Most genuinely hard coding lives here",
+          "effort": "high"
+        },
+        {
+          "id": "frontier",
+          "label": "Frontier",
+          "help": "Rare. Reserve for genuinely frontier problems - the deepest reasoning where even strong effort may fall short (novel algorithm design, subtle distributed/concurrency correctness) - or an explicit max-effort request like \"ultrathink\". Not just because a task is hard",
+          "effort": "max"
+        }
+      ]
+    }
   }
 }

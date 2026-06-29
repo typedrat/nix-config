@@ -12,8 +12,8 @@
   promptOverrides = fetchFromGitHub {
     owner = "skrabe";
     repo = "lobotomized-claude-code";
-    rev = "fd98b5fc614a17316e46ccaedf9ce65d9c97742b";
-    hash = "sha256-Q82Z19HvPZ2lxBq0z3yfzxDy3YfbJeDEdBoD+NPF+5w=";
+    rev = "98bdc064f1614e2281387a1e2a218087a6abb251";
+    hash = "sha256-aXKck4Gi2xH2kxAt9u8jLNvxhlCM0ID90AIcgMihfPU=";
   };
 in
   # Override claude-code itself rather than wrapping its output, so the
