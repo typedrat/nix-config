@@ -10,6 +10,8 @@
 
   ghidraWithExtensions = pkgs.ghidra.withExtensions (_: [
     pkgs.ghidra-extensions.reverse-engineering-assistant
+    pkgs.ghidra-extensions.ghidra-snes
+    pkgs.ghidra-extensions.ghidra-boy
   ]);
 
   ghidraWrapped = pkgs.symlinkJoin {
