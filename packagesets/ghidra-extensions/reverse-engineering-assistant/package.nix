@@ -18,16 +18,17 @@
     pname = "reverse-engineering-assistant";
     inherit version src;
 
+    outputs = ["out" "skills"];
+
     mitmCache = gradle.fetchDeps {
       pkg = self;
       data = ./deps.json;
     };
 
-    passthru.skills = lib.pipe "${src}/ReVa/skills" [
-      builtins.readDir
-      (lib.filterAttrs (_: type: type == "directory"))
-      (lib.mapAttrs (name: _: "${src}/ReVa/skills/${name}"))
-    ];
+    postInstall = ''
+      mkdir -p "$skills"
+      cp -r "$src/ReVa/skills/"* "$skills"/
+    '';
 
     passthru.python-wrapper = python3Packages.buildPythonApplication {
       pname = "mcp-reva";
