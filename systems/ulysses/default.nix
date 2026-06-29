@@ -214,7 +214,10 @@
     flatpak.enable = true;
     java.enable = true;
     nix-ld.enable = true;
-    virtualisation.docker.enable = true;
+    virtualisation.docker = {
+      enable = true;
+      nvidia.enable = true; # RTX 5090 GPU access in containers (CDI)
+    };
 
     # Security
     polkit.unprivilegedPowerManagement = true;

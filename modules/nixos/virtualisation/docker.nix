@@ -10,6 +10,9 @@ in {
   options.rat.virtualisation.docker = {
     enable = options.mkEnableOption "Docker";
 
+    nvidia.enable =
+      options.mkEnableOption "NVIDIA GPU support in Docker containers via the NVIDIA Container Toolkit (CDI)";
+
     dnsServers = options.mkOption {
       type = types.listOf types.str;
       default = ["8.8.8.8" "8.8.4.4"];
@@ -48,6 +51,11 @@ in {
         };
       };
     };
+
+    # CDI-based GPU access. Works with rootless Docker (25.0+): run containers
+    # with `docker run --device nvidia.com/gpu=all ...`. The toolkit regenerates
+    # the CDI spec at /var/run/cdi on boot.
+    hardware.nvidia-container-toolkit.enable = cfg.nvidia.enable;
 
     security.wrappers = {
       docker-rootlesskit = {
