@@ -4,7 +4,7 @@
   fetchurl,
   nix-update-script,
 }: let
-  version = "6.5.2";
+  version = "6.5.3";
 in
   stdenvNoCC.mkDerivation {
     pname = "hekate-payload";
@@ -12,7 +12,7 @@ in
 
     src = fetchurl {
       url = "https://github.com/CTCaer/hekate/releases/download/v${version}/hekate_ctcaer_${version}.bin";
-      hash = "sha256-JlSvb5v7jmWit5OGbNj1DRcuQv9GE8GL/YOFAhupbuQ=";
+      hash = "sha256-Yctp00HAtDY8+zkumhgrtVbsZWky4OUXa7FYwV/xrQA=";
     };
 
     dontUnpack = true;
