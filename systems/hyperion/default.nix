@@ -6,6 +6,9 @@
   nixpkgs.config.rocmSupport = true;
 
   boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  # Custom kernels currently install the image as vmlinuz instead of bzImage
+  # (kernel-install hook regression, NixOS/nixpkgs#535850). Drop once fixed upstream.
+  system.boot.loader.kernelFile = "vmlinuz";
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
 
   networking.hostName = "hyperion";
