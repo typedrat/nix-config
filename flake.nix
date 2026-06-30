@@ -164,10 +164,7 @@
     hyprlock.url = "github:hyprwm/hyprlock";
 
     hyprland-plugins = {
-      # Fork carrying the hyprbars fix for Hyprland's compositor view-state
-      # refactor (hyprwm/Hyprland#15245, #15256), unreleased on main. Drop back
-      # to github:hyprwm/hyprland-plugins once the fix lands upstream.
-      url = "github:typedrat/hyprland-plugins/typedrat/hyprbars-compositor-refactor";
+      url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
 

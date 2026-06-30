@@ -1612,16 +1612,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1782693458,
-        "narHash": "sha256-K7q3VbQ4Y5jhFE3XDhn4DfKMX7iYpJa64DsOt7Qf7dw=",
-        "owner": "typedrat",
+        "lastModified": 1782769258,
+        "narHash": "sha256-HAhqQOoz4S0gzIOMnClL49B+rMT7zdp3UDWeqxtMs/k=",
+        "owner": "hyprwm",
         "repo": "hyprland-plugins",
-        "rev": "48e795d79e69b6537f7e26ea6947c98fdf0bd9eb",
+        "rev": "71b8953d7d92dbebe87a6ff9895bdd30e7495873",
         "type": "github"
       },
       "original": {
-        "owner": "typedrat",
-        "ref": "typedrat/hyprbars-compositor-refactor",
+        "owner": "hyprwm",
         "repo": "hyprland-plugins",
         "type": "github"
       }
