@@ -69,6 +69,7 @@ in {
     # the injection service when it appears.
     services.udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="0955", ATTRS{idProduct}=="7321", TAG+="systemd", ENV{SYSTEMD_WANTS}="switch-rcm-inject.service"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="0955", ATTRS{idProduct}=="7321", GROUP="games"
     '';
 
     systemd.services.switch-rcm-inject = {
