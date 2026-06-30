@@ -32,12 +32,12 @@
 
         # Disable flaky concurrency test in python-mpv that intermittently fails
         # with MPV_ERROR_NOMEM (-12) under the build sandbox.
-        (final: prev: {
+        (_final: prev: {
           pythonPackagesExtensions =
             prev.pythonPackagesExtensions
             ++ [
-              (python-final: python-prev: {
-                mpv = python-prev.mpv.overridePythonAttrs (oldAttrs: {
+              (_python-final: python-prev: {
+                mpv = python-prev.mpv.overridePythonAttrs (_oldAttrs: {
                   disabledTests = ["test_wait_for_property_concurrency"];
                 });
               })
