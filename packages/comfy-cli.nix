@@ -29,6 +29,7 @@ python3.pkgs.buildPythonApplication rec {
     mixpanel
     packaging
     pathspec
+    posthog
     psutil
     pyyaml
     questionary
