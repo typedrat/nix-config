@@ -9,7 +9,7 @@
 # its patch set are reused wholesale; only the source is swapped.
 orca-slicer.overrideAttrs (prev: {
   pname = "orca-slicer-nanashi";
-  version = "0-unstable-2026-07-03";
+  version = "Nightly-Rolling-unstable-2026-07-03";
 
   src = fetchFromGitHub {
     owner = "NanashiTheNameless";
