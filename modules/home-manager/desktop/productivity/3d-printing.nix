@@ -14,7 +14,7 @@ in {
     };
 
     home.packages = [
-      pkgs.orca-slicer
+      pkgs.orca-slicer-nanashi
     ];
   };
 }
