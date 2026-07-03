@@ -729,7 +729,6 @@
       "enableVoiceConciseOutput": true,
       "enableChannelsMode": false,
       "maxEffortDefault": false,
-      "autoModeClassifierModel": "sonnet",
       "suppressDeferredTools": false,
       "claudemdContextOncePerConversation": true,
       "swapRipgrepForFff": false,

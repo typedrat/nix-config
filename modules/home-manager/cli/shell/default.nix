@@ -44,6 +44,18 @@ in {
       initContent = lib.mkBefore (
         ''
           source ~/.p10k.zsh
+          # Claude Code replays a snapshot of this interactive shell inside
+          # non-interactive tool subshells. p10k's gitstatusd daemon and
+          # instant-prompt cache both hold pipe fds that collide with Claude's
+          # node process; a severed pipe emits a SIGPIPE that kills zsh (closing
+          # the terminal tab) and, in verbose mode, prints a "bad pipe" warning.
+          # Disable both pipe subsystems in Claude's shells only. Set AFTER the
+          # source above (p10k.zsh hard-sets INSTANT_PROMPT=verbose) and before
+          # the theme loads and reads these.
+          if [[ -n "$CLAUDECODE" ]]; then
+            POWERLEVEL9K_DISABLE_GITSTATUS=true
+            POWERLEVEL9K_INSTANT_PROMPT=off
+          fi
           bindkey "^[[1;5C" forward-word
           bindkey "^[[1;5D" backward-word
 
