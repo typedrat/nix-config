@@ -85,6 +85,7 @@ in {
         ".local/state/mise"
         ".config/docker"
         ".local/share/docker"
+        ".config/tolgee"
         "Development"
       ];
     };
