@@ -1335,15 +1335,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1783148742,
-        "narHash": "sha256-1Uihde63B3aSOeDUG/GFRyKBkSYZQetU6eRpuXknl/g=",
-        "owner": "cjpais",
+        "lastModified": 1783189335,
+        "narHash": "sha256-41dsDGsQ63wmq0y9NTieawHasow45eYj9vgUSefgldc=",
+        "owner": "koloved",
         "repo": "Handy",
-        "rev": "6d92e2cc6902c18d8d3362872fda889172bdb261",
+        "rev": "8bdb56ba37737c0e19f361fe690b0e1bd0f80704",
         "type": "github"
       },
       "original": {
-        "owner": "cjpais",
+        "owner": "koloved",
+        "ref": "flatpak_wayland",
         "repo": "Handy",
         "type": "github"
       }

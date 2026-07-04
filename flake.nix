@@ -221,8 +221,12 @@
     # Handy: free, offline, extensible speech-to-text. Ships its own flake with
     # a package, a NixOS module (programs.handy: /dev/uinput udev rule for
     # rdev's global-hotkey grab) and an HM module (services.handy: autostart).
+    #
+    # Pinned to koloved's flatpak_wayland branch (cjpais/Handy#1560), which adds
+    # the xdg-desktop-portal GlobalShortcuts backend ("portal") for native
+    # Wayland global hotkeys. Repoint to github:cjpais/Handy once it merges.
     handy = {
-      url = "github:cjpais/Handy";
+      url = "github:koloved/Handy/flatpak_wayland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
