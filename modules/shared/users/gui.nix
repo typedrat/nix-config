@@ -171,18 +171,14 @@
         handy = {
           enable = options.mkEnableOption "Handy offline speech-to-text";
           keyboardImplementation = options.mkOption {
-            type = types.enum ["tauri" "handy_keys" "portal"];
-            default = "portal";
+            type = types.enum ["tauri" "handy_keys"];
+            default = "handy_keys";
             description = ''
               Handy's global-shortcut backend:
-                - "portal": xdg-desktop-portal GlobalShortcuts, the native
-                  Wayland mechanism (works via xdg-desktop-portal-hyprland and
-                  KDE). Full press+release, so push-to-talk works, with no
-                  device-access plumbing. Requires the patched package
-                  (cjpais/Handy#1287). Recommended on Wayland.
                 - "handy_keys": evdev backend; reports release as well as press
                   (push-to-talk works) and works under Wayland, but needs
                   /dev/input access (uinput module + "input" group).
+                  Recommended on Wayland.
                 - "tauri": X11 XGrabKey; press-only and does not grab globally
                   on Wayland.
             '';
