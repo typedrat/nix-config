@@ -1613,15 +1613,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1782769258,
-        "narHash": "sha256-HAhqQOoz4S0gzIOMnClL49B+rMT7zdp3UDWeqxtMs/k=",
-        "owner": "hyprwm",
+        "lastModified": 1783145056,
+        "narHash": "sha256-tQIMYvE8XWk1kO25euWAYdyxJPT+Mishl/drVG0Hb1c=",
+        "owner": "LionHeartP",
         "repo": "hyprland-plugins",
-        "rev": "71b8953d7d92dbebe87a6ff9895bdd30e7495873",
+        "rev": "97f3ec30c50fe7a6e616a265c64b2c9edf59a395",
         "type": "github"
       },
       "original": {
-        "owner": "hyprwm",
+        "owner": "LionHeartP",
         "repo": "hyprland-plugins",
         "type": "github"
       }

@@ -182,7 +182,8 @@
     hyprlock.url = "github:hyprwm/hyprlock";
 
     hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
+      # TEMP: hyprwm/hyprland-plugins#685 (hyprbars and hyprfocus: chase Hyprland)
+      url = "github:LionHeartP/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
 
