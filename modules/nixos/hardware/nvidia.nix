@@ -150,10 +150,20 @@ in {
         # the closure. firefox-unwrapped is built by cache.nixos-cuda.org so it
         # substitutes fine, but thunderbird-unwrapped is not on either cache,
         # forcing a multi-hour from-source rebuild on every nixpkgs bump.
-        # Pin thunderbird's onnxruntime to the non-CUDA build to match Hydra's
-        # cache.nixos.org hash for thunderbird-unwrapped.
+        #
+        # Overriding onnxruntime's own `cudaSupport` flag is not enough: its
+        # opencv/openvino inputs still resolve through the cudaSupport=true
+        # package set (CUDA builds on the GCC 14 backend stdenv), so the hash
+        # diverges from Hydra's and never substitutes. Re-import nixpkgs with
+        # cudaSupport fully off to reproduce Hydra's cache.nixos.org hash.
         thunderbird-unwrapped = prev.thunderbird-unwrapped.override {
-          onnxruntime = prev.onnxruntime.override {cudaSupport = false;};
+          inherit
+            (import prev.path {
+              inherit (prev.stdenv.hostPlatform) system;
+              config = prev.config // {cudaSupport = false;};
+            })
+            onnxruntime
+            ;
         };
       })
     ];
