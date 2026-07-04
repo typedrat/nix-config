@@ -25,14 +25,11 @@ in {
       directories = [".config/krita" ".local/share/krita"];
     };
 
-    home.packages = [pkgs.krita];
+    home.packages = [pkgs.krita-appimage];
 
-    # Krita only looks for pykrita plugins in ~/.local/share/krita/pykrita/
-    # Symlink the plugin there.
-    # TODO: drop the `&& false` once Acly/krita-ai-diffusion merges Qt6 support.
-    # The plugin currently only works against the Qt5 build of Krita, which is
-    # no longer in nixpkgs.
-    xdg.dataFile = modules.mkIf (aiDiffusionEnabled && false) {
+    # Krita only looks for pykrita plugins in ~/.local/share/krita/pykrita/,
+    # so symlink the plugin there.
+    xdg.dataFile = modules.mkIf aiDiffusionEnabled {
       "krita/pykrita/ai_diffusion".source = "${aiDiffusionPkg}/share/krita/pykrita/ai_diffusion";
       "krita/pykrita/ai_diffusion.desktop".source = "${aiDiffusionPkg}/share/krita/pykrita/ai_diffusion.desktop";
     };
