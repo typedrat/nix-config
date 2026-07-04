@@ -25,21 +25,21 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # claude-code: 2.1.193 -> 2.1.195 (NixOS/nixpkgs#536548)
-    nixpkgs-patch-536548 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/536548.diff";
+    # claude-code: 2.1.197 -> 2.1.198 (NixOS/nixpkgs#537680)
+    nixpkgs-patch-537680 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/537680.diff";
       flake = false;
     };
 
-    # claude-code: 2.1.195 -> 2.1.196 (NixOS/nixpkgs#536899)
-    nixpkgs-patch-536899 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/536899.diff";
+    # claude-code: 2.1.198 -> 2.1.199 (NixOS/nixpkgs#538039)
+    nixpkgs-patch-538039 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/538039.diff";
       flake = false;
     };
 
-    # claude-code: 2.1.196 -> 2.1.197 (NixOS/nixpkgs#537156)
-    nixpkgs-patch-537156 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/537156.diff";
+    # claude-code: 2.1.199 -> 2.1.201 (NixOS/nixpkgs#538449)
+    nixpkgs-patch-538449 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/538449.diff";
       flake = false;
     };
 
