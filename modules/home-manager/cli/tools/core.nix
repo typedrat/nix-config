@@ -53,9 +53,17 @@ in {
 
     programs.direnv = {
       enable = true;
-      silent = true;
-      enableZshIntegration = true;
       nix-direnv.enable = true;
+
+      config = {
+        whitelist = {
+          prefix = [
+            "/home/awilliams/Development/synapdeck"
+          ];
+        };
+      };
+      enableZshIntegration = true;
+      silent = true;
     };
 
     programs.eza = {
