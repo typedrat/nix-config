@@ -256,6 +256,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # No `nixpkgs.follows`: this pins its own nixpkgs so that the prebuilt
+    # output already published to FlakeHub keeps matching what we consume,
+    # instead of drifting (and forcing a local rebuild) every time our own
+    # nixpkgs input moves.
+    orca-slicer-nanashi = {
+      url = "https://flakehub.com/f/typedrat/orca-slicer-nanashi-nix/*";
+    };
+
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
