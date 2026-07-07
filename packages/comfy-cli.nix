@@ -6,14 +6,14 @@
 }:
 python3.pkgs.buildPythonApplication rec {
   pname = "comfy-cli";
-  version = "1.11.1";
+  version = "1.12.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Comfy-Org";
     repo = "comfy-cli";
     rev = "v${version}";
-    hash = "sha256-NeDg0AWcUGkmCTS4b9bpgJ2yLZIwamY94B+d6phtY+I=";
+    hash = "sha256-+YuvB9nZlIZNnD9YSKwVHuL7aWm5JLJgvG7LLwL/rv0=";
   };
 
   build-system = [
