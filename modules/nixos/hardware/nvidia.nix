@@ -40,6 +40,7 @@ in {
       type = types.enum [
         "stable"
         "production"
+        "new_feature"
         "beta"
         "vulkan_beta"
         "dc"
@@ -54,7 +55,14 @@ in {
         "legacy_580"
       ];
       default = "stable";
-      description = "NVIDIA driver package to use from linuxPackages.nvidiaPackages";
+      description = ''
+        NVIDIA driver package to use from linuxPackages.nvidiaPackages.
+
+        "new_feature" tracks NVIDIA's New Feature branch (currently 610.x),
+        distinct from "production"/"stable" (currently 595.x). "latest" picks
+        whichever of production/new_feature has the higher version number,
+        so it isn't a stable way to pin to the New Feature branch.
+      '';
     };
 
     cuda.enable = mkOption {

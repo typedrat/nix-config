@@ -133,6 +133,7 @@
 
       nvidia = {
         enable = true;
+        package = "latest";
         cuda.enable = true;
       };
       openrgb.enable = true;
