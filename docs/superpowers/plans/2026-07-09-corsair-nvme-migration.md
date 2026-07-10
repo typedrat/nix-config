@@ -217,6 +217,30 @@ Expected: `scan: resilvered ... with 0 errors`, both devices `ONLINE`, `errors: 
 
 > Do **not** mount the new ESP by hand and leave the config alone — `fileSystems."/boot".device` is `/dev/disk/by-partlabel/disk-main-ESP`, so it would silently revert to the Samsung on the next boot and you would verify the wrong ESP. Move the *label* instead. Only ESP labels swap here; `mig-root`/`mig-swap` vs `disk-main-root`/`disk-main-swap` remain distinct, so nothing collides.
 
+- [ ] **Step 0: Create a durable fallback boot entry — DO THIS FIRST**
+
+> The machine has **exactly one** EFI boot entry (`Boot0000* Limine`, on the Samsung ESP, partition GUID `1ecce9af-81f2-4cec-82c1-7fd8ab3108e9`). `nixos-rebuild boot` runs with `canTouchEfiVariables = true`; the Limine installer may **repoint that entry** at the Corsair. If it does, every "select the Samsung ESP in firmware" instruction in this plan becomes impossible to follow.
+>
+> Create a separately-labelled entry for the Samsung ESP *before* the installer can touch anything.
+
+```bash
+efibootmgr -v > /root/efibootmgr-before.txt
+efibootmgr -c -d /dev/nvme1n1 -p 1 \
+  -L "Limine (Samsung fallback)" \
+  -l '\efi\limine\BOOTX64.EFI'
+efibootmgr -v
+```
+
+Also confirm the firmware-agnostic removable-media path exists, since firmware one-shot boot menus always offer it even with no NVRAM entry:
+
+```bash
+ls -l /boot/EFI/BOOT/BOOTX64.EFI    # or /boot/efi/boot/bootx64.efi — FAT is case-insensitive
+```
+
+**Verify:** `efibootmgr -v` lists **two** entries — the original `Limine` and the new `Limine (Samsung fallback)` — both pointing at partition GUID `1ecce9af-…`.
+
+**ABORT if** the fallback entry was not created, or if `BOOTX64.EFI` is absent from both `\EFI\BOOT\` and the entry. Without one of these, a failed Corsair boot means booting the live USB to recover, rather than picking a menu item.
+
 - [ ] **Step 1: Make the filesystem**
 
 ```bash
@@ -250,7 +274,18 @@ findmnt /boot                       # expect SOURCE /dev/nvme0n1p1
 nixos-rebuild boot
 ```
 
-- [ ] **Step 5: Reboot and verify — this is the gate**
+- [ ] **Step 5: Confirm the fallback entry survived the rebuild**
+
+```bash
+diff /root/efibootmgr-before.txt <(efibootmgr -v)
+efibootmgr -v | grep -i 'samsung fallback'
+```
+
+Expected: the `Limine (Samsung fallback)` entry is **still present** and still points at partition GUID `1ecce9af-…`. The other `Limine` entry may now point at the Corsair — that is fine and expected.
+
+**ABORT if** the fallback entry is gone. Recreate it (Step 0) before rebooting. Do not reboot without it.
+
+- [ ] **Step 6: Reboot and verify — this is the gate**
 
 ```bash
 reboot
@@ -264,7 +299,7 @@ findmnt /boot                       # expect /dev/nvme0n1p1
 zpool status zpool                  # expect healthy 2-way mirror, still
 ```
 
-**ABORT if** the machine does not boot: select the **Samsung ESP** in firmware. It is untouched, the mirror is intact, and nothing has been lost. Investigate before retrying.
+**ABORT if** the machine does not boot: at the firmware menu select **`Limine (Samsung fallback)`**. It is untouched, the mirror is intact, and nothing has been lost. Investigate before retrying.
 
 ---
 
@@ -472,8 +507,8 @@ Note: `zpool-old` predates the upgrade and remains importable by older ZFS. It i
 |---|---|
 | Task 1–3 | Nothing has touched the Samsung. Re-zap the Corsair. |
 | Task 4 (bad Corsair) | `zpool detach` the **Corsair**. Pool is untouched. |
-| Task 5 (won't boot) | Select the Samsung ESP in firmware. Mirror intact. |
-| Task 6–7 | Boot the Samsung ESP; `zpool import zpool-old`. Full system as of detach. |
+| Task 5 (won't boot) | Select `Limine (Samsung fallback)` in firmware (created in Task 5 Step 0). Mirror intact. |
+| Task 6–7 | Boot `Limine (Samsung fallback)`; `zpool import zpool-old`. Full system as of detach. |
 | After Task 8 | `zpool-old` predates the upgrade, still importable. |
 
 ## What this plan deliberately does not do
