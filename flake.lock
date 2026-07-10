@@ -584,11 +584,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1783569760,
-        "narHash": "sha256-debpliOeMVTrO3IpmFmqfSO/mgYVYxhPmxGwDrBpknU=",
+        "lastModified": 1783656166,
+        "narHash": "sha256-6WP/DOGL2X6DdZl+vhxt/R7Ahn31z0cwo3JJ0cYFC2M=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "32cdec83ac1c9d5219dbb2278b9d4e3f2f6b5dc3",
+        "rev": "dd7e87fef8e4b30bfbf59418c48ddd3ab4ddb42e",
         "type": "gitlab"
       },
       "original": {
@@ -2183,11 +2183,11 @@
         "nixpkgs-nixcord": "nixpkgs-nixcord"
       },
       "locked": {
-        "lastModified": 1783621249,
-        "narHash": "sha256-IDo+yvIjSczA/bICPUHj4F9z0OBNoePnWca2e3E+cAM=",
+        "lastModified": 1783656718,
+        "narHash": "sha256-j6htXsWnhteRDRClQb4ELzYzXJt/qSucinUpVEBtoH4=",
         "owner": "FlameFlag",
         "repo": "nixcord",
-        "rev": "71e056ca5dc1c57898d3e4c694b0c656449babdb",
+        "rev": "b2b9fdc148a8a52a4c7297c9ce71f38d9402a6f0",
         "type": "github"
       },
       "original": {
@@ -2203,12 +2203,12 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1783616414,
-        "narHash": "sha256-OHz4ipkYvhcGcKKYfEGLbjKJIqljQKQyXSVcwfDvk8s=",
-        "rev": "80e36ea220ed19e32739234edd76cb9c76b518d6",
-        "revCount": 553,
+        "lastModified": 1783656564,
+        "narHash": "sha256-hl5OKzQwvDEbuS7CjFSXm4YnO0cuW6o548sduPqFGxs=",
+        "rev": "ebf2a8bbe53a229be6b19aea506272e3d8dd40da",
+        "revCount": 555,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/nixified-ai/flake/0.1.553%2Brev-80e36ea220ed19e32739234edd76cb9c76b518d6/019f47dd-def5-7c82-90d7-93c5f04d3c94/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/nixified-ai/flake/0.1.555%2Brev-ebf2a8bbe53a229be6b19aea506272e3d8dd40da/019f4a3a-51cb-7181-a454-ae821d8db906/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -2759,12 +2759,12 @@
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
-        "lastModified": 1783418046,
-        "narHash": "sha256-YH4puKfR57sR7AhJYbGjZxFLEtFbaoHoHHQ1xAw13QE=",
-        "rev": "79db6e9c731819b1bbdec92f56118ef8be54bf87",
-        "revCount": 7,
+        "lastModified": 1783647844,
+        "narHash": "sha256-j1NA/PqwmU3ecYJsxmprOiMSrn/oxxoO5/GJhRT34HY=",
+        "rev": "af2a90b6a1e2e3a8780fe4afb111599ea6c011c9",
+        "revCount": 11,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/typedrat/orca-slicer-nanashi-nix/0.1.7%2Brev-79db6e9c731819b1bbdec92f56118ef8be54bf87/019f3de7-e71a-7b12-9435-bc5682076485/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/typedrat/orca-slicer-nanashi-nix/0.1.11%2Brev-af2a90b6a1e2e3a8780fe4afb111599ea6c011c9/019f49e5-84b1-7f83-b318-3ba7e1538a1a/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -3718,11 +3718,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1783568868,
-        "narHash": "sha256-JDOHfb/kr6+QZGDMLfQkSjL2VNYZJJAZ3bjeLhPEeaU=",
+        "lastModified": 1783655619,
+        "narHash": "sha256-KwlfSN9Py11iYlG56AsjmhJfCtfzPlS2YgyHJ1cIZ80=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "d9ba7a11bb1d215da08df254a5c4f48c93f63a34",
+        "rev": "6cb9c541989996f3481ce747865c9dbe37be719e",
         "type": "github"
       },
       "original": {
