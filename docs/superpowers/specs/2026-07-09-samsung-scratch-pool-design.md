@@ -23,7 +23,9 @@ Within this spec the data itself is never at risk: copy 1.16 TiB across, verify,
 
 `findmnt` shows these are bind mounts of *directories inside* `zpool/safe/persist`, not datasets. There is no dataset boundary, so the move is `rsync`, not `zfs send`.
 
-`/persist` is 1.92T. Removing 1.16 TiB of re-downloadable game and model-weight data leaves roughly **760G of genuinely irreplaceable data** — the difference between "backing this up is a project" and "backing this up is a weekend." Given that `/persist` currently has **no backup at all**, this is the real payoff, beyond freeing space on the fast drive.
+`/persist` is **1.49T** (it was 1.92T until a cleanup of old downloads freed ~440 GiB; the three bulk directories above were unaffected). Removing 1.16 TiB of re-downloadable game and model-weight data therefore leaves roughly **340G of genuinely irreplaceable data**.
+
+Given that `/persist` currently has **no backup at all**, that is the real payoff, beyond freeing space on the fast drive: 340G is a `syncoid` target that fits comfortably on `iserlohn` and completes in one sitting. Re-measure before relying on these numbers — they move.
 
 ## Phase 0 — The Windows question: settled, Windows is needed
 

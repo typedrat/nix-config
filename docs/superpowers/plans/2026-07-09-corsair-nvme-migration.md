@@ -22,9 +22,10 @@
 
 ## Global Constraints
 
-- **No backup of `/persist` exists.** 1.92T in exactly one place. Every gate below exists because of this.
+- **No backup of `/persist` exists.** 1.49T in exactly one place. Every gate below exists because of this.
 - The Corsair root partition must be **≥ 3,991,121,428,480 bytes**, or `zpool attach` fails.
-- ESP + swap must total **≤ 9 GiB** (budget is 9 GiB + 1.8 MiB, minus GPT/alignment). Chosen: **ESP 4 GiB, swap 4 GiB.**
+- ESP + swap must total **≤ 8 GiB**. Not 9: `4000787030016 − 9663676416 = 3991123353600`, which clears the threshold by only 1,925,120 bytes — less than GPT headers plus alignment. **9 GiB exactly fails.** Chosen: **ESP 4 GiB, swap 4 GiB.**
+- ESP sizing is driven by initrd growth, not Secure Boot. Initrds are ~136 MiB and rising; `maxGenerations = 10` needs ~1.5 GiB transient during a rebuild. **The current 1 GiB ESP cannot hold 10 generations** — it holds 4 today at 55%. This migration incidentally fixes a latent `No space left on device` failure that would have struck around generation 7.
 - Partition labels must be unique across both drives at all times. `/boot` and swap resolve through `/dev/disk/by-partlabel/`.
 - Samsung by-id: `nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D` (`/dev/nvme1n1`)
 - Corsair by-id: `nvme-Corsair_MP700_PRO_XT_AD27B6108002KO` (`/dev/nvme0n1`)
@@ -33,10 +34,10 @@
 
 ## Prerequisites (do not start without these)
 
-- [ ] A **NixOS live USB** exists and boots on this machine.
-- [ ] The **ZFS passphrase** for `zpool` is known and tested (you will type it at boot).
-- [ ] The machine is on a UPS, or you accept a power loss during a 2.12T resilver.
-- [ ] `~2 hours` of wall clock, of which the resilver is unattended.
+- [x] A **NixOS live USB** exists and boots on this machine.
+- [x] The **ZFS passphrase** for `zpool` is known and tested (you will type it at boot).
+- [x] **No UPS — risk accepted, and it is bounded.** There is no point in this plan where power loss costs data: during Task 2 the Corsair is blank; during Task 4 the pool is a mirror with the Samsung holding a complete copy and ZFS resuming the resilver on reboot; after Task 6 the Samsung is importable as `zpool-old`.
+- [ ] `~2 hours` of wall clock, of which the resilver (~1.69 TiB allocated) is unattended.
 - [ ] Working tree is clean; you are on branch `typedrat/nvme-migration-specs`.
 
 ---
@@ -231,15 +232,20 @@ efibootmgr -c -d /dev/nvme1n1 -p 1 \
 efibootmgr -v
 ```
 
-Also confirm the firmware-agnostic removable-media path exists, since firmware one-shot boot menus always offer it even with no NVRAM entry:
-
-```bash
-ls -l /boot/EFI/BOOT/BOOTX64.EFI    # or /boot/efi/boot/bootx64.efi — FAT is case-insensitive
-```
-
 **Verify:** `efibootmgr -v` lists **two** entries — the original `Limine` and the new `Limine (Samsung fallback)` — both pointing at partition GUID `1ecce9af-…`.
 
-**ABORT if** the fallback entry was not created, or if `BOOTX64.EFI` is absent from both `\EFI\BOOT\` and the entry. Without one of these, a failed Corsair boot means booting the live USB to recover, rather than picking a menu item.
+Now create the removable-media fallback, which **does not currently exist** on this machine. The ESP holds only `\EFI\limine\BOOTX64.EFI` and `\EFI\memtest86plus\mt86plus.efi`. Firmware one-shot boot menus offer `\EFI\BOOT\BOOTX64.EFI` unconditionally, with no NVRAM entry required — so without it, a cleared NVRAM (CMOS reset, dead battery, firmware update) leaves **neither** drive bootable.
+
+```bash
+install -D /boot/EFI/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI
+find /boot/EFI -iname '*.efi' -printf '%s\t%p\n' | sort -n
+```
+
+Limine locates `limine.conf` by searching the boot partition, including `/limine/`, so the copy boots the same menu. This is a 368 KB insurance policy against a failure mode the NVRAM entry cannot cover.
+
+**Verify:** `\EFI\BOOT\BOOTX64.EFI` now exists at 368640 bytes.
+
+**ABORT if** the fallback entry was not created, or `\EFI\BOOT\BOOTX64.EFI` is absent. Without at least one of these, a failed Corsair boot means live-USB recovery rather than picking a menu item.
 
 - [ ] **Step 1: Make the filesystem**
 
@@ -389,10 +395,13 @@ Swap is `randomEncryption`, so it is reformatted at boot — no `mkswap` needed.
 
 **Files:**
 - Modify: `systems/ulysses/disko-config.nix:10` (device), `:15` (ESP size), `:25` (root end)
+- Modify: `systems/ulysses/default.nix` (add `zramSwap`)
 
 **Interfaces:**
 - Consumes: the on-disk layout built in Tasks 3–6.
 - Produces: a disko config that reproduces the current disk from scratch.
+
+> **Why `zramSwap`:** the partition shrinks 8 GiB → 4 GiB, but peak observed swap residency was 4.7 GiB. Compressed in-RAM swap absorbs the 0.7 GiB shortfall. The underlying cause of the swapping is an effectively-uncapped `zfs_arc_max` (`c_max` ≈ 122 GiB of 123 GiB RAM), which lets ARC crowd out anonymous pages. **Capping ARC is deliberately out of scope** — it is a separate change with its own reboot, and stacking it on a disk migration would confound any failure.
 
 > `disko` is **not run destructively** here. This edit makes the declarative config *describe* what was built by hand, per the manual-first sequencing chosen during design.
 
@@ -434,7 +443,17 @@ main = {
 };
 ```
 
-- [ ] **Step 2: Verify it evaluates and formats**
+- [ ] **Step 2: Add zram to compensate for the smaller swap partition**
+
+In `systems/ulysses/default.nix`, in the `# --- Boot ---` region:
+
+```nix
+  # Swap shrank 8G -> 4G to fit the ESP inside the partition budget. Peak swap
+  # residency was 4.7G, so compressed in-RAM swap covers the difference.
+  zramSwap.enable = true;
+```
+
+- [ ] **Step 3: Verify it evaluates and formats**
 
 ```bash
 nix fmt
@@ -443,7 +462,7 @@ nix build .#nixosConfigurations.ulysses.config.system.build.toplevel --no-link
 
 Expected: builds clean. **ABORT if** evaluation fails.
 
-- [ ] **Step 3: Apply and reboot — this is the gate**
+- [ ] **Step 4: Apply and reboot — this is the gate**
 
 ```bash
 nixos-rebuild boot
@@ -472,7 +491,7 @@ Expected: `DATASETS MATCH`, no diff output.
 
 **ABORT if** the machine does not boot: select the Samsung ESP in firmware, then `zpool import zpool-old` for a complete system as of Task 6.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add systems/ulysses/disko-config.nix
