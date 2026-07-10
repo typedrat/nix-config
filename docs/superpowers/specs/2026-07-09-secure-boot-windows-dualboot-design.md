@@ -57,11 +57,23 @@ This is the standard `sbctl` / NixOS-wiki warning for discrete GPUs, and a 5090 
 
 **Gate:** reboot. `sbctl status` reports Secure Boot enabled and all files signed; the machine has video on the 5090; `bootctl status` shows Secure Boot enabled. **Do not proceed to Phase 2 until all three hold.**
 
-## Phase 2 — Verify FH6 actually needs this
+## Phase 2 — Verify Windows is needed at all
 
-Before spending 512 GiB and an afternoon: confirm Forza Horizon 6 runs under the intended configuration. Some modern titles' anti-cheat requires Secure Boot *and* TPM 2.0 — both now satisfied — but a few require configurations incompatible with a chainloaded, custom-PK setup.
+**Secure Boot is resolved.** FH6's anti-cheat runs under Proton, which means it loads no kernel driver and therefore performs no boot attestation. It does not read Secure Boot state, and a custom PK is invisible to it. Windows will report `SecureBootEnabled = true` regardless, since `bootmgfw.efi` remains Microsoft-signed and verified against the enrolled Microsoft certificates.
 
-`bootctl` already reports `TPM2 Support: yes`. This phase is a check, not a build. If FH6 will not run, the Windows partition has no purpose and the `win-*` partitions should be reclaimed by the scratch pool instead.
+That resolution raises a sharper question. If the anti-cheat runs under Proton, **the game already runs on Linux**, and this entire spec exists to host one tool: the custom-livery injector.
+
+Before building it, test the injector **inside the game's own Proton prefix**:
+
+```bash
+protontricks-launch --appid <fh6-appid> LiveryTool.exe
+```
+
+The reported blocker — "stronger process isolation" — is real for a Win32 injector calling `OpenProcess` / `WriteProcessMemory` against a *different* prefix, or against a native Linux process (Yama `ptrace_scope`). It does **not** hold inside a single prefix: processes sharing a `wineserver` share a Windows-side process namespace, and those calls are serviced by wineserver, not the Linux kernel. This is the standard mechanism by which mod injectors work under Proton, and it is the specific failure mode that same-prefix launching fixes.
+
+If it works, **abandon this spec** and reclaim the `win-*` partitions into the scratch pool. Twenty minutes here is weighed against 512 GiB, a dual-boot, and permanent Secure Boot key management.
+
+Residual wrinkle if Windows is built anyway: chainloading `bootmgfw.efi` from Limine yields different TPM PCR measurements than a direct firmware boot. This is harmless with BitLocker disabled (see Phase 3), but would cause recovery-key prompts otherwise.
 
 ## Phase 3 — Windows installation
 
@@ -107,7 +119,8 @@ rat.boot.windows = {
 | No video after enabling Secure Boot | `--microsoft` at enrollment; iGPU display output as recovery; CMOS clear |
 | Windows clobbers the Corsair ESP | Corsair physically disconnected during install |
 | Windows Update overwrites its ESP | Isolated on `win-esp`; the Corsair ESP is never mounted by Windows |
-| FH6 anti-cheat rejects the setup | Phase 2 checks this before any Windows work |
+| FH6 anti-cheat rejects the setup | Resolved: runs under Proton, so no kernel driver, no boot attestation |
+| Windows built unnecessarily | Phase 2 tests the injector in-prefix first; if it works, this spec is void |
 | NTFS unmountable from Linux | Fast Startup disabled |
 | Clock skew between OSes | `RealTimeIsUniversal=1` |
 
