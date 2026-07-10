@@ -25,22 +25,16 @@ Within this spec the data itself is never at risk: copy 1.16 TiB across, verify,
 
 `/persist` is 1.92T. Removing 1.16 TiB of re-downloadable game and model-weight data leaves roughly **760G of genuinely irreplaceable data** — the difference between "backing this up is a project" and "backing this up is a weekend." Given that `/persist` currently has **no backup at all**, this is the real payoff, beyond freeing space on the fast drive.
 
-## Phase 0 — Settle the Windows question first
+## Phase 0 — The Windows question: settled, Windows is needed
 
-**This must happen before any partitioning.** The Samsung is carved in a single pass, and `scratch` is the last partition. If Windows later proves unnecessary, deleting `win-esp` / `win-msr` / `win-data` leaves free space *before* `scratch` — and a partition cannot grow backwards. Reclaiming it would mean destroying and rebuilding the pool after 1.16 TiB has been moved onto it.
+Partitioning is one-shot. `scratch` is the last partition, so deleting `win-esp` / `win-msr` / `win-data` later would leave free space *before* it, and a partition cannot grow backwards — reclaiming it would mean rebuilding the pool after 1.16 TiB had been moved onto it. Hence this decision precedes `sgdisk`.
 
-Run the test from spec 3 Phase 2 now: launch the FH6 custom-livery injector **inside the game's own Proton prefix**.
+**Resolved: build the `win-*` partitions.** Two independent reasons:
 
-```bash
-protontricks-launch --appid <fh6-appid> LiveryTool.exe
-```
+1. The FH6 custom-livery injector has been tested inside the game's own Proton prefix and does not work. Same-prefix `wineserver` process access is not sufficient for it.
+2. Independently, a set of controller anomalies (GuliKit over Bluetooth on the MT7927) needs cross-testing against a native Windows stack. A VM would confound precisely the variables under investigation — USB scheduling and Bluetooth link power management — so bare metal is required.
 
-FH6's anti-cheat runs under Proton, so the game itself does not need Windows. The injector is the only reason Windows was ever in scope, and same-prefix launching is the specific thing that fixes the "process isolation" failure it hits.
-
-**Outcome decides the layout:**
-
-- **Injector works in-prefix** → Windows is unnecessary. `scratch` takes the entire drive. Spec 3 is void.
-- **Injector genuinely fails** → carve the `win-*` partitions below, and spec 3 proceeds.
+Reason 2 stands on its own: even if the injector were later solved, the diagnostic need for a native control condition remains.
 
 ## Samsung layout
 

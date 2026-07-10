@@ -3,9 +3,10 @@
 **Status:** approved, not yet executed
 **Gated on:** `2026-07-09-samsung-scratch-pool-design.md` (Windows needs the `win-esp` / `win-msr` / `win-data` partitions it creates).
 
-> **This spec may be void.** Its Phase 2 test has been promoted to spec 2 Phase 0, because partitioning the Samsung is a one-shot decision that must be made *before* the pool is built. If the FH6 livery injector runs inside the game's Proton prefix, Windows is unnecessary and nothing here gets built.
+Spec 3 of 3. Enable Secure Boot on Limine, then install Windows 11 to the Samsung, for two purposes:
 
-Spec 3 of 3. Enable Secure Boot on Limine, then install Windows 11 to the Samsung for the Forza Horizon 6 custom-livery tool, which cannot work under Linux due to process-isolation constraints on the injector.
+1. The Forza Horizon 6 custom-livery injector, which does not work under Linux — including inside the game's own Proton prefix.
+2. A native control condition for diagnosing controller anomalies (GuliKit over Bluetooth on the MT7927).
 
 ## Bootloader decision: stay on Limine
 
@@ -59,23 +60,37 @@ This is the standard `sbctl` / NixOS-wiki warning for discrete GPUs, and a 5090 
 
 **Gate:** reboot. `sbctl status` reports Secure Boot enabled and all files signed; the machine has video on the 5090; `bootctl status` shows Secure Boot enabled. **Do not proceed to Phase 2 until all three hold.**
 
-## Phase 2 — Verify Windows is needed at all
+## Phase 2 — Preconditions for the controller cross-test
 
-**Secure Boot is resolved.** FH6's anti-cheat runs under Proton, which means it loads no kernel driver and therefore performs no boot attestation. It does not read Secure Boot state, and a custom PK is invisible to it. Windows will report `SecureBootEnabled = true` regardless, since `bootmgfw.efi` remains Microsoft-signed and verified against the enrolled Microsoft certificates.
+**Secure Boot is not a concern.** FH6's anti-cheat runs under Proton, which means it loads no kernel driver and performs no boot attestation. It does not read Secure Boot state, and a custom PK is invisible to it. Windows reports `SecureBootEnabled = true` regardless, since `bootmgfw.efi` remains Microsoft-signed and verified against the enrolled Microsoft certificates.
 
-That resolution raises a sharper question. If the anti-cheat runs under Proton, **the game already runs on Linux**, and this entire spec exists to host one tool: the custom-livery injector.
+The in-prefix injector test (`protontricks-launch --appid <fh6-appid> LiveryTool.exe`) has been run and **does not work**, so reason 1 for Windows holds. Reason 2 — the controller cross-test — carries its own preconditions, and neglecting them produces a confounded result rather than a wrong one, which is worse.
 
-Before building it, test the injector **inside the game's own Proton prefix**:
+### The MT7927 needs a working Windows driver
 
-```bash
-protontricks-launch --appid <fh6-appid> LiveryTool.exe
-```
+The Linux side runs **out-of-tree patched** `btusb`/`btmtk`, because the Bluetooth USB ID `0489:e110` is not yet in mainline. Filogic 380 is recent Wi-Fi 7 silicon. If MediaTek's Windows driver for this card is immature or absent, an observed behavioural difference measures *that driver*, not the controller or the Linux stack.
 
-The reported blocker — "stronger process isolation" — is real for a Win32 injector calling `OpenProcess` / `WriteProcessMemory` against a *different* prefix, or against a native Linux process (Yama `ptrace_scope`). It does **not** hold inside a single prefix: processes sharing a `wineserver` share a Windows-side process namespace, and those calls are serviced by wineserver, not the Linux kernel. This is the standard mechanism by which mod injectors work under Proton, and it is the specific failure mode that same-prefix launching fixes.
+**Verify Windows driver availability for the MT7927 / MT6639 before treating any cross-test result as signal.**
 
-If it works, **abandon this spec** and reclaim the `win-*` partitions into the scratch pool. Twenty minutes here is weighed against 512 GiB, a dual-boot, and permanent Secure Boot key management.
+### Both Linux workarounds are power-management overrides
 
-Residual wrinkle if Windows is built anyway: chainloading `bootmgfw.efi` from Limine yields different TPM PCR measurements than a direct firmware boot. This is harmless with BitLocker disabled (see Phase 3), but would cause recovery-key prompts otherwise.
+`rat.hardware.mt7927.disableAspm` and the USB-autosuspend fix (which replaced the Realtek RTL8761B dongle, whose autosuspend severed the GuliKit's BT link ~1 minute in) are both power-management overrides. Windows applies its own ASPM and USB selective-suspend defaults, which differ.
+
+A clean result on Windows therefore does **not** isolate a Linux driver bug. It may only mean Windows does not aggressively power-manage that link.
+
+### Isolate the variables
+
+Test the GuliKit **wired, on both platforms, first.** That removes Bluetooth, the MT7927, and its driver from the loop entirely. Only once wired behaviour is established as identical does a wireless discrepancy implicate the BT path.
+
+| Test | Isolates |
+|---|---|
+| Wired, Linux vs Windows | The controller and its HID handling |
+| Wireless, Linux vs Windows | The BT stack + MT7927 driver + power management |
+| Wireless, Linux, `disableAspm` toggled | ASPM specifically |
+
+### Residual wrinkle
+
+Chainloading `bootmgfw.efi` from Limine yields different TPM PCR measurements than a direct firmware boot. Harmless with BitLocker disabled (Phase 3); it would otherwise cause recovery-key prompts.
 
 ## Phase 3 — Windows installation
 
@@ -122,7 +137,8 @@ rat.boot.windows = {
 | Windows clobbers the Corsair ESP | Corsair physically disconnected during install |
 | Windows Update overwrites its ESP | Isolated on `win-esp`; the Corsair ESP is never mounted by Windows |
 | FH6 anti-cheat rejects the setup | Resolved: runs under Proton, so no kernel driver, no boot attestation |
-| Windows built unnecessarily | Phase 2 tests the injector in-prefix first; if it works, this spec is void |
+| No MT7927 Windows driver → controller cross-test is meaningless | Verify driver availability in Phase 2, before drawing conclusions |
+| Windows PM defaults differ → false "Linux bug" signal | Wired-first test matrix in Phase 2 isolates BT from the controller |
 | NTFS unmountable from Linux | Fast Startup disabled |
 | Clock skew between OSes | `RealTimeIsUniversal=1` |
 
