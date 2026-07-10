@@ -247,10 +247,21 @@ ls -l /boot/EFI/BOOT/BOOTX64.EFI    # or /boot/efi/boot/bootx64.efi — FAT is c
 mkfs.vfat -F32 -n BOOT /dev/disk/by-partlabel/mig-esp
 ```
 
-- [ ] **Step 2: Swap the ESP labels**
+- [ ] **Step 2: Swap the ESP labels — and check the fallback filesystem's health**
 
 ```bash
 umount /boot || systemctl stop boot.mount
+```
+
+> The Samsung ESP contains `FSCK0000.REC` and `FSCK0001.REC` — orphaned-cluster files left by `fsck.vfat` after recovering a damaged FAT. This volume has been repaired at least twice. It is also the fallback that every ABORT gate in this plan depends on. Check it now, while it is unmounted and before it becomes load-bearing.
+
+```bash
+fsck.vfat -n /dev/nvme1n1p1        # read-only check; must be unmounted for a valid result
+```
+
+Expected: no errors beyond the known `FSCK*.REC` orphans. **ABORT if** it reports FAT damage, a bad boot sector, or cross-linked clusters — the fallback is not trustworthy, and the mirror should not be broken until you have a rescue path you believe in. Repair with `fsck.vfat -r` and re-verify before continuing.
+
+```bash
 sgdisk -c 1:old-esp       /dev/nvme1n1   # Samsung steps aside
 sgdisk -c 1:disk-main-ESP /dev/nvme0n1   # Corsair takes the name
 partprobe /dev/nvme0n1 /dev/nvme1n1
