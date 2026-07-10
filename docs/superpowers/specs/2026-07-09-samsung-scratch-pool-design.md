@@ -25,6 +25,23 @@ Within this spec the data itself is never at risk: copy 1.16 TiB across, verify,
 
 `/persist` is 1.92T. Removing 1.16 TiB of re-downloadable game and model-weight data leaves roughly **760G of genuinely irreplaceable data** — the difference between "backing this up is a project" and "backing this up is a weekend." Given that `/persist` currently has **no backup at all**, this is the real payoff, beyond freeing space on the fast drive.
 
+## Phase 0 — Settle the Windows question first
+
+**This must happen before any partitioning.** The Samsung is carved in a single pass, and `scratch` is the last partition. If Windows later proves unnecessary, deleting `win-esp` / `win-msr` / `win-data` leaves free space *before* `scratch` — and a partition cannot grow backwards. Reclaiming it would mean destroying and rebuilding the pool after 1.16 TiB has been moved onto it.
+
+Run the test from spec 3 Phase 2 now: launch the FH6 custom-livery injector **inside the game's own Proton prefix**.
+
+```bash
+protontricks-launch --appid <fh6-appid> LiveryTool.exe
+```
+
+FH6's anti-cheat runs under Proton, so the game itself does not need Windows. The injector is the only reason Windows was ever in scope, and same-prefix launching is the specific thing that fixes the "process isolation" failure it hits.
+
+**Outcome decides the layout:**
+
+- **Injector works in-prefix** → Windows is unnecessary. `scratch` takes the entire drive. Spec 3 is void.
+- **Injector genuinely fails** → carve the `win-*` partitions below, and spec 3 proceeds.
+
 ## Samsung layout
 
 Check 4Kn support first, exactly as with the Corsair — the drive is being wiped anyway, so it is free:
@@ -43,6 +60,8 @@ Then, after `zpool destroy zpool-old`:
 | 2 | `win-msr` | 16 MiB | `0C01` | Microsoft Reserved |
 | 3 | `win-data` | 512 GiB | `0700` | Windows + Forza Horizon 6 |
 | 4 | `scratch` | remainder ≈ 3.1 TiB | `BF00` | ZFS scratch pool |
+
+This table applies **only if Phase 0 concluded that Windows is needed.** Otherwise partitions 1–3 are omitted and `scratch` spans the whole disk.
 
 All four partitions are created **now**, in one pass. Windows Setup is never allowed to create partitions — it installs *into* the existing `win-data`, using the existing `win-esp`. Partitions 1–3 sit empty until spec 3.
 

@@ -3,6 +3,8 @@
 **Status:** approved, not yet executed
 **Gated on:** `2026-07-09-samsung-scratch-pool-design.md` (Windows needs the `win-esp` / `win-msr` / `win-data` partitions it creates).
 
+> **This spec may be void.** Its Phase 2 test has been promoted to spec 2 Phase 0, because partitioning the Samsung is a one-shot decision that must be made *before* the pool is built. If the FH6 livery injector runs inside the game's Proton prefix, Windows is unnecessary and nothing here gets built.
+
 Spec 3 of 3. Enable Secure Boot on Limine, then install Windows 11 to the Samsung for the Forza Horizon 6 custom-livery tool, which cannot work under Linux due to process-isolation constraints on the injector.
 
 ## Bootloader decision: stay on Limine
