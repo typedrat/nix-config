@@ -25,21 +25,21 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # claude-code: 2.1.197 -> 2.1.198 (NixOS/nixpkgs#537680)
-    nixpkgs-patch-537680 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/537680.diff";
+    # claude-code: 2.1.201 -> 2.1.202 (NixOS/nixpkgs#539214)
+    nixpkgs-patch-539214 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/539214.diff";
       flake = false;
     };
 
-    # claude-code: 2.1.198 -> 2.1.199 (NixOS/nixpkgs#538039)
-    nixpkgs-patch-538039 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/538039.diff";
+    # claude-code: 2.1.202 -> 2.1.204 (NixOS/nixpkgs#539470)
+    nixpkgs-patch-539470 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/539470.diff";
       flake = false;
     };
 
-    # claude-code: 2.1.199 -> 2.1.201 (NixOS/nixpkgs#538449)
-    nixpkgs-patch-538449 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/538449.diff";
+    # claude-code: 2.1.204 -> 2.1.205 (NixOS/nixpkgs#539827)
+    nixpkgs-patch-539827 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/539827.diff";
       flake = false;
     };
 
@@ -182,8 +182,7 @@
     hyprlock.url = "github:hyprwm/hyprlock";
 
     hyprland-plugins = {
-      # TEMP: hyprwm/hyprland-plugins#685 (hyprbars and hyprfocus: chase Hyprland)
-      url = "github:LionHeartP/hyprland-plugins";
+      url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
 
