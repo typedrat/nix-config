@@ -13,13 +13,14 @@
   # apply the file-permission normalisation introduced for fetcherVersion >= 2
   # (see nixpkgs PR #350063). The resulting hash therefore drifts depending on
   # the build host's umask/permission state, causing FOD hash mismatches on
-  # rebuilds. Bump to `fetcherVersion = 3` for stable, host-independent hashes
-  # and override `pnpmDeps` accordingly until upstream migrates.
+  # rebuilds. Override `pnpmDeps` with `fetcherVersion = 4` (the only version
+  # supported for pnpm 11) for stable, host-independent hashes until upstream
+  # migrates.
   jellarrPackage = inputs'.jellarr.packages.default.overrideAttrs (old: {
     pnpmDeps = pkgs.fetchPnpmDeps {
-      fetcherVersion = 3;
+      fetcherVersion = 4;
       inherit (old) pname version src;
-      hash = "sha256-n0Msdv5pdnM6KVG/j3ixzZM81LK3gKHsdKLH7A1EqHQ=";
+      hash = "sha256-jo1BjRAjjfNKF0xb5cLCuELSveHeJ98iLPhMDKP1QbI=";
     };
   });
 

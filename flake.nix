@@ -195,6 +195,14 @@
       url = "github:nix-community/authentik-nix";
     };
 
+    # Linux-only system set for bun2nix (below). nixpkgs 26.11 dropped
+    # x86_64-darwin, and bun2nix defaults its flake-parts `systems` to
+    # nix-systems/default (all four platforms). flake-parts' `flake.formatter`
+    # eagerly instantiates every system's treefmt, so merely reading bun2nix's
+    # `self'` drags in an x86_64-darwin nixpkgs and aborts. Constrain it to
+    # Linux, which is all we build.
+    systems-linux.url = "github:nix-systems/default-linux";
+
     fenix = {
       url = "https://flakehub.com/f/nix-community/fenix/*";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -210,11 +218,13 @@
     handy = {
       url = "github:koloved/Handy/flatpak_wayland";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.bun2nix.inputs.systems.follows = "systems-linux";
     };
 
     hunk = {
       url = "github:modem-dev/hunk";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.bun2nix.inputs.systems.follows = "systems-linux";
     };
 
     jellarr = {
@@ -264,6 +274,7 @@
     style-search = {
       url = "github:typedrat/style-search";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.bun2nix.inputs.systems.follows = "systems-linux";
     };
     #endregion
 
