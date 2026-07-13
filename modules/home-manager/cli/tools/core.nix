@@ -80,7 +80,7 @@ in {
     programs.fzf = {
       enable = true;
       enableZshIntegration = true;
-      fileWidgetCommand = "${lib.getExe config.programs.fd.package} --type f";
+      fileWidget.command = "${lib.getExe config.programs.fd.package} --type f";
 
       defaultOptions = [
         ''--preview \"${lib.getExe config.programs.bat.package} --color=always --style=numbers --line-range=:500 {}\"''

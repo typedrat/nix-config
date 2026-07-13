@@ -130,6 +130,10 @@ in {
           waybar.mode = "createLink";
         };
 
+        # catppuccin.cursors populates home.pointerCursor but no longer flips its
+        # enable flag; set it explicitly so cursor config still gets generated.
+        home.pointerCursor.enable = true;
+
         gtk = {
           enable = true;
 

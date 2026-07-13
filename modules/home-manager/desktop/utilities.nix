@@ -23,7 +23,7 @@ in {
     };
     home.packages = with pkgs; [
       qalculate-qt
-      transmission_4-qt6
+      transmission_4-qt
       waypipe
       wev
       wl-clipboard
