@@ -135,6 +135,7 @@
         enable = true;
         package = "latest";
         cuda.enable = true;
+        profiling.enable = true;
       };
       openrgb.enable = true;
       topping-e2x2.enable = true;
