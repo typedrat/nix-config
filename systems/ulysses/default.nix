@@ -6,9 +6,9 @@
   imports = [
     ./alsa-ucm-conf.nix
     # ./comfyui
+    ./dell-no-audio
     ./disko-config.nix
     ./superio.nix
-    ./wireplumber.nix
   ];
 
   # --- Networking ---
