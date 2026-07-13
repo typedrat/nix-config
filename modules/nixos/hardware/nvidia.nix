@@ -70,6 +70,19 @@ in {
       default = false;
       description = "Enable CUDA support in nixpkgs";
     };
+
+    profiling.enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable GPU profiling for non-admin users.
+
+        Adds cudaPackages.nsight_compute (kernel-level) and nsight_systems
+        (timeline) to the system PATH and sets the
+        NVreg_RestrictProfilingToAdminUsers=0 modprobe option, letting
+        profiling tools read the GPU's performance counters without root.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -176,8 +189,19 @@ in {
       })
     ];
 
-    environment.systemPackages = with pkgs; [
-      nvitop
-    ];
+    # By default the driver restricts GPU performance counters to root; clearing
+    # this lets Nsight Compute profile as a normal user.
+    hardware.nvidia.moduleParams = mkIf cfg.profiling.enable {
+      nvidia.NVreg_RestrictProfilingToAdminUsers = 0;
+    };
+
+    environment.systemPackages = with pkgs;
+      [
+        nvitop
+      ]
+      ++ lib.optionals cfg.profiling.enable [
+        cudaPackages.nsight_compute
+        cudaPackages.nsight_systems
+      ];
   };
 }
