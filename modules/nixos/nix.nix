@@ -44,6 +44,34 @@
             ];
         })
 
+        # file 5.48's landlock sandbox forbids executing the decompression
+        # helpers under --uncompress, so file reports compressed tarballs by
+        # their outer compression MIME (application/x-bzip2) instead of
+        # application/x-tar. That breaks patool's mime detection and test suite
+        # (NixOS/nixpkgs#540025). NixOS/nixpkgs#540742 fixes it by also granting
+        # LANDLOCK_ACCESS_FS_EXECUTE, but patching file globally rebuilds the
+        # world, so scope the patched file to patool alone (it bakes file into
+        # its runtime PATH). Drop once the pinned nixpkgs includes #540742.
+        (_final: prev: {
+          pythonPackagesExtensions =
+            prev.pythonPackagesExtensions
+            ++ [
+              (_python-final: python-prev: {
+                patool = python-prev.patool.override {
+                  file = prev.file.overrideAttrs (oldAttrs: {
+                    postPatch =
+                      (oldAttrs.postPatch or "")
+                      + ''
+                        substituteInPlace src/landlock.c --replace-fail \
+                          "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR" \
+                          "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_EXECUTE"
+                      '';
+                  });
+                };
+              })
+            ];
+        })
+
         # nodejs 20 (bundled by github-runner for the Actions Node 20 runtime)
         # fails its check phase on this host: test-fs-readdir-ucs2 creates a file
         # with an invalid UCS-2 byte sequence as its name, but iserlohn's ZFS
