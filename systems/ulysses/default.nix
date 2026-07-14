@@ -88,6 +88,18 @@
   #   ];
   # };
 
+  # --- TLS certificates ---
+
+  # Vast.ai Jupyter CA — signs the per-instance TLS certs used to reach a
+  # rented instance's Jupyter/console over HTTPS. Trusting the root lets
+  # browsers and curl validate those connections.
+  security.pki.certificateFiles = [
+    (pkgs.fetchurl {
+      url = "https://console.vast.ai/static/jvastai_root.cer";
+      hash = "sha256-QGjq6SSC8EWhFZtStgQULMLH5Cena/jPIHDneZeOlQc=";
+    })
+  ];
+
   # --- udev rules ---
 
   # Mionix Naos PRO - grant user access to hidraw devices

@@ -29,6 +29,12 @@
   zenRepoAccent = capitalizeFirst accent;
 
   zenFirefoxConfig = {
+    # On Linux, Firefox reads OS-trusted CAs (e.g. the Vast.ai Jupyter CA added
+    # via security.pki.certificateFiles) only through a PKCS#11 module — the
+    # enterprise_roots pref is a no-op here. Load p11-kit's trust module so the
+    # system trust store is honored.
+    policies.SecurityDevices."System Trust Store" = "${pkgs.p11-kit.out}/lib/pkcs11/p11-kit-trust.so";
+
     profiles = {
       default = {
         id = 0;
