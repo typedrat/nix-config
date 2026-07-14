@@ -56,12 +56,14 @@ in {
       openrouterApiKey = {};
       answerOverflowKey = {};
       homeAssistantToken = {};
+      vastApiKey = {};
     };
 
     home.packages =
       (with pkgs; [
         llm
         python3Packages.huggingface-hub
+        vast-cli
       ])
       ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp;
 
@@ -231,6 +233,7 @@ in {
         export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
         export ANSWER_OVERFLOW_KEY=$(cat ${config.sops.secrets.answerOverflowKey.path})
         export HOME_ASSISTANT_TOKEN=$(cat ${config.sops.secrets.homeAssistantToken.path})
+        export VAST_API_KEY=$(cat ${config.sops.secrets.vastApiKey.path})
       ''
     );
   };
