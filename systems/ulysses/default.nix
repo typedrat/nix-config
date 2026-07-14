@@ -239,7 +239,10 @@
     # User configuration
     users.awilliams = {
       enable = true;
-      extraGroups = ["comfyui"];
+      extraGroups = [
+        "comfyui"
+        "ydotool"
+      ];
       cli = {
         enable = true;
         ai.peon-ping.enable = true;

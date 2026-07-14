@@ -40,6 +40,8 @@ in {
   config = mkIf config.rat.gui.enable {
     services.displayManager.defaultSession = config.rat.gui.defaultSession;
 
+    programs.ydotool.enable = true;
+
     boot = {
       extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
       kernelModules = ["v4l2loopback"];

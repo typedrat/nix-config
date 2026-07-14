@@ -71,6 +71,7 @@
     # User configuration (system-specific overrides)
     users.awilliams = {
       enable = true;
+      extraGroups = ["ydotool"];
       gui = {
         enable = true;
         hyprland = {
