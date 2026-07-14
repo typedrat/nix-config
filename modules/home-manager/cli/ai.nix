@@ -34,6 +34,7 @@ in {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         "AI"
+        ".codex"
         ".config/opencode"
         ".local/share/opencode"
         ".local/state/opencode"
@@ -65,6 +66,7 @@ in {
         python3Packages.huggingface-hub
         vast-cli
       ])
+      ++ [inputs'.codex-cli.packages.default]
       ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp;
 
     home.sessionVariables =

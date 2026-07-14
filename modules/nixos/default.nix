@@ -14,6 +14,7 @@
     ./alien.nix
     ./appimage.nix
     ./avahi.nix
+    ./codex-computer-use.nix
     ./flatpak.nix
     ./handy.nix
     ./impermanence.nix
