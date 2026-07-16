@@ -12,8 +12,8 @@
   promptOverrides = fetchFromGitHub {
     owner = "skrabe";
     repo = "lobotomized-claude-code";
-    rev = "47430bc4bdbc9e9fa2db50a2d4b306c1ca1b1c84";
-    hash = "sha256-eMWSDXrmQ/SfpNoFLQ1F9tK9xy7xlM/QemAQDSpEjGo=";
+    rev = "c20123024deb756bae41563bb285b8098bda2e24";
+    hash = "sha256-+rGlg2kCFU7h6FnqBEvWSU3JO7887focy239HVyw+uc=";
   };
 in
   # Override claude-code itself rather than wrapping its output, so the
@@ -40,7 +40,7 @@ in
         # tweakcc seeds defaults into system-prompts/ and system-reminders/
         # on first --apply, so they must be writable — symlinks back to
         # the immutable prompt-overrides source are insufficient.
-        cp -RL ${promptOverrides}/system-prompts-opus-4-8  "$TWEAKCC_CONFIG_DIR/system-prompts"
+        cp -RL ${promptOverrides}/system-prompts-fable-5 "$TWEAKCC_CONFIG_DIR/system-prompts"
         cp -RL ${promptOverrides}/system-reminders "$TWEAKCC_CONFIG_DIR/system-reminders"
         chmod -R u+w "$TWEAKCC_CONFIG_DIR/system-prompts" "$TWEAKCC_CONFIG_DIR/system-reminders"
 
