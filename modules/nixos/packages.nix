@@ -10,6 +10,7 @@
       nix-output-monitor
       nvme-cli
       gptfdisk
+      parted
     ];
   };
 }
