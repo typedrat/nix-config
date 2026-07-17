@@ -9,6 +9,7 @@
       just
       nix-output-monitor
       nvme-cli
+      gptfdisk
     ];
   };
 }
