@@ -21,24 +21,29 @@ This is spec 1 of 3. Spec 2 (`samsung-scratch-pool`) and spec 3 (`secure-boot-wi
 
 ## Approach
 
-`zpool attach` → resilver → `zpool detach`. ZFS's own resilver is the copy tool, and it is the only tool that checksum-verifies every block on the way in.
+**Decision revised to fresh pool + `zfs send -Rw`** (see the implementation plan for the executable version). The original choice was `zpool attach` → resilver → `zpool detach`, and that is still the safer, simpler operation. It was abandoned for one reason: it caps ESP + swap at ~8.9 GiB (root must be ≥ the existing vdev), and the desired layout is **4 GiB ESP + 8 GiB swap = 12 GiB**, which only a fresh pool can accommodate. See the partition-budget note below for why 8 GiB swap is impossible under attach.
 
-The pool keeps its name, GUID, encryption root, and `ashift`. The config delta is essentially the device path. **At no point does only one copy of the data exist**: one copy → two copies → two copies, dropping back to one only after the machine has booted off the Corsair. If the Corsair is defective, detach *it* instead and nothing is lost.
+The fresh-pool approach:
+
+- A raw replication stream (`zfs send -Rw`) carries every dataset, property, snapshot (`@blank`, `@premigrate`, `safe/hyperion-home`), and the **creation-time-immutable** `normalization=formD` — so faithfulness comes from the stream, not hand-recreation.
+- **No single-copy window** provided the Samsung is not wiped: the new pool is populated while the Samsung stays live, and the Samsung is retained as `zpool-old` after cutover. (The original spec text overstated this as a mandatory drawback of send/recv; it is not.)
+- The genuine risk is narrower than "immutable properties": raw-receiving an **encrypted pool-root** has mixed field reports. The plan neutralises it by performing the receive **live and reversibly** and gating on `zfs load-key` before any reboot — a failed receive costs nothing and the Samsung is untouched.
+- Bonus: a fresh pool is born with current feature flags, so no later `zpool upgrade`.
 
 Rejected alternatives:
 
-- **Fresh pool + `zfs send -w | zfs recv`.** The only option that can change genuinely immutable pool properties. It buys a reset fragmentation number (meaningless on NVMe — that metric prices seeks) and current feature flags (which `zpool upgrade` grants anyway). It costs a window where the new pool is the sole writable target, plus raw-send encryption-root sharp edges. Not worth it against an unbacked-up 1.92T.
+- **`zpool attach` → resilver → `detach`.** Simpler and safer, and the recommendation until the 8 GiB swap requirement ruled it out. Preserved in git history as the fallback if the encrypted receive proves intractable.
 - **`disko` destroy + restore.** Rules itself out. There is nothing to restore from.
 
-## Partition budget
+## Partition budget (why attach was ruled out)
 
-`zpool attach` refuses a device smaller than the existing vdev. The Samsung's root partition is **3,991,121,428,480 B**, so:
+`zpool attach` refuses a device smaller than the existing vdev. The Samsung's root partition is **3,991,121,428,480 B**, so under attach:
 
 ```
 4,000,787,030,016 − 3,991,121,428,480 = 9,665,601,536 B ≈ 9 GiB + 1.8 MiB
 ```
 
-**ESP + swap must fit in 9 GiB**, with ~2 MiB consumed by GPT headers and alignment.
+**Under attach, ESP + swap must fit in ~9 GiB**, with ~2 MiB consumed by GPT headers and alignment — so 8 GiB swap plus a 4 GiB ESP (12 GiB) is impossible, which is what forced the switch to a fresh pool. Under the fresh-pool approach the budget disappears: root only has to hold 1.49T, so **ESP 4 GiB + swap 8 GiB** fits with terabytes to spare.
 
 Chosen: **ESP 4 GiB, swap 4 GiB** (8 GiB total). The new root lands ~1 GiB *larger* than the Samsung's, so the attach has margin rather than being byte-exact.
 

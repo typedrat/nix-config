@@ -1,484 +1,332 @@
-# Corsair NVMe Migration Implementation Plan
+# Corsair NVMe Migration Implementation Plan (send/recv)
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to track task-by-task. Steps use checkbox (`- [ ]`) syntax.
 
 > ## ⚠ THIS PLAN IS NOT SUBAGENT-EXECUTABLE
 >
-> It runs `nvme format` and `zpool attach/detach` against the live root pool of a
-> workstation with **no backup of `/persist`**. Three tasks require a physical
-> reboot and reading a firmware boot menu. An agent cannot observe a POST screen,
-> cannot select a firmware boot entry, and cannot recover a machine that fails to
-> come up.
+> It runs `nvme format`, `sgdisk`, and `zfs recv` against the live root pool of a
+> workstation with **no backup of `/persist`**, and part of it runs from a live
+> USB. An agent cannot observe a POST screen, select a firmware boot entry, type
+> a passphrase at an initrd prompt, or recover a machine that fails to come up.
 >
-> **A human runs every command in this plan, at the console.** An agent may read
-> it aloud, check outputs against the expected values, and refuse to advance a
-> gate — nothing more.
+> **A human runs every command, at the console.** An agent may read the plan,
+> check output against expected values, and refuse to advance a gate.
 
-**Goal:** Move the `zpool` root pool from the Samsung 990 EVO Plus to the Corsair MP700 PRO XT, live, with no restore step and no moment where only one copy of the data exists.
+> ## ⚠ DEVICE NAMES ARE NOT STABLE — THIS IS NOT THEORETICAL
+>
+> Between two sessions of writing this plan, with no hardware change, the kernel
+> names **inverted**: the Corsair went from `nvme0n1` to `nvme1n1`, the Samsung
+> from `nvme1n1` to `nvme0n1`. A `nvme format /dev/nvme0n1` written for the first
+> session would have formatted the **live system** in the second.
+>
+> **Every destructive command uses `/dev/disk/by-id/…` or
+> `/dev/disk/by-partlabel/…`, never `/dev/nvmeXnY`.** Task 0 re-derives the
+> mapping for the current session into shell variables. Use the variables.
 
-**Architecture:** `zpool attach` → resilver → `zpool detach`. ZFS's own resilver performs the copy, checksum-verifying every block. The pool retains its name, GUID, encryption root, and `ashift`. The Samsung is never wiped — after detach it is renamed `zpool-old` and kept as an intact, importable fallback.
+**Goal:** Move the root pool to the Corsair MP700 PRO XT via `zfs send -Rw`, into a fresh pool that permits a 4 GiB ESP + 8 GiB swap layout the attach method cannot. The Samsung is kept intact as the fallback.
 
-**Tech Stack:** ZFS on root, disko (declarative, reconciled after the fact), Limine bootloader, impermanence with root rollback, NixOS unstable.
+**Architecture:** Create a new pool on the Corsair; `zfs send -Rw` (raw replication stream) the entire `zpool` hierarchy into it — carrying every property, snapshot, and the creation-time-immutable `normalization=formD`. The risky part (raw-receiving an encrypted pool-root) is proven **live and reversibly** before any reboot. Final cutover — rename, catch-up increment, bootloader — runs from a live USB. The Samsung is renamed `zpool-old` and never wiped by this plan.
+
+**Tech Stack:** ZFS on root (encrypted, single encryption root at pool top), Limine, impermanence with root rollback, disko (reconciled after), NixOS unstable.
 
 ## Global Constraints
 
-- **No backup of `/persist` exists.** 1.49T in exactly one place. Every gate below exists because of this.
-- The Corsair root partition must be **≥ 3,991,121,428,480 bytes**, or `zpool attach` fails.
-- ESP + swap must total **≤ 8 GiB**. Not 9: `4000787030016 − 9663676416 = 3991123353600`, which clears the threshold by only 1,925,120 bytes — less than GPT headers plus alignment. **9 GiB exactly fails.** Chosen: **ESP 4 GiB, swap 4 GiB.**
-- ESP sizing is driven by initrd growth, not Secure Boot. Initrds are ~136 MiB and rising; `maxGenerations = 10` needs ~1.5 GiB transient during a rebuild. **The current 1 GiB ESP cannot hold 10 generations** — it holds 4 today at 55%. This migration incidentally fixes a latent `No space left on device` failure that would have struck around generation 7.
-- Partition labels must be unique across both drives at all times. `/boot` and swap resolve through `/dev/disk/by-partlabel/`.
-- Samsung by-id: `nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D` (`/dev/nvme1n1`)
-- Corsair by-id: `nvme-Corsair_MP700_PRO_XT_AD27B6108002KO` (`/dev/nvme0n1`)
-- Existing vdev name in `zpool status`: `nvme-eui.0025385a51a3c872-part2`
-- **Never** run a destructive command without first re-confirming the device model string.
+- **No backup of `/persist` exists.** 1.49T in one place. Every gate exists because of this.
+- **`by-id` for all destructive ops. Never `/dev/nvmeXnY`.** (See the device-name warning above.)
+- New pool must end up named **`zpool`**, `ashift=12`, `autotrim=on`, with every dataset property reproduced. `send -Rw` carries them, including `normalization=formD` (immutable after creation — cannot be fixed by hand later).
+- Encryption root is the pool root `zpool`; single passphrase unlocks all. Preserving this through `recv` is the de-risk gate (Task 4).
+- Layout: **ESP 4 GiB, swap 8 GiB, root = remainder.** No attach threshold — a fresh pool only stores 1.49T, so root can be smaller than the disk.
+- Stable identifiers (verify in Task 0, do not trust the parentheticals):
+  - Corsair: `nvme-Corsair_MP700_PRO_XT_AD27B6108002KO`
+  - Samsung: `nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D`
+  - Live vdev in `zpool status`: `nvme-eui.0025385a51a3c872-part2` (on the Samsung)
+- A fresh pool is born with current feature flags, so **no `zpool upgrade` is needed** (the attach plan's Task 8 is gone).
+- **8 GiB swap covers the 4.7 GiB observed peak outright — no zram.** The peak itself is ARC-eviction artifact; capping `zfs_arc_max` is a separate follow-up, out of scope.
 
-## Prerequisites (do not start without these)
+## Prerequisites
 
-- [x] A **NixOS live USB** exists and boots on this machine.
-- [x] The **ZFS passphrase** for `zpool` is known and tested (you will type it at boot).
-- [x] **No UPS — risk accepted, and it is bounded.** There is no point in this plan where power loss costs data: during Task 2 the Corsair is blank; during Task 4 the pool is a mirror with the Samsung holding a complete copy and ZFS resuming the resilver on reboot; after Task 6 the Samsung is importable as `zpool-old`.
-- [ ] `~2 hours` of wall clock, of which the resilver (~1.69 TiB allocated) is unattended.
-- [ ] Working tree is clean; you are on branch `typedrat/nvme-migration-specs`.
+- [x] NixOS live USB, tested, boots on this machine. **Required — the cutover runs from it.**
+- [x] ZFS passphrase known and tested (typed at initrd, and at every `load-key` in this plan).
+- [x] No UPS — accepted, bounded: the Samsung is never wiped, so any failure means "boot the Samsung and retry," never data loss.
+- [ ] `~1–2 hours`; the live send (~1.49T) is the long unattended part; the USB cutover is short.
+- [ ] On branch `typedrat/nvme-migration-specs`, tree clean.
 
 ---
 
-### Task 1: Capture baseline state
+### Task 0: Establish this session's device mapping (MANDATORY, FIRST)
 
-**Files:**
-- Create: `/root/migration-baseline.txt` (scratch, not committed)
+**Files:** none.
 
 **Interfaces:**
-- Produces: the detached-vdev GUID and partition geometry that Tasks 2, 5, and 6 depend on.
+- Produces: shell variables `$CORSAIR` and `$SAMSUNG` (stable `by-id` paths) used by every later task. Re-run this at the start of **every** session — the `nvmeXnY` names may have changed since last time.
 
-- [ ] **Step 1: Record everything that must be true again afterward**
-
-```bash
-{
-  echo "=== date ==="; date
-  echo "=== nvme list ==="; nvme list
-  echo "=== lsblk bytes ==="; lsblk -b -o NAME,SIZE,MODEL,SERIAL,PARTLABEL,FSTYPE,MOUNTPOINT
-  echo "=== zpool status ==="; zpool status zpool
-  echo "=== zpool list -v -p ==="; zpool list -v -p zpool
-  echo "=== zfs list ==="; zfs list
-  echo "=== efibootmgr ==="; efibootmgr -v
-  echo "=== findmnt /boot ==="; findmnt /boot
-  echo "=== swapon ==="; swapon --show
-} | tee /root/migration-baseline.txt
-```
-
-- [ ] **Step 2: Verify the three numbers this plan hard-codes**
+- [ ] **Step 1: Bind the variables to stable paths and confirm roles**
 
 ```bash
-lsblk -b -no SIZE /dev/nvme1n1p2   # expect exactly: 3991121428480
-lsblk -b -no SIZE /dev/nvme1n1     # expect exactly: 4000787030016
-lsblk -b -no SIZE /dev/nvme0n1     # expect exactly: 4000787030016
+export CORSAIR=/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B6108002KO
+export SAMSUNG=/dev/disk/by-id/nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D
+
+echo "Corsair -> $(readlink -f $CORSAIR)"     # note the kernel name; do not hard-code it
+echo "Samsung -> $(readlink -f $SAMSUNG)"
+lsblk -no MODEL "$CORSAIR" | head -1           # MUST print: Corsair MP700 PRO XT
+lsblk -no MODEL "$SAMSUNG" | head -1           # MUST print: Samsung SSD 990 EVO Plus 4TB
+findmnt -no SOURCE /boot                        # the Samsung's p1 — the LIVE system
 ```
 
-**ABORT if** any value differs. The partition budget arithmetic in this plan is derived from these exact bytes and is not self-correcting.
-
-- [ ] **Step 3: Snapshot the pool**
+- [ ] **Step 2: Confirm the Corsair is blank and the Samsung is live**
 
 ```bash
-zfs snapshot -r zpool@premigrate
-zfs list -t snapshot | grep premigrate
+lsblk "$CORSAIR" | tail -n +2 | grep -q . && echo "STOP: Corsair not blank" || echo "Corsair blank — good"
+zpool status zpool | grep nvme-eui             # live vdev is on the Samsung
 ```
 
-Expected: one `@premigrate` line per dataset. This is instant and nearly free (copy-on-write). It guards against fat-fingers during the migration, **not** against disk loss.
+**ABORT if** either model string is wrong, the Corsair shows partitions, or `/boot` is not on the Samsung. Do not run a single destructive command until this task passes.
+
+---
+
+### Task 1: Baseline (mostly captured already)
+
+**Files:** Create `/root/migration-baseline.txt`.
+
+- [x] **Step 1: Baseline captured** — `/root/migration-baseline.txt` exists from an earlier session (nvme list, lsblk, zpool status/list, zfs list, efibootmgr, findmnt, swapon).
+- [x] **Step 2: `@premigrate` snapshots exist** — recursive snapshot already taken (`zpool@premigrate` and descendants). These are a fixed reference; the live send in Task 4 uses a **fresh** `@migrate` snapshot instead, so `@premigrate` stays as an untouched anchor.
+
+- [ ] **Step 3: Re-verify nothing drifted since baseline**
+
+```bash
+zfs list -H -o name | sort               # expect the same 8 datasets as baseline
+zpool status zpool                       # ONLINE, no errors
+```
 
 ---
 
 ### Task 2: Format the Corsair to 4Kn
 
-**Files:** none — hardware operation.
+**Files:** none.
 
 **Interfaces:**
-- Consumes: verified device identity from Task 1.
-- Produces: `/dev/nvme0n1` with 4096-byte LBA, no partition table.
+- Consumes: `$CORSAIR` from Task 0.
+- Produces: Corsair at 4096-byte LBA, no partition table.
 
-> `nvme format` is **irreversible** and destroys the wrong drive if `nvme0`/`nvme1` are transposed. `nvme0n1` is the *blank Corsair*. `nvme1n1` is your *live system*. Read the model string, out loud, before Step 3.
+> `nvme format` is irreversible. It targets `$CORSAIR` (by-id) — **never a raw `nvme0`/`nvme1` name.** Read the model string in Step 1 before Step 2.
 
-- [ ] **Step 1: Verify the target is the Corsair and is blank**
-
-```bash
-nvme id-ctrl /dev/nvme0n1 | grep -i '^mn'      # expect: Corsair MP700 PRO XT
-lsblk /dev/nvme0n1                              # expect: NO partitions listed
-```
-
-**ABORT if** the model is not `Corsair MP700 PRO XT`, or any partition appears.
-
-- [ ] **Step 2: Confirm 4Kn is offered**
+- [ ] **Step 1: Re-confirm the target**
 
 ```bash
-nvme id-ns /dev/nvme0n1 -H | grep -i 'lba format'
+lsblk -no MODEL "$CORSAIR" | head -1      # MUST print: Corsair MP700 PRO XT
+nvme id-ns "$CORSAIR" -H | grep -i 'lba format'   # LBA Format 1 = 4096 "Best"
 ```
 
-Expected: `LBA Format 1 : ... Data Size: 4096 bytes - Relative Performance: 0 Best`
+**ABORT if** the model is not `Corsair MP700 PRO XT`.
 
-- [ ] **Step 3: Format**
+- [ ] **Step 2: Format to 4Kn**
 
 ```bash
-nvme format /dev/nvme0n1 --lbaf=1 --force
+nvme format "$CORSAIR" --lbaf=1 --force
+nvme id-ns "$CORSAIR" -H | grep 'in use'  # expect: Data Size: 4096 bytes ... (in use)
 ```
 
-- [ ] **Step 4: Verify the format took**
-
-```bash
-nvme id-ns /dev/nvme0n1 -H | grep 'in use'
-```
-
-Expected: `Data Size: 4096 bytes ... (in use)`
-
-**ABORT if** still 512 bytes. 4Kn matches the pool's `ashift=12` (2¹² = 4096); proceeding at 512e is survivable but silently forfeits the alignment win, and this is the only moment it can be fixed.
+**ABORT if** still 512 bytes. Matches the pool's `ashift=12`; only fixable now.
 
 ---
 
-### Task 3: Partition the Corsair with temporary labels
+### Task 3: Partition the Corsair
 
-**Files:** none — partition table only.
+**Files:** none.
 
 **Interfaces:**
-- Consumes: 4Kn-formatted `/dev/nvme0n1`.
-- Produces: partlabels `mig-esp`, `mig-root`, `mig-swap`. Task 4 renames `mig-esp`; Task 6 renames the other two.
+- Consumes: 4Kn Corsair.
+- Produces: partlabels `mig-esp` (4 GiB), `mig-swap` (8 GiB), `mig-root` (remainder). Renamed to `disk-main-*` at cutover (Task 6).
 
-> Labels are deliberately **not** `disk-main-*`. The Samsung currently owns those names, and `/boot` and swap resolve through `/dev/disk/by-partlabel/`. Two partitions sharing a label makes those symlinks ambiguous — a clean route to an unbootable machine.
+> Temp labels avoid colliding with the Samsung's live `disk-main-*` while both are attached. A fresh pool has no attach threshold, so root simply takes what's left after ESP and swap.
 
 - [ ] **Step 1: Write the partition table**
 
 ```bash
-sgdisk --zap-all /dev/nvme0n1
-sgdisk -n 1:0:+4G -t 1:EF00 -c 1:mig-esp  /dev/nvme0n1
-sgdisk -n 2:0:-4G -t 2:BF00 -c 2:mig-root /dev/nvme0n1
-sgdisk -n 3:0:0   -t 3:8200 -c 3:mig-swap /dev/nvme0n1
-partprobe /dev/nvme0n1
+sgdisk --zap-all "$CORSAIR"
+sgdisk -n 1:0:+4G -t 1:EF00 -c 1:mig-esp  "$CORSAIR"
+sgdisk -n 2:0:+8G -t 2:8200 -c 2:mig-swap "$CORSAIR"
+sgdisk -n 3:0:0   -t 3:BF00 -c 3:mig-root "$CORSAIR"
+partprobe "$CORSAIR"
 ```
 
-- [ ] **Step 2: Verify the attach threshold — this is the gate**
+- [ ] **Step 2: Verify layout and that root dwarfs the data**
 
 ```bash
-lsblk -b -no SIZE /dev/nvme0n1p2
+sgdisk -p "$CORSAIR"
+lsblk -b -no SIZE /dev/disk/by-partlabel/mig-root   # expect ~3.98 TB, >> 1.49T used
+ls -l /dev/disk/by-partlabel/ | grep -E 'mig-|disk-main-'   # mig-* and disk-main-* both unique
 ```
 
-Expected: a value **≥ 3991121428480** (should be ~3992195170304, about 1 GiB larger).
-
-**ABORT if** smaller. `zpool attach` refuses a device below the existing vdev's size. Shrink swap and redo Step 1 rather than discovering this in Task 4.
-
-- [ ] **Step 3: Verify labels are unique across both drives**
-
-```bash
-lsblk -o NAME,PARTLABEL /dev/nvme0n1 /dev/nvme1n1
-ls -l /dev/disk/by-partlabel/
-```
-
-Expected: `mig-*` on nvme0n1, `disk-main-*` on nvme1n1, no duplicates, every symlink resolving to exactly one partition.
+**ABORT if** any label is duplicated across the two drives.
 
 ---
 
-### Task 4: Attach and resilver
+### Task 4: Create the new pool and raw-send LIVE — the encryption de-risk gate
 
 **Files:** none.
 
 **Interfaces:**
-- Consumes: `mig-root` from Task 3.
-- Produces: `zpool` as a healthy 2-way mirror. Task 5 detaches from this state.
+- Consumes: `mig-root` partition.
+- Produces: `zpool-new` on the Corsair holding a full, key-loadable copy as of `@migrate`.
 
-- [ ] **Step 1: Attach**
+> This is the crux, done **live and reversibly.** The machine keeps running on the Samsung. If the encrypted receive misbehaves, destroy `zpool-new` and nothing is lost — no reboot wasted, Samsung untouched. Only proceed to the cutover once `zfs load-key` succeeds here.
 
-```bash
-zpool attach zpool nvme-eui.0025385a51a3c872-part2 \
-  /dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B6108002KO-part2
-```
-
-- [ ] **Step 2: Watch the resilver**
+- [ ] **Step 1: Fresh migration snapshot**
 
 ```bash
-watch -n 30 zpool status zpool
+zfs snapshot -r zpool@migrate
+zfs list -t snapshot | grep @migrate      # one per dataset
 ```
 
-Reads are gated by the Samsung, so this is not fast. It runs live; keep using the machine. Expect tens of minutes for 2.12T.
-
-- [ ] **Step 3: Verify the resilver completed clean — this is the gate**
+- [ ] **Step 2: Create the destination pool (root dataset props come from the stream)**
 
 ```bash
-zpool status zpool
+zpool create -f -o ashift=12 -o autotrim=on -O mountpoint=none -O canmount=off \
+  zpool-new /dev/disk/by-partlabel/mig-root
 ```
 
-Expected: `scan: resilvered ... with 0 errors`, both devices `ONLINE`, `errors: No known data errors`, **no** `DEGRADED`.
+- [ ] **Step 3: Raw replication send (primary method)**
 
-**ABORT if** any checksum error, any `DEGRADED` state, or a nonzero error count. Recovery: `zpool detach zpool <corsair-part2>` — the pool returns to exactly its prior state and nothing is lost. A Corsair that errors on first resilver is a Corsair to RMA.
+```bash
+zfs send -Rw zpool@migrate | zfs recv -F -u zpool-new
+```
+
+`-R` carries all descendants, properties, and snapshots (`@blank`, `@premigrate`, `safe/hyperion-home`); `-w` sends the encrypted blocks raw; `-u` prevents mounting; `-F` lets the stream's root replace the freshly created `zpool-new` root.
+
+- [ ] **Step 4: THE GATE — verify structure, snapshots, and that the key loads**
+
+```bash
+zfs list -r zpool-new                                   # local/root, local/nix, local/home, safe/persist, safe/hyperion-home
+zfs list -t snapshot -r zpool-new | grep -E '@blank|@migrate'   # @blank on local/root AND local/home
+zfs get -r encryption,encryptionroot zpool-new | grep encryptionroot   # all should read zpool-new
+zfs get -o name,property,value normalization,acltype,xattr zpool-new/safe/persist
+zfs unload-key -a 2>/dev/null; zfs load-key zpool-new   # PROMPTS for passphrase — must succeed
+zfs get keystatus zpool-new                             # expect: available
+```
+
+**Expected:** every dataset and both `@blank` snapshots present; `encryptionroot` = `zpool-new` throughout; `load-key` accepts the passphrase and reports `available`.
+
+**ABORT / fall back if** `load-key` fails or the encryptionroot is wrong. This is the known-uncertain step. Recovery is clean — nothing is committed:
+
+```bash
+zpool destroy zpool-new        # zero loss; Samsung still live
+```
+
+Then either retry with the **fallback method** (create the pool pre-encrypted and receive children under it):
+
+```bash
+zpool create -f -o ashift=12 -o autotrim=on \
+  -O encryption=aes-256-gcm -O keyformat=passphrase -O keylocation=prompt \
+  -O acltype=posixacl -O xattr=sa -O normalization=formD -O dnodesize=auto \
+  -O relatime=on -O mountpoint=none -O canmount=off \
+  zpool-new /dev/disk/by-partlabel/mig-root
+zfs send -Rw zpool/local@migrate | zfs recv -F -u zpool-new/local
+zfs send -Rw zpool/safe@migrate  | zfs recv -F -u zpool-new/safe
+```
+
+…or abandon send/recv and revert to the attach plan (ESP 4G + swap 4G + zram) in git history. **Do not improvise past a failed `load-key`** against an unbacked-up pool.
 
 ---
 
-### Task 5: Move the ESP and prove the Corsair boots
+### Task 5: Keep using the machine while the copy sits
 
-**Files:** none — GPT names and bootloader install.
-
-**Interfaces:**
-- Consumes: healthy mirror from Task 4.
-- Produces: `/boot` on `nvme0n1p1`, Limine installed on the Corsair, Samsung ESP intact as `old-esp`.
-
-> Do **not** mount the new ESP by hand and leave the config alone — `fileSystems."/boot".device` is `/dev/disk/by-partlabel/disk-main-ESP`, so it would silently revert to the Samsung on the next boot and you would verify the wrong ESP. Move the *label* instead. Only ESP labels swap here; `mig-root`/`mig-swap` vs `disk-main-root`/`disk-main-swap` remain distinct, so nothing collides.
-
-- [ ] **Step 0: Create a durable fallback boot entry — DO THIS FIRST**
-
-> The machine has **exactly one** EFI boot entry (`Boot0000* Limine`, on the Samsung ESP, partition GUID `1ecce9af-81f2-4cec-82c1-7fd8ab3108e9`). `nixos-rebuild boot` runs with `canTouchEfiVariables = true`; the Limine installer may **repoint that entry** at the Corsair. If it does, every "select the Samsung ESP in firmware" instruction in this plan becomes impossible to follow.
->
-> Create a separately-labelled entry for the Samsung ESP *before* the installer can touch anything.
-
-```bash
-efibootmgr -v > /root/efibootmgr-before.txt
-efibootmgr -c -d /dev/nvme1n1 -p 1 \
-  -L "Limine (Samsung fallback)" \
-  -l '\efi\limine\BOOTX64.EFI'
-efibootmgr -v
-```
-
-**Verify:** `efibootmgr -v` lists **two** entries — the original `Limine` and the new `Limine (Samsung fallback)` — both pointing at partition GUID `1ecce9af-…`.
-
-Now create the removable-media fallback, which **does not currently exist** on this machine. The ESP holds only `\EFI\limine\BOOTX64.EFI` and `\EFI\memtest86plus\mt86plus.efi`. Firmware one-shot boot menus offer `\EFI\BOOT\BOOTX64.EFI` unconditionally, with no NVRAM entry required — so without it, a cleared NVRAM (CMOS reset, dead battery, firmware update) leaves **neither** drive bootable.
-
-```bash
-install -D /boot/EFI/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI
-find /boot/EFI -iname '*.efi' -printf '%s\t%p\n' | sort -n
-```
-
-Limine locates `limine.conf` by searching the boot partition, including `/limine/`, so the copy boots the same menu. This is a 368 KB insurance policy against a failure mode the NVRAM entry cannot cover.
-
-**Verify:** `\EFI\BOOT\BOOTX64.EFI` now exists at 368640 bytes.
-
-**ABORT if** the fallback entry was not created, or `\EFI\BOOT\BOOTX64.EFI` is absent. Without at least one of these, a failed Corsair boot means live-USB recovery rather than picking a menu item.
-
-- [ ] **Step 1: Make the filesystem**
-
-```bash
-mkfs.vfat -F32 -n BOOT /dev/disk/by-partlabel/mig-esp
-```
-
-- [ ] **Step 2: Swap the ESP labels — and check the fallback filesystem's health**
-
-```bash
-umount /boot || systemctl stop boot.mount
-```
-
-> The Samsung ESP contains `FSCK0000.REC` and `FSCK0001.REC` — orphaned-cluster files left by `fsck.vfat` after recovering a damaged FAT. This volume has been repaired at least twice. It is also the fallback that every ABORT gate in this plan depends on. Check it now, while it is unmounted and before it becomes load-bearing.
-
-```bash
-fsck.vfat -n /dev/nvme1n1p1        # read-only check; must be unmounted for a valid result
-```
-
-Expected: no errors beyond the known `FSCK*.REC` orphans. **ABORT if** it reports FAT damage, a bad boot sector, or cross-linked clusters — the fallback is not trustworthy, and the mirror should not be broken until you have a rescue path you believe in. Repair with `fsck.vfat -r` and re-verify before continuing.
-
-```bash
-sgdisk -c 1:old-esp       /dev/nvme1n1   # Samsung steps aside
-sgdisk -c 1:disk-main-ESP /dev/nvme0n1   # Corsair takes the name
-partprobe /dev/nvme0n1 /dev/nvme1n1
-```
-
-Renaming a GPT partition does not touch its contents. The Samsung's ESP keeps its Limine install and its firmware boot entry — EFI entries reference partition **GUIDs**, not names — so it stays selectable as a fallback.
-
-- [ ] **Step 3: Verify the label now resolves to the Corsair**
-
-```bash
-readlink -f /dev/disk/by-partlabel/disk-main-ESP    # expect: /dev/nvme0n1p1
-```
-
-**ABORT if** it resolves to `nvme1n1p1`. Do not mount, do not rebuild.
-
-- [ ] **Step 4: Mount and install Limine**
-
-```bash
-mount /dev/disk/by-partlabel/disk-main-ESP /boot
-findmnt /boot                       # expect SOURCE /dev/nvme0n1p1
-nixos-rebuild boot
-```
-
-- [ ] **Step 5: Confirm the fallback entry survived the rebuild**
-
-```bash
-diff /root/efibootmgr-before.txt <(efibootmgr -v)
-efibootmgr -v | grep -i 'samsung fallback'
-```
-
-Expected: the `Limine (Samsung fallback)` entry is **still present** and still points at partition GUID `1ecce9af-…`. The other `Limine` entry may now point at the Corsair — that is fine and expected.
-
-**ABORT if** the fallback entry is gone. Recreate it (Step 0) before rebooting. Do not reboot without it.
-
-- [ ] **Step 6: Reboot and verify — this is the gate**
-
-```bash
-reboot
-```
-
-At the firmware menu, select the Corsair entry if the firmware does not prefer it. After boot:
-
-```bash
-efibootmgr -v | grep BootCurrent    # cross-reference against the Corsair entry
-findmnt /boot                       # expect /dev/nvme0n1p1
-zpool status zpool                  # expect healthy 2-way mirror, still
-```
-
-**ABORT if** the machine does not boot: at the firmware menu select **`Limine (Samsung fallback)`**. It is untouched, the mirror is intact, and nothing has been lost. Investigate before retrying.
+Nothing to run. `zpool-new` holds the copy as of `@migrate`; the live pool keeps diverging. Task 6 catches the delta with an incremental. Schedule the cutover when you can spare a reboot.
 
 ---
 
-### Task 6: Detach, disambiguate, relabel
+### Task 6: Cutover from the live USB
 
 **Files:** none.
 
 **Interfaces:**
-- Consumes: verified Corsair boot from Task 5.
-- Produces: single-vdev `zpool` on the Corsair; Samsung relabeled `old-*` and renamed `zpool-old`.
+- Consumes: `zpool-new` (proven in Task 4).
+- Produces: the Corsair pool renamed `zpool`, caught up to the moment of cutover, bootable; the Samsung renamed `zpool-old`, intact.
 
-- [ ] **Step 1: Detach the Samsung**
+> Runs from the **live USB** — the new pool must take the name `zpool`, which the running system holds. Re-run **Task 0** first; kernel names differ under the live environment.
+
+- [ ] **Step 1: Boot the live USB, re-derive the mapping**
+
+Re-run Task 0 Step 1 to rebind `$CORSAIR` / `$SAMSUNG`. Do not assume the names from earlier.
+
+- [ ] **Step 2: Import both pools under final names, load keys**
 
 ```bash
-zpool detach zpool nvme-eui.0025385a51a3c872-part2
-zpool status zpool                  # expect: single vdev, ONLINE, no mirror
+zpool import                                    # observe both pools and their GUIDs
+zpool import -f -l zpool     zpool-old          # Samsung -> zpool-old (-l loads key)
+zpool import -f -l zpool-new zpool              # Corsair -> zpool
+zpool status                                    # zpool on Corsair, zpool-old on Samsung
 ```
 
-- [ ] **Step 2: Read what the detached label actually says — this is the verification gate**
+- [ ] **Step 3: Catch-up incremental (delta since `@migrate`)**
 
 ```bash
-zpool import
+zfs snapshot -r zpool-old@migrate2
+zfs send -Rw -I zpool-old@migrate zpool-old@migrate2 | zfs recv -u zpool
+zfs list -t snapshot -r zpool | grep @migrate2  # confirm the delta landed on the Corsair pool
 ```
 
-> **This step exists because the plan's author could not verify the claim.** A detached mirror member is *expected* to be importable under a new name, since detach leaves a self-consistent copy. That expectation has not been confirmed on this hardware. **Read the actual output. Do not assume.**
-
-Branch on what you see:
-
-**Case A — a pool named `zpool` is listed** (with an `id:` GUID). Two pools now claim the name `zpool`; initrd's `zpool import zpool` may become ambiguous and fail to boot. Rename the detached side, keeping it fully intact.
-
-The GUID is the number on the `id:` line of the `zpool import` output — the one whose vdev is `nvme1n1p2` (the Samsung), **not** the running pool. Capture it explicitly rather than retyping:
+- [ ] **Step 4: Relabel partitions to final names**
 
 ```bash
-DETACHED_ID=$(zpool import 2>/dev/null | awk '/id:/{id=$2} /nvme1n1p2|old-root/{print id; exit}')
-echo "$DETACHED_ID"                 # sanity-check: nonempty, and not the live pool's GUID
-zpool status zpool | grep -i 'pool:' # the live pool, for contrast
+# Samsung steps aside (by-id from Task 0; partition suffixes are stable within a disk)
+sgdisk -c 1:old-esp -c 2:old-root -c 3:old-swap "$SAMSUNG"
+# Corsair takes the canonical names
+sgdisk -c 1:disk-main-ESP -c 2:disk-main-swap -c 3:disk-main-root "$CORSAIR"
+partprobe "$CORSAIR" "$SAMSUNG"
 ```
 
-Import it under a new name (`-N` skips mounting; the pool is encrypted and its datasets must not mount), then export so the rename is written back to the label:
+- [ ] **Step 5: Fresh ESP and bootloader for the existing generation**
+
+The ESP is FAT, not part of the ZFS copy — build it fresh. The current system generation is already on the copied `/nix`, so install *its* bootloader rather than rebuilding.
 
 ```bash
-zpool import -N "$DETACHED_ID" zpool-old
+mkfs.vfat -F32 -n BOOT /dev/disk/by-partlabel/disk-main-ESP
+mkdir -p /mnt
+mount -t zfs zpool/local/root /mnt
+mount /dev/disk/by-partlabel/disk-main-ESP /mnt/boot
+mount -t zfs zpool/local/nix /mnt/nix
+for d in dev proc sys run; do mount --rbind /$d /mnt/$d; done
+NIXOS_INSTALL_BOOTLOADER=1 nixos-enter --root /mnt -- \
+  /nix/var/nix/profiles/system/bin/switch-to-configuration boot
+```
+
+**Verify:** `ls /mnt/boot/EFI/limine/BOOTX64.EFI` exists, and install the removable-media fallback that the current setup lacks:
+
+```bash
+install -D /mnt/boot/EFI/limine/BOOTX64.EFI /mnt/boot/EFI/BOOT/BOOTX64.EFI
+```
+
+- [ ] **Step 6: Export cleanly and reboot to the Corsair**
+
+```bash
+umount -R /mnt
+zpool export zpool
 zpool export zpool-old
-zpool import                        # expect: `zpool-old`, not `zpool`
+reboot     # remove the USB; select the Corsair/Limine entry in firmware if needed
 ```
 
-**ABORT if** `$DETACHED_ID` is empty, or if `zpool import` still shows a second pool named `zpool` afterward. Booting with two `zpool` candidates is the failure this step exists to prevent.
-
-**Case B — nothing is listed.** The detached label is not importable, so there is no ambiguity and no boot risk — but also **no fallback copy**. Stop. Do not proceed to Task 7 until you have decided whether to accept a single-copy system or to build a backup first.
-
-**ABORT in any other case.** Do not improvise against 1.92T of unbacked-up data.
-
-- [ ] **Step 3: Relabel root and swap (ESPs were already done in Task 5)**
-
-```bash
-swapoff -a
-sgdisk -c 2:old-root       -c 3:old-swap       /dev/nvme1n1
-sgdisk -c 2:disk-main-root -c 3:disk-main-swap /dev/nvme0n1
-partprobe /dev/nvme0n1 /dev/nvme1n1
-```
-
-- [ ] **Step 4: Verify every label the running config depends on**
-
-```bash
-readlink -f /dev/disk/by-partlabel/disk-main-ESP    # expect /dev/nvme0n1p1
-readlink -f /dev/disk/by-partlabel/disk-main-root   # expect /dev/nvme0n1p2
-readlink -f /dev/disk/by-partlabel/disk-main-swap   # expect /dev/nvme0n1p3
-ls /dev/disk/by-partlabel/                          # expect old-esp, old-root, old-swap too
-```
-
-Swap is `randomEncryption`, so it is reformatted at boot — no `mkswap` needed. Every `by-partlabel` path the running config references now points at the Corsair, with **no config change yet**.
+**ABORT if** the machine does not boot: the Samsung is intact and importable — boot the live USB, `zpool import -l zpool-old`, and you have a complete system as of `@migrate2`. Investigate before retrying; nothing is lost.
 
 ---
 
-### Task 7: Reconcile disko
+### Task 7: First boot from the Corsair — the gate
 
-**Files:**
-- Modify: `systems/ulysses/disko-config.nix:10` (device), `:15` (ESP size), `:25` (root end)
-- Modify: `systems/ulysses/default.nix` (add `zramSwap`)
+**Files:** none.
 
-**Interfaces:**
-- Consumes: the on-disk layout built in Tasks 3–6.
-- Produces: a disko config that reproduces the current disk from scratch.
+- [ ] **Step 1: Verify the running system is on the Corsair**
 
-> **Why `zramSwap`:** the partition shrinks 8 GiB → 4 GiB, but peak observed swap residency was 4.7 GiB. Compressed in-RAM swap absorbs the 0.7 GiB shortfall. The underlying cause of the swapping is an effectively-uncapped `zfs_arc_max` (`c_max` ≈ 122 GiB of 123 GiB RAM), which lets ARC crowd out anonymous pages. **Capping ARC is deliberately out of scope** — it is a separate change with its own reboot, and stacking it on a disk migration would confound any failure.
-
-> `disko` is **not run destructively** here. This edit makes the declarative config *describe* what was built by hand, per the manual-first sequencing chosen during design.
-
-- [ ] **Step 1: Edit the config**
-
-```nix
-main = {
-  type = "disk";
-  device = "/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B6108002KO";
-  content = {
-    type = "gpt";
-    partitions = {
-      ESP = {
-        size = "4G";
-        type = "EF00";
-        content = {
-          type = "filesystem";
-          format = "vfat";
-          mountpoint = "/boot";
-          mountOptions = ["umask=0077"];
-        };
-      };
-      root = {
-        end = "-4G";
-        content = {
-          type = "zfs";
-          pool = "zpool";
-        };
-      };
-      swap = {
-        size = "100%";
-        content = {
-          type = "swap";
-          randomEncryption = true;
-        };
-      };
-    };
-  };
-};
-```
-
-- [ ] **Step 2: Add zram to compensate for the smaller swap partition**
-
-In `systems/ulysses/default.nix`, in the `# --- Boot ---` region:
-
-```nix
-  # Swap shrank 8G -> 4G to fit the ESP inside the partition budget. Peak swap
-  # residency was 4.7G, so compressed in-RAM swap covers the difference.
-  zramSwap.enable = true;
-```
-
-- [ ] **Step 3: Verify it evaluates and formats**
+Re-run Task 0 to rebind variables, then:
 
 ```bash
-nix fmt
-nix build .#nixosConfigurations.ulysses.config.system.build.toplevel --no-link
+findmnt -no SOURCE /boot                 # a partition on the Corsair
+zpool status zpool                       # single vdev, on the Corsair, ONLINE, 0 errors
+readlink -f /dev/disk/by-partlabel/disk-main-ESP   # a Corsair partition
+swapon --show                            # disk-main-swap active (8G)
+zfs list                                 # all datasets mounted; /, /nix, /home, /persist
 ```
 
-Expected: builds clean. **ABORT if** evaluation fails.
-
-- [ ] **Step 4: Apply and reboot — this is the gate**
-
-```bash
-nixos-rebuild boot
-reboot
-```
-
-After boot:
-
-```bash
-findmnt /boot                       # expect /dev/nvme0n1p1
-swapon --show                       # expect /dev/nvme0n1p3
-zpool status zpool                  # expect single healthy vdev on the Corsair
-zfs list                            # expect all datasets mounted
-```
-
-Confirm no dataset went missing, by comparing against the Task 1 baseline:
+Confirm no dataset went missing against the Task 1 baseline:
 
 ```bash
 zfs list -H -o name | sort > /tmp/datasets-after.txt
@@ -487,47 +335,82 @@ sed -n '/=== zfs list ===/,/^=== /p' /root/migration-baseline.txt \
 diff /tmp/datasets-before.txt /tmp/datasets-after.txt && echo "DATASETS MATCH"
 ```
 
-Expected: `DATASETS MATCH`, no diff output.
+**ABORT if** anything mounts from the Samsung, or a dataset is missing.
 
-**ABORT if** the machine does not boot: select the Samsung ESP in firmware, then `zpool import zpool-old` for a complete system as of Task 6.
+---
 
-- [ ] **Step 5: Commit**
+### Task 8: Reconcile disko
+
+**Files:** Modify `systems/ulysses/disko-config.nix` (device, ESP size, swap/root split).
+
+> Declarative bookkeeping — disko is **not run destructively.** It is edited to describe what was built.
+
+- [ ] **Step 1: Edit the config**
+
+- `device` → `/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B6108002KO`
+- ESP `size` → `4G`
+- Reorder to ESP → swap → root, with swap `size = "8G"` and root taking the remainder:
+
+```nix
+partitions = {
+  ESP = {
+    size = "4G";
+    type = "EF00";
+    content = {
+      type = "filesystem";
+      format = "vfat";
+      mountpoint = "/boot";
+      mountOptions = ["umask=0077"];
+    };
+  };
+  swap = {
+    size = "8G";
+    content = {
+      type = "swap";
+      randomEncryption = true;
+    };
+  };
+  root = {
+    size = "100%";
+    content = {
+      type = "zfs";
+      pool = "zpool";
+    };
+  };
+};
+```
+
+- [ ] **Step 2: Verify it evaluates**
+
+```bash
+nix fmt
+nix build .#nixosConfigurations.ulysses.config.system.build.toplevel --no-link
+```
+
+- [ ] **Step 3: Apply and reboot — the gate**
+
+```bash
+nixos-rebuild boot && reboot
+```
+
+After boot: re-run Task 7 Step 1's checks. **ABORT if** it does not boot: boot the live USB, `zpool import -l zpool-old`.
+
+- [ ] **Step 4: Commit**
 
 ```bash
 git add systems/ulysses/disko-config.nix
-git commit -m "ulysses: move root pool to Corsair MP700 PRO XT
+git commit -m "ulysses: move root pool to Corsair MP700 PRO XT (send/recv)
 
-Reconciles disko with the layout built by the live attach/resilver/detach
-migration. ESP grows 1G -> 4G (Limine was at 55% of 1G, and Secure Boot
-adds signed artifacts); swap shrinks 8G -> 4G to stay inside the 9 GiB
-budget that keeps the root partition above the attach threshold."
+Fresh pool via zfs send -Rw, allowing a 4G ESP + 8G swap layout the attach
+threshold forbade. ESP grows 1G -> 4G (1G could not hold maxGenerations=10
+at ~136 MiB initrds); swap stays 8G. Samsung retained as zpool-old."
 ```
 
 ---
 
-### Task 8: `zpool upgrade` — deferred, irreversible
+### Task 9: Retire the fallback — deferred, not part of this plan
 
-**Files:** none.
-
-> **Do not run this in the same session.** Wait for several days of clean boots.
-
-The pool reports *"some supported features are not enabled"*. Upgrading forecloses importing it with older ZFS, which would complicate rolling back to an older NixOS generation. There is no urgency.
-
-- [ ] **Step 1: Confirm days of clean boots have passed, and `zpool-old` is still intact**
-
-```bash
-zpool import                        # expect zpool-old still listed
-journalctl --list-boots | tail -5
-```
-
-- [ ] **Step 2: Upgrade**
-
-```bash
-zpool upgrade zpool
-zpool status zpool                  # the "features not enabled" notice should be gone
-```
-
-Note: `zpool-old` predates the upgrade and remains importable by older ZFS. It is unaffected.
+The Samsung remains imported-capable as `zpool-old`, intact. Do **not** destroy it here. It is the only second copy of `/persist`, and destroying it is the first step of the Samsung scratch-pool spec — begin that only after days of clean boots from the Corsair.
 
 ---
 
@@ -535,12 +418,11 @@ Note: `zpool-old` predates the upgrade and remains importable by older ZFS. It i
 
 | Failure point | Recovery |
 |---|---|
-| Task 1–3 | Nothing has touched the Samsung. Re-zap the Corsair. |
-| Task 4 (bad Corsair) | `zpool detach` the **Corsair**. Pool is untouched. |
-| Task 5 (won't boot) | Select `Limine (Samsung fallback)` in firmware (created in Task 5 Step 0). Mirror intact. |
-| Task 6–7 | Boot `Limine (Samsung fallback)`; `zpool import zpool-old`. Full system as of detach. |
-| After Task 8 | `zpool-old` predates the upgrade, still importable. |
+| Task 0–3 | Nothing touched the Samsung. Re-zap the Corsair. |
+| Task 4 (bad encrypted recv) | `zpool destroy zpool-new`. Zero loss; Samsung live. |
+| Task 6 (won't boot) | Live USB; `zpool import -l zpool-old`. Full system as of `@migrate2`. |
+| Task 7–8 | Same — the Samsung is untouched and importable. |
 
 ## What this plan deliberately does not do
 
-The Samsung is left **intact**. It is not wiped, not repartitioned, not made into scratch. That is `2026-07-09-samsung-scratch-pool-design.md`, and it is severed on purpose: beginning it destroys `zpool-old`, and with it the only second copy of `/persist` that will ever have existed.
+The Samsung is left **intact** as `zpool-old` — not wiped, not repartitioned. That is the Samsung scratch-pool spec, severed on purpose: beginning it destroys the only second copy of `/persist`.
