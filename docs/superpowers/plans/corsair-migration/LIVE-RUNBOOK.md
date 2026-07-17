@@ -3,23 +3,25 @@
 You are here because the Corsair copy (`zpool-new`) is complete and verified,
 and it's time to cut over. This runs from the **NixOS installer USB**.
 
-## The 3 commands to get Claude Code running (no copy-paste needed)
+## One line to get Claude Code running (no copy-paste needed)
 
-Terminal-only, so these use tab-completion-friendly short paths:
+`go.sh` is on the installer's ESP (`EFIBOOT`). In the live USB:
 
 ```sh
-# 1: import the Samsung, load key (prompts passphrase), mount everything under /mnt
-zpool import -f -l -R /mnt zpool zpool-old
-
-# 2: copy auth + scripts to RAM, export the pool  (tab-complete the path: /mnt<tab>/p<tab>/h<tab>/a<tab>/C<tab>)
-bash /mnt/persist/home/awilliams/CUTOVER
-
-# 3: start Claude Code, which auto-loads the cutover context
-cd ~/migration && nix run nixpkgs#claude-code
+mkdir /esp && mount /dev/disk/by-label/EFIBOOT /esp && bash /esp/go.sh
 ```
 
-Then just tell Claude **"ready"** — it reads `~/migration/CLAUDE.md` on startup
-and picks up the cutover. No message to paste.
+It imports the Samsung (prompts your passphrase), bootstraps auth + scripts into
+RAM, and launches Claude Code primed for the cutover. Then just say **"ready"** —
+it reads `~/migration/CLAUDE.md` on startup. No message to paste.
+
+### Fallback (if `go.sh` isn't on the ESP)
+
+```sh
+zpool import -f -l -R /mnt zpool zpool-old
+bash /mnt/persist/home/awilliams/CUTOVER        # tab-complete: /mnt<tab>/p<tab>/h<tab>/a<tab>/C<tab>
+cd ~/migration && nix run nixpkgs#claude-code
+```
 
 ## What the cutover does (06-cutover.sh)
 
