@@ -3,28 +3,23 @@
 You are here because the Corsair copy (`zpool-new`) is complete and verified,
 and it's time to cut over. This runs from the **NixOS installer USB**.
 
-## The 5 commands to get Claude Code running (memorize / photograph these)
+## The 3 commands to get Claude Code running (no copy-paste needed)
 
-Everything else is on `/persist`, but you need these first to reach it:
+Terminal-only, so these use tab-completion-friendly short paths:
 
 ```sh
-# 1-3: import the Samsung read-only and mount your persisted data
-zpool import -f -N zpool zpool-old
-zfs load-key zpool-old            # type your ZFS passphrase
-zfs mount zpool-old/safe/persist  # -> /persist
+# 1: import the Samsung, load key (prompts passphrase), mount everything under /mnt
+zpool import -f -l -R /mnt zpool zpool-old
 
-# 4: copy auth + scripts to RAM, export the pool
-bash /persist/home/awilliams/Development/nix-config/docs/superpowers/plans/corsair-migration/live-bootstrap.sh
+# 2: copy auth + scripts to RAM, export the pool  (tab-complete the path: /mnt<tab>/p<tab>/h<tab>/a<tab>/C<tab>)
+bash /mnt/persist/home/awilliams/CUTOVER
 
-# 5: start Claude Code (authenticated as you)
-nix run nixpkgs#claude-code
+# 3: start Claude Code, which auto-loads the cutover context
+cd ~/migration && nix run nixpkgs#claude-code
 ```
 
-Then paste to Claude:
-
-> Read ~/migration/plan.md and ~/migration/06-cutover.sh. We are at Task 6
-> (cutover) from the live USB. zpool-new is a verified complete copy on the
-> Corsair (exported). Guide me through the cutover.
+Then just tell Claude **"ready"** — it reads `~/migration/CLAUDE.md` on startup
+and picks up the cutover. No message to paste.
 
 ## What the cutover does (06-cutover.sh)
 
