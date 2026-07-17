@@ -166,8 +166,11 @@ sgdisk --zap-all "$CORSAIR"
 sgdisk -n 1:0:+4G -t 1:EF00 -c 1:mig-esp  "$CORSAIR"
 sgdisk -n 2:0:+8G -t 2:8200 -c 2:mig-swap "$CORSAIR"
 sgdisk -n 3:0:0   -t 3:8300 -c 3:mig-root "$CORSAIR"   # 8300 = disko's ZFS partition type on the Samsung
-partprobe "$CORSAIR"
+partx -u "$CORSAIR"    # partprobe (parted) is not installed on the running system; partx (util-linux) is
 ```
+
+`sgdisk` isn't in the base system either — it's in `gptfdisk` (now added to `modules/nixos/packages.nix`, live after the next rebuild). Until then, prefix with:
+`nix shell nixpkgs#gptfdisk --command sudo --preserve-env=PATH bash …`
 
 - [ ] **Step 2: Verify layout and that root dwarfs the data**
 
