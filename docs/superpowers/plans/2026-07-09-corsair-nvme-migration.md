@@ -165,7 +165,7 @@ nvme id-ns "$CORSAIR" -H | grep 'in use'  # expect: Data Size: 4096 bytes ... (i
 sgdisk --zap-all "$CORSAIR"
 sgdisk -n 1:0:+4G -t 1:EF00 -c 1:mig-esp  "$CORSAIR"
 sgdisk -n 2:0:+8G -t 2:8200 -c 2:mig-swap "$CORSAIR"
-sgdisk -n 3:0:0   -t 3:BF00 -c 3:mig-root "$CORSAIR"
+sgdisk -n 3:0:0   -t 3:8300 -c 3:mig-root "$CORSAIR"   # 8300 = disko's ZFS partition type on the Samsung
 partprobe "$CORSAIR"
 ```
 
