@@ -76,7 +76,9 @@ findmnt -no SOURCE /boot                        # the Samsung's p1 — the LIVE 
 - [ ] **Step 2: Confirm the Corsair is blank and the Samsung is live**
 
 ```bash
-lsblk "$CORSAIR" | tail -n +2 | grep -q . && echo "STOP: Corsair not blank" || echo "Corsair blank — good"
+# count partition rows, not the disk's own row (tail -n +2 would false-positive)
+[ "$(lsblk -rno TYPE "$CORSAIR" | grep -c part)" -eq 0 ] \
+  && echo "Corsair blank — good" || { echo "STOP: Corsair not blank"; lsblk "$CORSAIR"; }
 zpool status zpool | grep nvme-eui             # live vdev is on the Samsung
 ```
 
