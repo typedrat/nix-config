@@ -68,7 +68,7 @@ zpool export zpool-old
 cat <<EOF
 
 DONE. Now run:
-  cd ~/migration && nix run nixpkgs#claude-code
+  cd ~/migration && nix --extra-experimental-features 'nix-command flakes' run nixpkgs#claude-code
 
 Then just tell Claude you're ready — it auto-loads the cutover context.
 EOF

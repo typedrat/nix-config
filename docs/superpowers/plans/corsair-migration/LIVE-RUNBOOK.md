@@ -20,7 +20,7 @@ it reads `~/migration/CLAUDE.md` on startup. No message to paste.
 ```sh
 zpool import -f -l -R /mnt zpool zpool-old
 bash /mnt/persist/home/awilliams/CUTOVER        # tab-complete: /mnt<tab>/p<tab>/h<tab>/a<tab>/C<tab>
-cd ~/migration && nix run nixpkgs#claude-code
+cd ~/migration && nix --extra-experimental-features 'nix-command flakes' run nixpkgs#claude-code
 ```
 
 ## What the cutover does (06-cutover.sh)
