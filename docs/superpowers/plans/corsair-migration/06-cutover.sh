@@ -43,7 +43,9 @@ KF=$(mktemp); chmod 600 "$KF"; trap 'rm -f "$KF"' EXIT; printf '%s' "$PASS" > "$
 
 # Samsung on-disk name is 'zpool' -> import as zpool-old (no mount, we only read it).
 zpool import -f -N zpool zpool-old || abort "import Samsung as zpool-old failed"
-# Corsair on-disk name is 'zpool-new' -> import as zpool, altroot /mnt, no auto-mount.
+# Corsair on-disk name is 'zpool-new'. If it's still imported under that name, export first.
+zpool list zpool-new >/dev/null 2>&1 && { echo "exporting still-imported zpool-new"; zpool export zpool-new || abort "could not export zpool-new"; }
+# import as zpool, altroot /mnt, no auto-mount.
 zpool import -f -R /mnt -N zpool-new zpool || abort "import Corsair as zpool failed"
 
 # sanity: right pools on the right disks
