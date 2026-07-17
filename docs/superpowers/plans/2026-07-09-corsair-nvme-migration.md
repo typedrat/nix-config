@@ -88,15 +88,32 @@ zpool status zpool | grep nvme-eui             # live vdev is on the Samsung
 
 ### Task 1: Baseline (mostly captured already)
 
-**Files:** Create `/root/migration-baseline.txt`.
+**Files:** Create `/persist/migration-baseline.txt` (persistent — survives the impermanence rollback, and rides along in the send/recv copy).
 
-- [x] **Step 1: Baseline captured** — `/root/migration-baseline.txt` exists from an earlier session (nvme list, lsblk, zpool status/list, zfs list, efibootmgr, findmnt, swapon).
-- [x] **Step 2: `@premigrate` snapshots exist** — recursive snapshot already taken (`zpool@premigrate` and descendants). These are a fixed reference; the live send in Task 4 uses a **fresh** `@migrate` snapshot instead, so `@premigrate` stays as an untouched anchor.
+> An earlier `/root/migration-baseline.txt` was wiped by the impermanence root
+> rollback on reboot. Capture to `/persist` this time.
 
-- [ ] **Step 3: Re-verify nothing drifted since baseline**
+- [ ] **Step 1: Capture the baseline to a persistent path**
 
 ```bash
-zfs list -H -o name | sort               # expect the same 8 datasets as baseline
+sudo sh -c '{
+  echo "=== date ==="; date
+  echo "=== nvme list ==="; nvme list
+  echo "=== lsblk bytes ==="; lsblk -b -o NAME,SIZE,MODEL,SERIAL,PARTLABEL,FSTYPE,MOUNTPOINT
+  echo "=== zpool status ==="; zpool status zpool
+  echo "=== zfs list ==="; zfs list
+  echo "=== efibootmgr ==="; efibootmgr -v
+  echo "=== findmnt /boot ==="; findmnt /boot
+  echo "=== swapon ==="; swapon --show
+} | tee /persist/migration-baseline.txt'
+```
+
+- [x] **Step 2: `@premigrate` snapshots exist** — recursive snapshot already taken (`zpool@premigrate` and descendants, 8 total). These are a fixed reference; the live send in Task 4 uses a **fresh** `@migrate` snapshot instead, so `@premigrate` stays as an untouched anchor.
+
+- [ ] **Step 3: Re-verify current state**
+
+```bash
+zfs list -H -o name | sort               # expect the 8 datasets listed in Task 7
 zpool status zpool                       # ONLINE, no errors
 ```
 
@@ -328,13 +345,23 @@ swapon --show                            # disk-main-swap active (8G)
 zfs list                                 # all datasets mounted; /, /nix, /home, /persist
 ```
 
-Confirm no dataset went missing against the Task 1 baseline:
+Confirm no dataset went missing. Compare against the known-good list captured
+during this migration (inline, because impermanence wipes `/root` every boot
+and Task 7 runs after a reboot):
 
 ```bash
+cat > /tmp/datasets-before.txt <<'EOF'
+zpool
+zpool/local
+zpool/local/home
+zpool/local/nix
+zpool/local/root
+zpool/safe
+zpool/safe/hyperion-home
+zpool/safe/persist
+EOF
 zfs list -H -o name | sort > /tmp/datasets-after.txt
-sed -n '/=== zfs list ===/,/^=== /p' /root/migration-baseline.txt \
-  | awk 'NR>2 && $1 ~ /^zpool/ {print $1}' | sort > /tmp/datasets-before.txt
-diff /tmp/datasets-before.txt /tmp/datasets-after.txt && echo "DATASETS MATCH"
+diff <(sort /tmp/datasets-before.txt) /tmp/datasets-after.txt && echo "DATASETS MATCH"
 ```
 
 **ABORT if** anything mounts from the Samsung, or a dataset is missing.
