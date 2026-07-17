@@ -270,6 +270,20 @@ Then run `04b-verify-gate.sh` — unchanged (single encryptionroot = zpool-new, 
 
 ---
 
+### Task 4 — OUTCOME (per-dataset non-raw, completed)
+
+The per-dataset non-raw send completed successfully (single encryption root
+`zpool-new`, all datasets, `@blank` on `local/root`+`local/home`, `@migrate`
+on the data datasets, key loads with the passphrase, sizes match live). The
+copy is **reused** — verified via `zfs list`/`zfs get`, then `zpool export`ed.
+No re-send was needed.
+
+Data-dataset `@migrate` (`local/nix`, `safe/persist`, `safe/hyperion-home`)
+survives reboots on the source (those datasets don't roll back), so the
+cutover incremental base is preserved even across reboots. `local/root` and
+`local/home` don't need a catch-up — they roll back to `@blank` on first boot
+of the new system.
+
 ### Task 5: Keep using the machine while the copy sits
 
 Nothing to run. `zpool-new` holds the copy as of `@migrate`; the live pool keeps diverging. Task 6 catches the delta with an incremental. Schedule the cutover when you can spare a reboot.
