@@ -11,6 +11,7 @@
       nvme-cli
       gptfdisk
       parted
+      pv
     ];
   };
 }
