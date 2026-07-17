@@ -229,25 +229,31 @@ zfs get keystatus zpool-new                             # expect: available
 
 **Expected:** every dataset and both `@blank` snapshots present; `encryptionroot` = `zpool-new` throughout; `load-key` accepts the passphrase and reports `available`.
 
-**ABORT / fall back if** `load-key` fails or the encryptionroot is wrong. This is the known-uncertain step. Recovery is clean — nothing is committed:
+**The raw method (Step 3) failed in practice** — confirmed by ZFS:
 
-```bash
-zpool destroy zpool-new        # zero loss; Samsung still live
+```
+cannot receive new filesystem stream: zfs receive -F cannot be used to
+destroy an encrypted filesystem or overwrite an unencrypted one with an
+encrypted one
 ```
 
-Then either retry with the **fallback method** (create the pool pre-encrypted and receive children under it):
+`recv -F` cannot make a fresh unencrypted pool root into an encrypted one. This is the definitive dead end for raw-receiving an encryption root onto a new pool root.
+
+**Method actually used: non-raw send into a pre-encrypted pool** (`04a-fallback-send.sh`). Create the destination pool *already encrypted* — its root dataset is the encryption root, exactly as disko builds it — then `zfs send -R` **without `-w`** for `local` and `safe`. Non-raw decrypts in RAM and re-encrypts under the new pool's key, so the received datasets inherit the single pool-root encryption. This reproduces the current topology exactly: one encryption root at the pool root, identical dataset paths, one boot prompt, **no NixOS/disko config changes**. The only difference is a fresh master key (invisible; same passphrase).
 
 ```bash
+zpool destroy zpool-new         # remove the empty pool from the failed raw attempt
 zpool create -f -o ashift=12 -o autotrim=on \
   -O encryption=aes-256-gcm -O keyformat=passphrase -O keylocation=prompt \
-  -O acltype=posixacl -O xattr=sa -O normalization=formD -O dnodesize=auto \
-  -O relatime=on -O mountpoint=none -O canmount=off \
+  -O acltype=posixacl -O dnodesize=auto -O normalization=formD \
+  -O relatime=on -O xattr=sa -O canmount=off -O mountpoint=none \
   zpool-new /dev/disk/by-partlabel/mig-root
-zfs send -Rw zpool/local@migrate | zfs recv -F -u zpool-new/local
-zfs send -Rw zpool/safe@migrate  | zfs recv -F -u zpool-new/safe
+# smoke test on local/root first, then:
+zfs send -R zpool/local@migrate | zfs recv -u zpool-new/local
+zfs send -R zpool/safe@migrate  | zfs recv -u zpool-new/safe
 ```
 
-…or abandon send/recv and revert to the attach plan (ESP 4G + swap 4G + zram) in git history. **Do not improvise past a failed `load-key`** against an unbacked-up pool.
+Then run `04b-verify-gate.sh` as before — its checks are unchanged (single encryptionroot = zpool-new, `load-key` unlocks all). **Do not improvise past a failed smoke test or `load-key`** against an unbacked-up pool; the last resort is reverting to the attach plan (ESP 4G + swap 4G, needs re-partition) in git history.
 
 ---
 
