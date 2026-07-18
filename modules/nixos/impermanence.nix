@@ -26,6 +26,14 @@ in {
 
     home.enable = mkEnableOption "home directory impermanence";
 
+    tank.enable = mkEnableOption "a separate bulk persistence root on its own pool";
+
+    tankDir = mkOption {
+      type = types.str;
+      default = "/tank";
+      description = "Mount root for the bulk (tank) persistence pool.";
+    };
+
     zfs.enable = mkEnableOption "impermanence by ZFS snapshot";
     zfs.snapshotName = mkOption {
       type = types.str;
