@@ -12,6 +12,11 @@
   gamingCfg = guiCfg.gaming or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
+
+  tankRoot =
+    if impermanenceCfg.tank.enable
+    then impermanenceCfg.tankDir
+    else persistDir;
 in {
   imports = [
     ./anime-game-launchers.nix
@@ -39,7 +44,6 @@ in {
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
-        ".local/share/Steam"
         ".steam"
         ".local/share/bottles"
         ".config/pegasus-frontend"
@@ -47,6 +51,12 @@ in {
         ".local/share/wine"
         # Native GOG/GameMaker game saves (e.g. Mina the Hollower)
         ".local/share/Yacht Club Games"
+      ];
+    };
+
+    home.persistence.${tankRoot} = modules.mkIf impermanenceCfg.home.enable {
+      directories = [
+        ".local/share/Steam"
         "Games"
       ];
     };

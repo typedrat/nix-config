@@ -14,6 +14,11 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
+  tankRoot =
+    if impermanenceCfg.tank.enable
+    then impermanenceCfg.tankDir
+    else persistDir;
+
   # Check if user has specific secrets configured (awilliams-specific)
   hasUserSecrets = username == "awilliams";
   hasNvidia = osConfig.rat.hardware.nvidia.enable;
@@ -33,7 +38,6 @@ in {
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
-        "AI"
         ".codex"
         ".config/opencode"
         ".local/share/opencode"
@@ -41,12 +45,18 @@ in {
         ".gstack"
         ".openpeon"
 
-        # HuggingFace model/dataset cache — large downloads worth persisting
-        ".cache/huggingface"
-
         # yes, this is where the authentication data for OpenCode lives
         # I want to shove a copy of the XDG specification up someone's asshole.
         ".cache/opencode"
+      ];
+    };
+
+    home.persistence.${tankRoot} = modules.mkIf impermanenceCfg.home.enable {
+      directories = [
+        "AI"
+
+        # HuggingFace model/dataset cache — large downloads worth persisting
+        ".cache/huggingface"
       ];
     };
 
