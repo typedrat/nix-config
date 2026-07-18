@@ -8,6 +8,7 @@
     ./dell-no-audio
     ./disko-config.nix
     ./superio.nix
+    ./tank.nix
   ];
 
   # --- Networking ---
