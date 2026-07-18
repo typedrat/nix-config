@@ -7,12 +7,12 @@
     disk = {
       main = {
         type = "disk";
-        device = "/dev/disk/by-id/nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D";
+        device = "/dev/disk/by-id/nvme-Corsair_MP700_PRO_XT_AD27B6108002KO";
         content = {
           type = "gpt";
           partitions = {
             ESP = {
-              size = "1G";
+              size = "4G";
               type = "EF00";
               content = {
                 type = "filesystem";
@@ -21,18 +21,18 @@
                 mountOptions = ["umask=0077"];
               };
             };
-            root = {
-              end = "-8G";
-              content = {
-                type = "zfs";
-                pool = "zpool";
-              };
-            };
             swap = {
-              size = "100%";
+              size = "8G";
               content = {
                 type = "swap";
                 randomEncryption = true;
+              };
+            };
+            root = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "zpool";
               };
             };
           };
