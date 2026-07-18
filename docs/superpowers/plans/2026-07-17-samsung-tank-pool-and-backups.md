@@ -160,11 +160,11 @@ Expected: `zpool-old` absent; the by-id points at the Samsung; partlabels are `o
 
 - [ ] **Step 2: Wipe the GPT and create the tank + reserved partitions**
 
-`+2800G` (GiB) ≈ 2.73 TiB tank, leaving ~0.9 TiB unpartitioned for a later Windows install.
+End `-512G` reserves 512 GiB at the end of the disk for a later Windows install; tank takes the rest (~3.14 TiB).
 ```bash
 SAMSUNG=/dev/disk/by-id/nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D
 sudo sgdisk --zap-all "$SAMSUNG"
-sudo sgdisk -n 1:0:+2800G -t 1:BF01 -c 1:tank "$SAMSUNG"
+sudo sgdisk -n 1:0:-512G -t 1:BF01 -c 1:tank "$SAMSUNG"
 sudo partprobe "$SAMSUNG"; sleep 2
 ls -l /dev/disk/by-partlabel/tank
 ```
@@ -394,7 +394,14 @@ git commit -m "home: relocate AI/HF/Steam/Games/launchers persistence to the tan
 
 ### Task 5c: Add the tank mount + stage-2 key-load module
 
-Imports the pool, loads its key from `/persist` after `/persist` is up, and mounts the single dataset at `/tank` (gated on the key-load). The impermanence bind `.mount` units then order after `/tank` via `RequiresMountsFor`.
+**Discovered during execution:** impermanence's NixOS module collects every
+`home.persistence` root (not just `environment.persistence`) and hard-asserts
+each backing filesystem is `neededForBoot = true` — no per-path opt-out. So
+`/tank` must mount in the **initrd**. Since its key lives on `/persist` (itself
+`neededForBoot`, mounted at `/sysroot/persist` in the initrd), we import the
+pool and load its key in the initrd before the `/tank` mount, mirroring the root
+pool. `nofail` bounds the risk: worst case the system boots without `/tank`
+rather than hanging.
 
 **Files:**
 - Create: `systems/ulysses/tank.nix`
@@ -405,47 +412,39 @@ Imports the pool, loads its key from `/persist` after `/persist` is up, and moun
 ```nix
 {
   config,
-  pkgs,
   ...
-}: let
-  keyFile = "/persist/.tank.key";
-  zfs = "${config.rat.zfs.package}/bin/zfs";
-in {
+}: {
   # The tank pool is managed manually (created once, out of band) rather than by
-  # disko: its key lives on the already-encrypted /persist, so it cannot unlock
-  # in initrd like the root pool and needs the stage-2 ordering below.
-  # nixos-rebuild only ever mounts it — never recreates it — so the reserved free
-  # space on the same disk (for a later Windows install) is safe.
-  boot.zfs.extraPools = ["tank"];
-
-  systemd.services.zfs-load-key-tank = {
-    description = "Load the tank pool key from /persist and prepare its mountpoint";
-    after = ["zfs-import.target"];
-    # RequiresMountsFor pulls in and orders after the /persist mount, where the
-    # key lives. The tank .mount unit below requires+after this service.
-    unitConfig.RequiresMountsFor = ["/persist"];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      # /tank is on the ephemeral root and must exist before the .mount runs.
-      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p /tank";
-      ExecStart = pkgs.writeShellScript "load-tank-key" ''
-        if [ "$(${zfs} get -H -o value keystatus tank)" != available ]; then
-          ${zfs} load-key tank
-        fi
-      '';
-    };
-  };
-
+  # disko: nixos-rebuild only ever mounts it, never recreates it, so the reserved
+  # free space on the same disk (for a later Windows install) stays safe.
+  #
+  # /tank backs an impermanence persistence root, and impermanence requires every
+  # persistence filesystem to be neededForBoot — i.e. mounted in the initrd. The
+  # pool's key lives on the (already initrd-mounted) /persist, so we import the
+  # pool and load its key in the initrd, before the /tank mount, mirroring how the
+  # root pool is unlocked. `nofail` keeps a tank problem from blocking boot: worst
+  # case the system comes up without /tank rather than hanging.
   fileSystems."/tank" = {
     device = "tank";
     fsType = "zfs";
-    options = [
-      "zfsutil"
-      "nofail"
-      "x-systemd.requires=zfs-load-key-tank.service"
-      "x-systemd.after=zfs-load-key-tank.service"
-    ];
+    neededForBoot = true;
+    options = ["zfsutil" "nofail"];
+  };
+
+  boot.initrd.systemd.services.zfs-load-key-tank = {
+    description = "Load the tank pool key from /persist (initrd)";
+    requiredBy = ["sysroot-tank.mount"];
+    before = ["sysroot-tank.mount"];
+    after = ["zfs-import-tank.service" "sysroot-persist.mount"];
+    unitConfig.DefaultDependencies = "no";
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    path = [config.rat.zfs.package];
+    script = ''
+      zfs load-key -L file:///sysroot/persist/.tank.key tank
+    '';
   };
 
   rat.impermanence.tank.enable = true;
