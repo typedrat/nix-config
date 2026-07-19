@@ -25,18 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # claude-code: 2.1.209 -> 2.1.210 (NixOS/nixpkgs#542088)
-    nixpkgs-patch-542088 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/542088.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.210 -> 2.1.211 (NixOS/nixpkgs#542472)
-    nixpkgs-patch-542472 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/542472.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
