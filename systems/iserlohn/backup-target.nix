@@ -24,6 +24,9 @@ in {
   };
   users.groups.syncoid = {};
 
+  # syncoid's transport helpers, found on the syncoid user's SSH-command PATH.
+  environment.systemPackages = [pkgs.mbuffer pkgs.lzop];
+
   # Create the per-host subtree (root-owned) and delegate scoped zfs permissions
   # to the syncoid user, so its SSH key can only receive into this subtree.
   systemd.services.syncoid-target-delegate = {

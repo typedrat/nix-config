@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib.options) mkEnableOption mkOption;
@@ -29,6 +30,10 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # syncoid's transport helpers, resolved via the service's booted-system path.
+    # lzop gains ~nothing on raw-encrypted streams; mbuffer smooths throughput.
+    environment.systemPackages = [pkgs.mbuffer pkgs.lzop];
+
     # Snapshot the irreplaceable datasets; tank and local/* are excluded.
     services.sanoid = {
       enable = true;
