@@ -168,6 +168,7 @@
       zfs.enable = true;
       zfs.homeDataset = "local/home";
     };
+    backup.enable = true;
 
     # Deployment
     deployment = {
