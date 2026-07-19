@@ -12,6 +12,8 @@
   # Per-host so more hosts can push to the same target as this grows: each host
   # has its own key (syncoid/<host>/ssh_key) and its own backups/<host>/ subtree.
   keyPath = "syncoid/${host}/ssh_key";
+  # Unprivileged, zfs-allow-scoped receiver on iserlohn (not root).
+  targetHost = "syncoid@iserlohn";
   targetBase = "zfspv-pool/backups/${host}";
 
   shortName = dataset: lib.last (lib.splitString "/" dataset);
@@ -51,7 +53,12 @@ in {
       commands = lib.listToAttrs (map (dataset:
         lib.nameValuePair (shortName dataset) {
           source = dataset;
-          target = "root@iserlohn:${targetBase}/${shortName dataset}";
+          target = "${targetHost}:${targetBase}/${shortName dataset}";
+          # Raw send: iserlohn stores the already-encrypted blocks and can never
+          # read the backup (zfspv-pool itself is unencrypted). recv -u so the
+          # keyless received dataset is never mounted on the target.
+          sendOptions = "w";
+          recvOptions = "u";
         })
       cfg.datasets);
     };
