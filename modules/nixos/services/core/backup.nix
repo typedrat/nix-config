@@ -3,13 +3,28 @@
   lib,
   ...
 }: let
-  inherit (lib.options) mkEnableOption;
+  inherit (lib.options) mkEnableOption mkOption;
   inherit (lib.modules) mkIf;
+  inherit (lib) types;
   cfg = config.rat.backup;
-  target = "root@iserlohn";
-  targetBase = "zfspv-pool/backups/ulysses";
+
+  host = config.networking.hostName;
+  # Per-host so more hosts can push to the same target as this grows: each host
+  # has its own key (syncoid/<host>/ssh_key) and its own backups/<host>/ subtree.
+  keyPath = "syncoid/${host}/ssh_key";
+  targetBase = "zfspv-pool/backups/${host}";
+
+  shortName = dataset: lib.last (lib.splitString "/" dataset);
 in {
-  options.rat.backup.enable = mkEnableOption "sanoid snapshots + syncoid replication to iserlohn";
+  options.rat.backup = {
+    enable = mkEnableOption "sanoid snapshots + syncoid replication to iserlohn";
+
+    datasets = mkOption {
+      type = types.listOf types.str;
+      default = ["zpool/safe/persist"];
+      description = "Source datasets to snapshot and replicate to iserlohn.";
+    };
+  };
 
   config = mkIf cfg.enable {
     # Snapshot the irreplaceable datasets; tank and local/* are excluded.
@@ -22,8 +37,7 @@ in {
         autosnap = true;
         autoprune = true;
       };
-      datasets."zpool/safe/persist".useTemplate = ["irreplaceable"];
-      datasets."zpool/safe/hyperion-home".useTemplate = ["irreplaceable"];
+      datasets = lib.genAttrs cfg.datasets (_: {useTemplate = ["irreplaceable"];});
     };
 
     # Push those snapshots to iserlohn. --no-sync-snap: replicate sanoid's
@@ -32,19 +46,17 @@ in {
     services.syncoid = {
       enable = true;
       interval = "*-*-* *:15:00"; # hourly at :15, after sanoid's hourly snap
-      sshKey = config.sops.secrets."syncoid/ssh_key".path;
+      sshKey = config.sops.secrets.${keyPath}.path;
       commonArgs = ["--no-sync-snap" "--sshoption=StrictHostKeyChecking=accept-new"];
-      commands."persist" = {
-        source = "zpool/safe/persist";
-        target = "${target}:${targetBase}/persist";
-      };
-      commands."hyperion-home" = {
-        source = "zpool/safe/hyperion-home";
-        target = "${target}:${targetBase}/hyperion-home";
-      };
+      commands = lib.listToAttrs (map (dataset:
+        lib.nameValuePair (shortName dataset) {
+          source = dataset;
+          target = "root@iserlohn:${targetBase}/${shortName dataset}";
+        })
+      cfg.datasets);
     };
 
     # syncoid's SSH key must be readable by the syncoid service user.
-    sops.secrets."syncoid/ssh_key".owner = config.services.syncoid.user;
+    sops.secrets.${keyPath}.owner = config.services.syncoid.user;
   };
 }

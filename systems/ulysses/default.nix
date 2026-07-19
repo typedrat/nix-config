@@ -168,7 +168,13 @@
       zfs.enable = true;
       zfs.homeDataset = "local/home";
     };
-    backup.enable = true;
+    backup = {
+      enable = true;
+      datasets = [
+        "zpool/safe/persist"
+        "zpool/safe/hyperion-home"
+      ];
+    };
 
     # Deployment
     deployment = {
