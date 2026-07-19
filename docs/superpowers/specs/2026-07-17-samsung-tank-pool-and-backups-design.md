@@ -137,19 +137,37 @@ after.
 
 ### 5. Backups (net-new sanoid/syncoid module)
 
-A new NixOS module (`modules/nixos/services/core/backup.nix`, `rat.*` namespaced)
-enabled on ulysses:
+A new host-generic NixOS module (`modules/nixos/services/core/backup.nix`,
+`rat.backup.*`) enabled on ulysses. Everything keys off `networking.hostName` so
+more source hosts can be added by just enabling it + generating their key:
 
-- **sanoid** on ulysses snapshots `safe/*` (`safe/persist` ~240G +
-  `safe/hyperion-home` 118G ≈ **~360G**) with retention (starting point: 24
-  hourly / 30 daily / 3 monthly). `local/*` and `tank` are excluded.
-- **syncoid** systemd timer pushes those snapshots over SSH to
-  `zfspv-pool/backups/ulysses/…` on iserlohn.
-- sanoid on iserlohn prunes the replicated target with a longer retention.
+- **sanoid** on ulysses snapshots `rat.backup.datasets` (default
+  `["zpool/safe/persist"]`; ulysses adds `zpool/safe/hyperion-home`, ~240G +
+  118G ≈ **~360G**), 24 hourly / 30 daily / 3 monthly. `local/*` and `tank` are
+  excluded.
+- **syncoid** (systemd timer, hourly) pushes to
+  `zfspv-pool/backups/<host>/<dataset>` on iserlohn.
 - First sync ≈ 1 h over 1 GbE; incrementals thereafter are small.
 
-syncoid pushes as its own service user over SSH to `root@iserlohn` using a
-dedicated key stored via SOPS.
+**Encrypted at rest — raw send.** `zfspv-pool` is *unencrypted*, so a plain send
+would land the irreplaceable data (SSH keys, the sops age key, …) as cleartext
+on iserlohn. syncoid uses `--sendoptions=w` (raw): iserlohn stores the
+already-encrypted blocks and cannot read them without the passphrase.
+`--recvoptions=u` keeps the keyless received datasets from ever mounting.
+
+**Least-privilege receiver — not root.** Instead of `root@iserlohn`, a dedicated
+unprivileged `syncoid` user on iserlohn holds the authorized key, with
+`zfs allow` scoped to the `zfspv-pool/backups/<host>` subtree only
+(`create,receive,rollback,destroy,hold,…`). A oneshot service creates the
+per-host parent dataset (`mountpoint=none`) and applies the delegation. So the
+key can only receive ciphertext into one subtree — no root, no wider access.
+
+**Keys.** Per-host: `syncoid/<host>/ssh_key` in SOPS, decrypted for the syncoid
+service user on the source. **Transport:** `mbuffer` + `lzop` are provided on
+both ends (lzop is a near-no-op on raw-encrypted streams; mbuffer smooths
+throughput). **Retention on iserlohn:** sanoid prunes the replicated copies
+(`autosnap = false`) with a longer policy; it can prune the keyless encrypted
+datasets without the key.
 
 ### 6. Stage-2 tank key-load + mount
 

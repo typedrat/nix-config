@@ -745,3 +745,54 @@ Expected: both timers scheduled.
 - **Spec coverage:** §1 Samsung layout → Tasks 3; §2 single-dataset tank → Tasks 3, 5c; §3 impermanence second root (7 dirs, 3 modules) → Tasks 5a/5b; §4 disko reconcile → Task 2; §5 backups → Tasks 6–9; §6 stage-2 key-load → Task 5c; execution order → Phase 1 then Phase 2; success criteria → Tasks 5d, 9.
 - **No placeholders** except the intentionally-pasted syncoid pubkey (Task 8) and the SOPS private-key value (Task 6), which are runtime-generated secrets.
 - **Type consistency:** `rat.impermanence.tank.enable`/`tankDir` defined in 5a, consumed in 5b/5c; `rat.backup.enable` defined and consumed in Task 7; single `tank` dataset consistent across Tasks 3, 4, 5c; the seven-dir list identical in Global Constraints, Task 4, Task 5b/5d.
+
+---
+
+## As-built deviations & lessons
+
+The committed code is the source of truth; these are where execution diverged
+from the tasks above and the gotchas worth remembering.
+
+### Phase 2 was hardened beyond the original plan
+
+Tasks 6–8 as written used a flat `root@iserlohn` push with a plain (decrypting)
+send. Both were changed:
+
+- **Raw encrypted send.** `zfspv-pool` is unencrypted, so a plain send would
+  store the irreplaceable data as cleartext on iserlohn. syncoid commands set
+  `sendOptions = "w"` (raw) + `recvOptions = "u"` (never mount the keyless
+  received dataset). The backup is ciphertext at rest; iserlohn can't read it.
+- **Delegated unprivileged receiver, not root.** `systems/iserlohn/backup-target.nix`
+  creates a dedicated `syncoid` system user (not root) holding the authorized
+  key, plus a `syncoid-target-delegate` oneshot that creates the per-host parent
+  dataset (`zfs create -p -o mountpoint=none zfspv-pool/backups/ulysses`) and
+  runs `zfs allow -u syncoid change-key,compression,create,destroy,hold,mount,mountpoint,receive,release,rollback,bookmark <subtree>`.
+  The key is receive-only into that one subtree.
+- **Per-host, generic module.** `backup.nix` derives the key path
+  (`syncoid/<host>/ssh_key`), target base (`zfspv-pool/backups/<host>`), and
+  syncoid commands from `networking.hostName` + a `rat.backup.datasets` option,
+  so a new source host just enables `rat.backup` and gets its own key + subtree.
+  The SOPS secret lives at `syncoid/ulysses/ssh_key` (not the flat
+  `syncoid/ssh_key`).
+- **Transport helpers.** `mbuffer` + `lzop` added to `environment.systemPackages`
+  on both ends (syncoid resolves them via the booted-system path / the receiver's
+  SSH-command PATH). lzop is a near-no-op on raw-encrypted streams; mbuffer
+  smooths throughput.
+
+### Lesson: chown tank's intermediate parent dirs during relocation
+
+Task 4 Step 3 created tank parent dirs with `sudo mkdir -p`, leaving the
+structural intermediates (`/tank/home/awilliams`, `.cache`, `.local`,
+`.local/share`) **root-owned**. impermanence propagates the source parent's
+ownership onto the home mountpoint parent, so `~/.cache` and `~/.local` became
+root-owned on every activation. Fix: after the rsyncs, chown the intermediate
+dirs to the user (not just the leaf data dirs):
+`chown awilliams:users /tank/home/awilliams{,/.cache,/.local,/.local/share}` and
+`chmod 700 /tank/home/awilliams`.
+
+### Lesson: don't `systemctl restart` syncoid mid-receive
+
+Restarting syncoid while a receive is in flight races the remote `zfs receive`
+lock ("… is already target of a zfs receive process"). Instead `stop`, let the
+remote recv wind down (a resume token remains on the target), then `start` — it
+resumes from the token, no progress lost.
