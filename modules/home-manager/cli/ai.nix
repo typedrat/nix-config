@@ -36,29 +36,32 @@ in {
   config = modules.mkIf (cliCfg.enable && cliCfg.ai.enable) {
     xdg.userDirs.extraConfig.XDG_AI_DIR = "$HOME/AI";
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".codex"
-        ".config/opencode"
-        ".local/share/opencode"
-        ".local/state/opencode"
-        ".gstack"
-        ".openpeon"
+    home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+      {
+        ${persistDir}.directories = [
+          ".codex"
+          ".config/opencode"
+          ".local/share/opencode"
+          ".local/state/opencode"
+          ".gstack"
+          ".openpeon"
 
-        # yes, this is where the authentication data for OpenCode lives
-        # I want to shove a copy of the XDG specification up someone's asshole.
-        ".cache/opencode"
-      ];
-    };
+          # yes, this is where the authentication data for OpenCode lives
+          # I want to shove a copy of the XDG specification up someone's asshole.
+          ".cache/opencode"
+        ];
+      }
+      {
+        # On ulysses these land on the tank pool; elsewhere tankRoot falls back
+        # to persistDir and mkMerge folds them into the block above.
+        ${tankRoot}.directories = [
+          "AI"
 
-    home.persistence.${tankRoot} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        "AI"
-
-        # HuggingFace model/dataset cache — large downloads worth persisting
-        ".cache/huggingface"
-      ];
-    };
+          # HuggingFace model/dataset cache — large downloads worth persisting
+          ".cache/huggingface"
+        ];
+      }
+    ]);
 
     sops.secrets = lib.mkIf hasUserSecrets {
       civitaiApiToken = {};

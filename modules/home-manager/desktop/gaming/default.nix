@@ -42,23 +42,26 @@ in {
 
     xdg.configFile."pegasus-frontend/themes/colorful".source = "${pkgs.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".steam"
-        ".local/share/bottles"
-        ".config/pegasus-frontend"
-        ".config/rom-organizer"
-        ".local/share/wine"
-        # Native GOG/GameMaker game saves (e.g. Mina the Hollower)
-        ".local/share/Yacht Club Games"
-      ];
-    };
-
-    home.persistence.${tankRoot} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".local/share/Steam"
-        "Games"
-      ];
-    };
+    home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+      {
+        ${persistDir}.directories = [
+          ".steam"
+          ".local/share/bottles"
+          ".config/pegasus-frontend"
+          ".config/rom-organizer"
+          ".local/share/wine"
+          # Native GOG/GameMaker game saves (e.g. Mina the Hollower)
+          ".local/share/Yacht Club Games"
+        ];
+      }
+      {
+        # On ulysses these land on the tank pool; elsewhere tankRoot falls back
+        # to persistDir and mkMerge folds them into the block above.
+        ${tankRoot}.directories = [
+          ".local/share/Steam"
+          "Games"
+        ];
+      }
+    ]);
   };
 }

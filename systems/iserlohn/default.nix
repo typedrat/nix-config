@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./backup-target.nix
     ./disko-config.nix
     ./hardware-configuration.nix
     ./home-assistant.nix
