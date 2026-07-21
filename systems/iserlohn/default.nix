@@ -16,6 +16,23 @@
 
   boot.kernelPackages = pkgs.linuxPackages;
 
+  # Serial console over the BMC's IPMI Serial-over-LAN. The board's graphical KVM
+  # is broken, so SOL is the working remote console. BIOS console redirection
+  # already carries the firmware/bootloader; these hand the kernel off to serial
+  # too. The BMC bridges SOL to an on-board UART — both are wired up so it works
+  # whichever one it is. Baud must match the BMC SOL rate (`ipmitool ... sol
+  # info`) and the BIOS redirection setting; 115200 is the AMI default.
+  boot.kernelParams = [
+    "console=tty0"
+    "console=ttyS0,115200n8"
+    "console=ttyS1,115200n8"
+  ];
+
+  # Login prompt on whichever UART the BMC actually uses for SOL (the kernel
+  # console= only auto-spawns a getty on the primary console).
+  systemd.services."serial-getty@ttyS0".enable = true;
+  systemd.services."serial-getty@ttyS1".enable = true;
+
   disko.devices.disk.main.device = "/dev/disk/by-id/ata-ADATA_SU800_2L412L2HHEK9";
 
   networking.hostName = "iserlohn";
