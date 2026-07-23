@@ -1,7 +1,4 @@
-{
-  config,
-  ...
-}: {
+{config, ...}: {
   # The tank pool is managed manually (created once, out of band) rather than by
   # disko: nixos-rebuild only ever mounts it, never recreates it, so the reserved
   # free space on the same disk (for a later Windows install) stays safe.
