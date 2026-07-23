@@ -10,13 +10,13 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "dispatcharr";
-  version = "0.27.2";
+  version = "0.28.2";
 
   src = fetchFromGitHub {
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-uqLX2tHYcIMQDscgAfCOV5v1Bx6NqNpKCzYSyAH1s88=";
+    hash = "sha256-M1IYEq+VLMM1fd+FlkqadYFKplPvt4Akrodn7ECUw9I=";
     leaveDotGit = true;
   };
 
