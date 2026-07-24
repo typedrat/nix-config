@@ -25,6 +25,20 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
+    # claude-code: 2.1.217 -> 2.1.218 (NixOS/nixpkgs#544776)
+    nixpkgs-patch-544776 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/544776.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.218 -> 2.1.219 (NixOS/nixpkgs#545319)
+    # Stacks on #544776 — the manifest hunks assume 2.1.218, so the patcher
+    # must apply #544776 first (it does; inputs sort alphabetically by name).
+    nixpkgs-patch-545319 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/545319.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
