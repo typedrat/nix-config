@@ -1,6 +1,17 @@
 {pkgs, ...}: {
   rat.services.matter-server.enable = true;
 
+  rat.services.zwave-js = {
+    enable = true;
+    serialPort = "/dev/serial/by-id/usb-Zooz_800_Z-Wave_Stick_533D004242-if00";
+  };
+
+  # zwave-js defaults to querying sensors in Celsius. The Honeywell T6 Pro
+  # sometimes answers those with a Celsius value flagged as Fahrenheit,
+  # so HA shows e.g. 27 °F for 27 °C. Preferring Fahrenheit makes the
+  # driver request/normalize temperatures in °F, matching the thermostat.
+  services.zwave-js.settings.preferences.scales.temperature = "Fahrenheit";
+
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;
@@ -75,6 +86,9 @@
 
       # Zigbee Home Automation
       "zha"
+
+      # Z-Wave
+      "zwave_js"
     ];
 
     config = {

@@ -3,5 +3,6 @@
     ./home-assistant
     ./matter-server.nix
     ./mosquitto.nix
+    ./zwave-js.nix
   ];
 }
