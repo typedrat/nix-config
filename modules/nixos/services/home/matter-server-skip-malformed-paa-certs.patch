@@ -1,0 +1,52 @@
+--- a/matter_server/server/helpers/paa_certificates.py
++++ b/matter_server/server/helpers/paa_certificates.py
+@@ -129,13 +129,20 @@
+                 certificate: str = certificate_data["pemCert"]
+                 subject = certificate_data["subjectAsText"]
+                 certificate = certificate.rstrip("\n")
+-                if await write_paa_root_cert(
+-                    paa_root_cert_dir,
+-                    base_name,
+-                    certificate,
+-                    subject,
+-                ):
+-                    fetch_count += 1
++                try:
++                    if await write_paa_root_cert(
++                        paa_root_cert_dir,
++                        base_name,
++                        certificate,
++                        subject,
++                    ):
++                        fetch_count += 1
++                except ValueError as err:
++                    LOGGER.warning(
++                        "Skipping malformed PAA root certificate %s: %s",
++                        subject,
++                        err,
++                    )
+     except (ClientError, TimeoutError) as err:
+         LOGGER.warning(
+             "Fetching latest certificates failed: error %s", err, exc_info=err
+@@ -169,10 +176,17 @@
+                     continue
+                 async with http_session.get(f"{GIT_URL}/{cert}.pem") as response:
+                     certificate = await response.text()
+-                if await write_paa_root_cert(
+-                    paa_root_cert_dir, "git_", certificate, cert
+-                ):
+-                    fetch_count += 1
++                try:
++                    if await write_paa_root_cert(
++                        paa_root_cert_dir, "git_", certificate, cert
++                    ):
++                        fetch_count += 1
++                except ValueError as err:
++                    LOGGER.warning(
++                        "Skipping malformed PAA root certificate %s: %s",
++                        cert,
++                        err,
++                    )
+     except (ClientError, TimeoutError) as err:
+         LOGGER.warning(
+             "Fetching latest certificates failed: error %s", err, exc_info=err

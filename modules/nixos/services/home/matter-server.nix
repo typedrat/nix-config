@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib) modules options types;
@@ -34,6 +35,14 @@ in {
         enable = true;
         inherit (config.links.matter-server) port;
         inherit (cfg) logLevel;
+
+        # A malformed PAA root certificate in the production DCL (NXP's)
+        # otherwise raises ValueError during the startup fetch, killing the
+        # server task before the websocket ever binds while the process
+        # stays alive and looks healthy to systemd. Skip bad certs instead.
+        package = pkgs.python-matter-server.overridePythonAttrs (old: {
+          patches = (old.patches or []) ++ [./matter-server-skip-malformed-paa-certs.patch];
+        });
       };
 
       # The upstream module uses DynamicUser which breaks impermanence
