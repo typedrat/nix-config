@@ -12,7 +12,8 @@
       overlays = [
         inputs.vscode-extensions.overlays.default
 
-        (_final: _prev: {
+        (_final: prev: {
+          inherit (prev) nix-update;
           nix = inputs'.nix.packages.default;
         })
 
@@ -44,34 +45,6 @@
             ];
         })
 
-        # file 5.48's landlock sandbox forbids executing the decompression
-        # helpers under --uncompress, so file reports compressed tarballs by
-        # their outer compression MIME (application/x-bzip2) instead of
-        # application/x-tar. That breaks patool's mime detection and test suite
-        # (NixOS/nixpkgs#540025). NixOS/nixpkgs#540742 fixes it by also granting
-        # LANDLOCK_ACCESS_FS_EXECUTE, but patching file globally rebuilds the
-        # world, so scope the patched file to patool alone (it bakes file into
-        # its runtime PATH). Drop once the pinned nixpkgs includes #540742.
-        (_final: prev: {
-          pythonPackagesExtensions =
-            prev.pythonPackagesExtensions
-            ++ [
-              (_python-final: python-prev: {
-                patool = python-prev.patool.override {
-                  file = prev.file.overrideAttrs (oldAttrs: {
-                    postPatch =
-                      (oldAttrs.postPatch or "")
-                      + ''
-                        substituteInPlace src/landlock.c --replace-fail \
-                          "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR" \
-                          "LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR | LANDLOCK_ACCESS_FS_EXECUTE"
-                      '';
-                  });
-                };
-              })
-            ];
-        })
-
         # nodejs 20 (bundled by github-runner for the Actions Node 20 runtime)
         # fails its check phase on this host: test-fs-readdir-ucs2 creates a file
         # with an invalid UCS-2 byte sequence as its name, but iserlohn's ZFS
@@ -99,6 +72,26 @@
           # nodejs_20 = callPackage symlink.nix { nodejs-slim = nodejs-slim_20; },
           # so rebuild the symlinkJoin wrapper against the patched slim derivation.
           nodejs_20 = prev.nodejs_20.override {nodejs-slim = nodejs-slim_20;};
+        })
+
+        # Workaround for https://github.com/NixOS/nixpkgs/issues/545409
+        # (root cause: https://github.com/NixOS/nixpkgs/issues/544701).
+        #
+        # cmake 4.3's FindCUDAToolkit fails hard when CUDAToolkit_ROOT is set but
+        # contains no bin/nvcc; it no longer falls back to searching PATH. The
+        # setup-cuda-hook builds CUDAToolkit_ROOT from host-side deps only, and
+        # cuda_nvcc is normally a nativeBuildInput, so nvcc is never in the list.
+        # Adding cuda_nvcc to buildInputs gets its path (which carries the
+        # include-in-cudatoolkit-root marker) into CUDAToolkit_ROOT, which OIDN
+        # forwards to the ExternalProject that runs find_package(CUDAToolkit).
+        #
+        # Wrong dependency category on purpose (nvcc is a build tool, not a
+        # library); fine for native builds. Drop once the fix lands, likely via
+        # https://github.com/NixOS/nixpkgs/pull/545092.
+        (final: prev: {
+          openimagedenoise = prev.openimagedenoise.overrideAttrs (old: {
+            buildInputs = (old.buildInputs or []) ++ [final.cudaPackages.cuda_nvcc];
+          });
         })
       ];
 
