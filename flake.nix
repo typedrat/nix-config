@@ -177,8 +177,9 @@
 
     hyprlock.url = "github:hyprwm/hyprlock";
 
+    # change back to github:hyprwm/hyprland-plugins once hyprwm/hyprland-plugins#689 is merged
     hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
+      url = "github:LionHeartP/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
 
