@@ -280,6 +280,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.bun2nix.inputs.systems.follows = "systems-linux";
     };
+
+    # Personal wallpaper collection (private repo). Consumed as raw files so the
+    # images live in the store rather than being copied into ~/Pictures by hand.
+    wallpapers = {
+      url = "github:typedrat/wallpapers";
+      flake = false;
+    };
     #endregion
 
     #region Extension Repositories

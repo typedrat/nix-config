@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }: let
   hostname = config.networking.hostName;
@@ -53,6 +54,9 @@ in {
       };
     };
     theming.enable = true;
+
+    # Desktop wallpaper, shared by the KDE desktop/lock screen and Hyprland.
+    gui.wallpaper.image = "${inputs.wallpapers}/__ginga_eiyuu_densetsu_drawn_by_hatakaze171__085aa73d9a05ec09234d39f5921efb44.png";
 
     # Security key support (GPG with hardware key)
     securityKey.enable = true;

@@ -116,6 +116,19 @@
         enable = options.mkEnableOption "KDE Plasma configuration" // {default = true;};
       };
 
+      wallpaper = {
+        image = options.mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          example = "/home/user/Pictures/wallpaper.png";
+          description = ''
+            Absolute path (or store path) to the desktop wallpaper, shared
+            across desktops: the KDE desktop and lock screen and the Hyprland
+            wallpaper daemon all read this single value.
+          '';
+        };
+      };
+
       chat = {
         enable = options.mkEnableOption "chat clients" // {default = true;};
         discord.enable = options.mkEnableOption "Discord" // {default = true;};

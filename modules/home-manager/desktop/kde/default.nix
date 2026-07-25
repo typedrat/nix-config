@@ -10,6 +10,7 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   kdeCfg = guiCfg.kde or {};
+  wallpaperImage = guiCfg.wallpaper.image or null;
   hyprlandCfg = guiCfg.hyprland or {};
   launcherVariant = hyprlandCfg.launcher.variant or "rofi";
   impermanenceCfg = osConfig.rat.impermanence;
@@ -69,6 +70,7 @@ in {
         lookAndFeel = "Catppuccin-${flavorName}-${accentName}";
         colorScheme = colorSchemeName;
         iconTheme = iconThemeName;
+        wallpaper = wallpaperImage;
       };
 
       fonts = {
@@ -124,6 +126,12 @@ in {
         effects = {
           translucency.enable = true;
           blur.enable = true;
+        };
+
+        # macOS-style layout: window controls on the left, utility toggles right.
+        titlebarButtons = {
+          left = ["close" "maximize" "minimize"];
+          right = ["on-all-desktops"];
         };
       };
 
@@ -224,29 +232,59 @@ in {
 
       # --- Misc Config ---
 
-      configFile = {
-        kdeglobals = {
-          KDE.AnimationDurationFactor = 0.5;
-        };
-        kwinrc = {
-          Windows = {
-            # Focus follows mouse, no delay (tiling WM behavior)
-            FocusPolicy = "FocusFollowsMouse";
-            DelayFocusInterval = 0;
+      configFile =
+        {
+          kdeglobals = {
+            KDE.AnimationDurationFactor = 0.5;
+            General = {
+              TerminalApplication = "ghostty";
+              TerminalService = "com.mitchellh.ghostty.desktop";
+              # Full hinting + RGB subpixel order for the LCD panel.
+              XftHintStyle = "hintfull";
+              XftSubPixel = "rgb";
+            };
+          };
+          kwinrc = {
+            Windows = {
+              # Focus follows mouse, no delay (tiling WM behavior)
+              FocusPolicy = "FocusFollowsMouse";
+              DelayFocusInterval = 0;
+            };
+            # Top-right hot corner locks the screen.
+            ElectricBorders.TopRight = "LockScreen";
+            # Aurorae SVG decoration shipped by utterly-round-plasma-style.
+            "org.kde.kdecoration2" = {
+              library = "org.kde.kwin.aurorae.v2";
+              theme = "__aurorae__svg__Utterly-Round-Dark";
+            };
+          };
+
+          # Don't auto-mount removable devices on attach.
+          kded5rc.Module-device_automounter.autoload = false;
+
+          # Flat pointer acceleration (raw input) for the gaming mouse. The group
+          # name is keyed by the device's libinput vendor/product IDs, so this
+          # only matches this specific mouse.
+          kcminputrc."Libinput/8916/4907/MIONIX MIONIX NAOS PRO Gaming Mouse".PointerAcceleration = 0.0;
+          # KDE apps support a per-application color-scheme override under
+          # [UiSettings] ColorScheme. When unset ("Default"), Dolphin ignores the
+          # global kdeglobals color scheme and renders the built-in default
+          # palette, which clashes with Kvantum's dark backgrounds (dark text on
+          # dark background). This is independent of the global scheme: even with
+          # plasma-apply-colorscheme correctly applying Catppuccin globally,
+          # Dolphin on "Default" still renders wrong (verified empirically). Pin
+          # the per-app override so Dolphin matches the rest of the desktop.
+          dolphinrc = {
+            UiSettings.ColorScheme = colorSchemeName;
+          };
+        }
+        // lib.optionalAttrs (wallpaperImage != null) {
+          # Lock screen uses the same wallpaper as the desktop.
+          kscreenlockerrc."Greeter/Wallpaper/org.kde.image/General" = {
+            Image = "file://${wallpaperImage}";
+            PreviewImage = "file://${wallpaperImage}";
           };
         };
-        # KDE apps support a per-application color-scheme override under
-        # [UiSettings] ColorScheme. When unset ("Default"), Dolphin ignores the
-        # global kdeglobals color scheme and renders the built-in default
-        # palette, which clashes with Kvantum's dark backgrounds (dark text on
-        # dark background). This is independent of the global scheme: even with
-        # plasma-apply-colorscheme correctly applying Catppuccin globally,
-        # Dolphin on "Default" still renders wrong (verified empirically). Pin
-        # the per-app override so Dolphin matches the rest of the desktop.
-        dolphinrc = {
-          UiSettings.ColorScheme = colorSchemeName;
-        };
-      };
     };
 
     # Hide Blueman applet in KDE (Plasma has native Bluetooth support)
@@ -262,6 +300,8 @@ in {
     home.packages = with pkgs; [
       kdePackages.spectacle
       playerctl
+      # Ships the Utterly-Round-Dark Aurorae decoration referenced in kwinrc.
+      utterly-round-plasma-style
     ];
 
     # Screenshot directory

@@ -3159,6 +3159,7 @@
         "treefmt-nix": "treefmt-nix_6",
         "typedrat-fonts": "typedrat-fonts",
         "vscode-extensions": "vscode-extensions",
+        "wallpapers": "wallpapers",
         "wayland-pipewire-idle-inhibit": "wayland-pipewire-idle-inhibit",
         "zen-browser": "zen-browser"
       }
@@ -3821,6 +3822,22 @@
       "original": {
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
+        "type": "github"
+      }
+    },
+    "wallpapers": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785012312,
+        "narHash": "sha256-DjYesDoDn84uDNVAAC/0mgVIyvlnDu6F+6hEr0J9Mjw=",
+        "owner": "typedrat",
+        "repo": "wallpapers",
+        "rev": "843fa5c915378cb777d14212a4fafdbd711507fc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "typedrat",
+        "repo": "wallpapers",
         "type": "github"
       }
     },

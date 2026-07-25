@@ -10,6 +10,7 @@
   guiCfg = userCfg.gui or {};
   hyprlandCfg = guiCfg.hyprland or {};
   wallpaperCfg = hyprlandCfg.wallpaper or {};
+  wallpaperImage = guiCfg.wallpaper.image or null;
 in {
   config =
     modules.mkIf (
@@ -20,9 +21,15 @@ in {
     ) {
       services.hyprpaper = {
         enable = true;
-        settings = {
-          splash = false;
-        };
+        settings =
+          {
+            splash = false;
+          }
+          // lib.optionalAttrs (wallpaperImage != null) {
+            preload = [wallpaperImage];
+            # Empty monitor field applies the wallpaper to every output.
+            wallpaper = [",${wallpaperImage}"];
+          };
       };
     };
 }
