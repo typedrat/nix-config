@@ -1411,16 +1411,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1783189335,
-        "narHash": "sha256-41dsDGsQ63wmq0y9NTieawHasow45eYj9vgUSefgldc=",
-        "owner": "koloved",
+        "lastModified": 1784811615,
+        "narHash": "sha256-ZFsCS1qr5+eAvYloLM5A9L3w7oo9p8OXL4gcovcA9NA=",
+        "owner": "cjpais",
         "repo": "Handy",
-        "rev": "8bdb56ba37737c0e19f361fe690b0e1bd0f80704",
+        "rev": "390729a8007a9c09be38416bc7755e4fa04165c3",
         "type": "github"
       },
       "original": {
-        "owner": "koloved",
-        "ref": "flatpak_wayland",
+        "owner": "cjpais",
         "repo": "Handy",
         "type": "github"
       }
@@ -2574,30 +2573,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-patch-544776": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-SKvjd6OQlf+qIPLptR+RKGOevv/HIAYw1Q1W2W4KrBY=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/544776.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/544776.diff"
-      }
-    },
-    "nixpkgs-patch-545319": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-TLL/w3JZsVUlPdoByCdBGeGmo2PbcYl7I9xqJqrvZ0U=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/545319.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/545319.diff"
-      }
-    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -3171,8 +3146,6 @@
         "nixified-ai": "nixified-ai",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_13",
-        "nixpkgs-patch-544776": "nixpkgs-patch-544776",
-        "nixpkgs-patch-545319": "nixpkgs-patch-545319",
         "nixvirt": "nixvirt",
         "orca-slicer-nanashi": "orca-slicer-nanashi",
         "peon-ping": "peon-ping",
