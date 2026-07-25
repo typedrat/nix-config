@@ -159,6 +159,7 @@ in {
       # PATH while still preserving it as a GC root.
       (lib.hiPrio rustChannelShim)
       rustStable
+      fenix.rust-analyzer
 
       # cargo-fuzz from nixpkgs, wrapped so the sanitizer-instrumented fuzz
       # harness it builds finds libstdc++/libgcc_s at runtime. See the
