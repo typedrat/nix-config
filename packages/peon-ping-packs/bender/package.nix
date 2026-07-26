@@ -6,7 +6,7 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "peon-ping-pack-bender";
-  version = "0-unstable-2025-07-27";
+  version = "1.0.0-unstable-2026-02-16";
 
   src = fetchFromGitHub {
     owner = "ravenrs";
