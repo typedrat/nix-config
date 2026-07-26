@@ -140,9 +140,14 @@ in {
         oembed.additional_providers = [
           (
             let
+              # oembed.com serves providers.json live and unversioned, so a
+              # hash pinned against it goes stale the next time a provider
+              # changes and every build then fails on the mismatch. The npm
+              # release carries the same generated file at a fixed version.
+              version = "1.0.20260604";
               providers = pkgs.fetchurl {
-                url = "https://oembed.com/providers.json";
-                hash = "sha256-05FAW6aFyEWCpqJ/8QovDp1WmkYDONud6/+EJ7XU/a4=";
+                url = "https://registry.npmjs.org/oembed-providers/-/oembed-providers-${version}.tgz";
+                hash = "sha256-pfRA3HiNFZI5e90/zle5c+DoMEUk6W8d6YbUwROrVJ8=";
               };
             in
               pkgs.runCommand "providers.json"
@@ -152,7 +157,8 @@ in {
                 # filter out entries that do not contain a schemes entry
                 # Error in configuration at 'oembed.additional_providers.<item 0>.<item 22>.endpoints.<item 0>': 'schemes' is a required property
                 # and have none http protocols: Unsupported oEmbed scheme (spotify) for pattern: spotify:*
-                jq '[ ..|objects| select(.endpoints[0]|has("schemes")) | .endpoints[0].schemes=([ .endpoints[0].schemes[]|select(.|contains("http")) ]) ]' ${providers} > $out
+                tar -xzf ${providers} package/providers.json -O \
+                  | jq '[ ..|objects| select(.endpoints[0]|has("schemes")) | .endpoints[0].schemes=([ .endpoints[0].schemes[]|select(.|contains("http")) ]) ]' > $out
               ''
           )
         ];
