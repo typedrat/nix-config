@@ -3,14 +3,19 @@
   appimageTools,
   fetchurl,
   makeWrapper,
-  nix-update-script,
+  writeShellApplication,
+  curl,
+  jq,
+  gnused,
+  gnugrep,
+  coreutils,
 }: let
   pname = "es-de";
-  version = "3.1.0";
+  version = "3.4.1";
 
   src = fetchurl {
-    url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/246875981/download";
-    hash = "sha256-TLZs/JIwmXEc+g7d2D22R0SmKU4C4//Rnuhn93qI7H4=";
+    url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/288156961/download";
+    hash = "sha256-PGGkTXONVRY9qljt5wcgtCWg32JGDATcI908pYZyNYE=";
     name = "ES-DE_v${version}.AppImage";
   };
 
@@ -35,7 +40,17 @@ in
         $out/share/icons/hicolor/scalable/apps/es-de.svg
     '';
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
+    passthru.updateScript = lib.getExe (writeShellApplication {
+      name = "es-de-update";
+      runtimeInputs = [
+        curl
+        jq
+        gnused
+        gnugrep
+        coreutils
+      ];
+      text = builtins.readFile ./update.sh;
+    });
 
     meta = {
       description = "EmulationStation Desktop Edition - a frontend for browsing and launching games";

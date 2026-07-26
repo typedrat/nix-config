@@ -2,6 +2,14 @@ set -euo pipefail
 
 pkg_file="packages/chaptarr/package.nix"
 
+# GitHub runners ship a v1 /etc/containers/registries.conf, which the skopeo
+# in nixpkgs refuses to parse (it only accepts v2). Point both skopeo and
+# nix-prefetch-docker at a minimal v2 config instead.
+registries_conf=$(mktemp)
+trap 'rm -f "$registries_conf"' EXIT
+echo 'unqualified-search-registries = ["docker.io"]' > "$registries_conf"
+export CONTAINERS_REGISTRIES_CONF="$registries_conf"
+
 # Get latest versioned tag from Docker Hub (exclude "latest", "develop", "beta")
 latest_version=$(
   curl -s "https://hub.docker.com/v2/repositories/robertlordhood/chaptarr/tags/?page_size=25&ordering=last_updated" |
@@ -26,9 +34,18 @@ new_index_digest=$(
     sha256sum | awk '{print "sha256:" $1}'
 )
 
-# Prefetch hashes for each architecture
-amd64_hash=$(nix-prefetch-docker --image-name robertlordhood/chaptarr --image-tag "$latest_version" --arch amd64 --os linux 2>&1 | grep 'sha256-' | sed 's/.*\(sha256-[^"]*\).*/\1/')
-arm64_hash=$(nix-prefetch-docker --image-name robertlordhood/chaptarr --image-tag "$latest_version" --arch arm64 --os linux 2>&1 | grep 'sha256-' | sed 's/.*\(sha256-[^"]*\).*/\1/')
+# Prefetch hashes for each architecture. --json keeps the hash off the progress
+# output, which also carries an "ImageHash:" line and so can't be grepped for.
+prefetch_arch() {
+  nix-prefetch-docker --json --quiet \
+    --image-name robertlordhood/chaptarr \
+    --image-tag "$latest_version" \
+    --arch "$1" --os linux |
+    jq -r '.hash'
+}
+
+amd64_hash=$(prefetch_arch amd64)
+arm64_hash=$(prefetch_arch arm64)
 
 # Update the package file
 sed -i "s|version = \"[^\"]*\"|version = \"$latest_version\"|" "$pkg_file"

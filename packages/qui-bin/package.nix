@@ -3,26 +3,32 @@
   stdenvNoCC,
   fetchurl,
   autoPatchelfHook,
-  nix-update-script,
+  writeShellApplication,
+  curl,
+  jq,
+  gawk,
+  gnused,
+  gnugrep,
+  coreutils,
 }: let
-  version = "1.18.0";
+  version = "1.23.0";
 
   sources = {
     x86_64-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_x86_64.tar.gz";
-      hash = "sha256-Yi85Sq6/HEsDi3EZjYe+37/JU54J+srTYsGsGMV7sfc=";
+      hash = "sha256-mNZZTZchH3QsYnEmPwtQHZhItHqn5XNBvz5A59zpL4g=";
     };
     aarch64-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_arm64.tar.gz";
-      hash = "sha256-vYPVxkuQ1wkfU66qFzxrllRws/YcGaHAmB76UiEgWBk=";
+      hash = "sha256-x13Eg2ERH3I+LOk5eHGSLGUpdX/UjF8PtO37IvCGF7M=";
     };
     armv7l-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_arm.tar.gz";
-      hash = "sha256-eZGgPpOZpEmBbFyfOGo4hjhojlSl0bx88NMUFy5qR5E=";
+      hash = "sha256-UmHfFT0w47Jxup0U7bpVH3hMXO6jH06tMc0b4BP0fCs=";
     };
     aarch64-darwin = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_darwin_arm64.tar.gz";
-      hash = "sha256-Qau7lIZGZ8KNrfJlRPb7Gz5EC3ITAzs+tcmT3N9OX+k=";
+      hash = "sha256-S+iFPp5BE0BFhByJ7v1o/PcxoTzrIbTXJUzyO8thDbQ=";
     };
   };
 in
@@ -48,7 +54,18 @@ in
       runHook postInstall
     '';
 
-    passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
+    passthru.updateScript = lib.getExe (writeShellApplication {
+      name = "qui-bin-update";
+      runtimeInputs = [
+        curl
+        jq
+        gawk
+        gnused
+        gnugrep
+        coreutils
+      ];
+      text = builtins.readFile ./update.sh;
+    });
 
     meta = {
       description = "Modern alternative webUI for qBittorrent, with multi-instance support (pre-built binary)";

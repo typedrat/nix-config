@@ -4,7 +4,6 @@
   claude-code,
   tweakcc-fixed,
   jq,
-  nix-update-script,
   # User-supplied tweakcc config; tracked alongside this package so prompt
   # tweaks are reproducible across hosts.
   tweakccConfig ? ./config.json,
@@ -77,12 +76,15 @@ in
       runHook postInstallCheck
     '';
 
+    # Drop the inherited updateScript: it resolves claude-code's definition to
+    # a path inside patched nixpkgs, which isn't part of this flake, so
+    # nix-update can't rewrite it. Bumping this package means bumping the
+    # nixpkgs patch, tweakcc-fixed and the prompt overrides together, by hand.
     passthru =
-      (prev.passthru or {})
+      builtins.removeAttrs (prev.passthru or {}) ["updateScript"]
       // {
         unpatched = claude-code;
         promptOverridesSrc = promptOverrides;
-        updateScript = nix-update-script {attrPath = "claude-code";};
       };
 
     meta =

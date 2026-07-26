@@ -2,6 +2,7 @@
   lib,
   python3Packages,
   fetchFromGitHub,
+  nix-update-script,
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "kicad-skip";
@@ -26,6 +27,10 @@ python3Packages.buildPythonPackage (finalAttrs: {
   pythonImportsCheck = [
     "skip"
   ];
+
+  # Without --flake, nix-update resolves this file to its store path and then
+  # fails to `git diff` it against the working tree.
+  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = {
     description = "KiCAD s-expression schematic/layout file manipulation";

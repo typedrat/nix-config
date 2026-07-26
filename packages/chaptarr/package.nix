@@ -31,8 +31,8 @@
 
   hash =
     {
-      amd64 = "sha256-mcmMeQkGu9nKhlHXl9AGCRTme+0forvRuNEagSbhz54=";
-      arm64 = "sha256-V/W8tYbsJcQ2BgYG4EAjqVwf+87isZ/p/Q5dBPEF/V4=";
+      amd64 = "sha256-VYX1izJmmryLFybDO16U+CyrXKMHtAudO2vMlVLvKok=";
+      arm64 = "sha256-iuYOWaJCLjzxg5J/YDLFhmOxidAUm4W2Qx6NxyEe6IQ=";
     }
     .${
       arch
@@ -40,11 +40,11 @@
 in
   stdenvNoCC.mkDerivation rec {
     pname = "chaptarr";
-    version = "0.9.333";
+    version = "0.9.852";
 
     src = dockerTools.pullImage {
       imageName = "robertlordhood/chaptarr";
-      imageDigest = "sha256:c0eed65ecc29194025711d3da942e9ee0ec868051a40fa3275f1fea01d0542d9";
+      imageDigest = "sha256:cd5813b16d2d00c5e6d439cc53876b5c7a24f0693bfc7111d61f5afacdc5b055";
       inherit hash;
       finalImageTag = version;
       os = "linux";
