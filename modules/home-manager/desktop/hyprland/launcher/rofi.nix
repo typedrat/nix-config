@@ -3,9 +3,11 @@
   osConfig,
   pkgs,
   lib,
+  hlLib,
   ...
 }: let
   inherit (lib) modules;
+  inherit (hlLib) dsp bind;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
@@ -140,11 +142,9 @@ in {
         wtype
       ];
 
-      wayland.windowManager.hyprland.settings = {
-        bind = [
-          "$main_mod,space,exec,rofi -show drun"
-          "$main_mod&SHIFT,period,exec,rofimoji --skin-tone light --max-recent 0"
-        ];
-      };
+      wayland.windowManager.hyprland.settings.bind = [
+        (bind "SUPER + space" (dsp.exec "rofi -show drun"))
+        (bind "SUPER + SHIFT + period" (dsp.exec "rofimoji --skin-tone light --max-recent 0"))
+      ];
     };
 }

@@ -16,6 +16,29 @@
   palette = (lib.importJSON "${config.catppuccin.sources.palette}/palette.json").${config.catppuccin.flavor}.colors;
   mkRgb = color: "rgb(${lib.removePrefix "#" palette.${color}.hex})";
   mkRgba = color: alpha: "rgba(${lib.removePrefix "#" palette.${color}.hex}${alpha})";
+
+  # This hyprbars build adds buttons through a plugin Lua function rather than
+  # the old `hyprbars-button` keyword. The plugin only exists on Hyprland's
+  # second config pass (the first records it via hl.plugin.load; the plugin
+  # system then loads it and reloads), so the calls are guarded.
+  buttons = [
+    {
+      bg = mkRgb "red";
+      icon = "󰖭";
+      action = "hyprctl dispatch killactive";
+    }
+    {
+      bg = mkRgb "yellow";
+      icon = "󰖰";
+      action = "hyprctl dispatch movetoworkspacesilent special:minimized";
+    }
+    {
+      bg = mkRgb "green";
+      icon = "󰘖";
+      action = "hyprctl dispatch fullscreen 1";
+    }
+  ];
+  renderButton = b: ''hl.plugin.hyprbars.add_button({ bg_color = ${builtins.toJSON b.bg}, fg_color = ${builtins.toJSON (mkRgb "base")}, size = 20, icon = ${builtins.toJSON b.icon}, action = ${builtins.toJSON b.action} })'';
 in {
   config =
     modules.mkIf (
@@ -29,7 +52,7 @@ in {
         ];
 
         settings = {
-          plugin = {
+          config.plugin = {
             hyprbars = {
               bar_height = 36;
               bar_precedence_over_border = true;
@@ -40,24 +63,27 @@ in {
               "col.text" = mkRgb "text";
 
               bar_buttons_alignment = "right";
-              hyprbars-button = [
-                "${mkRgb "red"}, 20, 󰖭, hyprctl dispatch killactive, ${mkRgb "base"}"
-                "${mkRgb "yellow"}, 20, 󰖰, hyprctl dispatch movetoworkspacesilent special:minimized, ${mkRgb "base"}"
-                "${mkRgb "green"}, 20, 󰘖, hyprctl dispatch fullscreen 1, ${mkRgb "base"}"
-              ];
             };
           };
+
+          # Ghidra spawns transient child windows (titled win16, win17, ...)
+          # that should not get a titlebar of their own.
+          window_rule = [
+            {
+              name = "ghidra-no-bar";
+              match = {
+                initial_class = "^(ghidra-Ghidra)$";
+                initial_title = "^(win\\d+)$";
+              };
+              "hyprbars:no_bar" = true;
+            }
+          ];
         };
 
         extraConfig = ''
-          # Ghidra spawns transient child windows (titled win16, win17, ...)
-          # that should not get a titlebar of their own.
-          windowrule {
-            name = ghidra-no-bar
-            match:initial_class = ^(ghidra-Ghidra)$
-            match:initial_title = ^(win\d+)$
-            hyprbars:no_bar = on
-          }
+          if hl.plugin.hyprbars then
+          ${lib.concatMapStringsSep "\n" renderButton buttons}
+          end
         '';
       };
     };

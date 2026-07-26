@@ -4,9 +4,11 @@
   inputs',
   pkgs,
   lib,
+  hlLib,
   ...
 }: let
   inherit (lib) modules options types;
+  inherit (hlLib) dsp bind;
   inherit (inputs'.hyprland.packages) hyprland;
   inherit (inputs'.pyprland.packages) pyprland;
   inherit (config.home) username;
@@ -93,25 +95,23 @@ in {
           };
         };
 
-        wayland.windowManager.hyprland.extraConfig = ''
-          windowrule {
-            name = float-spotify
-            match:class = [Ss]potify
-            float = on
+        wayland.windowManager.hyprland.settings.window_rule = [
+          {
+            name = "float-spotify";
+            match = {class = "[Ss]potify";};
+            float = true;
           }
-
-          windowrule {
-            name = float-ncspot
-            match:class = ncspot
-            float = on
+          {
+            name = "float-ncspot";
+            match = {class = "ncspot";};
+            float = true;
           }
-
-          windowrule {
-            name = float-pwvucontrol
-            match:class = com.saivert.pwvucontrol
-            float = on
+          {
+            name = "float-pwvucontrol";
+            match = {class = "com.saivert.pwvucontrol";};
+            float = true;
           }
-        '';
+        ];
       })
 
     (modules.mkIf (
@@ -128,11 +128,9 @@ in {
           };
         };
 
-        wayland.windowManager.hyprland.settings = {
-          bind = [
-            "$main_mod,b,exec,pypr fetch-client-menu"
-          ];
-        };
+        wayland.windowManager.hyprland.settings.bind = [
+          (bind "SUPER + b" (dsp.exec "pypr fetch-client-menu"))
+        ];
       })
   ];
 }

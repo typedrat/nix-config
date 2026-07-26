@@ -3,9 +3,11 @@
   osConfig,
   pkgs,
   lib,
+  hlLib,
   ...
 }: let
   inherit (lib) modules;
+  inherit (hlLib) execOnce;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
@@ -26,11 +28,9 @@ in {
       && (barCfg.enable or true)
       && (barCfg.variant or "waybar") == "waybar"
     ) {
-      wayland.windowManager.hyprland.settings = {
-        exec-once = [
-          "waybar"
-        ];
-      };
+      wayland.windowManager.hyprland.settings.on = [
+        (execOnce "waybar")
+      ];
 
       programs.waybar = {
         enable = true;

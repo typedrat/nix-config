@@ -29,12 +29,12 @@ in {
         };
       };
 
-      wayland.windowManager.hyprland.extraConfig = ''
-        windowrule {
-          name = fcitx-pseudo
-          match:class = .*fcitx.*
-          pseudo = on
+      wayland.windowManager.hyprland.settings.window_rule = [
+        {
+          name = "fcitx-pseudo";
+          match = {class = ".*fcitx.*";};
+          pseudo = true;
         }
-      '';
+      ];
     };
 }

@@ -17,7 +17,7 @@ in {
       && hyprlandCfg.enable
       && blurCfg.enable
     ) {
-      wayland.windowManager.hyprland.settings = {
+      wayland.windowManager.hyprland.settings.config = {
         decoration = {
           blur = {
             enabled = true;

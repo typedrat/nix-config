@@ -3,9 +3,11 @@
   osConfig,
   pkgs,
   lib,
+  hlLib,
   ...
 }: let
   inherit (lib) modules;
+  inherit (hlLib) dsp bind;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
@@ -143,7 +145,7 @@ in {
       home.packages = [dmenuTool];
 
       wayland.windowManager.hyprland.settings.bind = [
-        "$main_mod, m, exec, ${lib.getExe pullMinimized}"
+        (bind "SUPER + m" (dsp.exec (lib.getExe pullMinimized)))
       ];
     };
 }

@@ -2,8 +2,8 @@
 #
 # The system-level pieces (package, /dev/uinput udev rule + uinput module,
 # "input" group, wtype) live in modules/nixos/handy.nix. Here we do the
-# per-user bits: autostart service, compositor keybind, persisted state, and
-# declarative management of Handy's settings.
+# per-user bits: autostart service, persisted state, and declarative
+# management of Handy's settings.
 #
 # Settings are stored by tauri-plugin-store in the app-data dir
 #   ~/.local/share/com.pais.handy/settings_store.json
@@ -35,7 +35,6 @@
   inherit (impermanenceCfg) persistDir;
 
   handyEnabled = guiCfg.enable && productivityCfg.enable && handyCfg.enable;
-  hyprlandEnabled = handyEnabled && (guiCfg.hyprland.enable or false);
 
   # Keys we re-assert on every activation. Deep-merged into the existing
   # ".settings" so unrelated/user-tweaked keys are preserved.
@@ -98,12 +97,6 @@ in {
       enable = true;
       inherit (osConfig.programs.handy) package;
     };
-
-    # Bind Super+O to toggle dictation as a convenience alongside the native
-    # push-to-talk shortcut. Shells out to the running instance via the CLI.
-    wayland.windowManager.hyprland.settings.bind = modules.mkIf hyprlandEnabled (modules.mkAfter [
-      "$main_mod, o, global, handy:transcribe"
-    ]);
 
     # Declaratively enforce the settings that control the shortcut backend and
     # push-to-talk. See the header comment for why this is a merge rather than

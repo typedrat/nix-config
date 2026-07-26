@@ -3,9 +3,11 @@
   osConfig,
   pkgs,
   lib,
+  hlLib,
   ...
 }: let
   inherit (lib.modules) mkIf mkMerge;
+  inherit (hlLib) execOnce;
   inherit (config.home) username;
   sunshineCfg = osConfig.rat.gaming.sunshine or {};
   impermanenceCfg = osConfig.rat.impermanence;
@@ -52,8 +54,8 @@ in {
   config = mkIf enabled (mkMerge [
     {
       # Run the headless setup + Sunshine launch once the graphical session is up.
-      wayland.windowManager.hyprland.settings.exec-once = [
-        "${startScript}/bin/sunshine-headless-start"
+      wayland.windowManager.hyprland.settings.on = [
+        (execOnce "${startScript}/bin/sunshine-headless-start")
       ];
     }
     (mkIf impermanenceCfg.home.enable {

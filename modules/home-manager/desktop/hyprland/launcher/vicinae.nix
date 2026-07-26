@@ -2,9 +2,11 @@
   config,
   osConfig,
   lib,
+  hlLib,
   ...
 }: let
   inherit (lib) modules;
+  inherit (hlLib) dsp bind;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
@@ -48,35 +50,28 @@ in {
         directories = [".local/share/vicinae"];
       };
 
-      wayland.windowManager.hyprland = {
-        settings = {
-          bind = [
-            "$main_mod, space, exec, vicinae toggle"
-            "$main_mod, b, exec, vicinae vicinae://extensions/vicinae/wm/switch-windows"
-            "$main_mod, v, exec, vicinae vicinae://extensions/vicinae/clipboard/history"
-            "$main_mod&SHIFT, period, exec, vicinae vicinae://launch/core/search-emojis"
-          ];
-        };
+      wayland.windowManager.hyprland.settings = {
+        bind = [
+          (bind "SUPER + space" (dsp.exec "vicinae toggle"))
+          (bind "SUPER + b" (dsp.exec "vicinae vicinae://extensions/vicinae/wm/switch-windows"))
+          (bind "SUPER + v" (dsp.exec "vicinae vicinae://extensions/vicinae/clipboard/history"))
+          (bind "SUPER + SHIFT + period" (dsp.exec "vicinae vicinae://launch/core/search-emojis"))
+        ];
 
-        extraConfig = ''
-          layerrule {
-            name = vicinae-blur
-            match:namespace = vicinae
-            blur = on
+        layer_rule = [
+          {
+            match = {namespace = "vicinae";};
+            blur = true;
           }
-
-          layerrule {
-            name = vicinae-ignorealpha
-            match:namespace = vicinae
-            ignore_alpha = 0
+          {
+            match = {namespace = "vicinae";};
+            ignore_alpha = 0;
           }
-
-          layerrule {
-            name = vicinae-noanim
-            match:namespace = vicinae
-            no_anim = on
+          {
+            match = {namespace = "vicinae";};
+            no_anim = true;
           }
-        '';
+        ];
       };
     };
 }
