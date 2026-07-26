@@ -1,8 +1,9 @@
 {
   name = "Update packages";
 
+  # No push trigger: this workflow's own PR is automerged, so a push trigger
+  # would make every merge start the next update round immediately.
   on = {
-    push.branches = ["master"];
     workflowDispatch = {};
     # Run 1 hour after flake.lock update (0 20 * * *) to use fresh nixpkgs
     schedule = [
@@ -58,7 +59,9 @@
                 fi
               done
 
-              commit_msg=".commit-message-$pkg"
+              # Attribute paths can contain slashes (peon-ping-packs/bender);
+              # those would be read as directories that don't exist.
+              commit_msg=".commit-message-''${pkg//\//-}"
 
               if [ "$is_custom" = true ]; then
                 # Run the package's update.sh script directly

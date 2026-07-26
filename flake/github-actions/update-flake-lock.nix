@@ -1,8 +1,9 @@
 {
   name = "Update flake.lock";
 
+  # No push trigger: this workflow's own PR is automerged, so a push trigger
+  # would make every merge start the next update round immediately.
   on = {
-    push.branches = ["master"];
     workflowDispatch = {};
     schedule = [
       {cron = "0 20 * * *";}
