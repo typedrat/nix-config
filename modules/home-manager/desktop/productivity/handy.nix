@@ -2,8 +2,18 @@
 #
 # The system-level pieces (package, /dev/uinput udev rule + uinput module,
 # "input" group, wtype) live in modules/nixos/handy.nix. Here we do the
-# per-user bits: autostart service, persisted state, and declarative
-# management of Handy's settings.
+# per-user bits: autostart service, persisted state, the vendored model
+# weights, and declarative management of Handy's settings.
+#
+# Handy resolves catalog models through hf-hub's shared cache
+#   ~/.cache/huggingface/hub/models--<org>--<repo>/
+#     refs/<revision>            -> the commit hash
+#     snapshots/<hash>/<file>    -> the weights
+# (hf-hub reads $HF_HOME/hub, else that literal path — it does not honour
+# XDG_CACHE_HOME.) The pkgs.handy-parakeet-unified-en derivation *is* such a
+# repo directory, so symlinking it into the cache makes the catalog entry
+# report itself as downloaded and Handy runs offline from the first launch,
+# with no ~700MB runtime download.
 #
 # Settings are stored by tauri-plugin-store in the app-data dir
 #   ~/.local/share/com.pais.handy/settings_store.json
@@ -35,6 +45,9 @@
   inherit (impermanenceCfg) persistDir;
 
   handyEnabled = guiCfg.enable && productivityCfg.enable && handyCfg.enable;
+
+  inherit (pkgs) handy-parakeet-unified-en;
+  hfCacheHome = "${config.home.homeDirectory}/.cache/huggingface/hub";
 
   # Keys we re-assert on every activation. Deep-merged into the existing
   # ".settings" so unrelated/user-tweaked keys are preserved.
@@ -80,6 +93,7 @@
       audio_feedback = false;
       external_script_path = null;
       keyboard_implementation = handyCfg.keyboardImplementation;
+      selected_model = handy-parakeet-unified-en.modelId;
     };
   };
 
@@ -101,6 +115,20 @@ in {
     # Declaratively enforce the settings that control the shortcut backend and
     # push-to-talk. See the header comment for why this is a merge rather than
     # a managed file.
+    home.activation.handyModel = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      handyRepo="${hfCacheHome}/${handy-parakeet-unified-en.cacheDirName}"
+
+      # Only ever replace our own symlink. A real directory here is a repo the
+      # user (or another HF tool) downloaded, and clobbering it would throw away
+      # hundreds of megabytes that Handy is probably still pointing at.
+      if [ -L "$handyRepo" ] || [ ! -e "$handyRepo" ]; then
+        $DRY_RUN_CMD mkdir -p "${hfCacheHome}"
+        $DRY_RUN_CMD ln -sfn ${handy-parakeet-unified-en} "$handyRepo"
+      else
+        echo "handy: $handyRepo is not a symlink; leaving the downloaded copy in place" >&2
+      fi
+    '';
+
     home.activation.handySettings = lib.hm.dag.entryAfter ["writeBoundary"] ''
       handyStore="${config.xdg.dataHome}/com.pais.handy/settings_store.json"
       $DRY_RUN_CMD mkdir -p "$(dirname "$handyStore")"
@@ -110,10 +138,19 @@ in {
         $DRY_RUN_CMD install -m600 ${baselineFile} "$handyStore"
       fi
 
-      # Deep-merge the overlay into ".settings", preserving everything else.
+      # Deep-merge the overlay into ".settings", preserving everything else, and
+      # point an unselected install at the vendored model. Selection is seeded
+      # rather than re-asserted: Handy's own auto-selection stays off until
+      # onboarding finishes, so without this a fresh profile sits with no model
+      # despite one being on disk — but a model the user picked in the UI is
+      # theirs to keep.
       _handyTmp="$(mktemp)"
       if ${pkgs.jq}/bin/jq --argjson overlay "$(cat ${overlayFile})" \
-          '.settings = ((.settings // {}) * $overlay)' "$handyStore" > "$_handyTmp"; then
+          --arg model "${handy-parakeet-unified-en.modelId}" \
+          '.settings = ((.settings // {}) * $overlay)
+           | if (.settings.selected_model // "") == ""
+             then .settings.selected_model = $model
+             else . end' "$handyStore" > "$_handyTmp"; then
         $DRY_RUN_CMD install -m600 "$_handyTmp" "$handyStore"
         $DRY_RUN_CMD rm -f "$_handyTmp"
       else
