@@ -4,30 +4,32 @@
 # Exposes helpers to patch nixpkgs and home-manager from flake inputs
 # named with a given prefix (e.g. "nixpkgs-patch-*", "home-manager-patch-*").
 let
-  # Wrap a raw flake input path in a derivation so it has a usable .name.
-  wrapPatch = pkgs: patch:
-    pkgs.stdenvNoCC.mkDerivation {
+  # Give a raw patch input a usable name: flake inputs all land in the store as
+  # "…-source", which says nothing in a build log. builtins.path renames the
+  # file during evaluation, so patches never become derivations and never
+  # acquire a platform of their own.
+  namePatch = patch:
+    builtins.path {
       inherit (patch) name;
-      phases = ["installPhase"];
-      installPhase = ''
-        cp -r ${patch.value.outPath} $out
-      '';
+      path = patch.value.outPath;
     };
 
-  # Collect all inputs whose names start with `prefix`, wrap each one.
+  # Collect all inputs whose names start with `prefix`, in name order — stacked
+  # patches rely on that, since each one's hunks assume its predecessor applied.
   patchesFromInputs = {
     inputs,
-    pkgs,
+    lib,
     prefix,
-  }: let
-    matching = pkgs.lib.filterAttrs (n: _: pkgs.lib.hasPrefix prefix n) inputs;
-    pairs = pkgs.lib.attrsToList matching;
-  in
-    map (wrapPatch pkgs) pairs;
+  }:
+    map namePatch (lib.attrsToList (lib.filterAttrs (n: _: lib.hasPrefix prefix n) inputs));
 
   # Apply a list of patches to a source tree using pkgs.applyPatches.
   # Provides a bat-based failure hook (same UX as nixpkgs-patcher).
   # Only call this when patches != [].
+  #
+  # `pkgs` decides which platform runs the patching, and is the caller's to
+  # choose — the result is pure text, so it is not the platform the tree will
+  # be used on. See patchedNixpkgs.buildSystem in patched-nixpkgs.nix.
   patchSource = {
     src,
     name,

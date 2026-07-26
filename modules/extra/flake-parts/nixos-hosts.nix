@@ -45,14 +45,15 @@ in
       mkNixosSystem = _hostname: hostConfig: let
         inherit (hostConfig) system;
 
-        # Unpatched pkgs — used only to run applyPatches itself.
-        pkgs = import inputs.nixpkgs {inherit system;};
+        # Unpatched pkgs — used only to run applyPatches itself, so it follows
+        # patchedNixpkgs.buildSystem rather than the host's own system.
+        pkgs = import inputs.nixpkgs {system = config.patchedNixpkgs.buildSystem;};
 
         # nixpkgs patching — discovered by patched-nixpkgs.nix too, so
         # legacyPackages and NixOS systems can never observe different
         # patch sets.
         nixpkgsPatches = patcher.patchesFromInputs {
-          inherit inputs pkgs;
+          inherit inputs lib;
           prefix = "nixpkgs-patch-";
         };
         patchedNixpkgs =
@@ -71,7 +72,7 @@ in
 
         # home-manager patching
         hmPatches = patcher.patchesFromInputs {
-          inherit inputs pkgs;
+          inherit inputs lib;
           prefix = "home-manager-patch-";
         };
         patchedHm =
