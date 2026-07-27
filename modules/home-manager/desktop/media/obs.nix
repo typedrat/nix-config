@@ -20,7 +20,6 @@ in {
         obs-pipewire-audio-capture
         obs-vaapi
         obs-vkcapture
-        wlrobs
       ];
     };
   };

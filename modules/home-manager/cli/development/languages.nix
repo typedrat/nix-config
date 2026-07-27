@@ -178,6 +178,7 @@ in {
             ipython
             matplotlib
             numpy
+            opencv-python
             pandas
             polars
             pynput
