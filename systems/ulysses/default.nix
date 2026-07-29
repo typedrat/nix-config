@@ -116,17 +116,15 @@
     # Boot
     boot = {
       loader = "limine";
-      memtest86.enable = true;
       limine.secureBoot = {
+        enable = true;
         validateChecksums = true;
         enrollConfig = true;
       };
-      # windows = {
-      #   enable = true;
-      #   title = "Windows 11";
-      #   # Windows ESP on WD SN750 (/dev/nvme0n1p1)
-      #   efiPartition = "guid(a2b0ff18-ff5e-4783-b72d-323241b76611)";
-      # };
+      windows = {
+        enable = true;
+        title = "Windows 11";
+      };
     };
 
     # Hardware

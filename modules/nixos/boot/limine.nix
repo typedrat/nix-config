@@ -139,6 +139,17 @@ in {
 
     # Memtest86+ for Limine
     (modules.mkIf (cfg.loader == "limine" && cfg.memtest86.enable) {
+      assertions = [
+        {
+          assertion = !cfg.limine.secureBoot.enable;
+          # The entry chainloads through the firmware, which rejects the unsigned
+          # mt86plus.efi. Signing it on the ESP is not a way out: the blake2b hash
+          # below is taken from the unsigned store path at eval time, so a signature
+          # would trip panicOnChecksumMismatch instead.
+          message = "rat.boot.memtest86 cannot be used together with rat.boot.limine.secureBoot";
+        }
+      ];
+
       # Copy memtest86+ directly to ESP (not through limine's additionalFiles which uses /boot/limine/)
       system.activationScripts.memtest86plus = ''
         install -D -m 644 ${pkgs.memtest86plus}/mt86plus.efi ${config.boot.loader.efi.efiSysMountPoint}/EFI/memtest86plus/mt86plus.efi
