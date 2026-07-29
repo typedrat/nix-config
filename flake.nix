@@ -25,27 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # claude-code: 2.1.217 -> 2.1.218 (NixOS/nixpkgs#544776)
-    nixpkgs-patch-544776 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/544776.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.218 -> 2.1.219 (NixOS/nixpkgs#545319)
-    nixpkgs-patch-545319 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/545319.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.219 -> 2.1.220 (NixOS/nixpkgs#545573)
-    # Stacks on the two above — each patch's manifest hunks assume the prior
-    # version, so the patcher must apply them in order (it does; inputs sort
-    # alphabetically by name, which matches ascending PR number here).
-    nixpkgs-patch-545573 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/545573.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
@@ -184,9 +163,8 @@
 
     hyprlock.url = "github:hyprwm/hyprlock";
 
-    # change back to github:hyprwm/hyprland-plugins once hyprwm/hyprland-plugins#689 is merged
     hyprland-plugins = {
-      url = "github:LionHeartP/hyprland-plugins";
+      url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
 

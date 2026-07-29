@@ -86,8 +86,9 @@
         # forwards to the ExternalProject that runs find_package(CUDAToolkit).
         #
         # Wrong dependency category on purpose (nvcc is a build tool, not a
-        # library); fine for native builds. Drop once the fix lands, likely via
-        # https://github.com/NixOS/nixpkgs/pull/545092.
+        # library); fine for native builds. The hook-level fix is
+        # https://github.com/NixOS/nixpkgs/pull/545542; drop this once it reaches
+        # the pinned nixpkgs.
         (final: prev: {
           openimagedenoise = prev.openimagedenoise.overrideAttrs (old: {
             buildInputs = (old.buildInputs or []) ++ [final.cudaPackages.cuda_nvcc];

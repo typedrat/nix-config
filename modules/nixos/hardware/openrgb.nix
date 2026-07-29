@@ -10,7 +10,10 @@
   cfg = config.rat.hardware.openrgb;
   impermanenceCfg = config.rat.impermanence;
 
-  inherit (inputs'.nanopkgs.packages) openrgb;
+  # `legacyPackages`, not `packages`: the latter is a `meta`-filtered view of the
+  # same scope, and filtering forces every nanopkgs package, so one that fails to
+  # evaluate takes the whole set down with it.
+  inherit (inputs'.nanopkgs.legacyPackages) openrgb;
 in {
   options.rat.hardware.openrgb.enable = mkEnableOption "OpenRGB";
 

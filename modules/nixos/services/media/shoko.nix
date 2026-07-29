@@ -50,12 +50,15 @@ in {
 
       services.shoko = {
         enable = true;
-        package = inputs'.nanopkgs.packages.shoko;
+        # `legacyPackages`, not `packages`: the latter is a `meta`-filtered view
+        # of the same scope, and filtering forces every nanopkgs package, so one
+        # that fails to evaluate takes the whole set down with it.
+        package = inputs'.nanopkgs.legacyPackages.shoko;
         # nanopkgs computed the `pnpmDeps` hash against `pkgs.pnpm`, which has
         # since moved from pnpm 10 to a pnpm 11 alpha in nixpkgs. The two pnpm
         # versions produce different store layouts, so the hash mismatches.
         # Pin pnpm_10 explicitly until nanopkgs updates the hash for pnpm 11.
-        webui = inputs'.nanopkgs.packages.shoko-webui.override {
+        webui = inputs'.nanopkgs.legacyPackages.shoko-webui.override {
           pnpm = pkgs.pnpm_10;
         };
       };
