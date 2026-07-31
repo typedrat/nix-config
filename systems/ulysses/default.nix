@@ -29,6 +29,19 @@
     "amdgpu"
   ];
 
+  # Stop the NVMe layer parking drives in deep autonomous power states.
+  #
+  # The Corsair MP700 PRO XT holding zpool stopped answering while cool (32C)
+  # and near idle, failed its controller reset with CSTS=0x1, and came back
+  # perfectly on a power cycle with SMART reporting zero media errors and zero
+  # error-log entries. That is a controller that went to sleep and did not wake,
+  # not a disk that is wearing out. Since swap and the root pool both live on
+  # that device, one dropout suspends the pool and every task touching swap
+  # blocks forever, which is what the lock-ups actually were.
+  #
+  # The cost is idle power. Revisit if Corsair ships firmware past ESFM10.1.
+  boot.kernelParams = ["nvme_core.default_ps_max_latency_us=0"];
+
   # --- Session variables ---
 
   # Force GLVND to use the NVIDIA EGL vendor library. Without this, applications
