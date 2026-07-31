@@ -125,6 +125,47 @@
     "zoneinfo"
   ];
 
+  # Turn a lock-up into a panic. A wedged machine is already unrecoverable, so
+  # there is nothing left to protect by staying up, and a panic buys a stack
+  # trace: netpoll runs in polling mode and keeps working in panic context, so
+  # the trace goes out over netconsole, and the EFI pstore backend keeps a copy
+  # that systemd-pstore archives on the way back up.
+  #
+  # hung_task_panic and panic_on_rcu_stall stay off. Both fire on conditions
+  # this machine can plausibly survive under heavy IO, and a false panic costs
+  # more than the trace is worth.
+  boot.kernel.sysctl = {
+    "kernel.panic_on_oops" = 1;
+    "kernel.hardlockup_panic" = 1;
+    # The one to back out first if this machine starts panicking under load
+    # rather than at the moment it would have hung.
+    "kernel.softlockup_panic" = 1;
+
+    # Dump every CPU, not just the stuck one: a lock-up is usually about what
+    # some *other* core is holding.
+    "kernel.hardlockup_all_cpu_backtrace" = 1;
+    "kernel.softlockup_all_cpu_backtrace" = 1;
+
+    # Task states and memory info alongside the trace, which is the difference
+    # between knowing a task blocked and knowing what it blocked on.
+    "kernel.panic_print" = 3;
+
+    "kernel.panic" = 30;
+
+    # Plymouth drops console_loglevel to 0 for a clean splash, which silences
+    # every console — netconsole included. panic() calls console_verbose() and
+    # so gets through regardless, but the warnings leading up to a hang would
+    # not, and those are the ones worth reading. Overriding only the sysctl
+    # leaves the boot-time `loglevel=` parameter alone, so the splash stays
+    # clean and the console only turns verbose once userspace is up.
+    "kernel.printk" = 7;
+  };
+
+  # Recovery only, not diagnosis: the SP5100 TCO timer exposes no pretimeout
+  # governor, so it resets without a chance to panic first. It earns its place
+  # for the hangs that trip none of the detectors above.
+  systemd.settings.Manager.RuntimeWatchdogSec = "60s";
+
   rat = {
     # Networking
     networking.networkManager.enable = true;

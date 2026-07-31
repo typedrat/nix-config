@@ -62,6 +62,10 @@ in {
           "/var/log"
           "/var/lib/nixos"
           "/var/lib/systemd/coredump"
+          # Where systemd-pstore archives a panic log after the reboot that
+          # follows it. Ephemeral, this survives exactly one boot past the
+          # crash that produced it.
+          "/var/lib/systemd/pstore"
           "/var/lib/systemd/timers"
           "/var/lib/systemd/timesync"
           "/var/lib/systemd/rfkill"
