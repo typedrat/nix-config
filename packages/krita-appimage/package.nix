@@ -11,11 +11,11 @@
   coreutils,
 }: let
   pname = "krita";
-  version = "5.3.2.1";
+  version = "5.3.3";
 
   src = fetchurl {
     url = "https://download.kde.org/stable/krita/${version}/krita-${version}-x86_64.AppImage";
-    hash = "sha256-2UCS2qoa1CPYKnKX4LMcriz9zQ0GWVt/UPhGt2w7Puc=";
+    hash = "sha256-Hj//XaAGwNJgD5ikGqLJp9+km9kx82QGFvMNdi2090M=";
   };
 
   contents = appimageTools.extractType2 {inherit pname version src;};
