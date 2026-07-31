@@ -91,15 +91,24 @@ in {
         "bootstrap/token"
       ];
 
+      # The server and the worker share this file, so anything set here lands on
+      # both. Listen addresses must not: the worker ships its own, deliberately
+      # different, and an EnvironmentFile is applied after Environment=, so
+      # putting them here overrode the worker's and pointed both processes at
+      # the same ports. Whichever won the race bound them, and the loser only
+      # logged a warning and carried on serving nothing.
+      systemd.services.authentik.environment = {
+        AUTHENTIK_LISTEN__HTTP = lib.mkForce (builtins.toString config.links.authentik.tuple);
+        AUTHENTIK_LISTEN__HTTPS = lib.mkForce (builtins.toString config.links.authentik-https.tuple);
+        AUTHENTIK_LISTEN__METRICS = lib.mkForce (builtins.toString config.links.prometheus-authentik.tuple);
+      };
+
       sops.templates."authentik.env" = {
         content = lib.toShellVars {
           AUTHENTIK_SECRET_KEY = config.sops.placeholder."authentik/secret";
           AUTHENTIK_BOOTSTRAP_EMAIL = config.sops.placeholder."authentik/bootstrap/email";
           AUTHENTIK_BOOTSTRAP_PASSWORD = config.sops.placeholder."authentik/bootstrap/password";
           AUTHENTIK_BOOTSTRAP_TOKEN = config.sops.placeholder."authentik/bootstrap/token";
-          AUTHENTIK_LISTEN__HTTP = builtins.toString config.links.authentik.tuple;
-          AUTHENTIK_LISTEN__HTTPS = builtins.toString config.links.authentik-https.tuple;
-          AUTHENTIK_LISTEN__METRICS = builtins.toString config.links.prometheus-authentik.tuple;
         };
 
         restartUnits = [
