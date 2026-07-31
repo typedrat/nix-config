@@ -61,8 +61,35 @@
 
       route=$(ip -6 route get "$remote_ip")
       dev=$(echo "$route" | sed -n 's/.* dev \([^ ]*\).*/\1/p' | head -1)
-      local_ip=$(echo "$route" | sed -n 's/.* src \([^ ]*\).*/\1/p' | head -1)
       remote_mac=$(ip -6 neigh get "$remote_ip" dev "$dev" | sed -n 's/.* lladdr \([^ ]*\).*/\1/p' | head -1)
+
+      # The source address deliberately does not come from `ip route get`. That
+      # reports whichever address the kernel would pick, and RFC 4941 makes it
+      # prefer a privacy address that rotates every few days. A netconsole
+      # target holds its source for as long as it is enabled, so a rotating one
+      # quietly stops delivering long before anyone looks.
+      pick_local() {
+        local want_ula="$1" addr is_ula
+        for addr in $(ip -6 -o addr show dev "$dev" scope global -temporary -deprecated | awk '{print $4}' | cut -d/ -f1); do
+          case "$addr" in
+            fc*|fd*) is_ula=1 ;;
+            *) is_ula=0 ;;
+          esac
+          if [ "$is_ula" = "$want_ula" ]; then
+            echo "$addr"
+            return 0
+          fi
+        done
+        return 1
+      }
+
+      # Match the remote's class so the two ends stay on the same prefix.
+      case "$remote_ip" in
+        fc*|fd*) want_ula=1 ;;
+        *) want_ula=0 ;;
+      esac
+
+      local_ip=$(pick_local "$want_ula" || pick_local "$((1 - want_ula))" || true)
 
       if [ -z "$dev" ] || [ -z "$local_ip" ] || [ -z "$remote_mac" ]; then
         echo "could not resolve dev/src/mac for $remote_ip" >&2
