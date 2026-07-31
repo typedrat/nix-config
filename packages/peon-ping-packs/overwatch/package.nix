@@ -7,11 +7,11 @@
   src = fetchFromGitHub {
     owner = "heron--";
     repo = "overwatch-peon-pings";
-    rev = "c4505f45fe02828b98b56b83f403f4edfa43ac30";
-    hash = "sha256-3cj7bH/rpM9srhLwhLa90dM8EnFdJslFMFcVxol6Dps=";
+    rev = "0371a64b9550016ef3215fc2cf2829697387431d";
+    hash = "sha256-58rlXzZY88/efMwYPLjG6UG5tccEt4pNJGD2xJBQdHw=";
   };
 
-  version = "0-unstable-2025-03-29";
+  version = "1.1.0-unstable-2026-05-21";
 
   characters = [
     "ana"
