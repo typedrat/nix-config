@@ -6,14 +6,14 @@
 }:
 python3.pkgs.buildPythonApplication rec {
   pname = "vast-cli";
-  version = "1.4.2";
+  version = "1.5.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "vast-ai";
     repo = "vast-cli";
     tag = "v${version}";
-    hash = "sha256-H3w1JsuCQTW032T+EBoCrRxtXoiAp7ke/aP8R0d0MeA=";
+    hash = "sha256-4w2YNQmbs2X5D8La04ST7857wAzS+nh7Imfco4T+mfk=";
   };
 
   build-system = with python3.pkgs; [
