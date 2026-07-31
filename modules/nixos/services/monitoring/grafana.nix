@@ -1,10 +1,13 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib) modules options types;
   cfg = config.rat.services.grafana;
+
+  dashboards = pkgs.writeTextDir "lock-ups.json" (builtins.toJSON (import ./dashboards/lock-ups.nix));
   impermanenceCfg = config.rat.impermanence;
   authentikCfg = config.rat.services.authentik;
 
@@ -88,16 +91,32 @@ in {
         provision = {
           enable = true;
 
+          # Pinned uids: provisioned dashboards reference datasources by uid, and
+          # an auto-generated one changes out from under them.
           datasources.settings.datasources = [
             {
               name = "Prometheus";
               type = "prometheus";
+              uid = "prometheus";
               inherit (config.links.prometheus) url;
             }
             {
               name = "Loki";
               type = "loki";
+              uid = "loki";
               inherit (config.links.loki) url;
+            }
+          ];
+
+          dashboards.settings.providers = [
+            {
+              name = "rat";
+              options.path = dashboards;
+              # Provisioned dashboards live in the store, so the copy Grafana
+              # writes to its database is disposable; letting it be deleted from
+              # the UI only means losing it until the next restart.
+              allowUiUpdates = false;
+              disableDeletion = true;
             }
           ];
         };
