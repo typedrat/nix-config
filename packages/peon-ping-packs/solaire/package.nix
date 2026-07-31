@@ -6,7 +6,7 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "peon-ping-pack-solaire";
-  version = "0-unstable-2026-03-22";
+  version = "1.0.3-unstable-2026-03-25";
 
   src = fetchFromGitHub {
     owner = "jmfiebak";
