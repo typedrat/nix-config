@@ -1,6 +1,7 @@
 {
   osConfig,
   inputs',
+  pkgs,
   lib,
   ...
 }: let
@@ -14,7 +15,7 @@ in {
     };
 
     home.packages = [
-      inputs'.orca-slicer-nanashi.packages.default
+      pkgs.orca-slicer
     ];
   };
 }
