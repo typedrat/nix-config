@@ -17,7 +17,7 @@
 
   setup = pkgs.writeShellApplication {
     name = "netconsole-setup";
-    runtimeInputs = with pkgs; [iproute2 iputils kmod gnused gawk];
+    runtimeInputs = with pkgs; [coreutils getent gawk gnused iproute2 iputils kmod];
     text = ''
       target=${lib.escapeShellArg cfg.forwardTo}
 
@@ -45,8 +45,15 @@
 
       # A unique-local address survives the ISP rotating its delegated prefix,
       # so it is worth preferring even though hosts reach each other over the
-      # global prefix by default.
-      remote_ip=$(pick_address 1 || pick_address 0 || true)
+      # global prefix by default. The collector is not necessarily answering
+      # the moment this host finishes booting, hence the retries.
+      remote_ip=""
+      for _ in 1 2 3 4 5 6; do
+        remote_ip=$(pick_address 1 || pick_address 0 || true)
+        [ -n "$remote_ip" ] && break
+        sleep 10
+      done
+
       if [ -z "$remote_ip" ]; then
         echo "no reachable address for $target" >&2
         exit 1
