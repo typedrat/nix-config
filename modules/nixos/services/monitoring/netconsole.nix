@@ -209,15 +209,30 @@ in {
           ExecStart = "${receiver} ${link.portStr} ${logDir}";
           Restart = "always";
           RestartSec = 5;
-          DynamicUser = true;
-          StateDirectory = "netconsole";
-          LogsDirectory = "netconsole";
+          # Deliberately not DynamicUser: that puts LogsDirectory under
+          # /var/log/private, which is 0700 root, and the collector that has to
+          # read these files runs as a different dynamic user and cannot
+          # traverse it.
+          User = "netconsole";
+          Group = "netconsole";
+          ReadWritePaths = [logDir];
           ProtectSystem = "strict";
           ProtectHome = true;
           PrivateDevices = true;
           NoNewPrivileges = true;
         };
       };
+
+      users.users.netconsole = {
+        isSystemUser = true;
+        group = "netconsole";
+      };
+      users.groups.netconsole = {};
+
+      # World readable on purpose. This is the log worth reading first after a
+      # machine dies, and needing a privilege dance to get at it defeats the
+      # point of keeping it on disk.
+      systemd.tmpfiles.rules = ["d ${logDir} 0755 netconsole netconsole -"];
 
       rat.services.alloy = {
         enable = true;
