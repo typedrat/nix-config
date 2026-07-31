@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   lib,
   ...
@@ -123,6 +124,21 @@
       prometheus = {
         enable = true;
         exporters.ipmi.enable = true;
+
+        remoteWrite = {
+          enable = true;
+          allowFrom = config.rat.networking.lanRanges;
+        };
+      };
+
+      remoteSyslog.receiver = {
+        enable = true;
+        allowFrom = config.rat.networking.lanRanges;
+      };
+
+      netconsole.receiver = {
+        enable = true;
+        allowFrom = config.rat.networking.lanRanges;
       };
 
       github-runner = {

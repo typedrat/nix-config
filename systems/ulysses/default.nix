@@ -110,6 +110,21 @@
 
   # --- rat.* configuration ---
 
+  # --- Telemetry ---
+
+  # Extra node_exporter collectors aimed at the lock-ups this machine has been
+  # having. `processes` surfaces tasks piling up in uninterruptible sleep,
+  # `interrupts` catches an IRQ storm, and `buddyinfo`/`zoneinfo` show memory
+  # fragmenting to the point where allocations start stalling. hwmon and edac
+  # are on by default and cover thermals and ECC.
+  services.prometheus.exporters.node.enabledCollectors = [
+    "pressure"
+    "processes"
+    "interrupts"
+    "buddyinfo"
+    "zoneinfo"
+  ];
+
   rat = {
     # Networking
     networking.networkManager.enable = true;
@@ -227,6 +242,13 @@
         # Streams a dedicated headless display (default name "sunshine") so the
         # physical monitors stay on your work while you game remotely.
       };
+    };
+
+    # Telemetry, collected by iserlohn
+    services = {
+      prometheus.push.target = "iserlohn.lan";
+      remoteSyslog.forwardTo = "iserlohn.lan";
+      netconsole.forwardTo = "iserlohn.lan";
     };
 
     # Software

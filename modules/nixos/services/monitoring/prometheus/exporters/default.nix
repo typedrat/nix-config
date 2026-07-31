@@ -9,6 +9,7 @@ in {
     ./loki.nix
     ./node.nix
     ./postgres.nix
+    ./smartctl.nix
     ./traefik.nix
     ./qbittorrent.nix
     ./zfs.nix
