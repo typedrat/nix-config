@@ -111,7 +111,19 @@
       echo "$remote_ip"    > ${targetDir}/remote_ip
       echo "$remote_mac"   > ${targetDir}/remote_mac
       echo ${link.portStr} > ${targetDir}/remote_port
-      echo 1               > ${targetDir}/enabled
+
+      # Extended format prefixes each message with level, sequence number and
+      # timestamp. The sequence number is the point: UDP loss is likeliest
+      # exactly when a machine is coming apart, and without it a gap in the log
+      # is indistinguishable from a quiet moment. Not every kernel builds
+      # support for it, so a refusal here is worth reporting but not fatal.
+      if ! echo 1 > ${targetDir}/extended 2>/dev/null; then
+        echo "kernel refused extended netconsole format, continuing without sequence numbers" >&2
+      fi
+
+      echo 1 > ${targetDir}/enabled
+
+      echo "netconsole extended=$(cat ${targetDir}/extended)"
 
       echo "netconsole -> [$remote_ip]:${link.portStr} via $dev ($remote_mac)"
     '';
