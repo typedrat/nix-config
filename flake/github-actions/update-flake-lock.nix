@@ -27,7 +27,14 @@
 
       steps = [
         {uses = "actions/checkout@v4";}
-        {uses = "DeterminateSystems/determinate-nix-action@v3";}
+        {
+          uses = "DeterminateSystems/determinate-nix-action@v3";
+          # The default github.token is repo-scoped and 404s on private flake
+          # inputs (typedrat/wallpapers); the PAT lands in nix.conf access-tokens.
+          with_ = {
+            github-token = "\${{ secrets.GH_TOKEN_FOR_UPDATES }}";
+          };
+        }
         {uses = "DeterminateSystems/flakehub-cache-action@main";}
         {
           uses = "DeterminateSystems/update-flake-lock@main";
