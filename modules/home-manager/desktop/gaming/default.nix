@@ -35,7 +35,8 @@ in {
       igir
       pegasus-frontend
       umu-launcher
-      winePackages.stagingFull
+      wineWow64Packages.stagingFull
+      winetricks
     ];
 
     xdg.userDirs.extraConfig.XDG_GAMES_DIR = "$HOME/Games";
