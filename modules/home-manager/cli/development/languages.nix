@@ -185,6 +185,7 @@ in {
             scipy
             seaborn
             sympy
+            tqdm
           ]
       ))
 
