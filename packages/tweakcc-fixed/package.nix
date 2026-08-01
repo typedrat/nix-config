@@ -9,7 +9,6 @@
   pnpmConfigHook,
   autoPatchelfHook,
   makeBinaryWrapper,
-  nix-update-script,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tweakcc-fixed";
@@ -103,8 +102,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  passthru.updateScript = nix-update-script {
-    extraArgs = ["--flake"];
+  passthru = {
+    # System-prompt / system-reminder overrides consumed by
+    # claude-code-patched. Pinned here rather than there because the
+    # overrides are written against the tweakcc patch shapes, so both
+    # must be bumped together; update.sh keeps them in lockstep.
+    promptOverrides = fetchFromGitHub {
+      owner = "skrabe";
+      repo = "lobotomized-claude-code";
+      rev = "c7e4f55abfdfc72213c40e9f1f361e14a30dbb60";
+      hash = "sha256-LVV9Yo9wTdHYiIZDEjsycLQNFs2LyGm49N8BPr1szB0=";
+    };
+
+    updateScript = ./update.sh;
   };
 
   meta = {
