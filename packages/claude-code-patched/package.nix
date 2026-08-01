@@ -1,6 +1,5 @@
 {
   lib,
-  fetchFromGitHub,
   claude-code,
   tweakcc-fixed,
   jq,
@@ -8,12 +7,9 @@
   # tweaks are reproducible across hosts.
   tweakccConfig ? ./config.json,
 }: let
-  promptOverrides = fetchFromGitHub {
-    owner = "skrabe";
-    repo = "lobotomized-claude-code";
-    rev = "c7e4f55abfdfc72213c40e9f1f361e14a30dbb60";
-    hash = "sha256-LVV9Yo9wTdHYiIZDEjsycLQNFs2LyGm49N8BPr1szB0=";
-  };
+  # Pinned in tweakcc-fixed's passthru so its update script bumps the
+  # overrides and the patcher together.
+  inherit (tweakcc-fixed) promptOverrides;
 in
   # Override claude-code itself rather than wrapping its output, so the
   # binary is patched in place. We hook `preFixup` to run tweakcc-fixed
@@ -79,7 +75,8 @@ in
     # Drop the inherited updateScript: it resolves claude-code's definition to
     # a path inside patched nixpkgs, which isn't part of this flake, so
     # nix-update can't rewrite it. Bumping this package means bumping the
-    # nixpkgs patch, tweakcc-fixed and the prompt overrides together, by hand.
+    # nixpkgs patch by hand; tweakcc-fixed's update script handles the
+    # patcher and prompt overrides.
     passthru =
       builtins.removeAttrs (prev.passthru or {}) ["updateScript"]
       // {
@@ -99,7 +96,7 @@ in
           rewrites the ELF interpreter (running the patch after
           autoPatchelf crashes LIEF on the rewritten program headers).
           The user's ~/.tweakcc/config.json is captured in this repo at
-          packages/tweakcc-fixed/config.json so the result is
+          packages/claude-code-patched/config.json so the result is
           reproducible across hosts.
         '';
       };

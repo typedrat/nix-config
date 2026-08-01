@@ -45,8 +45,9 @@
             failed_packages=""
 
             # Packages with custom update scripts that must be run directly
-            # (nix-update can't handle packages built via external flake inputs)
-            custom_update_packages="bypass-paywalls-clean ttv-lol-pro"
+            # (nix-update can't handle packages built via external flake inputs
+            # or with extra pinned sources beyond src)
+            custom_update_packages="bypass-paywalls-clean ttv-lol-pro tweakcc-fixed"
 
             for pkg in $packages; do
               echo "Updating $pkg..."
