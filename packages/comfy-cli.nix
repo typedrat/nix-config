@@ -16,6 +16,10 @@ python3.pkgs.buildPythonApplication rec {
     hash = "sha256-xQ0wPeO2K6+CUdYWL9vEB22WeQB6YhflX4p11q71/do=";
   };
 
+  nativeBuildInputs = with python3.pkgs; [
+    pythonRelaxDepsHook
+  ];
+
   build-system = [
     python3.pkgs.setuptools
   ];
@@ -56,6 +60,8 @@ python3.pkgs.buildPythonApplication rec {
   pythonImportsCheck = [
     "comfy_cli"
   ];
+
+  pythonRelaxDeps = ["mixpanel"];
 
   postFixup = ''
     rm $out/bin/comfy-cli $out/bin/comfycli
