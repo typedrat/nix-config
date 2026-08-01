@@ -50,6 +50,7 @@ python3.pkgs.buildPythonApplication rec {
     python-dateutil
     requests
     rich
+    typing-extensions
     urllib3
     xdg
   ];
