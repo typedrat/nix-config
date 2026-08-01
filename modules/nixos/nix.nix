@@ -73,27 +73,6 @@
           # so rebuild the symlinkJoin wrapper against the patched slim derivation.
           nodejs_20 = prev.nodejs_20.override {nodejs-slim = nodejs-slim_20;};
         })
-
-        # Workaround for https://github.com/NixOS/nixpkgs/issues/545409
-        # (root cause: https://github.com/NixOS/nixpkgs/issues/544701).
-        #
-        # cmake 4.3's FindCUDAToolkit fails hard when CUDAToolkit_ROOT is set but
-        # contains no bin/nvcc; it no longer falls back to searching PATH. The
-        # setup-cuda-hook builds CUDAToolkit_ROOT from host-side deps only, and
-        # cuda_nvcc is normally a nativeBuildInput, so nvcc is never in the list.
-        # Adding cuda_nvcc to buildInputs gets its path (which carries the
-        # include-in-cudatoolkit-root marker) into CUDAToolkit_ROOT, which OIDN
-        # forwards to the ExternalProject that runs find_package(CUDAToolkit).
-        #
-        # Wrong dependency category on purpose (nvcc is a build tool, not a
-        # library); fine for native builds. The hook-level fix is
-        # https://github.com/NixOS/nixpkgs/pull/545542; drop this once it reaches
-        # the pinned nixpkgs.
-        (final: prev: {
-          openimagedenoise = prev.openimagedenoise.overrideAttrs (old: {
-            buildInputs = (old.buildInputs or []) ++ [final.cudaPackages.cuda_nvcc];
-          });
-        })
       ];
 
       config = {
