@@ -42,6 +42,34 @@
   # The cost is idle power. Revisit if Corsair ships firmware past ESFM10.1.
   boot.kernelParams = ["nvme_core.default_ps_max_latency_us=0"];
 
+  # Cap the ARC. Left unset, OpenZFS on Linux sizes arc_c_max at RAM minus 1GiB,
+  # so on this box the cache is free to reach ~122GiB and in practice peaked at
+  # 85GiB, squeezing MemAvailable to a 15GiB floor.
+  #
+  # That squeeze does not show up as cache pressure. ARC lives in SPL slab and
+  # is accounted unreclaimable, so `free` files it under used with no
+  # attribution, and the kernel will not count it as reclaimable when deciding
+  # what to evict. Under a burst allocation ARC cannot shrink synchronously —
+  # dnode and dbuf eviction is asynchronous and rate-limited — so the only fast
+  # lever left is paging anon out, which fills the 8G swap and then leaves an
+  # ordinary order-0 fault nowhere to go. The kills that follow are global OOM
+  # (constraint=CONSTRAINT_NONE), not a cgroup limit, and the victims are
+  # whichever process happened to fault, not whatever grew.
+  #
+  # Swappiness is not the lever it looks like. xanmod already patches the
+  # in-tree default down to 10, and swap still filled, because swappiness only
+  # biases the anon-vs-file reclaim ratio — it cannot stop anon reclaim when
+  # slab is what is holding the memory and will not give it back in time.
+  #
+  # 32GiB holds nearly all of the MFU working set, and misses land on NVMe.
+  # sys_free is the headroom ARC leaves before it stops growing; the default is
+  # 1/64 of RAM, which is far too thin to absorb a burst at this scale.
+  boot.extraModprobeConfig = let
+    gib = n: n * 1024 * 1024 * 1024;
+  in ''
+    options zfs zfs_arc_max=${toString (gib 32)} zfs_arc_sys_free=${toString (gib 8)}
+  '';
+
   # --- Session variables ---
 
   # Force GLVND to use the NVIDIA EGL vendor library. Without this, applications
