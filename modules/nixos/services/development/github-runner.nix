@@ -129,5 +129,32 @@ in {
         )
         cfg.runners;
     })
+
+    # Workflows authenticate to FlakeHub through determinate-nixd, and a machine
+    # has exactly one credential slot: the job's OIDC token lands in
+    # /nix/var/determinate and displaces both the host's token and the
+    # auth_state.json it would refresh from. That token is good for five
+    # minutes, so once a job has run, every build on this host gets a 401 from
+    # the cache until someone logs in again by hand.
+    #
+    # The runners are ephemeral and exit after a single job, so restoring the
+    # host's own credential on stop costs one login per job. `+` runs it as root
+    # rather than as the runner user, which keeps the long-lived token out of
+    # reach of the very workflows that make this necessary, and `-` stops a
+    # failed refresh from dragging the runner unit into a failed state with it.
+    (modules.mkIf cfg.enable {
+      sops.secrets.flakehub_token.mode = "0400";
+
+      systemd.services =
+        lib.mapAttrs' (
+          name: _runnerCfg:
+            lib.nameValuePair "github-runner-${name}" {
+              serviceConfig.ExecStopPost = [
+                "-+${lib.getExe' inputs'.determinate.packages.default "determinate-nixd"} auth login token --token-file ${config.sops.secrets.flakehub_token.path}"
+              ];
+            }
+        )
+        cfg.runners;
+    })
   ];
 }
