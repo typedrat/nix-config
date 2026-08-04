@@ -1,6 +1,7 @@
 {
   imports = [
     ./3d-printing.nix
+    ./anki.nix
     ./blender.nix
     ./freecad.nix
     ./gimp.nix

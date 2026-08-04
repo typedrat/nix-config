@@ -181,6 +181,19 @@
         obsidian.enable = options.mkEnableOption "Obsidian" // {default = true;};
         libreoffice.enable = options.mkEnableOption "LibreOffice" // {default = true;};
         sioyek.enable = options.mkEnableOption "Sioyek PDF reader" // {default = true;};
+        anki = {
+          enable = options.mkEnableOption "Anki" // {default = true;};
+          sync.enable =
+            options.mkEnableOption "AnkiWeb sync"
+            // {
+              description = ''
+                Whether to sync with AnkiWeb, using the `username` and `syncKey`
+                entries of `secrets/<username>/anki.yaml`. The sync key is not
+                the account password; it is stored in `prefs21.db` once you have
+                logged in from Anki's preferences.
+              '';
+            };
+        };
         handy = {
           enable = options.mkEnableOption "Handy offline speech-to-text";
           keyboardImplementation = options.mkOption {

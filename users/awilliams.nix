@@ -80,6 +80,8 @@ in {
       };
     };
 
+    gui.productivity.anki.sync.enable = true;
+
     # Email accounts
     email.accounts = {
       Personal = {
