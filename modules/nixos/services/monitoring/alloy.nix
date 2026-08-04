@@ -17,12 +17,23 @@ in {
 
     httpAddress = options.mkOption {
       type = types.str;
-      default = "127.0.0.1:12345";
+      default = config.links.alloy.tuple;
+      defaultText = options.literalExpression "config.links.alloy.tuple";
       description = "Address for Alloy's own UI and metrics endpoint.";
     };
   };
 
   config = modules.mkMerge [
+    {
+      # Alloy's own default is 12345, which sits outside the reserved range and
+      # is a popular pick for dev servers. Going through port-magic moves it
+      # into the reserved band and makes a collision an eval error rather than
+      # a service that quietly loses the race for the port.
+      links.alloy = {
+        protocol = "http";
+      };
+    }
+
     (modules.mkIf cfg.enable {
       services.alloy = {
         enable = true;
