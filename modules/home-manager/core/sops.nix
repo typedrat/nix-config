@@ -10,10 +10,9 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
-  userSecretsDir = ../../../secrets + "/${username}";
   cfg = config.rat.userSecrets;
 
-  secretFile = file: userSecretsDir + "/${file}.yaml";
+  secretFile = file: config.rat.userSecretsDir + "/${file}.yaml";
 
   # Secrets are named "<file>/<key>" so that two files can declare the same key
   # without colliding in the flat sops.secrets namespace.
@@ -30,6 +29,13 @@ in {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
   ];
+
+  options.rat.userSecretsDir = options.mkOption {
+    type = types.path;
+    readOnly = true;
+    default = ../../../secrets + "/${username}";
+    description = "Directory holding this user's own SOPS files.";
+  };
 
   options.rat.userSecrets = options.mkOption {
     type = types.attrsOf (types.attrsOf (types.submodule {

@@ -9,11 +9,13 @@
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
+
+  hasSecrets = builtins.pathExists (config.rat.userSecretsDir + "/vizio.yaml");
 in {
-  config = modules.mkIf (cliCfg.enable && cliCfg.networking.enable) {
-    sops.secrets = {
-      vizioAuth = {};
-      vizioIp = {};
+  config = modules.mkIf (cliCfg.enable && cliCfg.networking.enable && hasSecrets) {
+    rat.userSecrets.vizio = {
+      auth = {};
+      ip = {};
     };
 
     home.packages = [
@@ -27,8 +29,8 @@ in {
           fi
 
           export VIZIO_IP VIZIO_AUTH
-          VIZIO_IP=$(cat ${config.sops.secrets.vizioIp.path})
-          VIZIO_AUTH=$(cat ${config.sops.secrets.vizioAuth.path})
+          VIZIO_IP=$(cat ${config.sops.secrets."vizio/ip".path})
+          VIZIO_AUTH=$(cat ${config.sops.secrets."vizio/auth".path})
           pyvizio power "$1"
         '';
       })

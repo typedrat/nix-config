@@ -10,7 +10,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
 
-  # Check if user has specific secrets configured (awilliams-specific)
+  # miseGithubToken is shared with the system-level nix config, so it stays in
+  # the shared file, which only the sops admin key can open.
   hasUserSecrets = username == "awilliams";
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;

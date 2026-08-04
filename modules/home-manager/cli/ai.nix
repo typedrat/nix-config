@@ -19,8 +19,10 @@
     then impermanenceCfg.tankDir
     else persistDir;
 
-  # Check if user has specific secrets configured (awilliams-specific)
-  hasUserSecrets = username == "awilliams";
+  hasUserSecrets = builtins.pathExists (config.rat.userSecretsDir + "/ai.yaml");
+  # civitai and hf tokens live in the shared file, which only the sops admin
+  # key can open.
+  hasSharedSecrets = username == "awilliams";
   hasNvidia = osConfig.rat.hardware.nvidia.enable;
   gpuVram = osConfig.rat.hardware.gpu.vram;
   hasLargeVram = gpuVram >= 16;
@@ -63,14 +65,19 @@ in {
       }
     ]);
 
-    sops.secrets = lib.mkIf hasUserSecrets {
+    sops.secrets = lib.mkIf hasSharedSecrets {
       civitaiApiToken = {};
       hfToken = {};
-      morphApiKey = {};
-      openrouterApiKey = {};
-      answerOverflowKey = {};
-      homeAssistantToken = {};
-      vastApiKey = {};
+    };
+
+    rat.userSecrets = lib.mkIf hasUserSecrets {
+      ai = {
+        morphApiKey = {};
+        openrouterApiKey = {};
+        answerOverflowKey = {};
+        homeAssistantToken = {};
+        vastApiKey = {};
+      };
     };
 
     home.packages =
@@ -240,15 +247,17 @@ in {
       settings = lib.filterAttrs (_: v: v != null) peonSettings;
     };
 
-    programs.zsh.initContent = lib.mkIf hasUserSecrets (
-      lib.mkBefore ''
+    programs.zsh.initContent = lib.mkBefore (
+      lib.optionalString hasSharedSecrets ''
         export CIVITAI_API_TOKEN=$(cat ${config.sops.secrets.civitaiApiToken.path})
         export HF_TOKEN=$(cat ${config.sops.secrets.hfToken.path})
-        export MORPH_API_KEY=$(cat ${config.sops.secrets.morphApiKey.path})
-        export OPENROUTER_API_KEY=$(cat ${config.sops.secrets.openrouterApiKey.path})
-        export ANSWER_OVERFLOW_KEY=$(cat ${config.sops.secrets.answerOverflowKey.path})
-        export HOME_ASSISTANT_TOKEN=$(cat ${config.sops.secrets.homeAssistantToken.path})
-        export VAST_API_KEY=$(cat ${config.sops.secrets.vastApiKey.path})
+      ''
+      + lib.optionalString hasUserSecrets ''
+        export MORPH_API_KEY=$(cat ${config.sops.secrets."ai/morphApiKey".path})
+        export OPENROUTER_API_KEY=$(cat ${config.sops.secrets."ai/openrouterApiKey".path})
+        export ANSWER_OVERFLOW_KEY=$(cat ${config.sops.secrets."ai/answerOverflowKey".path})
+        export HOME_ASSISTANT_TOKEN=$(cat ${config.sops.secrets."ai/homeAssistantToken".path})
+        export VAST_API_KEY=$(cat ${config.sops.secrets."ai/vastApiKey".path})
       ''
     );
   };

@@ -10,13 +10,13 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
 
-  hasUserSecrets = username == "awilliams";
+  hasUserSecrets = builtins.pathExists (config.rat.userSecretsDir + "/github.yaml");
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
-    sops.secrets = lib.mkIf hasUserSecrets {
-      githubPersonalAccessToken = {};
+    rat.userSecrets = lib.mkIf hasUserSecrets {
+      github.personalAccessToken = {};
     };
 
     home.packages = with pkgs; [
@@ -43,7 +43,7 @@ in {
     ];
 
     programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
-      export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.githubPersonalAccessToken.path})
+      export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets."github/personalAccessToken".path})
     '');
 
     home.file.".claude/hooks/peon-ping/peon.sh" = modules.mkIf config.programs.peon-ping.enable {

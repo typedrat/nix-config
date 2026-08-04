@@ -120,7 +120,7 @@ in {
         workdrive = {
           type = "drive";
           config = {
-            service_account_file = "work-gdrive-sa-key";
+            service_account_file = "work-gdrive/serviceAccount";
             impersonate = "alexis@synapdeck.com";
             scope = "drive";
           };
@@ -129,7 +129,7 @@ in {
         workdrive-shared = {
           type = "drive";
           config = {
-            service_account_file = "work-gdrive-sa-key";
+            service_account_file = "work-gdrive/serviceAccount";
             impersonate = "alexis@synapdeck.com";
             scope = "drive";
             team_drive = "0AEjPQYC7XEWcUk9PVA";
