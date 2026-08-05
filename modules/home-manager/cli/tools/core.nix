@@ -38,6 +38,7 @@ in {
       gnutar
       hyfetch
       jd-diff-patch
+      mdcat
       openssl
       pv
       rename
