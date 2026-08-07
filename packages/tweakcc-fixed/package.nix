@@ -110,8 +110,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     promptOverrides = fetchFromGitHub {
       owner = "skrabe";
       repo = "lobotomized-claude-code";
-      rev = "78a8d1b94bfdb74e6f115e3e8eeb17656d9595a8";
-      hash = "sha256-0TkubBksq7+tOfXKO67YywcweZ4nyrrEv++opQ+mdZE=";
+      rev = "a1bcd98050949bc4234719460c22499c57fe910b";
+      hash = "sha256-uLx6nyUhDoElBcCDl12+OLhCRAx/vfC4QltRuD20/Nk=";
     };
 
     updateScript = ./update.sh;
