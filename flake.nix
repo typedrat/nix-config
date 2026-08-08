@@ -33,23 +33,8 @@
       flake = false;
     };
 
-    # claude-code + vscode-extensions.anthropic.claude-code: 2.1.222 -> 2.1.223
-    # (NixOS/nixpkgs#549758)
-    nixpkgs-patch-549758 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/549758.diff";
-      flake = false;
-    };
-
-    # claude-code + vscode-extensions.anthropic.claude-code: 2.1.223 -> 2.1.224
-    # (NixOS/nixpkgs#550094)
-    nixpkgs-patch-550094 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/550094.diff";
-      flake = false;
-    };
-
     # claude-code + vscode-extensions.anthropic.claude-code: 2.1.224 -> 2.1.226
-    # (NixOS/nixpkgs#550589). These three stack: each bump's manifest.json hunk
-    # assumes the previous version as context.
+    # (NixOS/nixpkgs#550589).
     nixpkgs-patch-550589 = {
       url = "https://github.com/NixOS/nixpkgs/pull/550589.diff";
       flake = false;
