@@ -35,9 +35,25 @@ in
         # tweakcc seeds defaults into system-prompts/ and system-reminders/
         # on first --apply, so they must be writable — symlinks back to
         # the immutable prompt-overrides source are insufficient.
-        cp -RL ${promptOverrides}/system-prompts-fable-5 "$TWEAKCC_CONFIG_DIR/system-prompts"
+        cp -RL ${promptOverrides}/system-prompts-opus-5 "$TWEAKCC_CONFIG_DIR/system-prompts"
         cp -RL ${promptOverrides}/system-reminders "$TWEAKCC_CONFIG_DIR/system-reminders"
         chmod -R u+w "$TWEAKCC_CONFIG_DIR/system-prompts" "$TWEAKCC_CONFIG_DIR/system-reminders"
+
+        # These two overrides have empty bodies, but the strings they blank are
+        # markup sentinels rather than prose: "<command-name>/loop</command-name>"
+        # (34 chars) and the JSON fragment '"content":"<command-name>/' (26).
+        # CC re-reads the first from transcripts to classify /loop sessions —
+        # `o.includes("<command-name>/loop</command-name>")` — so blanking it
+        # leaves `includes("")`, true for every line, and every session that has
+        # any messages is dropped from /resume as a /loop session.
+        #
+        # Deleting these restores 60 bytes of markup, not prompt text: the
+        # 44kB prose sharing their name is a separate id and stays overridden.
+        # Empty bodies are normal (~166 of them) and deliberately strip
+        # guidance, so don't generalise this by length — most short ones are
+        # prose worth removing. Only markup-shaped literals belong here.
+        rm -f "$TWEAKCC_CONFIG_DIR/system-prompts/system-prompt-command-name-framing-tag-2.md" \
+              "$TWEAKCC_CONFIG_DIR/system-prompts/system-prompt-command-name-framing-tag-3.md"
 
         # Scrub the captured config's installation pointer and applied
         # flag so tweakcc targets the binary in *this* derivation and

@@ -3,6 +3,7 @@
   stdenv,
   stdenvNoCC,
   fetchFromGitHub,
+  fetchpatch,
   nodejs,
   pnpm,
   fetchPnpmDeps,
@@ -26,6 +27,17 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     rev = "v${finalAttrs.version}";
     hash = "sha256-DhEi2iOHECASVXMmRBXfekP1G7DwVNvwq4xg2ubNn98=";
   };
+
+  # Repacking a Bun single-file executable appended the rewritten bundle
+  # instead of replacing the original, so every patched claude-code shipped
+  # two copies and grew from ~285MB to ~711MB.
+  patches = [
+    (fetchpatch {
+      name = "no-binary-bloat-when-patching-linux-installs.patch";
+      url = "https://github.com/skrabe/tweakcc-fixed/pull/27.diff";
+      hash = "sha256-iezWE2E/2d+WoV95BUsHf6gIBU6MwOTzA54jdi95NSQ=";
+    })
+  ];
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
