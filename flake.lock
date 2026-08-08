@@ -2573,6 +2573,42 @@
         "type": "github"
       }
     },
+    "nixpkgs-patch-549758": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-D2rlBWjnQjWligJrCVPsD8KJrXcTPM49VlLhWxgAFLk=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/549758.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/549758.diff"
+      }
+    },
+    "nixpkgs-patch-550094": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-vOV4PVPSUEiC7B6affhOPWkOFW6e7cORmYBODUIKoM8=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/550094.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/550094.diff"
+      }
+    },
+    "nixpkgs-patch-550589": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-IKhTz8umlsLNtOcCa0xK/wnjIHR4XuyHc894XRKZ39Y=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/550589.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/550589.diff"
+      }
+    },
     "nixpkgs-regression": {
       "locked": {
         "lastModified": 1643052045,
@@ -3146,6 +3182,9 @@
         "nixified-ai": "nixified-ai",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_13",
+        "nixpkgs-patch-549758": "nixpkgs-patch-549758",
+        "nixpkgs-patch-550094": "nixpkgs-patch-550094",
+        "nixpkgs-patch-550589": "nixpkgs-patch-550589",
         "nixvirt": "nixvirt",
         "orca-slicer-nanashi": "orca-slicer-nanashi",
         "peon-ping": "peon-ping",
