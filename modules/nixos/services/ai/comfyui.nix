@@ -13,6 +13,13 @@ in {
     inputs.nixified-ai.nixosModules.comfyui
   ];
 
+  # nixpkgs ships its own `services.comfyui`, but it only exposes
+  # enable/package/listen/port/extraArgs. The options below are built on
+  # nixified-ai's module (models, customNodes, acceleration, home), so the
+  # nixpkgs one is dropped rather than merged — leaving both in place is a
+  # duplicate-declaration error.
+  disabledModules = ["services/misc/comfyui.nix"];
+
   options.rat.services.comfyui = {
     enable = options.mkEnableOption "ComfyUI";
 
