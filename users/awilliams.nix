@@ -20,6 +20,9 @@ in {
       ]
       ++ lib.optionals config.rat.gaming.enable [
         "gamemode"
+      ]
+      ++ lib.optionals config.rat.hardware.esp32Dev.enable [
+        "plugdev"
       ];
     shell = pkgs.zsh;
     sshKeys = [

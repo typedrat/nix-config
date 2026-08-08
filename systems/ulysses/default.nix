@@ -249,6 +249,7 @@
       securityKey.enable = true;
       usbmuxd.enable = true;
       nintendoSwitch.rcm.enable = true;
+      esp32Dev.enable = true;
     };
 
     # Storage
