@@ -26,6 +26,9 @@ in {
     home.packages = with pkgs; [
       # Compilers and build tools
       gcc
+      gnumake
+      autoconf
+      automake
 
       # Development utilities
       devpod
