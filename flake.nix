@@ -25,21 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # frei0r & gavl: restrict gavl to Linux and move the CUDA nvcc dependency
-    # to nativeBuildInputs, pointing CMake at the split package layout
-    # (NixOS/nixpkgs#549747)
-    nixpkgs-patch-549747 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/549747.diff";
-      flake = false;
-    };
-
-    # claude-code + vscode-extensions.anthropic.claude-code: 2.1.224 -> 2.1.226
-    # (NixOS/nixpkgs#550589).
-    nixpkgs-patch-550589 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/550589.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
