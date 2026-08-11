@@ -162,13 +162,6 @@ in {
 
         systemd.services.qbittorrent = {
           restartTriggers = [categoriesFile];
-
-          # tmpfiles' C+ directive only creates files that don't already
-          # exist, so it can't overwrite a stale categories.json (e.g. a
-          # leftover symlink from the previous activation-script approach,
-          # or a previous version of the categories file). Install the file
-          # ourselves on every start, matching the pattern nixpkgs uses for
-          # qBittorrent.conf itself (see NixOS/nixpkgs#503103).
           serviceConfig.ExecStartPre = modules.mkIf (cfg.categories != {}) (
             modules.mkAfter [
               "${pkgs.coreutils}/bin/install -Dm600 ${categoriesFile} ${config.services.qbittorrent.profileDir}/qBittorrent/config/categories.json"

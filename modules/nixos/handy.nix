@@ -13,10 +13,6 @@
 #   - "handy_keys" evdev: reports release as well as press (PTT works), but
 #                  needs /dev/input access — hence the uinput module + "input"
 #                  group below.
-#   - "portal"     xdg-desktop-portal GlobalShortcuts: the native Wayland
-#                  mechanism (works via xdg-desktop-portal-hyprland / KDE),
-#                  full press+release, no device-access plumbing needed.
-#                  Provided by the Handy input (cjpais/Handy#1560).
 # The backend is selected declaratively via
 # rat.users.<name>.gui.productivity.handy.keyboardImplementation.
 {
