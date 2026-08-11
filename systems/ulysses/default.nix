@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   pkgs,
   ...
 }: {
@@ -84,19 +85,6 @@
   # Don't load amdgpu in initrd - it changes monitor enumeration order
   hardware.facter.detected.boot.graphics.kernelModules = lib.mkForce ["nvidia"];
 
-  # MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 + Bluetooth combo card.
-  # Builds out-of-tree patched btusb/btmtk (for BT USB 0489:e110, not yet in
-  # mainline) and patched mt7925e/mt7921e (320MHz EHT fixes), plus extracts the
-  # BT/WiFi firmware. This replaces the external Realtek RTL8761B dongle, whose
-  # USB autosuspend was severing the GuliKit controller's Bluetooth link
-  # ~1 minute into use. disableAspm fixes a PCIe ASPM "stuck upload" issue.
-  rat.hardware.mt7927 = {
-    enable = true;
-    enableWifi = true;
-    enableBluetooth = true;
-    disableAspm = true;
-  };
-
   # --- Extra filesystems ---
 
   # Hyperion home backup (ZFS dataset received from old system)
@@ -115,20 +103,19 @@
     ];
   };
 
-  # Not currently installed.
-  # # Windows drive (WD SN750 500GB)
-  # fileSystems."/mnt/windows" = {
-  #   device = "/dev/disk/by-id/nvme-WDS500G3X0C-00SJG0_21025A800309-part3";
-  #   fsType = "ntfs-3g";
-  #   options = [
-  #     "rw"
-  #     "uid=${toString config.users.users.awilliams.uid}"
-  #     "nofail"
-  #     "x-gvfs-show"
-  #     "x-gvfs-name=Windows"
-  #     "x-gvfs-icon=drive-harddisk"
-  #   ];
-  # };
+  # Windows drive
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-id/nvme-Samsung_SSD_990_EVO_Plus_4TB_S7U8NU0YA00669D-part3";
+    fsType = "ntfs-3g";
+    options = [
+      "rw"
+      "uid=${toString config.users.users.awilliams.uid}"
+      "nofail"
+      "x-gvfs-show"
+      "x-gvfs-name=Windows"
+      "x-gvfs-icon=drive-harddisk"
+    ];
+  };
 
   # --- TLS certificates ---
 
@@ -238,12 +225,24 @@
         vram = 32;
       };
 
+      # MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 + Bluetooth combo card.
+      # Builds out-of-tree patched btusb/btmtk (for BT USB 0489:e110, not yet in
+      # mainline) and patched mt7925e/mt7921e (320MHz EHT fixes), plus extracts the
+      # BT/WiFi firmware. disableAspm fixes a PCIe ASPM "stuck upload" issue.
+      mt7927 = {
+        enable = true;
+        enableWifi = true;
+        enableBluetooth = true;
+        disableAspm = true;
+      };
+
       nvidia = {
         enable = true;
         package = "latest";
         cuda.enable = true;
         profiling.enable = true;
       };
+
       openrgb.enable = true;
       topping-e2x2.enable = true;
       securityKey.enable = true;
