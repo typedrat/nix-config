@@ -21,14 +21,29 @@
     text = ''
       target=${lib.escapeShellArg cfg.forwardTo}
 
+      # The neighbour may not answer the moment the network comes up. Nothing
+      # is ordered after this unit, so waiting here delays only the logging.
+      sleep 5
+
+      # glibc synthesises ::ffff:A.B.C.D entries from a name's A records when it
+      # publishes no AAAA. Nothing reaches those over v6, so they are dropped
+      # here and reconsidered by the v4 pass.
+      v6_addrs() {
+        getent ahostsv6 "$target" 2>/dev/null | awk '{print $1}' | grep -v '^::ffff:' | sort -u || true
+      }
+
+      v4_addrs() {
+        getent ahostsv4 "$target" 2>/dev/null | awk '{print $1}' | sort -u || true
+      }
+
       # netpoll does no address resolution of its own, so the destination has
       # to be pinned down here: a reachable address, the interface that reaches
-      # it, and the neighbour's MAC. Stale AAAA records are normal on a LAN
-      # where leases are recycled, hence probing each candidate rather than
-      # trusting the first answer.
-      pick_address() {
+      # it, and the neighbour's MAC. Stale records are normal on a LAN where
+      # leases are recycled, hence probing each candidate rather than trusting
+      # the first answer.
+      pick_v6() {
         local ula_only="$1" addr
-        for addr in $(getent ahostsv6 "$target" | awk '{print $1}' | sort -u); do
+        for addr in $(v6_addrs); do
           if [ "$ula_only" = 1 ]; then
             case "$addr" in
               fc*|fd*) ;;
@@ -43,13 +58,27 @@
         return 1
       }
 
+      pick_v4() {
+        local addr
+        for addr in $(v4_addrs); do
+          if ping -4 -c1 -W2 "$addr" >/dev/null 2>&1; then
+            echo "$addr"
+            return 0
+          fi
+        done
+        return 1
+      }
+
       # A unique-local address survives the ISP rotating its delegated prefix,
       # so it is worth preferring even though hosts reach each other over the
-      # global prefix by default. The collector is not necessarily answering
-      # the moment this host finishes booting, hence the retries.
+      # global prefix by default. v4 is tried last but is not a fallback in name
+      # only: a name that resolves to no AAAA at all would otherwise leave the
+      # machine with no crash logging whatsoever. The collector is not
+      # necessarily answering the moment this host finishes booting, hence the
+      # retries.
       remote_ip=""
       for _ in 1 2 3 4 5 6; do
-        remote_ip=$(pick_address 1 || pick_address 0 || true)
+        remote_ip=$(pick_v6 1 || pick_v6 0 || pick_v4 || true)
         [ -n "$remote_ip" ] && break
         sleep 10
       done
@@ -59,16 +88,27 @@
         exit 1
       fi
 
-      route=$(ip -6 route get "$remote_ip")
+      case "$remote_ip" in
+        *:*) family=6 ;;
+        *) family=4 ;;
+      esac
+
+      route=$(ip -"$family" route get "$remote_ip" 2>/dev/null || true)
       dev=$(echo "$route" | sed -n 's/.* dev \([^ ]*\).*/\1/p' | head -1)
-      remote_mac=$(ip -6 neigh get "$remote_ip" dev "$dev" | sed -n 's/.* lladdr \([^ ]*\).*/\1/p' | head -1)
+
+      if [ -z "$dev" ]; then
+        echo "no route to $remote_ip" >&2
+        exit 1
+      fi
+
+      remote_mac=$(ip -"$family" neigh get "$remote_ip" dev "$dev" 2>/dev/null | sed -n 's/.* lladdr \([^ ]*\).*/\1/p' | head -1 || true)
 
       # The source address deliberately does not come from `ip route get`. That
       # reports whichever address the kernel would pick, and RFC 4941 makes it
       # prefer a privacy address that rotates every few days. A netconsole
       # target holds its source for as long as it is enabled, so a rotating one
       # quietly stops delivering long before anyone looks.
-      pick_local() {
+      pick_local6() {
         local want_ula="$1" addr is_ula
         for addr in $(ip -6 -o addr show dev "$dev" scope global -temporary -deprecated | awk '{print $4}' | cut -d/ -f1); do
           case "$addr" in
@@ -83,16 +123,22 @@
         return 1
       }
 
-      # Match the remote's class so the two ends stay on the same prefix.
-      case "$remote_ip" in
-        fc*|fd*) want_ula=1 ;;
-        *) want_ula=0 ;;
-      esac
+      if [ "$family" = 6 ]; then
+        # Match the remote's class so the two ends stay on the same prefix.
+        case "$remote_ip" in
+          fc*|fd*) want_ula=1 ;;
+          *) want_ula=0 ;;
+        esac
 
-      local_ip=$(pick_local "$want_ula" || pick_local "$((1 - want_ula))" || true)
+        local_ip=$(pick_local6 "$want_ula" || pick_local6 "$((1 - want_ula))" || true)
+      else
+        # v4 has no privacy-address rotation to dodge, so the interface's own
+        # address is the only candidate.
+        local_ip=$(ip -4 -o addr show dev "$dev" scope global | awk '{print $4}' | cut -d/ -f1 | head -1)
+      fi
 
-      if [ -z "$dev" ] || [ -z "$local_ip" ] || [ -z "$remote_mac" ]; then
-        echo "could not resolve dev/src/mac for $remote_ip" >&2
+      if [ -z "$local_ip" ] || [ -z "$remote_mac" ]; then
+        echo "could not resolve src/mac for $remote_ip" >&2
         exit 1
       fi
 
@@ -202,11 +248,16 @@ in {
         wantedBy = ["multi-user.target"];
 
         serviceConfig = {
-          Type = "oneshot";
+          # Deliberately not oneshot. A target implicitly orders itself after
+          # everything it wants, so a oneshot here holds multi-user.target for
+          # as long as the probing runs — and uwsm refuses to start a session
+          # until graphical.target is active, turning an unreachable collector
+          # into a minute-plus black screen at the greeter. Type=exec goes
+          # active the moment the process is running and leaves the probing to
+          # happen out of band; a failure still shows up as a failed unit.
+          Type = "exec";
           RemainAfterExit = true;
           ExecStart = lib.getExe setup;
-          # The neighbour may not answer the moment the network comes up.
-          ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
         };
       };
     })
