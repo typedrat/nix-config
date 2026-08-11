@@ -33,6 +33,17 @@
   );
 in {
   config = mkIf cfg.enable {
+    # Registers gnome-keyring and gcr on the session bus. gcr owns
+    # org.gnome.keyring.SystemPrompter; without it the daemon has no way to ask
+    # for the login-keyring password, so any keyring that starts locked — a
+    # daemon restarted outside PAM, for instance — stays locked permanently.
+    services.gnome.gnome-keyring.enable = true;
+
+    # gcr-ssh-agent defaults to following gnome-keyring and asserts against
+    # programs.ssh.startAgent, since only one SSH agent can own the socket.
+    # The keyring here runs secrets only; ssh-agent stays with OpenSSH.
+    services.gnome.gcr-ssh-agent.enable = false;
+
     security.pam.services.greetd.enableGnomeKeyring = true;
     security.pam.services.login.enableGnomeKeyring = true;
 
