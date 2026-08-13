@@ -1,0 +1,41 @@
+diff --git a/src/sync.rs b/src/sync.rs
+index f3552fd..d162228 100644
+--- a/src/sync.rs
++++ b/src/sync.rs
+@@ -27,6 +27,7 @@ pub enum FontWeight {
+     Bold,
+     ExtraBold,
+     Black,
++    Variable,
+ }
+ 
+ pub struct TkFont {
+@@ -52,7 +53,11 @@ impl TkFont {
+                 style: match &capture[5] {
+                     "normal" => FontStyle::Normal,
+                     "italic" => FontStyle::Italic,
+-                    _ => unreachable!(),
++                    style => {
++                        let name = &capture[1];
++                        eprintln!("Skipping font {name}: unrecognized style '{style}'.");
++                        continue;
++                    }
+                 },
+                 weight: match &capture[6] {
+                     "100" => FontWeight::Thin,
+@@ -64,7 +69,14 @@ impl TkFont {
+                     "700" => FontWeight::Bold,
+                     "800" => FontWeight::ExtraBold,
+                     "900" => FontWeight::Black,
+-                    _ => unreachable!(),
++                    // Variable fonts declare an axis range rather than a single
++                    // weight, e.g. `font-weight:100 900`. One file covers them all.
++                    weight if weight.contains(' ') => FontWeight::Variable,
++                    weight => {
++                        let name = &capture[1];
++                        eprintln!("Skipping font {name}: unrecognized weight '{weight}'.");
++                        continue;
++                    }
+                 },
+             };
+ 
