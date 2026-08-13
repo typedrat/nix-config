@@ -15,7 +15,9 @@ in {
   config = modules.mkIf (cliCfg.enable && cliCfg.tools.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
+        ".config/tksync"
         ".local/share/direnv"
+        ".local/share/fonts"
         ".local/share/zoxide"
         ".local/state/yazi"
       ];
@@ -42,6 +44,7 @@ in {
       openssl
       pv
       rename
+      tksync
       tree
       vim.xxd
       which
