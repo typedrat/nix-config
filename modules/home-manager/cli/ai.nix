@@ -82,11 +82,11 @@ in {
 
     home.packages =
       (with pkgs; [
+        codex
         llm
         python3Packages.huggingface-hub
         vast-cli
       ])
-      ++ [inputs'.codex-cli.packages.default]
       ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp;
 
     home.sessionVariables =
