@@ -6,6 +6,7 @@
   nodejs,
   makeBinaryWrapper,
   kicad-skip,
+  nix-update-script,
 }: let
   pythonEnv = python3.withPackages (ps:
     with ps; [
@@ -21,14 +22,14 @@
       typing-extensions
     ]);
 in
-  buildNpmPackage (_finalAttrs: {
+  buildNpmPackage (finalAttrs: {
     pname = "kicad-mcp-server";
     version = "2.6.0";
 
     src = fetchFromGitHub {
       owner = "mixelpixx";
       repo = "KiCAD-MCP-Server";
-      rev = "ccabbf0daff0db6e902e39d39ea734b018cd3eae";
+      tag = "v${finalAttrs.version}";
       hash = "sha256-vEQMbF5kU5bAhRlaC8TMkRfZJW06GQkUBZOHfkxc+Pg=";
     };
 
@@ -48,6 +49,7 @@ in
       cp -r dist $out/lib/kicad-mcp-server/
       cp -r node_modules $out/lib/kicad-mcp-server/
       cp -r python $out/lib/kicad-mcp-server/
+      cp -r config $out/lib/kicad-mcp-server/
       cp package.json $out/lib/kicad-mcp-server/
 
       makeBinaryWrapper ${lib.getExe nodejs} $out/bin/kicad-mcp-server \
@@ -56,6 +58,8 @@ in
 
       runHook postInstall
     '';
+
+    passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
     meta = {
       description = "AI-assisted PCB design with KiCAD via Model Context Protocol";
