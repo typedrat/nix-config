@@ -196,10 +196,6 @@
     # miss the codex-desktop-linux.cachix.org binary cache (see cachix/).
     codex-desktop-linux.url = "github:ilysenko/codex-desktop-linux";
 
-    # OpenAI Codex CLI. nixpkgs left un-followed for the same reason, to hit the
-    # codex-cli.cachix.org binary cache.
-    codex-cli.url = "github:sadjow/codex-cli-nix/main";
-
     authentik-nix = {
       url = "github:nix-community/authentik-nix";
     };
