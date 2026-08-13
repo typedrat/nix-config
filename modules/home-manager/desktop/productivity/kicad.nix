@@ -12,11 +12,25 @@
   productivityCfg = guiCfg.productivity or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
+
+  hasUserSecrets = builtins.pathExists (config.rat.userSecretsDir + "/digikey.yaml");
 in {
   config = modules.mkIf (guiCfg.enable && productivityCfg.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [".config/kicad" ".local/share/kicad"];
     };
+
+    rat.userSecrets = lib.mkIf hasUserSecrets {
+      digikey = {
+        clientId = {};
+        clientSecret = {};
+      };
+    };
+
+    programs.zsh.initContent = lib.mkIf hasUserSecrets (lib.mkBefore ''
+      export DIGIKEY_CLIENT_ID=$(cat ${config.sops.secrets."digikey/clientId".path})
+      export DIGIKEY_CLIENT_SECRET=$(cat ${config.sops.secrets."digikey/clientSecret".path})
+    '');
 
     home.packages = [
       (pkgs.kicad.override {
