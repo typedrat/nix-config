@@ -10,6 +10,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   productivityCfg = guiCfg.productivity or {};
+  cliCfg = userCfg.cli or {};
+  aiCfg = cliCfg.ai or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
@@ -32,14 +34,16 @@ in {
       export DIGIKEY_CLIENT_SECRET=$(cat ${config.sops.secrets."digikey/clientSecret".path})
     '');
 
-    home.packages = [
-      (pkgs.kicad.override {
-        addons = with pkgs.kicadAddons; [
-          # TODO: re-enable once upstream adds KiCAD 10 compatibility
-          # kikit
-          # kikit-library
-        ];
-      })
-    ];
+    home.packages =
+      [
+        (pkgs.kicad.override {
+          addons = with pkgs.kicadAddons; [
+            # TODO: re-enable once upstream adds KiCAD 10 compatibility
+            # kikit
+            # kikit-library
+          ];
+        })
+      ]
+      ++ lib.optional (aiCfg.enable or false) pkgs.kicad-mcp-server;
   };
 }

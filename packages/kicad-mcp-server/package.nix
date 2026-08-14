@@ -4,23 +4,37 @@
   fetchFromGitHub,
   python3,
   nodejs,
-  makeBinaryWrapper,
+  makeWrapper,
+  kicad,
   kicad-skip,
+  freerouting,
+  jre,
   nix-update-script,
 }: let
-  pythonEnv = python3.withPackages (ps:
-    with ps; [
-      kicad # pcbnew SWIG bindings
-      kicad-python # IPC backend (kipy)
-      kicad-skip
-      pillow
-      cairosvg
-      colorlog
-      pydantic
-      requests
-      python-dotenv
-      typing-extensions
-    ]);
+  # Qualified rather than `with ps;`: `with` loses to the function arguments, so
+  # a bare `kicad` here would resolve to the top-level KiCAD, not the SWIG bindings.
+  pythonEnv = python3.withPackages (ps: [
+    ps.kicad # pcbnew SWIG bindings
+    ps.kicad-python # IPC backend (kipy)
+    kicad-skip
+    ps.pillow
+    ps.cairosvg
+    ps.colorlog
+    ps.pydantic
+    ps.requests
+    ps.python-dotenv
+    ps.typing-extensions
+  ]);
+
+  # KiCAD keys its library env vars on the major version and only exports them
+  # from inside its own wrapper. Unset, the server's library lookups — and the
+  # KICAD<n>_*_DIR references in sym-lib-table/fp-lib-table — fall through to
+  # /usr/share/kicad and resolve to nothing.
+  kicadMajor = lib.versions.major kicad.version;
+
+  # PCM-installed libraries live under the user settings directory, which KiCAD
+  # names after the release series.
+  kicadSeries = lib.versions.majorMinor kicad.version;
 in
   buildNpmPackage (finalAttrs: {
     pname = "kicad-mcp-server";
@@ -36,7 +50,7 @@ in
     npmDepsHash = "sha256-QlrIhfin80CpTaEKs7ujqW4m1rF/ENUY0aEdD8SBMHc=";
 
     nativeBuildInputs = [
-      makeBinaryWrapper
+      makeWrapper
     ];
 
     # tsc is run by the default npm build script
@@ -52,9 +66,17 @@ in
       cp -r config $out/lib/kicad-mcp-server/
       cp package.json $out/lib/kicad-mcp-server/
 
-      makeBinaryWrapper ${lib.getExe nodejs} $out/bin/kicad-mcp-server \
+      # The 3rd-party dir goes through --run because --set-default shell-quotes
+      # its value, which would leave $HOME literal.
+      makeWrapper ${lib.getExe nodejs} $out/bin/kicad-mcp-server \
         --add-flags "$out/lib/kicad-mcp-server/dist/index.js" \
-        --set KICAD_PYTHON ${lib.getExe' pythonEnv "python3"}
+        --prefix PATH : ${lib.makeBinPath [jre]} \
+        --set KICAD_PYTHON ${lib.getExe' pythonEnv "python3"} \
+        --set-default PYTHONPATH ${pythonEnv}/${python3.sitePackages} \
+        --set-default KICAD${kicadMajor}_SYMBOL_DIR ${kicad.libraries.symbols}/share/kicad/symbols \
+        --set-default KICAD${kicadMajor}_FOOTPRINT_DIR ${kicad.libraries.footprints}/share/kicad/footprints \
+        --set-default FREEROUTING_JAR ${freerouting}/share/freerouting/freerouting-executable.jar \
+        --run 'export KICAD${kicadMajor}_3RD_PARTY="''${KICAD${kicadMajor}_3RD_PARTY:-''${XDG_DATA_HOME:-$HOME/.local/share}/kicad/${kicadSeries}/3rdparty}"'
 
       runHook postInstall
     '';

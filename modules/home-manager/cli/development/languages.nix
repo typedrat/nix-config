@@ -180,8 +180,11 @@ in {
             numpy
             opencv-python
             pandas
+            pdfplumber
             polars
+            pymupdf
             pynput
+            pypdf
             scipy
             seaborn
             sympy
