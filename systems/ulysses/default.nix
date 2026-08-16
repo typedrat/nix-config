@@ -291,12 +291,16 @@
         primaryMonitor = "DP-1";
         tvMonitor = "HDMI-A-1";
         monitors = [
-          # vrr=1: always-on VRR (G-SYNC Compatible / FreeSync).
-          # The S2725QS has a 48-120Hz VRR range. Always-on gives smoother
-          # desktop scrolling and reliable VRR in borderless-windowed games
-          # (where vrr=2's fullscreen detection can miss). Drop to vrr=2 if
-          # this specific panel turns out to flicker on the desktop.
-          "DP-1,3840x2160@120.0,0x1080,1.0,vrr,1"
+          # vrr=2 (fullscreen only) rather than always-on, because always-on
+          # breaks DPMS wake on this panel: a sleeping S2725QS reports
+          # vrr_capable=0 over its dead DP link, and the DPMS-on commit still
+          # carries the latched adaptive-sync flag, so the DRM backend rejects
+          # the whole commit. The single retry lands 2000/120 ms later and
+          # fails the same way, leaving the panel dark while Hyprland records
+          # it as on — at which point `dpms on` is a no-op and only an off/on
+          # cycle recovers it. Fullscreen-only keeps the flag clear on the
+          # desktop, so waking commits cleanly.
+          "DP-1,3840x2160@120.0,0x1080,1.0,vrr,2"
           "HDMI-A-1,1920x1080@60.0,960x0,1.0"
         ];
         workspaces = [
