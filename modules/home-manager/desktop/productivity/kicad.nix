@@ -19,7 +19,9 @@
 in {
   config = modules.mkIf (guiCfg.enable && productivityCfg.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/kicad" ".local/share/kicad"];
+      directories =
+        [".config/kicad" ".local/share/kicad"]
+        ++ lib.optional (aiCfg.enable or false) ".local/share/kicad-mcp";
     };
 
     rat.userSecrets = lib.mkIf hasUserSecrets {
