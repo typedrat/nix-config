@@ -59,6 +59,7 @@ in {
     ./polkit.nix
     ./pyprland.nix
     ./smart-gaps.nix
+    ./ssh-session-env.nix
     ./wayland-pipewire-idle-inhibit.nix
   ];
 
