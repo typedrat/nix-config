@@ -5,6 +5,7 @@ in {
     ./audio.nix
     ./bluetooth.nix
     ./esp32-dev.nix
+    ./midi.nix
     ./mt7927.nix
     ./nintendo-switch.nix
     ./nvidia.nix

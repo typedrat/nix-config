@@ -251,6 +251,9 @@
       esp32Dev.enable = true;
     };
 
+    # Audio
+    audio.midi.enable = true;
+
     # Storage
     zfs = {
       enable = true;
