@@ -175,6 +175,7 @@ in {
       (python3.withPackages (
         ps:
           with ps; [
+            build123d
             ipython
             matplotlib
             numpy
@@ -185,10 +186,12 @@ in {
             pymupdf
             pynput
             pypdf
+            pytest
             scipy
             seaborn
             sympy
             tqdm
+            yacv-server
           ]
       ))
 

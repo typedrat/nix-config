@@ -24,6 +24,7 @@ in {
     };
 
     home.packages = with pkgs; [
+      bubblewrap
       catbox-cli
       cowsay
       (fastfetch.overrideAttrs (oldAttrs: {
