@@ -38,16 +38,16 @@
 in
   buildNpmPackage (finalAttrs: {
     pname = "kicad-mcp-server";
-    version = "2.6.0";
+    version = "2.7.0";
 
     src = fetchFromGitHub {
       owner = "mixelpixx";
       repo = "KiCAD-MCP-Server";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-vEQMbF5kU5bAhRlaC8TMkRfZJW06GQkUBZOHfkxc+Pg=";
+      hash = "sha256-faCTkstk6LEm9qctoRObtlATUOW8JNQ645LepAFsgMI=";
     };
 
-    npmDepsHash = "sha256-QlrIhfin80CpTaEKs7ujqW4m1rF/ENUY0aEdD8SBMHc=";
+    npmDepsHash = "sha256-LBUZmYzYnaVyuU0/fwy6t3yoIIb8Qbve/mF/Fv6Y6qg=";
 
     nativeBuildInputs = [
       makeWrapper
