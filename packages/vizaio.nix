@@ -6,14 +6,14 @@
 }:
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "vizaio";
-  version = "0.4.1";
+  version = "0.5.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "raman325";
     repo = "vizaio";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-YAJTQfxLCqYIq0KLTCwYnQB+C0LqUot1CAsU4QC4mYA=";
+    hash = "sha256-LQkhwZ9FZSM9ll2U75VF8uDTaCiREUkFD2JBYGR4IJU=";
   };
 
   build-system = with python3Packages; [
