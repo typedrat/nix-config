@@ -16,7 +16,7 @@ python3Packages.buildPythonApplication rec {
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-Kp6LsZk4Q2hgSb9gfXxJohDXkMN+up/D9RtMS5uFV+M=";
+    hash = "sha256-HVI4aMmpYWVSD+2DmIf+h55P5a6TAe0Wh8tYVBdJ2y0=";
     leaveDotGit = true;
   };
 
