@@ -1,0 +1,126 @@
+--- a/src/nativeInstallation.ts
++++ b/src/nativeInstallation.ts
+@@ -1416,6 +1416,8 @@
+   extensionSize: bigint;
+   /** Placed directly after the writable segment (gap-free) rather than at nextVirtualAddress. */
+   compact: boolean;
++  /** Written over the existing .bun rather than placed after it. */
++  inPlace: boolean;
+ }
+ 
+ /**
+@@ -1450,6 +1452,9 @@
+   nextVirtualAddress: bigint;
+   newContentSize: bigint;
+   pageSize: bigint;
++  oldBunVirtualAddress?: bigint;
++  oldBunFileOffset?: bigint;
++  allocSectionAtOrAfterBun?: boolean;
+ }): BunSectionPlacement {
+   const {
+     rwVirtualAddress,
+@@ -1460,21 +1465,53 @@
+     nextVirtualAddress,
+     newContentSize,
+     pageSize,
++    oldBunVirtualAddress,
++    oldBunFileOffset,
++    allocSectionAtOrAfterBun,
+   } = params;
+ 
+   const alignedNewSize = alignBigInt(newContentSize, pageSize);
+   const rwMemEnd = rwVirtualAddress + rwVirtualSize;
+-  const compact = rwMemEnd >= topmostLoadEnd;
+-  const newVaddr = compact
+-    ? alignBigInt(rwMemEnd, pageSize)
+-    : alignBigInt(nextVirtualAddress, pageSize);
+ 
+-  const offsetInSegment = newVaddr - rwVirtualAddress;
+-  const newFileOffset = rwFileOffset + offsetInSegment;
++  // Compact placement still appends: the old .bun keeps its file range and the
++  // rebuilt one lands after it, so the binary carries both copies. When no
++  // other allocated section sits at or above the old .bun, nothing can be
++  // displaced by writing over it instead, and that is the only placement which
++  // reclaims the old range.
++  //
++  // Opt-in, because the caller may not know the section layout — the placement
++  // tests exercise the arithmetic alone. Without all three inputs the original
++  // append placement is used.
++  const inPlace =
++    allocSectionAtOrAfterBun === false &&
++    oldBunVirtualAddress !== undefined &&
++    oldBunFileOffset !== undefined;
++
++  const compact = !inPlace && rwMemEnd >= topmostLoadEnd;
++
++  let newVaddr: bigint;
++  let newFileOffset: bigint;
++  if (inPlace) {
++    newVaddr = oldBunVirtualAddress;
++    newFileOffset = oldBunFileOffset;
++  } else {
++    newVaddr = compact
++      ? alignBigInt(rwMemEnd, pageSize)
++      : alignBigInt(nextVirtualAddress, pageSize);
++    newFileOffset = rwFileOffset + (newVaddr - rwVirtualAddress);
++  }
++
+   const oldRwFileEnd = rwFileOffset + rwFileSize;
+   const extensionSize = newFileOffset + alignedNewSize - oldRwFileEnd;
+ 
+-  return { newVaddr, newFileOffset, alignedNewSize, extensionSize, compact };
++  return {
++    newVaddr,
++    newFileOffset,
++    alignedNewSize,
++    extensionSize,
++    compact,
++    inPlace,
++  };
+ }
+ 
+ /**
+@@ -1555,6 +1592,19 @@
+       return end > max ? end : max;
+     }, 0n);
+ 
++    // Only sections that occupy memory can be displaced by writing over the
++    // old .bun range; a non-ALLOC section (symbol tables, debug info) is moved
++    // by LIEF's own layout pass and does not pin the range.
++    const SHF_ALLOC = 0x2n;
++    const allocSectionAtOrAfterBun = elfBinary
++      .sections()
++      .some(
++        s =>
++          s.name !== '.bun' &&
++          (BigInt(s.flags) & SHF_ALLOC) !== 0n &&
++          BigInt(s.virtualAddress) >= oldBunSectionVaddr
++      );
++
+     const placement = computeBunSectionPlacement({
+       rwVirtualAddress: BigInt(rwSegment.virtualAddress),
+       rwVirtualSize: BigInt(rwSegment.virtualSize),
+@@ -1564,14 +1614,20 @@
+       nextVirtualAddress: BigInt(elfBinary.nextVirtualAddress()),
+       newContentSize,
+       pageSize: BigInt(pageSize),
++      oldBunVirtualAddress: BigInt(oldBunSectionVaddr),
++      oldBunFileOffset: BigInt(bunSection.fileOffset),
++      allocSectionAtOrAfterBun,
+     });
+-    const { newVaddr, newFileOffset, extensionSize, compact } = placement;
++    const { newVaddr, newFileOffset, extensionSize, compact, inPlace } =
++      placement;
+     debug(
+-      `repackELFSection: ${compact ? 'compact' : 'fallback'} placement ` +
++      `repackELFSection: ${inPlace ? 'in-place' : compact ? 'compact' : 'fallback'} placement ` +
+         `(topmost LOAD ends at 0x${topmostLoadEnd.toString(16)})`
+     );
+ 
+-    if (extensionSize < 0n) {
++    // In-place reuses a range the segment already covers, so a negative
++    // extension just means the rebuilt section is smaller than the old one.
++    if (extensionSize < 0n && !inPlace) {
+       throw new Error(
+         'New .bun location overlaps existing writable ELF segment'
+       );

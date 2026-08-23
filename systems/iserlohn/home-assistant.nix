@@ -1,4 +1,6 @@
 {pkgs, ...}: {
+  rat.services.ha-mcp.enable = true;
+
   rat.services.matter-server.enable = true;
 
   rat.services.zwave-js = {
@@ -19,6 +21,7 @@
     customComponents = with pkgs.home-assistant-custom-components; [
       adaptive_lighting
       elegoo_printer
+      ha_mcp_tools
       localtuya
       moonraker
       waste_collection_schedule
@@ -65,9 +68,9 @@
       # Matter
       "matter"
 
-      # Model Context Protocol
+      # Model Context Protocol client, for pointing Assist at an external
+      # MCP server. The built-in mcp_server is left out: ha-mcp replaces it.
       "mcp"
-      "mcp_server"
 
       # Jellyfin
       "jellyfin"
