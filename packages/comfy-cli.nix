@@ -30,6 +30,7 @@ python3.pkgs.buildPythonApplication rec {
     cookiecutter
     gitpython
     httpx
+    imageio-ffmpeg
     mixpanel
     packaging
     pathspec
