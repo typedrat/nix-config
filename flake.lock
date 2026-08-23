@@ -478,15 +478,16 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1787383400,
-        "narHash": "sha256-OrqBaIHflpZIcn2OjiMKCXyZNeK/zDbBWyy0lVOarr8=",
-        "owner": "ilysenko",
+        "lastModified": 1787514408,
+        "narHash": "sha256-AeRQ6dCzeC/QwOPzC0IU9lbpyvdqhVqKomUH44w5Ykw=",
+        "owner": "typedrat",
         "repo": "codex-desktop-linux",
-        "rev": "13895a608077151d314e5f2b6e442b92cd9f2f3b",
+        "rev": "47fb53e5a8388611bbe517b1f3ec8122b455a6a0",
         "type": "github"
       },
       "original": {
-        "owner": "ilysenko",
+        "owner": "typedrat",
+        "ref": "fix/helper-workspace-source",
         "repo": "codex-desktop-linux",
         "type": "github"
       }

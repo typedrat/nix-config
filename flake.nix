@@ -202,7 +202,13 @@
     # OpenAI Codex/ChatGPT desktop app for Linux. nixpkgs is intentionally left
     # un-followed: overriding it would change the derivation's store paths and
     # miss the codex-desktop-linux.cachix.org binary cache (see cachix/).
-    codex-desktop-linux.url = "github:ilysenko/codex-desktop-linux";
+    #
+    # Pinned to a fork branch: upstream's helperWorkspaceSource filter strips a
+    # prefix that never matches, so the feature-helpers crate workspace builds
+    # from an empty source and every computer-use/read-aloud/record-replay
+    # configuration dies on a missing Cargo.lock. Back to ilysenko once
+    # ilysenko/codex-desktop-linux#1395 lands.
+    codex-desktop-linux.url = "github:typedrat/codex-desktop-linux/fix/helper-workspace-source";
 
     authentik-nix = {
       url = "github:nix-community/authentik-nix";
