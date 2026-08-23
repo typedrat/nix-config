@@ -3,7 +3,6 @@
   stdenv,
   stdenvNoCC,
   fetchFromGitHub,
-  fetchpatch,
   nodejs,
   pnpm,
   fetchPnpmDeps,
@@ -28,15 +27,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     hash = "sha256-AsDw1EVn8zDypBby/MA2fC3DWNXutRrIrRKrCHSabtA=";
   };
 
-  # Repacking a Bun single-file executable appended the rewritten bundle
-  # instead of replacing the original, so every patched claude-code shipped
-  # two copies and grew from ~285MB to ~711MB.
+  # Repacking a Bun single-file executable appends the rebuilt .bun after the
+  # original instead of over it, so every patched claude-code carries two copies
+  # of a ~238MB section (324MB -> 561MB). Upstream's compact placement only
+  # removes the coarse alignment gap between them, not the duplicate.
+  #
+  # Rebase of skrabe/tweakcc-fixed#27, which still targets the pre-2.7.37 shape
+  # of repackELFSection and no longer applies; the new placement inputs are
+  # optional so the upstream placement tests keep type-checking.
   patches = [
-    (fetchpatch {
-      name = "no-binary-bloat-when-patching-linux-installs.patch";
-      url = "https://github.com/skrabe/tweakcc-fixed/pull/27.diff";
-      hash = "sha256-iezWE2E/2d+WoV95BUsHf6gIBU6MwOTzA54jdi95NSQ=";
-    })
+    ./no-binary-bloat-when-patching-linux-installs.patch
   ];
 
   pnpmDeps = fetchPnpmDeps {
