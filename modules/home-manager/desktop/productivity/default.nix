@@ -13,6 +13,7 @@
     ./libreoffice.nix
     ./obsidian.nix
     ./openscad.nix
+    ./scanning.nix
     ./sioyek.nix
     ./thunderbird.nix
     ./zotero.nix

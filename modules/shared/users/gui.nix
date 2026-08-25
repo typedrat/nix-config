@@ -221,6 +221,7 @@
         kicad.enable = options.mkEnableOption "KiCad" // {default = true;};
         freecad.enable = options.mkEnableOption "FreeCAD";
         printing3d.enable = options.mkEnableOption "3D printing tools" // {default = true;};
+        scanning.enable = options.mkEnableOption "document scanning tools" // {default = true;};
         krita = {
           enable = options.mkEnableOption "Krita";
           aiDiffusion.enable = options.mkEnableOption "Krita AI Diffusion plugin";

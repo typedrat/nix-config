@@ -11,6 +11,7 @@ in {
     ./nvidia.nix
     ./openrgb.nix
     ./printing.nix
+    ./scanning.nix
     ./security-key.nix
     ./topping-e2x2.nix
     ./udisks2.nix
