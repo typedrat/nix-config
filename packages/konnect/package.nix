@@ -11,16 +11,16 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "konnect";
-  version = "0.7.0";
+  version = "0.9.0";
 
   src = fetchFromGitHub {
     owner = "mixelpixx";
     repo = "Konnect";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-6G4gR8YMiSbrW3c66NkdOkDNVBdbr8qZM5e9GbgQaUA=";
+    hash = "sha256-589/mu7p4IC9kPiMiknZ2D+MeNQU/gdblIB6U//M3PQ=";
   };
 
-  cargoHash = "sha256-3ox5nXA/jkOsv5Ii9TfGVkREiAmaaCgOxJAQbkPL0RA=";
+  cargoHash = "sha256-Syb5cEHShgZaSGI6cDdkQRf4SDakGkJ9nJ7yI1/3JqE=";
 
   nativeBuildInputs = [
     # nng-sys compiles the bundled NNG C library.
