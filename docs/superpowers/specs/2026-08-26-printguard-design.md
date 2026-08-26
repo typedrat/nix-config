@@ -188,8 +188,7 @@ validated rather than guessed.
   - `error` → "Print failed"
   - `cancelled` → "Print cancelled" — this doubles as confirmation when PrintGuard
     auto-cancels on a sustained defect
-  - `paused` → "Print paused" — catches filament runout and PrintGuard's pause action, but
-    will also fire on every manual pause and on `M600` filament changes
+  - `paused` → "Print paused", enriched with the MMU state below
 - Top-level `variables:` capture the sensor values once so all four branches read a
   consistent snapshot.
 - Each notification attaches a still via `data.image = "/api/camera_proxy/camera.centauri_webcam"`.
@@ -200,6 +199,29 @@ Units, confirmed against the live entities: `sensor.centauri_carbon_print_durati
 
 Templates appear only in `variables:` and in notification `message`/`title`/`data` fields,
 which is where the Home Assistant best-practice guidance permits them.
+
+#### The paused branch and the Canvas MMU
+
+The printer has an Elegoo Canvas multi-material unit, so `M600` manual filament changes are
+never used. Every pause is therefore an event worth hearing about — a runout, a jam, or an
+MMU error — rather than something initiated at the printer. This makes `paused` one of the
+more valuable branches, not a noisy one.
+
+`binary_sensor.centauri_carbon_canvas_{1..4}_prep_2` are `device_class: occupancy` sensors
+reporting filament presence per slot (slots 1 and 2 currently loaded, 3 and 4 empty), with
+`binary_sensor.centauri_carbon_virtual_bypass_2` and
+`binary_sensor.centauri_carbon_toolhead_4way_hub_hub_2` covering the direct-feed bypass and
+the hub. The paused notification templates a compact summary of which slots read empty, so
+the message names the likely cause instead of just reporting a pause.
+
+It also appends `sensor.centauri_carbon_current_print_message_2` when non-empty — Klipper's
+pause reason. Treat this as **opportunistic**: the sensor is empty during a normal print and
+it has not been observed during an actual pause, so the template must tolerate an empty
+string rather than depend on it.
+
+A dedicated runout automation — triggering on any Canvas slot going `on` → `off` while the
+print state is `printing` — would catch a runout even when Klipper does not pause. Deferred
+unless wanted; the enriched pause message covers the common case.
 
 **Caveat:** Moonraker holds `print_duration` and `filament_used` after `complete` but resets
 them when the next print starts. The notification is accurate when sent; the sensors are not
