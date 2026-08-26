@@ -543,6 +543,9 @@
             # Klipper's pause reason. Empty during a normal print, and not
             # observed during a real pause, so never depended on.
             print_reason = "{{ states('sensor.centauri_carbon_current_print_message_2') }}";
+            # The wording lives inside the variable on purpose. Home Assistant
+            # renders automation variables with parse_result=True, so a bare
+            # "3, 4" would come back as a tuple and stringify with brackets.
             canvas_empty = ''
               {% set ns = namespace(slots=[]) %}
               {% for slot in range(1, 5) %}
@@ -550,7 +553,7 @@
                   {% set ns.slots = ns.slots + [slot | string] %}
                 {% endif %}
               {% endfor %}
-              {{ ns.slots | join(', ') }}
+              {% if ns.slots %}Canvas {{ ns.slots | join(', ') }} empty{% endif %}
             '';
           };
           trigger = [
@@ -648,7 +651,7 @@
                       action = "notify.alexis_push";
                       data = {
                         title = "Print paused";
-                        message = "{{ print_file }} paused at {{ print_progress }}{% if canvas_empty %} — Canvas {{ canvas_empty }} empty{% endif %}{% if print_reason %} — {{ print_reason }}{% endif %}";
+                        message = "{{ print_file }} paused at {{ print_progress }}{% if canvas_empty %} — {{ canvas_empty }}{% endif %}{% if print_reason %} — {{ print_reason }}{% endif %}";
                         data.image = "/api/camera_proxy/camera.centauri_webcam";
                       };
                     }
