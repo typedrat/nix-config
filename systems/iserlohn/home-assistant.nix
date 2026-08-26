@@ -551,8 +551,8 @@
         # Snapshots what the end-of-print notification needs, because Moonraker
         # wipes these sensors the instant a print stops. `not_from` skips
         # resume-from-pause without also skipping a Home Assistant restart
-        # mid-print, which arrives as unknown/unavailable and would otherwise
-        # leave the previous print's details in the helpers.
+        # mid-print, which arrives as None, unknown or unavailable and would
+        # otherwise leave the previous print's details in the helpers.
         {
           alias = "Centauri Carbon → Print Started";
           id = "centauri_print_started";
@@ -566,14 +566,22 @@
             }
           ];
           action = [
+            # Both reads happen after the delay: Moonraker populates the
+            # filename and the duration counter a fraction of a second after
+            # the state flips, so reading either immediately returns the
+            # previous print's value.
+            {delay = "00:00:05";}
             {
               action = "input_datetime.set_datetime";
               target.entity_id = "input_datetime.centauri_print_started";
-              data.datetime = "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}";
+              # Derived from the duration counter rather than now(), so a Home
+              # Assistant restart mid-print recovers the true start instead of
+              # restamping to the restart.
+              data.datetime = ''
+                {{ (now().timestamp() - (states('sensor.centauri_carbon_print_duration_2') | float(0)) * 60)
+                   | timestamp_custom('%Y-%m-%d %H:%M:%S', true) }}
+              '';
             }
-            # The filename lands a fraction of a second after the state flips,
-            # so reading it immediately returns the previous print's value.
-            {delay = "00:00:05";}
             {
               action = "input_text.set_value";
               target.entity_id = "input_text.centauri_print_file";
@@ -591,13 +599,19 @@
           variables = {
             # Snapshotted at print start; the live sensors are already cleared
             # by the time this automation runs.
-            print_file = "{{ states('input_text.centauri_print_file') }}";
-            # Wall-clock since the print started, so a long mid-print pause is
-            # counted in. Moonraker's own duration counter would have excluded
-            # it, but that sensor is already zeroed by the time this runs.
+            # Unset helpers read "unknown"; say something sensible instead.
+            print_file = ''
+              {% set f = states('input_text.centauri_print_file') %}
+              {% if f and f not in ['unknown', 'unavailable'] %}{{ f }}{% else %}A print{% endif %}
+            '';
+            # The stamp is derived from Moonraker's duration counter at
+            # capture time, so a long mid-print pause still counts toward the
+            # elapsed figure. An unset input_datetime reads epoch, which the
+            # guard below rejects instead of reporting a six-figure hour count.
             print_elapsed = ''
               {% set t = state_attr('input_datetime.centauri_print_started', 'timestamp') %}
-              {% if t %}{% set s = (now().timestamp() - t) | int %}{{ '%dh %dm' | format(s // 3600, (s % 3600) // 60) }}{% else %}an unknown time{% endif %}
+              {% set s = (now().timestamp() - (t | float(0))) | int %}
+              {% if t and s > 0 and s < 604800 %}{{ '%dh %dm' | format(s // 3600, (s % 3600) // 60) }}{% else %}an unknown time{% endif %}
             '';
             # Klipper's pause reason. Empty during a normal print, and not
             # observed during a real pause, so never depended on.
