@@ -48,6 +48,11 @@ in {
     sops.secrets."home-assistant/mqtt_password" = {
       sopsFile = ../../../../../secrets/home-assistant.yaml;
       key = "mqtt_password";
+      # Mosquitto bakes this into its password database at preStart, and Home
+      # Assistant keeps its own copy in the config entry it was given through
+      # the UI. Rotating the password only takes effect once the broker
+      # restarts.
+      restartUnits = ["mosquitto.service"];
     };
 
     # Automatically enable and configure Mosquitto
