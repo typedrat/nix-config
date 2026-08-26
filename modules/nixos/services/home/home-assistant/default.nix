@@ -10,6 +10,7 @@
 in {
   imports = [
     ./authentik.nix
+    ./go2rtc.nix
     ./mqtt.nix
   ];
   options.rat.services.home-assistant = {

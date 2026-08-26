@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   rat.services.ha-mcp.enable = true;
 
   rat.services.matter-server.enable = true;
@@ -14,9 +18,60 @@
   # driver request/normalize temperatures in °F, matching the thermostat.
   services.zwave-js.settings.preferences.scales.temperature = "Fahrenheit";
 
+  sops.secrets."go2rtc/tapo_cloud_password" = {
+    sopsFile = ../../secrets/go2rtc.yaml;
+    key = "tapo_cloud_password";
+    restartUnits = ["go2rtc.service"];
+  };
+
+  rat.services.go2rtc = {
+    enable = true;
+
+    # WebRTC media goes browser-to-go2rtc directly, so the port has to be
+    # reachable rather than proxied. The stun candidate only resolves to
+    # something usable once 8555 is forwarded to this host; without that,
+    # off-LAN viewers fall back to HLS, which still reads the repaired
+    # streams below.
+    openFirewall = true;
+    webrtcCandidates = ["stun:8555"];
+
+    credentials.TAPO_CLOUD_PASSWORD =
+      config.sops.secrets."go2rtc/tapo_cloud_password".path;
+
+    ffmpegTemplates = {
+      # Crowsnest's multipart MJPEG carries no timestamps, so a muxer bills
+      # the ~8 frames it gets each second against the 25fps the container
+      # claims and playback crawls. Take timing from arrival instead.
+      mjpegin = "-use_wallclock_as_timestamps 1 -i {input}";
+
+      # Keyframes on a wall-clock interval, not a frame count: the source
+      # runs 5fps idle and 15fps printing, so a fixed -g would stretch the
+      # gap between keyframes to twelve seconds on an idle printer.
+      mjpeg2h264 =
+        "-codec:v libx264 -preset:v superfast -tune:v zerolatency"
+        + " -profile:v main -level:v 4.1 -pix_fmt yuv420p"
+        + " -force_key_frames expr:gte(t,n_forced*2)";
+    };
+
+    streams = {
+      # The C110's RTSP server is what the tplink integration pulls, and that
+      # path is where the macroblock corruption comes from. TP-Link's own
+      # protocol carries the same 2304x1296 feed with a clean two-second GOP,
+      # so this hands the bitstream over untouched.
+      centauri_external = "tapo://\${TAPO_CLOUD_PASSWORD}@C110.lan";
+
+      # Moonraker's camera has no stream source for Home Assistant to hand to
+      # go2rtc, so it is declared here and re-encoded to H.264.
+      centauri_webcam =
+        "ffmpeg:http://Centauri-Carbon.lan/webcam/?action=stream"
+        + "#video=mjpeg2h264#input=mjpegin";
+    };
+  };
+
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;
+    go2rtc.enable = true;
 
     customComponents = with pkgs.home-assistant-custom-components; [
       adaptive_lighting
@@ -58,6 +113,9 @@
       # ESPHome
       "esphome"
 
+      # Camera platform for the go2rtc-fed entities
+      "ffmpeg"
+
       # Magic Home
       "flux_led"
 
@@ -96,6 +154,30 @@
 
     config = {
       default_config = {};
+
+      # Both printer cameras are served from go2rtc rather than from their
+      # own integrations: the Tapo's RTSP output arrives with corrupted
+      # reference frames, and Moonraker's MJPEG entity advertises no stream
+      # source at all, which leaves it stuck on Home Assistant's proxy and
+      # excluded from WebRTC. FFmpegCamera derives its stream source from the
+      # last whitespace-separated token of `input`, so the bare URL is what
+      # the go2rtc integration ends up brokering.
+      camera = [
+        {
+          platform = "ffmpeg";
+          name = "Centauri External";
+          input = "${config.links.go2rtc-rtsp.url}/centauri_external";
+        }
+        {
+          platform = "ffmpeg";
+          name = "Centauri Webcam";
+          input = "${config.links.go2rtc-rtsp.url}/centauri_webcam";
+        }
+      ];
+
+      # Home zone: 4800 Trona Way, Fair Oaks, CA 95628
+      homeassistant.latitude = 38.652948;
+      homeassistant.longitude = -121.293407;
 
       # HomeKit-friendly wrapper for the Vizio TV that hides the firehose of
       # FAST/streaming sources the TV advertises. The Vizio integration
