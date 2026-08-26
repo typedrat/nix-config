@@ -223,9 +223,38 @@ A dedicated runout automation — triggering on any Canvas slot going `on` → `
 print state is `printing` — would catch a runout even when Klipper does not pause. Deferred
 unless wanted; the enriched pause message covers the common case.
 
-**Caveat:** Moonraker holds `print_duration` and `filament_used` after `complete` but resets
-them when the next print starts. The notification is accurate when sent; the sensors are not
-a historical record.
+#### Snapshotting, because the sensors are wiped on the same tick
+
+An earlier draft of this spec claimed Moonraker holds `print_duration` and `filament_used`
+after `complete` and only resets them when the next print starts. That is **wrong**, and the
+recorder shows it plainly:
+
+```
+15:39:51.268348  sensor...current_print_state_2  → complete
+15:39:51.268716  sensor...filename_2             → ""     (+0.4 ms)
+15:39:51.269455  sensor...print_duration_2       → 0.0    (was 10.01)
+15:39:51.269576  sensor...filament_used_2        → 0.0    (was 3.03)
+15:39:51.269691  sensor...progress_2             → 0.0    (was 99.99)
+```
+
+Filename, duration, filament and progress are all cleared within roughly a millisecond of
+the state change that triggers the automation, so reading them when it fires yields an empty
+string and zeros. The same happens on `paused`.
+
+The design therefore snapshots at print *start*:
+
+- `input_text.centauri_print_file` and `input_datetime.centauri_print_started`, both declared
+  in Nix.
+- A second automation, "Centauri Carbon → Print Started", triggers on `to: "printing"` with
+  `from: ["standby" "complete" "cancelled" "error"]` — omitting `paused` so resuming does not
+  restamp the start time and under-report the duration. It stamps the timestamp first, then
+  waits before reading the filename, because the filename lands a fraction of a second after
+  the state flips and reading it immediately returns the previous print's name.
+- The end-of-print automation reads the helpers and computes elapsed from the stamp.
+
+**Filament used and progress are dropped from the notifications.** Nothing preserves them:
+they exist only while printing and change every ~2s, so snapshotting them would mean writing
+to a helper continuously for the whole print, bloating the recorder for a cosmetic detail.
 
 ### PrintGuard alert automation
 
