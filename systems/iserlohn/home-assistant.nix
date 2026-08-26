@@ -24,6 +24,24 @@
     restartUnits = ["go2rtc.service"];
   };
 
+  sops.secrets."printguard/mqtt_password" = {
+    sopsFile = ../../secrets/printguard.yaml;
+    key = "mqtt_password";
+    restartUnits = ["printguard.service"];
+  };
+
+  rat.services.printguard.enable = true;
+
+  # PrintGuard publishes HA MQTT discovery for each monitor, so it needs the
+  # same homeassistant/ topic access the HA user has.
+  rat.services.mosquitto.users.printguard = {
+    passwordFile = config.sops.secrets."printguard/mqtt_password".path;
+    acl = [
+      "readwrite homeassistant/#"
+      "read homeassistant/status"
+    ];
+  };
+
   rat.services.go2rtc = {
     enable = true;
 
