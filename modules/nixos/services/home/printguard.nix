@@ -23,7 +23,7 @@
   };
 
   printguardPackage = pkgs.printguard.override {
-    inherit (cpuPkgs.python3Packages) onnxruntime;
+    printguardOnnxruntime = cpuPkgs.python3Packages.onnxruntime;
   };
 
   # PrintGuard supervises this binary itself and republishes every camera

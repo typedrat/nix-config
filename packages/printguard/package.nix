@@ -4,7 +4,11 @@
   fetchFromGitHub,
   buildNpmPackage,
   pycentauri,
-  onnxruntime ? python3Packages.onnxruntime,
+  # Named to avoid colliding with the top-level `onnxruntime` (the C++
+  # library): callPackage auto-wires any parameter matching a top-level pkgs
+  # attribute ahead of its own default, so a plain `onnxruntime` argument here
+  # would silently bind to that unrelated package instead of the Python one.
+  printguardOnnxruntime ? python3Packages.onnxruntime,
   nix-update-script,
 }:
 python3Packages.buildPythonApplication rec {
@@ -88,7 +92,7 @@ python3Packages.buildPythonApplication rec {
     ]
     ++ [
       pycentauri
-      onnxruntime
+      printguardOnnxruntime
     ];
 
   # models/ is committed upstream but excluded from the wheel, which only ships
