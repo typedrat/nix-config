@@ -542,8 +542,10 @@
         }
 
         # Snapshots what the end-of-print notification needs, because Moonraker
-        # wipes these sensors the instant a print stops. `from` excludes
-        # "paused" so resuming does not restamp the start time.
+        # wipes these sensors the instant a print stops. `not_from` skips
+        # resume-from-pause without also skipping a Home Assistant restart
+        # mid-print, which arrives as unknown/unavailable and would otherwise
+        # leave the previous print's details in the helpers.
         {
           alias = "Centauri Carbon → Print Started";
           id = "centauri_print_started";
@@ -552,7 +554,7 @@
             {
               platform = "state";
               entity_id = "sensor.centauri_carbon_current_print_state_2";
-              from = ["standby" "complete" "cancelled" "error"];
+              not_from = "paused";
               to = "printing";
             }
           ];
@@ -583,6 +585,9 @@
             # Snapshotted at print start; the live sensors are already cleared
             # by the time this automation runs.
             print_file = "{{ states('input_text.centauri_print_file') }}";
+            # Wall-clock since the print started, so a long mid-print pause is
+            # counted in. Moonraker's own duration counter would have excluded
+            # it, but that sensor is already zeroed by the time this runs.
             print_elapsed = ''
               {% set t = state_attr('input_datetime.centauri_print_started', 'timestamp') %}
               {% if t %}{% set s = (now().timestamp() - t) | int %}{{ '%dh %dm' | format(s // 3600, (s % 3600) // 60) }}{% else %}an unknown time{% endif %}
