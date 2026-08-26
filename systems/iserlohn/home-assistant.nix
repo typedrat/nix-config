@@ -27,7 +27,11 @@
   sops.secrets."printguard/mqtt_password" = {
     sopsFile = ../../secrets/printguard.yaml;
     key = "mqtt_password";
-    restartUnits = ["printguard.service"];
+    # Mosquitto bakes this into its password database at preStart, and
+    # PrintGuard itself never reads the file — the credentials are entered
+    # in its web UI. Rotating the password only takes effect once the broker
+    # restarts.
+    restartUnits = ["mosquitto.service"];
   };
 
   rat.services.printguard.enable = true;
