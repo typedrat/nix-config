@@ -382,6 +382,19 @@
         };
       };
 
+      # One target for every push, so adding a device is a one-line change
+      # rather than an edit in each automation.
+      notify = [
+        {
+          platform = "group";
+          name = "alexis_push";
+          services = [
+            {service = "mobile_app_alexis_iphone";}
+            {service = "mobile_app_ipad_nuevo";}
+          ];
+        }
+      ];
+
       # Sunrise alarm automation
       automation = [
         {
@@ -509,6 +522,139 @@
             {
               action = "light.turn_off";
               target.entity_id = "light.centauri_carbon_riser_light";
+            }
+          ];
+        }
+
+        # Every pause here is a runout, jam, or MMU error: the Canvas unit
+        # means M600 manual filament changes never happen.
+        {
+          alias = "Centauri Carbon → Print Ended";
+          id = "centauri_print_ended";
+          mode = "single";
+          variables = {
+            print_file = "{{ states('sensor.centauri_carbon_filename_2') }}";
+            print_elapsed = ''
+              {% set m = states('sensor.centauri_carbon_print_duration_2') | float(0) %}
+              {{ '%dh %dm' | format(m // 60, m % 60) }}
+            '';
+            print_filament = "{{ states('sensor.centauri_carbon_filament_used_2') | float(0) | round(1) }} m";
+            print_progress = "{{ states('sensor.centauri_carbon_progress_2') | float(0) | round(1) }}%";
+            # Klipper's pause reason. Empty during a normal print, and not
+            # observed during a real pause, so never depended on.
+            print_reason = "{{ states('sensor.centauri_carbon_current_print_message_2') }}";
+            canvas_empty = ''
+              {% set ns = namespace(slots=[]) %}
+              {% for slot in range(1, 5) %}
+                {% if is_state('binary_sensor.centauri_carbon_canvas_' ~ slot ~ '_prep_2', 'off') %}
+                  {% set ns.slots = ns.slots + [slot | string] %}
+                {% endif %}
+              {% endfor %}
+              {{ ns.slots | join(', ') }}
+            '';
+          };
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "sensor.centauri_carbon_current_print_state_2";
+              to = "complete";
+              id = "complete";
+            }
+            {
+              platform = "state";
+              entity_id = "sensor.centauri_carbon_current_print_state_2";
+              to = "error";
+              id = "error";
+            }
+            {
+              platform = "state";
+              entity_id = "sensor.centauri_carbon_current_print_state_2";
+              to = "cancelled";
+              id = "cancelled";
+            }
+            {
+              platform = "state";
+              entity_id = "sensor.centauri_carbon_current_print_state_2";
+              to = "paused";
+              id = "paused";
+            }
+          ];
+          action = [
+            {
+              choose = [
+                {
+                  conditions = [
+                    {
+                      condition = "trigger";
+                      id = "complete";
+                    }
+                  ];
+                  sequence = [
+                    {
+                      action = "notify.alexis_push";
+                      data = {
+                        title = "Print finished";
+                        message = "{{ print_file }} — {{ print_elapsed }}, {{ print_filament }} used";
+                        data.image = "/api/camera_proxy/camera.centauri_webcam";
+                      };
+                    }
+                  ];
+                }
+                {
+                  conditions = [
+                    {
+                      condition = "trigger";
+                      id = "error";
+                    }
+                  ];
+                  sequence = [
+                    {
+                      action = "notify.alexis_push";
+                      data = {
+                        title = "Print failed";
+                        message = "{{ print_file }} errored at {{ print_progress }}{% if print_reason %} — {{ print_reason }}{% endif %}";
+                        data.image = "/api/camera_proxy/camera.centauri_webcam";
+                      };
+                    }
+                  ];
+                }
+                {
+                  conditions = [
+                    {
+                      condition = "trigger";
+                      id = "cancelled";
+                    }
+                  ];
+                  sequence = [
+                    {
+                      action = "notify.alexis_push";
+                      data = {
+                        title = "Print cancelled";
+                        message = "{{ print_file }} cancelled at {{ print_progress }}";
+                        data.image = "/api/camera_proxy/camera.centauri_webcam";
+                      };
+                    }
+                  ];
+                }
+                {
+                  conditions = [
+                    {
+                      condition = "trigger";
+                      id = "paused";
+                    }
+                  ];
+                  sequence = [
+                    {
+                      action = "notify.alexis_push";
+                      data = {
+                        title = "Print paused";
+                        message = "{{ print_file }} paused at {{ print_progress }}{% if canvas_empty %} — Canvas {{ canvas_empty }} empty{% endif %}{% if print_reason %} — {{ print_reason }}{% endif %}";
+                        data.image = "/api/camera_proxy/camera.centauri_webcam";
+                      };
+                    }
+                  ];
+                }
+              ];
             }
           ];
         }
