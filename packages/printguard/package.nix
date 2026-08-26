@@ -41,6 +41,13 @@ python3Packages.buildPythonApplication rec {
       --replace-fail \
         'host="0.0.0.0"' \
         'host=os.environ.get("HOST", "0.0.0.0")'
+
+    # Store files have mtime = epoch and zipfile rejects pre-1980 timestamps,
+    # so the source bundle the hub builds at startup aborts before it binds.
+    substituteInPlace printguard/pysrc.py \
+      --replace-fail \
+        'zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED)' \
+        'zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED, strict_timestamps=False)'
   '';
 
   build-system = with python3Packages; [
