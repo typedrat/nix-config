@@ -6,6 +6,7 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.home-assistant;
   impermanenceCfg = config.rat.impermanence;
+  inherit (config.rat.services) domainName;
 in {
   imports = [
     ./authentik.nix
@@ -133,6 +134,15 @@ in {
         enable = true;
         inherit (cfg) subdomain;
         serviceUrl = config.links.home-assistant.url;
+      };
+
+      # Everything reaches Home Assistant through Traefik, so the only URL it
+      # can hand out — to the companion app, webhooks, TTS media, notification
+      # links — is the public one. Without this it advertises the loopback
+      # address it binds to.
+      rat.services.home-assistant.config.homeassistant = {
+        external_url = "https://${cfg.subdomain}.${domainName}";
+        internal_url = "https://${cfg.subdomain}.${domainName}";
       };
     })
 
