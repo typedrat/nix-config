@@ -134,8 +134,24 @@ in {
           Group = "printguard";
           WorkingDirectory = stateDir;
           StateDirectory = "printguard";
+          # state.json holds the MQTT password and printer credentials entered
+          # through the web UI.
+          StateDirectoryMode = "0700";
           Restart = "on-failure";
           RestartSec = 5;
+
+          NoNewPrivileges = true;
+          PrivateDevices = true;
+          PrivateTmp = true;
+          ProtectControlGroups = true;
+          ProtectHome = true;
+          ProtectKernelTunables = true;
+          ProtectSystem = "strict";
+          RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
+          RestrictNamespaces = true;
+          RestrictRealtime = true;
+          SystemCallArchitectures = "native";
+          SystemCallFilter = ["@system-service" "~@privileged"];
         };
       };
     })
