@@ -41,6 +41,10 @@
   rat.services.mosquitto.users.printguard = {
     passwordFile = config.sops.secrets."printguard/mqtt_password".path;
     acl = [
+      # Discovery goes under homeassistant/; everything else -- state, the
+      # snapshot, the last will, and the command topics it subscribes to --
+      # lives under the default base_topic.
+      "readwrite printguard/#"
       "readwrite homeassistant/#"
       "read homeassistant/status"
     ];
@@ -93,6 +97,9 @@
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;
+    # Home Assistant needs the PrintGuard topic tree too, or the entities
+    # discovery creates stay unavailable and their controls do nothing.
+    mqtt.extraAclRules = ["readwrite printguard/#"];
     go2rtc.enable = true;
 
     customComponents = with pkgs.home-assistant-custom-components; [
