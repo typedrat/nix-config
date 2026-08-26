@@ -612,7 +612,7 @@
               {% set f = states('input_text.centauri_print_file') %}
               {% set t = state_attr('input_datetime.centauri_print_started', 'timestamp') %}
               {% set s = (now().timestamp() - (t | float(0))) | int %}
-              {% if f not in ['unknown', 'unavailable', ''] and t and s > 0 and s < 604800 %}{{ '%dh %dm' | format(s // 3600, (s % 3600) // 60) }}{% else %}an unknown time{% endif %}
+              {% if f and f not in ['unknown', 'unavailable'] and t and s > 0 and s < 604800 %}{{ '%dh %dm' | format(s // 3600, (s % 3600) // 60) }}{% else %}an unknown time{% endif %}
             '';
             # Klipper's pause reason. Empty during a normal print, and not
             # observed during a real pause, so never depended on.
