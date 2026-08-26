@@ -116,15 +116,23 @@ nix build .#nixosConfigurations.iserlohn.config.system.build.toplevel
 ### Terraform Infrastructure
 
 ```bash
-# Use terranix wrapper from repository root
-# The wrapper automatically sets up SSH tunnels and environment variables
-nix run .#terraform.wrapper -- plan
-nix run .#terraform.wrapper -- apply
+# Run from the repository root. The dev shell carries every subcommand;
+# `plan` only exists here, not as a flake app.
+nix develop .#terraform
+plan
+apply
 
-# Or navigate to terraform directory
-cd terraform
-# The terraform config is symlinked from the nix store
+# Apply directly without entering the shell (mainProgram is `apply`):
+nix run .#terraform
 ```
+
+There is no `.#terraform.wrapper` attribute — `nix run .#terraform.wrapper` fails with
+"flake does not provide attribute". The flake exposes `packages.terraform` (the apply
+script), `packages."terraform.tf.json"` (the generated config), and `devShells.terraform`
+(`apply`, `destroy`, `init`, `plan`, `tofu`).
+
+Each of those commands invokes a `tofu` wrapper that `cd`s into `terraform/` itself, so run
+them from the repository root, not from inside `terraform/`.
 
 The terranix wrapper automatically:
 - Decrypts required secrets from `secrets/default.yaml` using SOPS
