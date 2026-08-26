@@ -14,7 +14,10 @@
   # PrintGuard supervises this binary itself and republishes every camera
   # through it, so the addresses have to be reservations rather than the
   # upstream defaults — go2rtc already holds the stock RTSP port.
-  mediamtxConfig = (pkgs.formats.yaml {}).generate "mediamtx.yml" {
+  # JSON, not YAML: pkgs.formats.yaml prefixes the file with a `%YAML 1.1`
+  # directive that MediaMTX rejects outright. JSON is valid YAML and carries
+  # no directive.
+  mediamtxConfig = (pkgs.formats.json {}).generate "mediamtx.yml" {
     api = true;
     apiAddress = config.links.printguard-mediamtx-api.tuple;
 
