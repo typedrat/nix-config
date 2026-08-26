@@ -20,6 +20,9 @@ Spec: `docs/superpowers/specs/2026-08-26-printguard-design.md`
 - Every package sets `passthru.updateScript`. Use `nix-update-script {extraArgs = ["--flake"];}` — without `--flake`, nix-update resolves the file to its store path and fails to diff it.
 - Ports come from the `links` module (`config.links.<name>.{port,portStr,tuple,url,ipv4}`). Never hardcode a port.
 - Verified upstream versions: `pycentauri` **0.9.1**, `printguard` **2.4.0**.
+- **Check dependency versions by evaluating the flake's own nixpkgs, never by grepping `~/Development/nixpkgs`** — that checkout tracks its own commit and drifts from what the flake pins. Use:
+  `nix eval --json --impure --expr 'let f = builtins.getFlake "/home/awilliams/Development/nix-config"; pkgs = import f.inputs.nixpkgs { system = "x86_64-linux"; config.allowUnfree = true; }; in { fastmcp = pkgs.python3Packages.fastmcp.version; }'`
+- Versions in the pinned nixpkgs as of 2026-08-26, all satisfying PrintGuard's floors except where noted: python **3.14.7**, ai-edge-litert 2.1.6, aiomqtt 2.5.1, av 17.0.1, fastapi 0.139.0, fastmcp 3.4.7, httpx 0.28.1, ml-dtypes 0.6.0, numpy 2.5.1, onnxruntime 1.27.1, packaging 26.2, paho-mqtt 2.1.0, pyprusalink 3.1.0, starlette 1.3.1, uvicorn 0.51.0, wasmtime 47.0.1, **pydantic-settings 2.12.0 (below the required 2.14.2)**.
 - Verified hashes (prefetched 2026-08-26): pycentauri src `sha256-kO3CMMHsElQBkL7zm/Z5l4eOVef1Mbs7bf0AS1lVw6E=`, printguard src `sha256-Wm/tzjm96SMUA860YzaFqXHOpZzOB/6LVa6eO35OApg=`, printguard npm deps `sha256-Fyd64kSJ8g+R2WVBYUr0wTk0EZoP3sERM+yf8b7J90Y=`. If a hash mismatches, Nix prints the correct one in the error — use that value.
 
 ### A note on testing
@@ -153,7 +156,7 @@ the printer."
 - The frontend at `web/` is a Vite app and `dist` is **not** committed, so it needs a `buildNpmPackage` sub-derivation. `packages/dispatcharr/package.nix` is the existing example of this pattern in this repo.
 - `models/` (5MB ONNX + TFLite + `prototypes.json` + `metadata.json`) is committed upstream, but `[tool.hatch.build.targets.wheel] packages = ["printguard"]` means it is **not** in the wheel. It must be copied from the source tree in `postInstall`.
 - `printguard/server/app.py` hardcodes `host="0.0.0.0"`. Patch it to honour a `HOST` env var so the module can bind loopback and let Traefik front it.
-- Two upstream version floors exceed what nixpkgs ships: `fastmcp>=3.4.2` (nixpkgs has 3.3.1) and `pydantic-settings>=2.14.2` (nixpkgs has 2.12.0). Relax both. `pythonImportsCheck` in Step 4 is what proves the relaxation is safe — if either library's API moved, the import fails there rather than at runtime.
+- One upstream version floor exceeds what nixpkgs ships: `pydantic-settings>=2.14.2`, against 2.12.0 in the pinned nixpkgs. Relax it. `pythonImportsCheck` in Step 4 is what proves the relaxation is safe — if the library's API moved, the import fails there rather than at runtime. Every other floor is satisfied; the versions in the Global Constraints table were read from the flake's own nixpkgs.
 - `onnxruntime-ep-openvino` is a hard dependency in `pyproject.toml` but is an *optional plugin execution provider* not packaged in nixpkgs. Remove it from the metadata. `printguard/server/inference.py` loads it opportunistically via `PLUGIN_MODULES` and works without it.
 - `printguard-desktop` needs the `desktop` extra (pywebview, pystray), which is not installed. Delete that script rather than ship one that fails on import.
 
@@ -218,14 +221,14 @@ python3Packages.buildPythonApplication rec {
 
   # onnxruntime-ep-openvino is an optional ONNX execution provider that is not
   # in nixpkgs; inference.py loads it opportunistically and falls back without
-  # it. The two relaxed floors exceed what nixpkgs ships — pythonImportsCheck
-  # covers whether that actually matters.
+  # it.
   pythonRemoveDeps = [
     "onnxruntime-ep-openvino"
   ];
 
+  # Upstream wants >=2.14.2 and nixpkgs is a couple of releases behind.
+  # pythonImportsCheck covers whether that actually matters.
   pythonRelaxDeps = [
-    "fastmcp"
     "pydantic-settings"
   ];
 
@@ -299,7 +302,7 @@ Failure modes and what to do:
 | Symptom | Fix |
 |---|---|
 | npm deps hash mismatch | Use the `got:` hash Nix prints for `npmDepsHash` |
-| `Checking whether the following imports work` fails on `fastmcp` or `pydantic_settings` | The relaxed floor was not safe. Package the newer version locally rather than relaxing. |
+| `Checking whether the following imports work` fails on `pydantic_settings` | The relaxed floor was not safe. Package 2.14.2+ locally rather than relaxing. |
 | A dependency is reported unsatisfied in the dist-info check | Add its name to `pythonRelaxDeps` if the installed version is close, or `pythonRemoveDeps` if it is genuinely optional |
 | `substituteInPlace ... --replace-fail` errors | Upstream changed the binding line; grep `printguard/server/app.py` for `uvicorn.run` and adjust the match |
 | `python3` is 3.14 and a dependency fails to build there | Switch the two `python3Packages` references to `python312Packages` in both this file and `packages/pycentauri/package.nix` |
@@ -984,6 +987,6 @@ Finally, confirm end-to-end on the next real print end.
 
 - The spec did not mention an MQTT user. PrintGuard cannot publish discovery without one, and mosquitto here denies anonymous connections, so Task 4 adds it.
 - The spec did not mention patching the bind address. `app.py` hardcodes `0.0.0.0`; the one-line patch in Task 2 lets the module bind loopback instead of relying on the firewall.
-- The spec did not anticipate the `fastmcp` and `pydantic-settings` version floors. Task 2 relaxes both and states how to tell whether that was safe.
+- The spec did not anticipate the `pydantic-settings` version floor. Task 2 relaxes it and states how to tell whether that was safe.
 
-**Open risk:** the two relaxed floors are the most likely thing to fail. If `pythonImportsCheck` rejects either, the fallback is a local package of the newer version, which is a new task rather than an edit to Task 2.
+**Open risk:** the relaxed `pydantic-settings` floor is the most likely thing to fail. If `pythonImportsCheck` rejects it, the fallback is a local package of 2.14.2+, which is a new task rather than an edit to Task 2.
