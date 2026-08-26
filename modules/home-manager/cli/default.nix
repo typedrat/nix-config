@@ -5,5 +5,6 @@
     ./shell
     ./tools
     ./ai.nix
+    ./python.nix
   ];
 }

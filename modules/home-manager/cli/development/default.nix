@@ -35,7 +35,6 @@ in {
       process-compose
       tokei
       rainfrog
-      uv
 
       # VCS and GitHub
       ghui

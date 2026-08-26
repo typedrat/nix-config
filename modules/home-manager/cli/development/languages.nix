@@ -141,12 +141,9 @@ in {
         ".local/share/rustup"
         ".local/share/bun"
         ".config/npm"
-        ".config/ipython"
         ".local/share/pnpm"
         ".local/state/pnpm"
         ".cache/ms-playwright"
-        ".cache/uv"
-        ".local/share/uv"
       ];
     };
     home.packages = with pkgs; [
@@ -170,30 +167,6 @@ in {
       # exposes a binary named `cargo-fuzz` on PATH so `cargo fuzz <...>`
       # still resolves it via the standard cargo-subcommand mechanism.
       cargo-fuzz-nixos
-
-      # Python with common data science packages
-      (python3.withPackages (
-        ps:
-          with ps; [
-            build123d
-            ipython
-            matplotlib
-            numpy
-            opencv-python
-            pandas
-            pdfplumber
-            polars
-            pymupdf
-            pynput
-            pypdf
-            pytest
-            scipy
-            seaborn
-            sympy
-            tqdm
-            yacv-server
-          ]
-      ))
 
       # JavaScript/Node.js
       bun

@@ -84,7 +84,10 @@ in {
       (with pkgs; [
         codex
         llm
-        python3Packages.huggingface-hub
+        # hiPrio: wins the `hf` binary collision against huggingface-hub
+        # pulled transitively into the cli/python.nix scripting environment
+        # (e.g. via gradio).
+        (lib.hiPrio python3Packages.huggingface-hub)
         vast-cli
       ])
       ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp;
