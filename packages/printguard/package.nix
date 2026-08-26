@@ -4,6 +4,7 @@
   fetchFromGitHub,
   buildNpmPackage,
   pycentauri,
+  onnxruntime ? python3Packages.onnxruntime,
   nix-update-script,
 }:
 python3Packages.buildPythonApplication rec {
@@ -77,7 +78,6 @@ python3Packages.buildPythonApplication rec {
       httpx
       ml-dtypes
       numpy
-      onnxruntime
       packaging
       paho-mqtt
       pydantic-settings
@@ -86,7 +86,10 @@ python3Packages.buildPythonApplication rec {
       uvicorn
       wasmtime
     ]
-    ++ [pycentauri];
+    ++ [
+      pycentauri
+      onnxruntime
+    ];
 
   # models/ is committed upstream but excluded from the wheel, which only ships
   # the printguard package directory.

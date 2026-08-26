@@ -11,6 +11,21 @@
 
   stateDir = "/var/lib/printguard";
 
+  # PrintGuard's default "auto" runtime builds an ONNX session on the first
+  # non-CPU execution provider offered, with no fallback. This host's
+  # onnxruntime is a CUDA build, but its Pascal card is not in the default
+  # capability set, so that session would fail and take engine startup with
+  # it. Re-importing without CUDA yields the cache.nixos.org build and drops a
+  # multi-gigabyte closure that would never have run.
+  cpuPkgs = import pkgs.path {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config = pkgs.config // {cudaSupport = false;};
+  };
+
+  printguardPackage = pkgs.printguard.override {
+    inherit (cpuPkgs.python3Packages) onnxruntime;
+  };
+
   # PrintGuard supervises this binary itself and republishes every camera
   # through it, so the addresses have to be reservations rather than the
   # upstream defaults — go2rtc already holds the stock RTSP port.
@@ -116,8 +131,8 @@ in {
             PORT = config.links.printguard.portStr;
 
             DATA_DIR = stateDir;
-            MODEL_DIR = "${pkgs.printguard}/share/printguard/models";
-            STATIC_DIR = "${pkgs.printguard}/share/printguard/web";
+            MODEL_DIR = "${printguardPackage}/share/printguard/models";
+            STATIC_DIR = "${printguardPackage}/share/printguard/web";
 
             MEDIAMTX_BINARY = lib.getExe pkgs.mediamtx;
             MEDIAMTX_CONFIG = "${mediamtxConfig}";
@@ -132,7 +147,7 @@ in {
           };
 
         serviceConfig = {
-          ExecStart = lib.getExe pkgs.printguard;
+          ExecStart = lib.getExe printguardPackage;
           User = "printguard";
           Group = "printguard";
           WorkingDirectory = stateDir;
