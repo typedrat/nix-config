@@ -395,6 +395,21 @@
         }
       ];
 
+      # Moonraker clears the filename, duration, progress and filament sensors
+      # in the same millisecond the print-state sensor changes, so nothing is
+      # left to read by the time an end-of-print automation fires. These hold a
+      # snapshot taken at print start.
+      input_text.centauri_print_file = {
+        name = "Centauri Print File";
+        max = 255;
+      };
+
+      input_datetime.centauri_print_started = {
+        name = "Centauri Print Started";
+        has_date = true;
+        has_time = true;
+      };
+
       # Sunrise alarm automation
       automation = [
         {
@@ -526,6 +541,38 @@
           ];
         }
 
+        # Snapshots what the end-of-print notification needs, because Moonraker
+        # wipes these sensors the instant a print stops. `from` excludes
+        # "paused" so resuming does not restamp the start time.
+        {
+          alias = "Centauri Carbon → Print Started";
+          id = "centauri_print_started";
+          mode = "single";
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "sensor.centauri_carbon_current_print_state_2";
+              from = ["standby" "complete" "cancelled" "error"];
+              to = "printing";
+            }
+          ];
+          action = [
+            {
+              action = "input_datetime.set_datetime";
+              target.entity_id = "input_datetime.centauri_print_started";
+              data.datetime = "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}";
+            }
+            # The filename lands a fraction of a second after the state flips,
+            # so reading it immediately returns the previous print's value.
+            {delay = "00:00:05";}
+            {
+              action = "input_text.set_value";
+              target.entity_id = "input_text.centauri_print_file";
+              data.value = "{{ states('sensor.centauri_carbon_filename_2') | truncate(255, true, '') }}";
+            }
+          ];
+        }
+
         # Every pause here is a runout, jam, or MMU error: the Canvas unit
         # means M600 manual filament changes never happen.
         {
@@ -533,13 +580,13 @@
           id = "centauri_print_ended";
           mode = "single";
           variables = {
-            print_file = "{{ states('sensor.centauri_carbon_filename_2') }}";
+            # Snapshotted at print start; the live sensors are already cleared
+            # by the time this automation runs.
+            print_file = "{{ states('input_text.centauri_print_file') }}";
             print_elapsed = ''
-              {% set m = states('sensor.centauri_carbon_print_duration_2') | float(0) %}
-              {{ '%dh %dm' | format(m // 60, m % 60) }}
+              {% set t = state_attr('input_datetime.centauri_print_started', 'timestamp') %}
+              {% if t %}{% set s = (now().timestamp() - t) | int %}{{ '%dh %dm' | format(s // 3600, (s % 3600) // 60) }}{% else %}an unknown time{% endif %}
             '';
-            print_filament = "{{ states('sensor.centauri_carbon_filament_used_2') | float(0) | round(1) }} m";
-            print_progress = "{{ states('sensor.centauri_carbon_progress_2') | float(0) | round(1) }}%";
             # Klipper's pause reason. Empty during a normal print, and not
             # observed during a real pause, so never depended on.
             print_reason = "{{ states('sensor.centauri_carbon_current_print_message_2') }}";
@@ -597,7 +644,7 @@
                       action = "notify.alexis_push";
                       data = {
                         title = "Print finished";
-                        message = "{{ print_file }} — {{ print_elapsed }}, {{ print_filament }} used";
+                        message = "{{ print_file }} — finished in {{ print_elapsed }}";
                         data.image = "/api/camera_proxy/camera.centauri_webcam";
                       };
                     }
@@ -615,7 +662,7 @@
                       action = "notify.alexis_push";
                       data = {
                         title = "Print failed";
-                        message = "{{ print_file }} errored at {{ print_progress }}{% if print_reason %} — {{ print_reason }}{% endif %}";
+                        message = "{{ print_file }} — failed after {{ print_elapsed }}{% if print_reason %} — {{ print_reason }}{% endif %}";
                         data.image = "/api/camera_proxy/camera.centauri_webcam";
                       };
                     }
@@ -633,7 +680,7 @@
                       action = "notify.alexis_push";
                       data = {
                         title = "Print cancelled";
-                        message = "{{ print_file }} cancelled at {{ print_progress }}";
+                        message = "{{ print_file }} — cancelled after {{ print_elapsed }}";
                         data.image = "/api/camera_proxy/camera.centauri_webcam";
                       };
                     }
@@ -651,7 +698,7 @@
                       action = "notify.alexis_push";
                       data = {
                         title = "Print paused";
-                        message = "{{ print_file }} paused at {{ print_progress }}{% if canvas_empty %} — {{ canvas_empty }}{% endif %}{% if print_reason %} — {{ print_reason }}{% endif %}";
+                        message = "{{ print_file }} — paused after {{ print_elapsed }}{% if canvas_empty %} — {{ canvas_empty }}{% endif %}{% if print_reason %} — {{ print_reason }}{% endif %}";
                         data.image = "/api/camera_proxy/camera.centauri_webcam";
                       };
                     }
