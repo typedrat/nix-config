@@ -311,6 +311,36 @@ printer.
 not configured by this repo. The API is reachable from ulysses via the LAN
 router.
 
+## Implementation sequencing
+
+The three changes have different blast radii and are deployed and verified
+independently, in this order:
+
+1. **Router** (`alias` + hotplug). Affects every hosted service. Verified by
+   confirming LAN clients reach Traefik with `10.0.0.x` source addresses before
+   anything depends on it.
+2. **Traefik module** (`authentikBypassFrom`). Affects every route. Verified by
+   confirming existing routes are unchanged when the option is unset.
+3. **Spoolman module**, which depends on both.
+4. **Printer** (`[spoolman]` in `/etc/klipper/config/moonraker.conf`), last.
+
+### Printer work must not interrupt a print
+
+Moonraker's config is only read at startup, so the `[spoolman]` block requires a
+restart to take effect. Restarting Moonraker does not abort a running print —
+klippy is a separate process reached over a Unix socket — but **PrintGuard
+monitors this printer through Moonraker**, so a restart blinds failure detection
+for the remainder of the print in progress.
+
+Both the edit and the restart therefore wait until the printer is idle. Confirm
+with:
+
+```
+curl -sS "http://Centauri-Carbon.lan/printer/objects/query?print_stats" 
+```
+
+and proceed only when `print_stats.state` is not `printing`.
+
 ## Verification plan
 
 1. `nix build .#nixosConfigurations.iserlohn.config.system.build.toplevel`.
