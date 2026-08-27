@@ -132,6 +132,12 @@ const STYLE = `
   .gauges { display: flex; justify-content: space-around; align-items: center;
             margin-top: 12px; }
   .gauges > * { cursor: pointer; }
+  .graph { margin-top: 10px; position: relative; }
+  .graph svg { display: block; width: 100%; height: 96px; }
+  .axis { display: flex; justify-content: space-between; font-size: 10px;
+          color: var(--gkf-muted); margin-top: 2px; }
+  .nodata { position: absolute; inset: 0; display: flex; align-items: center;
+            justify-content: center; font-size: 12px; color: var(--gkf-muted); }
 `;
 
 class GratkitFireflyCard extends HTMLElement {
@@ -157,9 +163,11 @@ class GratkitFireflyCard extends HTMLElement {
   }
 
   set hass(hass) {
+    const first = !this._hass;
     this._hass = hass;
     if (!this._built) this._build();
     this._update();
+    if (first) this._fetchStats();
   }
 
   getCardSize() {
@@ -198,6 +206,19 @@ class GratkitFireflyCard extends HTMLElement {
       h("div", { onclick: () => this._moreInfo(c.humidity) }, this._els.humGauge.node),
     );
 
+    this._els.plot = svgEl("svg", {
+      viewBox: "0 0 380 96", preserveAspectRatio: "none",
+    });
+    this._els.nodata = h("div", { class: "nodata" }, "No history yet");
+    this._els.axisFrom = h("span", {}, `${c.hours}h ago`);
+    const graph = h(
+      "div",
+      { class: "graph" },
+      this._els.plot,
+      this._els.nodata,
+      h("div", { class: "axis" }, this._els.axisFrom, h("span", {}, "now")),
+    );
+
     const card = h(
       "ha-card",
       {},
@@ -211,6 +232,7 @@ class GratkitFireflyCard extends HTMLElement {
           this._els.pill,
         ),
         gauges,
+        graph,
       ),
     );
 
@@ -275,6 +297,134 @@ class GratkitFireflyCard extends HTMLElement {
         ? ""
         : `peak ${this._peakHumidity.toFixed(0)}%`,
     });
+  }
+
+  connectedCallback() {
+    // Statistics change at most once every five minutes; polling faster only
+    // costs recorder queries.
+    this._statsTimer = setInterval(() => this._fetchStats(), 5 * 60 * 1000);
+    this._fetchStats();
+  }
+
+  disconnectedCallback() {
+    clearInterval(this._statsTimer);
+    this._statsTimer = null;
+  }
+
+  async _fetchStats() {
+    const hass = this._hass;
+    const c = this._config;
+    // The 5-minute interval keeps firing across a setConfig, which clears the
+    // shadow root and the node cache — drawing into it then would throw.
+    if (!hass || !c || !this._built) return;
+
+    const ids = [c.current_temp, c.humidity].filter(Boolean);
+    if (!ids.length) return;
+
+    const end = new Date();
+    const start = new Date(end.getTime() - c.hours * 3600 * 1000);
+
+    let res;
+    try {
+      res = await hass.callWS({
+        type: "recorder/statistics_during_period",
+        start_time: start.toISOString(),
+        end_time: end.toISOString(),
+        statistic_ids: ids,
+        // 5-minute statistics are only retained ~10 days; hourly are permanent.
+        period: c.hours <= 12 ? "5minute" : "hour",
+        types: ["mean"],
+      });
+    } catch (err) {
+      // A recorder that is busy or purging should degrade the graph, not the card.
+      console.warn(`${CARD_TAG}: statistics unavailable`, err);
+      res = null;
+    }
+
+    const series = (id) =>
+      ((res && res[id]) || [])
+        .map((row) => ({ t: row.start, v: row.mean }))
+        .filter((p) => typeof p.v === "number" && Number.isFinite(p.v));
+
+    this._temps = series(c.current_temp);
+    this._hums = series(c.humidity);
+    this._peakHumidity = this._hums.length
+      ? Math.max(...this._hums.map((p) => p.v))
+      : null;
+
+    this._drawGraph();
+    this._updateGauges();
+  }
+
+  _drawGraph() {
+    const plot = this._els.plot;
+    const c = this._config;
+    const W = 380, H = 96, PAD = 8;
+
+    plot.textContent = "";
+
+    const temps = this._temps || [];
+    const hums = this._hums || [];
+    const empty = !temps.length && !hums.length;
+    this._els.nodata.style.display = empty ? "flex" : "none";
+    if (empty) return;
+
+    // Both series share the x range so they stay time-aligned even when one has
+    // fewer points than the other.
+    const stamps = [...temps, ...hums].map((p) => p.t);
+    const t0 = Math.min(...stamps);
+    const t1 = Math.max(...stamps);
+    const span = t1 - t0 || 1;
+
+    const path = (pts, lo, hi) => {
+      const range = hi - lo || 1;
+      return pts
+        .map((p, i) => {
+          const x = ((p.t - t0) / span) * W;
+          const y = H - PAD - ((p.v - lo) / range) * (H - PAD * 2);
+          return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+        })
+        .join(" ");
+    };
+
+    for (let i = 1; i < 3; i++) {
+      plot.appendChild(svgEl("line", {
+        x1: 0, x2: W, y1: (H / 3) * i, y2: (H / 3) * i,
+        stroke: "var(--gkf-line)", "stroke-width": 1,
+      }));
+    }
+
+    if (hums.length) {
+      const gradId = `${CARD_TAG}-hum-fill`;
+      const defs = svgEl("defs");
+      const grad = svgEl("linearGradient", { id: gradId, x1: 0, y1: 0, x2: 0, y2: 1 });
+      grad.appendChild(svgEl("stop", {
+        offset: "0%", "stop-color": "var(--gkf-humidity)", "stop-opacity": .3,
+      }));
+      grad.appendChild(svgEl("stop", {
+        offset: "100%", "stop-color": "var(--gkf-humidity)", "stop-opacity": 0,
+      }));
+      defs.appendChild(grad);
+      plot.appendChild(defs);
+
+      const d = path(hums, 0, c.humidity_max);
+      plot.appendChild(svgEl("path", {
+        d: `${d} L ${W} ${H} L 0 ${H} Z`, fill: `url(#${gradId})`,
+      }));
+      plot.appendChild(svgEl("path", {
+        d, fill: "none", stroke: "var(--gkf-humidity)", "stroke-width": 2,
+        "stroke-linejoin": "round", "stroke-linecap": "round",
+      }));
+    }
+
+    if (temps.length) {
+      const target = stateOf(this._hass, c.target_temp);
+      plot.appendChild(svgEl("path", {
+        d: path(temps, target?.attributes?.min ?? 40, target?.attributes?.max ?? 70),
+        fill: "none", stroke: "var(--gkf-temp)", "stroke-width": 2,
+        "stroke-linejoin": "round", "stroke-linecap": "round",
+      }));
+    }
   }
 }
 
