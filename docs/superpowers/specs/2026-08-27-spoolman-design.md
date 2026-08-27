@@ -206,6 +206,24 @@ proxy provider, the application, the access-group binding, and the embedded
 outpost attachment. It needs `tofu apply` to take effect; the NixOS switch alone
 does nothing for it.
 
+**These objects were created directly through the Authentik API**, because the
+terraform state backend was unreachable at the time (`HeadObject` 403 against
+`typedrat-terraform-state`; the sops-stored B2 key decrypts fine, so the key
+itself is rotated or revoked). Terraform therefore does not know they exist, and
+the next successful `tofu apply` will try to create them again and fail on the
+duplicate slug. Import them first:
+
+```
+tofu import 'authentik_provider_proxy.spoolman-proxy' 27
+tofu import 'authentik_application.spoolman' spoolman
+tofu import 'authentik_policy_binding.app-spoolman-discord-sysop-0' 24991795-86a4-46b7-af3a-a132ddd60016
+```
+
+The fourth object — the embedded-outpost attachment — was made by patching the
+outpost's provider list rather than as a standalone resource, so check whether
+`authentik_outpost_provider_attachment.embedded-outpost-spoolman` imports
+cleanly or needs to be recreated once state is writable again.
+
 ### Accepted risk
 
 Spoolman becomes fully read/write to anything on the LAN, IoT devices included.
