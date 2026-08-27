@@ -191,6 +191,21 @@ rule's length, and the bypass rule is strictly longer than the one it shadows,
 so it always outranks it. An explicit `priority` on the route would defeat
 that, so in that one case the bypass takes `priority + 1`.
 
+### The Authentik application is not optional
+
+Setting `authentik = true` on the route only makes Traefik *call* the forward-auth
+endpoint. Authentik's embedded outpost answers for the hosts it has a proxy
+provider for, and returns **404 for anything else** — so without a matching
+application the public path is not protected-and-prompting, it is simply broken,
+while the LAN bypass keeps working and hides the fact.
+
+So `terraform/authentik/applications/spoolman.nix` is part of the feature, not a
+follow-up: an `authentik.applications.spoolman` entry with
+`proxy.externalHost = "https://spoolman.thisratis.gay"`, which generates the
+proxy provider, the application, the access-group binding, and the embedded
+outpost attachment. It needs `tofu apply` to take effect; the NixOS switch alone
+does nothing for it.
+
 ### Accepted risk
 
 Spoolman becomes fully read/write to anything on the LAN, IoT devices included.
