@@ -10,6 +10,7 @@ in {
     ./node.nix
     ./postgres.nix
     ./smartctl.nix
+    ./spoolman.nix
     ./traefik.nix
     ./qbittorrent.nix
     ./zfs.nix
