@@ -124,6 +124,19 @@ no validation conflict. ACME is DNS-01 via Cloudflare with an explicit
 `dnsResolver = "1.1.1.1:53"`, so LAN DNS changes cannot affect certificate
 issuance.
 
+The alias does not work alone. This router runs with `rebind_protection`
+enabled, which discards upstream answers containing private addresses — the
+defence against DNS rebinding attacks, and precisely what the rewrite
+manufactures. With only the alias set, every rewritten name resolves to nothing
+rather than to `10.0.0.10`. The domain has to be exempted alongside it:
+
+```
+uci add_list dhcp.@dnsmasq[0].rebind_domain='thisratis.gay'
+```
+
+This is invisible in a bare dnsmasq test, which has no rebind protection by
+default.
+
 ### Handling the DHCP lease
 
 WAN is `proto='dhcp'` with a 4-day lease, so the address is stable in practice
