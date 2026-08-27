@@ -705,6 +705,12 @@ Add these methods to the class, after `_updateGauges`:
   disconnectedCallback() {
     clearInterval(this._statsTimer);
     this._statsTimer = null;
+    // _pending write timers are left running deliberately: a click the user
+    // already made should still reach the device even if the card leaves the
+    // DOM before the debounce fires. _expiry timers exist only to repaint
+    // this card, so there is nothing left for them to do.
+    for (const t of Object.values(this._expiry)) clearTimeout(t);
+    this._expiry = {};
   }
 
   async _fetchStats() {
