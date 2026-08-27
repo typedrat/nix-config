@@ -15,12 +15,13 @@ in {
       this configuration controls. Hosts reach each other over it by preference
       (RFC 6724 ranks a global prefix above a unique-local one), so it has to be
       listed, and it has to be corrected here if the delegation ever rotates —
-      the symptom is every cross-host scrape failing at once.
+      the symptom is every cross-host scrape failing at once. The current
+      delegation is the `ipv6-prefix` in `ifstatus wan6` on the router.
     '';
     default = [
       "10.0.0.0/24"
       "fdb1:d67d:2e17::/48"
-      "2601:204:f381:4784::/64"
+      "2601:204:f300:6fe2::/64"
     ];
   };
 }
