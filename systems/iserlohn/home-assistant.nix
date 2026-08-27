@@ -176,14 +176,16 @@
     mqtt.extraAclRules = ["readwrite printguard/#"];
     go2rtc.enable = true;
 
-    customComponents = with pkgs.home-assistant-custom-components; [
-      adaptive_lighting
-      elegoo_printer
-      ha_mcp_tools
-      localtuya
-      moonraker
-      waste_collection_schedule
-    ];
+    customComponents =
+      (with pkgs.home-assistant-custom-components; [
+        adaptive_lighting
+        elegoo_printer
+        ha_mcp_tools
+        localtuya
+        moonraker
+        waste_collection_schedule
+      ])
+      ++ [pkgs.spoolman-homeassistant];
 
     customLovelaceModules = [pkgs.gratkit-firefly-card];
 
