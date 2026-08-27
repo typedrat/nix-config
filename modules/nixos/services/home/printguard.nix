@@ -11,6 +11,36 @@
 
   stateDir = "/var/lib/printguard";
 
+  # Seeded only when state.json is absent. PrintGuard owns the file at runtime
+  # -- every settings change rewrites the whole thing -- so this bootstraps a
+  # rebuilt host rather than trying to hold the file declaratively.
+  seedFile = (pkgs.formats.json {}).generate "printguard-state.json" cfg.seed.state;
+
+  seedScript = pkgs.writeShellScript "printguard-seed" ''
+    set -euo pipefail
+    state="${stateDir}/state.json"
+    if [ -e "$state" ]; then
+      exit 0
+    fi
+    umask 077
+    # Built aside and renamed: redirecting straight onto $state truncates it
+    # before jq runs, and PrintGuard treats an unparseable state.json as empty
+    # without complaining -- a failure would look like a wiped config, and the
+    # seed would never run again because the file now exists.
+    tmp="$state.seed.$$"
+    trap 'rm -f "$tmp"' EXIT
+    ${
+      if cfg.seed.mqttPasswordFile == null
+      then ''cp ${seedFile} "$tmp"''
+      else ''
+        ${lib.getExe pkgs.jq} --arg pw "$(cat ${cfg.seed.mqttPasswordFile})" \
+          '.settings.mqtt.password = $pw' ${seedFile} > "$tmp"
+      ''
+    }
+    chmod 0600 "$tmp"
+    mv -n "$tmp" "$state"
+  '';
+
   # PrintGuard's default "auto" runtime builds an ONNX session on the first
   # non-CPU execution provider offered, with no fallback. This host's
   # onnxruntime is a CUDA build, but its Pascal card is not in the default
@@ -70,6 +100,38 @@
   };
 in {
   options.rat.services.printguard = {
+    seed = {
+      enable = options.mkEnableOption "writing state.json on first start";
+
+      state = options.mkOption {
+        type = types.attrsOf types.anything;
+        default = {};
+        description = ''
+          Initial contents of PrintGuard's `state.json`, written only when that
+          file does not already exist. Its top-level keys are `cameras`,
+          `printers`, `monitors` and `settings`.
+
+          This lands in the Nix store, which is world-readable, so it must not
+          contain credentials. The MQTT password is the one secret the seed
+          needs, and {option}`seed.mqttPasswordFile` injects it at runtime
+          instead.
+
+          A camera whose id is `<printer-id>-<moonraker webcam uid>` claims the
+          id the printer's own webcam discovery would use, so the discovered
+          camera is never added and the source here wins permanently.
+        '';
+      };
+
+      mqttPasswordFile = options.mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = ''
+          File whose contents replace `.settings.mqtt.password` in the seed as
+          it is written, keeping the password out of the Nix store.
+        '';
+      };
+    };
+
     enable = options.mkEnableOption "PrintGuard 3D print failure detection";
 
     subdomain = options.mkOption {
@@ -147,6 +209,7 @@ in {
           };
 
         serviceConfig = {
+          ExecStartPre = lib.optional cfg.seed.enable seedScript;
           ExecStart = lib.getExe printguardPackage;
           User = "printguard";
           Group = "printguard";

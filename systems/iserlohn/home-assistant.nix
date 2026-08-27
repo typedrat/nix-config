@@ -34,7 +34,73 @@
     restartUnits = ["mosquitto.service"];
   };
 
-  rat.services.printguard.enable = true;
+  rat.services.printguard = {
+    enable = true;
+
+    # Written only if state.json is absent, so a rebuilt host comes back with
+    # the printer, camera and monitor already wired. PrintGuard owns the file
+    # afterwards -- changes made in its UI persist and are not reverted.
+    seed = {
+      enable = true;
+      mqttPasswordFile = config.sops.secrets."printguard/mqtt_password".path;
+
+      state = {
+        printers = [
+          {
+            id = "centauri";
+            name = "Centauri Carbon";
+            # Real Klipper, not Elegoo's fork, so the generic Moonraker adapter
+            # applies. Moonraker answers on port 80 here rather than the usual
+            # 7125, and needs no API key on a trusted LAN.
+            provider = "klipper";
+            config.base_url = "http://Centauri-Carbon.lan";
+          }
+        ];
+
+        cameras = [
+          {
+            # This id is what the printer's own webcam discovery would generate
+            # (<printer id>-<moonraker webcam uid>), so claiming it first means
+            # the discovered camera is never added and this source stands. Left
+            # to itself PrintGuard would pull the printer's MJPEG directly,
+            # putting a second consumer on a 128MB single-core board and
+            # reintroducing the untimestamped stream go2rtc exists to repair.
+            id = "centauri-56ec4ede-7367-552e-9a77-e1d425c44067";
+            name = "Centauri Webcam";
+            printer_id = "centauri";
+            source = {
+              kind = "url";
+              url = "${config.links.go2rtc-rtsp.url}/centauri_webcam";
+            };
+          }
+        ];
+
+        monitors = [
+          {
+            id = "centauri";
+            name = "Centauri Carbon";
+            camera_id = "centauri-56ec4ede-7367-552e-9a77-e1d425c44067";
+            printer_id = "centauri";
+            enabled = true;
+            # Alert only until the detector has been watched over a few real
+            # prints; flip to "pause" once its behaviour is known.
+            on_defect = "none";
+            # Home Assistant sees defects over MQTT, so PrintGuard's own
+            # notifier stays off rather than duplicating them.
+            notify = false;
+          }
+        ];
+
+        settings.mqtt = {
+          enabled = true;
+          host = config.links.mosquitto.ipv4;
+          inherit (config.links.mosquitto) port;
+          username = "printguard";
+          tls = false;
+        };
+      };
+    };
+  };
 
   # PrintGuard publishes HA MQTT discovery for each monitor, so it needs the
   # same homeassistant/ topic access the HA user has.
