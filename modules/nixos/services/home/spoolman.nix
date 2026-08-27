@@ -36,14 +36,20 @@ in {
 
     lanBypass = options.mkOption {
       type = types.listOf types.str;
-      default = config.rat.networking.lanRanges;
+      default = ["10.0.0.0/24" "fdb1:d67d:2e17::/48"];
       description = ''
         Client ranges reaching Spoolman without Authentik. Moonraker and the
         slicer tooling send no auth headers and cannot answer a forward-auth
         challenge, so they need an unauthenticated path.
 
         Everything in these ranges gets read/write access to the whole
-        inventory.
+        inventory, so this is deliberately NOT `rat.networking.lanRanges`:
+        that list includes the ISP-delegated IPv6 prefix, which rotates on
+        re-delegation and has gone stale before. A stray stale prefix here
+        would hand a stranger's /64 unauthenticated write access rather than
+        just breaking monitoring. Nothing that needs the bypass (the printer,
+        ulysses, Home Assistant on loopback) uses a global IPv6 source, and
+        the domain has no AAAA records at all.
       '';
     };
   };
@@ -95,6 +101,29 @@ in {
         DynamicUser = lib.mkForce false;
         User = "spoolman";
         Group = "spoolman";
+        # spoolman.db and spoolman.log live here.
+        StateDirectoryMode = "0700";
+        Restart = "on-failure";
+        RestartSec = 5;
+
+        # DynamicUser implies ProtectSystem=strict, ProtectHome=read-only,
+        # PrivateTmp, NoNewPrivileges, RestrictSUIDSGID and RemoveIPC; forcing
+        # it off above drops all of that too, so it's restored explicitly
+        # here. AF_INET/AF_INET6 stay allowed and nothing IP-address-scoped is
+        # added: Spoolman calls out to donkie.github.io at startup and on a
+        # schedule to sync the external filament database.
+        NoNewPrivileges = true;
+        PrivateDevices = true;
+        PrivateTmp = true;
+        ProtectControlGroups = true;
+        ProtectHome = true;
+        ProtectKernelTunables = true;
+        ProtectSystem = "strict";
+        RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        SystemCallArchitectures = "native";
+        SystemCallFilter = ["@system-service" "~@privileged"];
       };
 
       users.users.spoolman = {
