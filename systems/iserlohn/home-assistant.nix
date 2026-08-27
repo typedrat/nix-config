@@ -811,6 +811,49 @@
             }
           ];
         }
+
+        # PrintGuard scores every frame and flips this on once a defect has
+        # held for the monitor's consecutive-frame count, so it is already
+        # debounced -- no `for:` needed here.
+        {
+          alias = "Centauri Carbon → Defect Detected";
+          id = "centauri_defect_detected";
+          mode = "single";
+          variables = {
+            print_file = ''
+              {% set f = states('input_text.centauri_print_file') %}
+              {% if f and f not in ['unknown', 'unavailable'] %}{{ f }}{% else %}A print{% endif %}
+            '';
+          };
+          trigger = [
+            {
+              platform = "state";
+              entity_id = "binary_sensor.centauri_carbon_defect";
+              to = "on";
+            }
+          ];
+          action = [
+            {
+              action = "notify.alexis_push";
+              data = {
+                title = "Possible print failure";
+                # The score is in the message on purpose while the detector is
+                # still being calibrated: a healthy print sits around 35-40, so
+                # seeing the number that tripped it is what tells you whether
+                # the monitor's threshold wants moving.
+                message = "{{ print_file }} — defect score {{ states('sensor.centauri_carbon_defect_score') }} at {{ states('sensor.centauri_carbon_progress') | float(0) | round(0) }}%";
+                data = {
+                  # PrintGuard's own snapshot, not the raw webcam: this is the
+                  # frame the detector actually scored.
+                  image = "/api/camera_proxy/camera.centauri_carbon_snapshot";
+                  # Breaks through Focus without the confirmation a critical
+                  # alert demands.
+                  push."interruption-level" = "time-sensitive";
+                };
+              };
+            }
+          ];
+        }
       ];
     };
   };
