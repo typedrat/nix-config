@@ -42,15 +42,10 @@
       flake = false;
     };
 
-    # claude-code: 2.1.238 -> 2.1.245 (NixOS/nixpkgs#556326)
-    nixpkgs-patch-556326 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/556326.diff";
-      flake = false;
-    };
-
-    # claude-code: 2.1.245 -> 2.1.246 (NixOS/nixpkgs#556625)
-    nixpkgs-patch-556625 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/556625.diff";
+    # Bump claude-code to 2.1.247 and switch to the zstd-compressed native
+    # distribution Anthropic introduced in 2.1.243 (NixOS/nixpkgs#556673)
+    nixpkgs-patch-556673 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/556673.diff";
       flake = false;
     };
 
@@ -223,13 +218,7 @@
     # OpenAI Codex/ChatGPT desktop app for Linux. nixpkgs is intentionally left
     # un-followed: overriding it would change the derivation's store paths and
     # miss the codex-desktop-linux.cachix.org binary cache (see cachix/).
-    #
-    # Pinned to a fork branch: upstream's helperWorkspaceSource filter strips a
-    # prefix that never matches, so the feature-helpers crate workspace builds
-    # from an empty source and every computer-use/read-aloud/record-replay
-    # configuration dies on a missing Cargo.lock. Back to ilysenko once
-    # ilysenko/codex-desktop-linux#1395 lands.
-    codex-desktop-linux.url = "github:typedrat/codex-desktop-linux/fix/helper-workspace-source";
+    codex-desktop-linux.url = "github:ilysenko/codex-desktop-linux";
 
     authentik-nix = {
       url = "github:nix-community/authentik-nix";
