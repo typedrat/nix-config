@@ -41,7 +41,7 @@ localtuya exposes them, are the constraints the card designs around:
 | 105 | `material_type` | `select.…_material_type`                      | ABS, DIY1, DIY2, HIPS, Nylon, PC, PETG, PLA, PLA_J, TPU |
 | 106 | `erro`          | `binary_sensor.…_error`                       | Error **code**; localtuya's `state_on: "1"` matches only code 1 |
 | 107 | `pvrpm`         | `sensor.…_fan_speed`                          | rpm |
-| 108 | `usb_bz`        | `binary_sensor.…_usb`                         | device_class `plug` |
+| 108 | `usb_bz`        | `binary_sensor.…_usb`                         | Reports only whether something is plugged into the USB port — unused by the card |
 | 109 | `speek`         | `switch.…_sound`                              | Buzzer |
 | 110 | `lcd_onof`      | `switch.…_lcd`                                | Front panel display |
 
@@ -134,14 +134,17 @@ light: select.gratkit_firefly_v2_light
 error: binary_sensor.gratkit_firefly_v2_error
 sound: switch.gratkit_firefly_v2_sound
 lcd: switch.gratkit_firefly_v2_lcd
-usb: binary_sensor.gratkit_firefly_v2_usb
 hours: 24
 humidity_max: 60
 ```
 
-Three keys are new: `usb`, `hours` (graph window) and `humidity_max` (humidity
-gauge ceiling). One is corrected: `error` pointed at `sensor.…_error`, which
-does not exist — the entity is a `binary_sensor`.
+Two keys are new: `hours` (graph window) and `humidity_max` (humidity gauge
+ceiling). One is corrected: `error` pointed at `sensor.…_error`, which does not
+exist — the entity is a `binary_sensor`.
+
+`binary_sensor.…_usb` is deliberately not wired up. It only reports whether
+something is plugged into the dryer's USB port, which carries no information
+about drying, so it earns no space on the card.
 
 Every entity key is optional. An unset key, or one naming an entity that is not
 in `hass.states`, renders that control disabled showing an em dash. `setConfig`
@@ -163,8 +166,8 @@ A single `ha-card`, in four stacked bands:
 3. **Graph** — the temperature and humidity history band, described below.
 4. **Diagnostics strip** — one muted line between the graph and the controls,
    carrying the values that are real but not headline material:
-   `Heater 87 °C · Fan 5040 rpm · USB idle`. This is where `heating_temp`,
-   `fan_speed` and `usb` live; each segment is omitted when its key is unset.
+   `Heater 87 °C · Fan 5040 rpm`. This is where `heating_temp` and `fan_speed`
+   live; each segment is omitted when its key is unset.
 5. **Controls** — a material dropdown, a temperature stepper and a timer
    stepper, then a chip row for power, light, LCD and sound.
 
