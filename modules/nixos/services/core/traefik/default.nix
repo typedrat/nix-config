@@ -6,6 +6,21 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.traefik;
   inherit (config.rat.services) domainName;
+
+  # Shared by a route's main router and its Authentik-bypass twin, so the two
+  # can never drift apart on host or path matching.
+  routeRule = route: let
+    hostRule =
+      if route.subdomain != null
+      then "Host(`${route.subdomain}.${domainName}`)"
+      else "Host(`${domainName}`)";
+    pathRule =
+      if route.pathRegex != null
+      then "&& PathRegexp(`${route.pathRegex}`)"
+      else if route.path != null
+      then "&& PathPrefix(`${route.path}`)"
+      else "";
+  in "${hostRule} ${pathRule}";
 in {
   imports = [
     ./theme-park.nix
@@ -45,6 +60,20 @@ in {
             type = types.bool;
             default = false;
             description = "Enable Authentik forward auth.";
+          };
+          authentikBypassFrom = options.mkOption {
+            type = types.listOf types.str;
+            default = [];
+            description = ''
+              Client IP ranges that reach the service without passing Authentik
+              forward auth, as an additional higher-priority router.
+
+              For backends whose clients cannot answer a forward-auth
+              challenge. The ranges are only as trustworthy as the network they
+              name, so the backend is fully exposed to anything inside them.
+
+              Has no effect unless {option}`authentik` is enabled.
+            '';
           };
           extraMiddlewares = options.mkOption {
             type = types.listOf types.str;
@@ -182,18 +211,7 @@ in {
               lib.mapAttrs (
                 name: route:
                   modules.mkIf route.enable {
-                    rule = let
-                      hostRule =
-                        if route.subdomain != null
-                        then "Host(`${route.subdomain}.${domainName}`)"
-                        else "Host(`${domainName}`)";
-                      pathRule =
-                        if route.pathRegex != null
-                        then "&& PathRegexp(`${route.pathRegex}`)"
-                        else if route.path != null
-                        then "&& PathPrefix(`${route.path}`)"
-                        else "";
-                    in "${hostRule} ${pathRule}";
+                    rule = routeRule route;
                     service = name;
                     entryPoints = ["websecure"];
                     tls = true;
@@ -203,6 +221,35 @@ in {
                       ++ route.extraMiddlewares;
                   }
                   // (lib.optionalAttrs (route.priority != null) {inherit (route) priority;})
+              )
+              cfg.routes
+            )
+
+            (
+              lib.concatMapAttrs (
+                name: route:
+                  if (route.enable && route.authentik && route.authentikBypassFrom != [])
+                  then {
+                    "${name}-bypass" =
+                      {
+                        # ClientIP takes one range per call, so several are ORed.
+                        rule = "${routeRule route} && (${
+                          lib.concatMapStringsSep " || " (range: "ClientIP(`${range}`)") route.authentikBypassFrom
+                        })";
+                        service = name;
+                        entryPoints = ["websecure"];
+                        tls = true;
+                        middlewares =
+                          (lib.optionals (route.stripPrefix && route.path != null) ["${name}-stripprefix"])
+                          ++ route.extraMiddlewares;
+                      }
+                      # Traefik ranks equal-priority routers by rule length, and
+                      # this rule is strictly longer than the one it shadows, so
+                      # it already wins by default. An explicit priority on the
+                      # route would break that, hence the +1.
+                      // (lib.optionalAttrs (route.priority != null) {priority = route.priority + 1;});
+                  }
+                  else {}
               )
               cfg.routes
             )
