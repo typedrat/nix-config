@@ -33,7 +33,19 @@
       if cfg.seed.mqttPasswordFile == null
       then ''cp ${seedFile} "$tmp"''
       else ''
-        ${lib.getExe pkgs.jq} --arg pw "$(cat ${cfg.seed.mqttPasswordFile})" \
+        # Read it in its own statement. A substitution that fails inside an
+        # argument does not trip errexit, so an unreadable secret would
+        # otherwise sail through as an empty password and only surface as the
+        # broker refusing the connection.
+        if ! pw=$(cat ${cfg.seed.mqttPasswordFile}); then
+          echo "printguard-seed: cannot read ${cfg.seed.mqttPasswordFile}" >&2
+          exit 1
+        fi
+        if [ -z "$pw" ]; then
+          echo "printguard-seed: ${cfg.seed.mqttPasswordFile} is empty" >&2
+          exit 1
+        fi
+        ${lib.getExe pkgs.jq} --arg pw "$pw" \
           '.settings.mqtt.password = $pw' ${seedFile} > "$tmp"
       ''
     }

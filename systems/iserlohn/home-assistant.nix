@@ -27,6 +27,10 @@
   sops.secrets."printguard/mqtt_password" = {
     sopsFile = ../../secrets/printguard.yaml;
     key = "mqtt_password";
+    # The seed step runs as the service user and reads this directly.
+    # Mosquitto takes it through systemd credentials, which the service manager
+    # resolves as root, so narrowing the owner does not affect the broker.
+    owner = "printguard";
     # Mosquitto bakes this into its password database at preStart, and
     # PrintGuard itself never reads the file — the credentials are entered
     # in its web UI. Rotating the password only takes effect once the broker
@@ -68,6 +72,10 @@
             id = "centauri-56ec4ede-7367-552e-9a77-e1d425c44067";
             name = "Centauri Webcam";
             printer_id = "centauri";
+            # Mandatory: the restore path reads record["max_fps"] directly and
+            # CAMERA_DEFAULTS has no entry for it, so a record without it takes
+            # the whole engine down with a KeyError on start.
+            max_fps = 15.0;
             source = {
               kind = "url";
               url = "${config.links.go2rtc-rtsp.url}/centauri_webcam";
