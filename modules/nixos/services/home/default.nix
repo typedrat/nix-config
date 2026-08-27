@@ -6,6 +6,7 @@
     ./matter-server.nix
     ./mosquitto.nix
     ./printguard.nix
+    ./spoolman.nix
     ./zwave-js.nix
   ];
 }
