@@ -258,7 +258,22 @@ or the LAN bypass, since it runs on iserlohn itself.
 ### Moonraker
 
 The printer is rooted and running a custom Linux image, so `moonraker.conf` is
-editable over SSH as root (reachability confirmed):
+editable over SSH as root.
+
+The config is split in two. `/etc/klipper/config/moonraker-readonly/moonraker.conf`
+is the vendor file — it carries a "PLEASE DO NOT EDIT ... UPDATES WILL RESET
+THIS FILE" header and is regenerated on firmware update.
+`/etc/klipper/config/moonraker.conf` is the user file, which does nothing but
+include the vendor directory and invite additions:
+
+```ini
+[include moonraker-readonly/*.conf]
+
+# Add other extra configuration here.
+```
+
+The `[spoolman]` block therefore goes in the **outer**
+`/etc/klipper/config/moonraker.conf`, where it survives firmware updates:
 
 ```ini
 [spoolman]
@@ -266,16 +281,29 @@ server: https://spoolman.thisratis.gay
 sync_rate: 5
 ```
 
+Confirmed against this build's `/usr/share/moonraker/moonraker/components/spoolman.py`:
+`server` is required and `sync_rate` is an int defaulting to 5 (minimum 1).
+Those are the only two options it reads.
+
 Reached via the LAN router, so no Authentik and no port number. The printer is
 `10.0.0.13`, inside the `10.0.0.0/24` bypass CIDR.
 
-The exact config path is not yet known — `/etc/moonraker.conf` and
-`/home/*/printer_data/config/moonraker.conf` are both absent, so implementation
-must locate it first.
+Prerequisites verified on the printer:
+
+- Clock is correct and the CA bundle is present; `curl https://auth.thisratis.gay/`
+  returns 302 with TLS verifying, so it already trusts the Let's Encrypt chain
+  and can reach Traefik over HTTPS.
+- It resolves via `10.0.0.1`, the router, so the `alias` rewrite will apply to
+  it. This is what makes the unauthenticated LAN router reachable by name.
+
+One residual unknown: Moonraker's component uses aiohttp rather than curl, so it
+may consult a bundled `certifi` store instead of the system one. The ISRG root
+is old enough that this is very unlikely to matter, and step 7 of the
+verification plan would catch it.
 
 Because this edit lives on the printer's filesystem rather than in this repo,
-the snippet is also checked in here so the configuration is not recorded only on
-the printer.
+the snippet is checked in here so the configuration is not recorded only on the
+printer.
 
 ### Slicer
 
@@ -294,7 +322,8 @@ router.
    proving the DNS doctoring works end to end.
 5. From outside the LAN, confirm the same URL redirects to Authentik.
 6. Confirm the metrics endpoint's format, then that Prometheus scrapes it.
-7. On the printer, restart Moonraker and confirm it connects to Spoolman.
+7. On the printer, restart Moonraker and confirm from its log that the Spoolman
+   component connected — this also rules out the aiohttp CA-store caveat above.
 8. Run a short print and confirm the spool's remaining weight decreases.
 9. Confirm `ulysses-webhook.thisratis.gay` still resolves to Cloudflare from a
    LAN host, i.e. the automatic carve-out held.
