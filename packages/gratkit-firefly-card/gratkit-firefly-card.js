@@ -44,6 +44,74 @@ const svgEl = (tag, attrs = {}) => {
   return el;
 };
 
+// The error entity carries a code, but localtuya declares state_on: "1", so any
+// code other than 1 reads as "off". Trust the raw code when it is present.
+const errorInfo = (s) => {
+  if (isDead(s)) return { fault: false, code: null };
+  const raw = s.attributes?.raw_state;
+  if (raw !== undefined && raw !== null) {
+    const code = String(raw);
+    const clear = code === "0" || code === "false" || code === "False";
+    return { fault: !clear, code: clear ? null : code };
+  }
+  return { fault: s.state === "on", code: s.state === "on" ? "1" : null };
+};
+
+const GAUGE_START = 135;
+const GAUGE_SWEEP = 270;
+
+// A 270-degree radial gauge. Returns the SVG node plus a setter so the caller
+// can update it without rebuilding the DOM.
+const gauge = ({ label, unit, colour, digits = 0 }) => {
+  const R = 44, CX = 64, CY = 60;
+  const point = (deg) => [
+    CX + R * Math.cos((deg * Math.PI) / 180),
+    CY + R * Math.sin((deg * Math.PI) / 180),
+  ];
+  const arc = (from, to) => {
+    const [x1, y1] = point(from);
+    const [x2, y2] = point(to);
+    return `M ${x1} ${y1} A ${R} ${R} 0 ${to - from > 180 ? 1 : 0} 1 ${x2} ${y2}`;
+  };
+
+  const node = svgEl("svg", { width: 128, height: 112, viewBox: "0 0 128 112" });
+  const track = svgEl("path", {
+    d: arc(GAUGE_START, GAUGE_START + GAUGE_SWEEP),
+    fill: "none", stroke: "var(--gkf-line)", "stroke-width": 9, "stroke-linecap": "round",
+  });
+  const fill = svgEl("path", {
+    fill: "none", stroke: colour, "stroke-width": 9, "stroke-linecap": "round",
+  });
+  const value = svgEl("text", {
+    x: CX, y: CY + 4, "text-anchor": "middle", fill: colour,
+    "font-size": 27, "font-weight": 300,
+  });
+  const foot = svgEl("text", {
+    x: CX, y: CY + 22, "text-anchor": "middle", fill: "var(--gkf-muted)", "font-size": 10,
+  });
+  const cap = svgEl("text", {
+    x: CX, y: 106, "text-anchor": "middle", fill: "var(--gkf-muted)",
+    "font-size": 11, "letter-spacing": .6,
+  });
+  cap.textContent = label;
+  node.append(track, fill, value, foot, cap);
+
+  const set = ({ value: v, lo, hi, foot: footText }) => {
+    value.textContent = v === null ? DASH : `${v.toFixed(digits)}${unit}`;
+    foot.textContent = footText || "";
+    const frac = v === null || hi === lo ? 0 : Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+    if (frac > 0.001) {
+      fill.setAttribute("d", arc(GAUGE_START, GAUGE_START + GAUGE_SWEEP * frac));
+      fill.removeAttribute("visibility");
+    } else {
+      fill.setAttribute("visibility", "hidden");
+    }
+  };
+
+  set({ value: null, lo: 0, hi: 1 });
+  return { node, set };
+};
+
 const STYLE = `
   :host { --gkf-temp: var(--state-climate-heat-color, #ffb74d);
           --gkf-humidity: var(--state-humidifier-on-color, #64b5f6);
@@ -61,6 +129,9 @@ const STYLE = `
               color: var(--error-color, #f44336); }
   .pill.idle { background: color-mix(in srgb, var(--gkf-muted) 18%, transparent);
                color: var(--gkf-muted); }
+  .gauges { display: flex; justify-content: space-around; align-items: center;
+            margin-top: 12px; }
+  .gauges > * { cursor: pointer; }
 `;
 
 class GratkitFireflyCard extends HTMLElement {
@@ -113,6 +184,20 @@ class GratkitFireflyCard extends HTMLElement {
     this._els.sub = h("div", { class: "sub" });
     this._els.pill = h("span", { class: "pill" });
 
+    this._els.tempGauge = gauge({
+      label: "CHAMBER", unit: "°", colour: "var(--gkf-temp)",
+    });
+    this._els.humGauge = gauge({
+      label: "HUMIDITY", unit: "%", colour: "var(--gkf-humidity)",
+    });
+
+    const gauges = h(
+      "div",
+      { class: "gauges" },
+      h("div", { onclick: () => this._moreInfo(c.current_temp) }, this._els.tempGauge.node),
+      h("div", { onclick: () => this._moreInfo(c.humidity) }, this._els.humGauge.node),
+    );
+
     const card = h(
       "ha-card",
       {},
@@ -125,6 +210,7 @@ class GratkitFireflyCard extends HTMLElement {
           h("div", {}, this._els.name, this._els.sub),
           this._els.pill,
         ),
+        gauges,
       ),
     );
 
@@ -135,9 +221,14 @@ class GratkitFireflyCard extends HTMLElement {
   }
 
   _update() {
+    if (!this._hass || !this._config) return;
+    this._updateHeader();
+    this._updateGauges();
+  }
+
+  _updateHeader() {
     const hass = this._hass;
     const c = this._config;
-    if (!hass || !c) return;
 
     const fan = stateOf(hass, c.fan);
     this._els.name.textContent =
@@ -149,9 +240,41 @@ class GratkitFireflyCard extends HTMLElement {
     if (!isDead(material)) bits.push(material.state);
     this._els.sub.textContent = bits.join(" · ");
 
-    const chamber = num(stateOf(hass, c.current_temp));
-    this._els.pill.textContent = fmt(chamber, 0, " °C");
-    this._els.pill.className = running ? "pill" : "pill idle";
+    const { fault, code } = errorInfo(stateOf(hass, c.error));
+    const pill = this._els.pill;
+    if (fault) {
+      pill.textContent = `Error ${code}`;
+      pill.className = "pill bad";
+    } else if (running) {
+      pill.textContent = "OK";
+      pill.className = "pill";
+    } else {
+      pill.textContent = "Off";
+      pill.className = "pill idle";
+    }
+  }
+
+  _updateGauges() {
+    const hass = this._hass;
+    const c = this._config;
+
+    const target = stateOf(hass, c.target_temp);
+    const targetVal = num(target);
+    this._els.tempGauge.set({
+      value: num(stateOf(hass, c.current_temp)),
+      lo: target?.attributes?.min ?? 40,
+      hi: target?.attributes?.max ?? 70,
+      foot: targetVal === null ? "" : `target ${targetVal.toFixed(0)}`,
+    });
+
+    this._els.humGauge.set({
+      value: num(stateOf(hass, c.humidity)),
+      lo: 0,
+      hi: c.humidity_max,
+      foot: this._peakHumidity === undefined || this._peakHumidity === null
+        ? ""
+        : `peak ${this._peakHumidity.toFixed(0)}%`,
+    });
   }
 }
 
