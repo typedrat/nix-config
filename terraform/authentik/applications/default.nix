@@ -13,6 +13,7 @@
     ./jellyfin.nix
     ./matrix.nix
     ./prometheus.nix
+    ./printguard.nix
     ./prowlarr.nix
     ./qui.nix
     ./qbittorrent.nix
