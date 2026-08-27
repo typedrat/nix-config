@@ -373,7 +373,7 @@
           wallpaper.enable = true;
           logout.enable = true;
           blur.enable = true;
-          hyprbars.enable = true;
+          hyprbars.enable = false;
           kde.enable = true;
           pyprland.enable = true;
           smartGaps.enable = true;

@@ -147,6 +147,10 @@ in {
           (bind "SUPER + k" dsp.close)
           (bind "SUPER + SHIFT + k" dsp.forceKill)
 
+          # Park the window on a special workspace; SUPER + SHIFT + m brings
+          # one back (see launcher/dmenu.nix).
+          (bind "SUPER + m" (dsp.moveToWorkspaceSilent "special:minimized"))
+
           # Media keys stay active while the session is locked.
           (bindOpts "XF86AudioPlay" (dsp.exec "playerctl play-pause") {locked = true;})
           (bindOpts "XF86AudioPrev" (dsp.exec "playerctl previous") {locked = true;})

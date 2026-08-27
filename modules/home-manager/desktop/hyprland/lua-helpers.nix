@@ -28,6 +28,8 @@
     fullscreen = mkLuaInline "hl.dsp.window.fullscreen()";
     drag = mkLuaInline "hl.dsp.window.drag()";
     focusWorkspace = ws: mkLuaInline "hl.dsp.focus({ workspace = ${luaStr ws} })";
+    # `follow = false` is the Lua spelling of movetoworkspacesilent.
+    moveToWorkspaceSilent = ws: mkLuaInline "hl.dsp.window.move({ workspace = ${luaStr ws}, follow = false })";
     global = name: mkLuaInline "hl.dsp.global(${luaStr name})";
   };
 

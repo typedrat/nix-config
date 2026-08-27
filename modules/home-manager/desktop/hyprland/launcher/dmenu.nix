@@ -81,7 +81,7 @@
     else "";
 
   # Picker that lists every window parked on the special:minimized workspace
-  # (see hyprbars.nix's minimize button) and pulls the chosen one onto the
+  # (see the SUPER + m minimize bind) and pulls the chosen one onto the
   # workspace you're currently looking at. Backend-agnostic via rat-dmenu.
   pullMinimized = pkgs.writeShellApplication {
     name = "pull-minimized-window";
@@ -145,7 +145,7 @@ in {
       home.packages = [dmenuTool];
 
       wayland.windowManager.hyprland.settings.bind = [
-        (bind "SUPER + m" (dsp.exec (lib.getExe pullMinimized)))
+        (bind "SUPER + SHIFT + m" (dsp.exec (lib.getExe pullMinimized)))
       ];
     };
 }
