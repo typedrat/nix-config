@@ -185,9 +185,11 @@ authentikBypassFrom = mkOption {
 };
 ```
 
-When non-empty and `authentik` is true, the module emits the additional
-higher-priority router. Priority is set explicitly rather than relying on
-Traefik's longest-rule-wins default.
+When non-empty and `authentik` is true, the module emits the additional router.
+It relies on Traefik's longest-rule-wins default — `Priority` defaults to the
+rule's length, and the bypass rule is strictly longer than the one it shadows,
+so it always outranks it. An explicit `priority` on the route would defeat
+that, so in that one case the bypass takes `priority + 1`.
 
 ### Accepted risk
 
@@ -239,16 +241,31 @@ different origin. Revisit if a web tool needs cross-origin access.
 
 ### Service user
 
-The upstream module's `DynamicUser = true` is kept. Nothing else touches the
-state directory, so no fixed UID is needed — unlike zipline, which had to force
-`DynamicUser` off for Postgres peer authentication.
+The upstream module's `DynamicUser = true` is forced off in favour of a static
+`spoolman` user. Under `DynamicUser`, systemd's `StateDirectory` actually lives
+at `/var/lib/private/spoolman` and `/var/lib/spoolman` is only a symlink — so
+the impermanence entry below would persist a symlink and lose the database on
+reboot.
+
+That override has a cost worth stating: `DynamicUser=` **implies**
+`ProtectSystem=strict`, `ProtectHome=read-only`, `PrivateTmp`,
+`NoNewPrivileges`, `RestrictSUIDSGID` and `RemoveIPC`. Turning it off silently
+discards all of them. Since this service is a network-facing Python application
+that the entire LAN can write to unauthenticated, the module restores that
+hardening explicitly rather than inheriting it.
+
+One constraint on any further hardening: Spoolman makes outbound HTTPS requests
+to `donkie.github.io` at startup and on a schedule to sync an external filament
+database, so it must keep `AF_INET`/`AF_INET6` and must not gain an
+`IPAddressDeny`.
 
 ### Persistence
 
 `/var/lib/spoolman` added to `environment.persistence.${persistDir}` under
 `mkIf (cfg.enable && impermanenceCfg.enable)`, matching the printguard pattern.
-With `DynamicUser` the directory is owned by a per-boot UID, so the persistence
-entry records the directory without pinning user/group.
+The entry pins `user` and `group` to `spoolman`. Because `/var/lib/nixos` is
+itself persisted, the allocated UID is stable across boots, and
+`StateDirectory=spoolman` re-applies ownership on every start.
 
 ## Monitoring
 
@@ -378,4 +395,25 @@ curl -sS "http://Centauri-Carbon.lan/printer/objects/query?print_stats"
   behaviour needs review.
 - **Router change affects every hosted service**, not just Spoolman. It is a
   one-line `uci delete` to revert.
-- **Metrics may not exist as assumed.** Handled by verifying before wiring.
+- **Metrics may not exist as assumed.** Resolved: the binary was run directly
+  and `/metrics` returns Prometheus text.
+- **A LAN client that bypasses the router's resolver still looks external.**
+  The rewrite only reaches clients that ask the router for DNS. Anything using
+  DoH/DoT or a hardcoded public resolver — a browser with secure DNS enabled,
+  an IoT device with `8.8.8.8` baked in — still resolves to the WAN address and
+  hairpins, arriving as `71.195.171.238`. It fails closed (that client just
+  gets Authentik), but silently, and the obsolete hairpin SNAT rules are still
+  installed on the router. Worth checking a client's resolver before concluding
+  the bypass is broken for it.
+- **`SPOOLMAN_CORS_ORIGIN` being unset is load-bearing.** With it unset,
+  Spoolman installs no CORS middleware at all, so a hostile page cannot drive
+  cross-origin writes against a LAN user's browser. Never set it to `*`.
+- **Tailscale subnet routing would silently widen the bypass.** The router
+  forwards `tailscale → lan` with SNAT to `10.0.0.1`, which sits inside the
+  bypass range. `AdvertiseRoutes` is currently null, so no tailnet node can
+  reach `10.0.0.0/24` — but enabling subnet routing would grant every tailnet
+  node unauthenticated write access to Spoolman.
+- **Backups are not off-host.** Spoolman's automatic backups land in
+  `/var/lib/spoolman/backups`, on the same dataset as the live database, and
+  iserlohn only *receives* syncoid replication rather than sending it. They
+  protect against corruption and mistakes, not against loss of the dataset.
