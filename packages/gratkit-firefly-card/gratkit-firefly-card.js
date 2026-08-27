@@ -167,7 +167,7 @@ class GratkitFireflyCard extends HTMLElement {
     this._hass = hass;
     if (!this._built) this._build();
     this._update();
-    if (first) this._fetchStats();
+    if (first && this.isConnected) this._fetchStats();
   }
 
   getCardSize() {
@@ -340,6 +340,10 @@ class GratkitFireflyCard extends HTMLElement {
       console.warn(`${CARD_TAG}: statistics unavailable`, err);
       res = null;
     }
+
+    // setConfig may have run while the above await was pending, clearing the
+    // node cache — bail out quietly rather than draw into stale/missing nodes.
+    if (!this._built) return;
 
     const series = (id) =>
       ((res && res[id]) || [])

@@ -737,6 +737,10 @@ Add these methods to the class, after `_updateGauges`:
       res = null;
     }
 
+    // setConfig may have run while the above await was pending, clearing the
+    // node cache — bail out quietly rather than draw into stale/missing nodes.
+    if (!this._built) return;
+
     const series = (id) =>
       ((res && res[id]) || [])
         .map((row) => ({ t: row.start, v: row.mean }))
@@ -840,7 +844,7 @@ Add after `_fetchStats`:
     this._hass = hass;
     if (!this._built) this._build();
     this._update();
-    if (first) this._fetchStats();
+    if (first && this.isConnected) this._fetchStats();
   }
 ```
 
