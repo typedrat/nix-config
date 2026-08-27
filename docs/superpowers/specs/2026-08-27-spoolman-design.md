@@ -324,22 +324,20 @@ independently, in this order:
 3. **Spoolman module**, which depends on both.
 4. **Printer** (`[spoolman]` in `/etc/klipper/config/moonraker.conf`), last.
 
-### Printer work must not interrupt a print
+### Restarting Moonraker mid-print
 
 Moonraker's config is only read at startup, so the `[spoolman]` block requires a
-restart to take effect. Restarting Moonraker does not abort a running print —
-klippy is a separate process reached over a Unix socket — but **PrintGuard
-monitors this printer through Moonraker**, so a restart blinds failure detection
-for the remainder of the print in progress.
+restart to take effect. This is safe during a print: klippy is a separate
+process reached over a Unix socket and keeps running. The only cost is that
+**PrintGuard monitors this printer through Moonraker**, so failure detection is
+blind for the length of the restart.
 
-Both the edit and the restart therefore wait until the printer is idle. Confirm
-with:
+Judge that against the print in progress. For a print with no realistic failure
+mode, restart freely; for a long or difficult one, wait for idle:
 
 ```
-curl -sS "http://Centauri-Carbon.lan/printer/objects/query?print_stats" 
+curl -sS "http://Centauri-Carbon.lan/printer/objects/query?print_stats"
 ```
-
-and proceed only when `print_stats.state` is not `printing`.
 
 ## Verification plan
 
