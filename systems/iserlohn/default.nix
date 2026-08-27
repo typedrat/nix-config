@@ -153,6 +153,7 @@
 
       # autobrr.enable = true;
       configarr.enable = true;
+      spoolman.enable = true;
       jellarr = {
         enable = true;
 
