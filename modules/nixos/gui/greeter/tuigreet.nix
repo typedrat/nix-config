@@ -8,6 +8,7 @@
   inherit (lib.strings) concatStringsSep;
   cfg = config.rat.gui;
   impermanenceCfg = config.rat.impermanence;
+  loginDefs = config.security.loginDefs.settings;
 in {
   config = mkMerge [
     (mkIf (cfg.enable && cfg.greeter.variant == "tuigreet") {
@@ -31,6 +32,12 @@ in {
                 "--asterisks"
                 "--remember-session"
                 "--user-menu"
+                # tuigreet only consults /etc/login.defs while parsing argv;
+                # its config layer then rebuilds the user list from a built-in
+                # 1000-60000 range, which sweeps in the nixbld accounts at
+                # 30001+. Passing the bounds explicitly survives that pass.
+                "--user-menu-min-uid ${toString loginDefs.UID_MIN}"
+                "--user-menu-max-uid ${toString loginDefs.UID_MAX}"
                 "--theme 'text=white;container=black;border=magenta;greet=magenta;input=red;action=magenta;button=white'"
                 "--power-shutdown '/run/current-system/systemd/bin/systemctl poweroff'"
                 "--power-reboot '/run/current-system/systemd/bin/systemctl reboot'"
