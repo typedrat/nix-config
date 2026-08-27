@@ -606,8 +606,10 @@
             '';
             # The stamp is derived from Moonraker's duration counter at
             # capture time, so a long mid-print pause still counts toward the
-            # elapsed figure. An unset input_datetime reads epoch, which the
-            # guard below rejects instead of reporting a six-figure hour count.
+            # elapsed figure. An unset input_datetime reads midnight today
+            # rather than epoch, so its timestamp looks perfectly plausible --
+            # the filename helper is the honest marker, since it is written in
+            # the same run as the stamp.
             print_elapsed = ''
               {% set f = states('input_text.centauri_print_file') %}
               {% set t = state_attr('input_datetime.centauri_print_started', 'timestamp') %}
