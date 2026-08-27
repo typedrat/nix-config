@@ -33,7 +33,7 @@
 | `packages/gratkit-firefly-card/package.nix` | Copy derivation; content-hashed version so the resource URL cache-busts on every edit |
 | `systems/iserlohn/home-assistant.nix` | One line adding the package to `customLovelaceModules` |
 
-The card is a single file by design. It is one device's UI with no reusable parts, and splitting ~500 lines across modules would mean either a bundler (rejected in the spec) or multiple `<script>` resources.
+The card is a single file by design. It is one device's UI with no reusable parts, and splitting ~731 lines across modules would mean either a bundler (rejected in the spec) or multiple `<script>` resources.
 
 Live state changed through APIs, not files:
 
@@ -54,7 +54,7 @@ Proves the whole chain end to end (Nix package → `buildEnv` → `www/nixos-lov
 **Interfaces:**
 - Produces: package attribute `pkgs.gratkit-firefly-card`; custom element `gratkit-firefly-card`; the module-scope helpers `stateOf`, `isDead`, `num`, `fmt`, `h`, `svgEl`, and the class `GratkitFireflyCard` with private fields `_config`, `_hass`, `_els`, `_built`, which Tasks 2–4 extend.
 
-- [ ] **Step 1: Write the card module**
+- [x] **Step 1: Write the card module**
 
 Create `packages/gratkit-firefly-card/gratkit-firefly-card.js`:
 
@@ -227,7 +227,7 @@ window.customCards.push({
 });
 ```
 
-- [ ] **Step 2: Check the module parses**
+- [x] **Step 2: Check the module parses**
 
 ```bash
 node --check packages/gratkit-firefly-card/gratkit-firefly-card.js && echo "SYNTAX OK"
@@ -235,7 +235,7 @@ node --check packages/gratkit-firefly-card/gratkit-firefly-card.js && echo "SYNT
 
 Expected: `SYNTAX OK`. `node` is v24 on this host; a syntax error prints a `SyntaxError` and exits non-zero.
 
-- [ ] **Step 3: Write the Nix package**
+- [x] **Step 3: Write the Nix package**
 
 Create `packages/gratkit-firefly-card/package.nix`:
 
@@ -277,7 +277,7 @@ in
 
 There is deliberately no `passthru.updateScript`: the card has no upstream to track. The GitHub Actions update workflow filters on that attribute, so omitting it simply excludes the package.
 
-- [ ] **Step 4: Build the package**
+- [x] **Step 4: Build the package**
 
 ```bash
 git add packages/gratkit-firefly-card
@@ -294,7 +294,7 @@ ls -l "$(nix build .#gratkit-firefly-card --no-link --print-out-paths)"
 
 Expected: exactly `gratkit-firefly-card.js`.
 
-- [ ] **Step 5: Wire the package into Home Assistant**
+- [x] **Step 5: Wire the package into Home Assistant**
 
 In `systems/iserlohn/home-assistant.nix`, immediately after the closing `];` of the `customComponents` list, add:
 
@@ -302,7 +302,7 @@ In `systems/iserlohn/home-assistant.nix`, immediately after the closing `];` of 
     customLovelaceModules = [pkgs.gratkit-firefly-card];
 ```
 
-- [ ] **Step 6: Verify the generated resource entry**
+- [x] **Step 6: Verify the generated resource entry**
 
 ```bash
 nix eval --json .#nixosConfigurations.iserlohn.config.services.home-assistant.config.lovelace
@@ -316,7 +316,7 @@ nix eval --json .#nixosConfigurations.iserlohn.config.services.home-assistant.cu
 
 Expected: one entry naming `gratkit-firefly-card`.
 
-- [ ] **Step 7: Build the host**
+- [x] **Step 7: Build the host**
 
 ```bash
 nix build .#nixosConfigurations.iserlohn.config.system.build.toplevel --no-link --print-out-paths
@@ -325,7 +325,7 @@ echo "exit=$?"
 
 Expected: a store path and `exit=0`. Check the exit code explicitly — piping a build into `tail` and chaining with `&&` tests the exit status of `tail`, not of `nix build`, and will report success for a failed build.
 
-- [ ] **Step 8: Delete the stale storage resource — BEFORE deploying**
+- [x] **Step 8: Delete the stale storage resource — BEFORE deploying** (done by the controller)
 
 Use the MCP tool `ha_config_delete_dashboard_resource` with `resource_id` `6906523868364b138ea56d4d82d48b05`.
 
@@ -335,7 +335,7 @@ Expected: `total_count: 0`.
 
 This must happen now. After the next step `resource_mode` is `yaml`, Home Assistant builds a `ResourceYAMLCollection` which registers no create/update/delete websocket handlers, and the entry becomes undeletable through the API.
 
-- [ ] **Step 9: Deploy**
+- [x] **Step 9: Deploy** (done by the controller)
 
 ```bash
 nix run .#switch iserlohn -- --build-host iserlohn
@@ -343,7 +343,7 @@ nix run .#switch iserlohn -- --build-host iserlohn
 
 Expected: completes without error.
 
-- [ ] **Step 10: Verify the resource now resolves**
+- [x] **Step 10: Verify the resource now resolves** (done by the controller)
 
 ```bash
 ssh -A iserlohn 'sudo grep -A4 "^lovelace:" /etc/home-assistant/configuration.yaml'
@@ -364,7 +364,7 @@ ssh iserlohn 'curl -s -o /dev/null -w "%{http_code}\n" \
 
 Expected: `200`. This returned `404` before the change and is the regression test for the original fault.
 
-- [ ] **Step 11: Correct the dashboard config**
+- [x] **Step 11: Correct the dashboard config** (done by the controller)
 
 The existing `3d-printing` config points `error` at `sensor.gratkit_firefly_v2_error`, which does not exist — the entity is a `binary_sensor`. Use `ha_config_set_dashboard` with `url_path` `3d-printing` and this config:
 
@@ -396,7 +396,7 @@ The existing `3d-printing` config points `error` at `sensor.gratkit_firefly_v2_e
 }
 ```
 
-- [ ] **Step 12: Confirm it renders in a browser**
+- [x] **Step 12: Confirm it renders in a browser** (done by the controller; no browser was reachable, substituted with the headless DOM-shim harness)
 
 Using the Chrome MCP tools, open `https://home.thisratis.gay/3d-printing/0` and take a screenshot.
 
@@ -404,7 +404,7 @@ Expected: a card headed `GratKit Firefly V2`, sub-line `Drying · PETG`, and a p
 
 If the browser shows the old error, hard-reload — the frontend caches modules aggressively, though the content-hashed query string should prevent it.
 
-- [ ] **Step 13: Commit**
+- [x] **Step 13: Commit**
 
 ```bash
 nix fmt
@@ -430,7 +430,7 @@ once the module list is non-empty."
 - Consumes: `stateOf`, `isDead`, `num`, `fmt`, `h`, `svgEl`, `DASH`, `STYLE`, and `GratkitFireflyCard._build` / `._update` from Task 1.
 - Produces: `errorInfo(stateObj)` returning `{fault: boolean, code: string|null}`; `gauge(opts)` returning `{node, set}` where `set({value, lo, hi, foot})` updates it in place. Task 3 relies on `_update` already being split into per-section updates.
 
-- [ ] **Step 1: Add the error reader and gauge factory**
+- [x] **Step 1: Add the error reader and gauge factory**
 
 Insert after `svgEl` in the module:
 
@@ -504,7 +504,7 @@ const gauge = ({ label, unit, colour, digits = 0 }) => {
 };
 ```
 
-- [ ] **Step 2: Extend the stylesheet**
+- [x] **Step 2: Extend the stylesheet**
 
 Append to the `STYLE` template literal, before its closing backtick:
 
@@ -514,7 +514,7 @@ Append to the `STYLE` template literal, before its closing backtick:
   .gauges > * { cursor: pointer; }
 ```
 
-- [ ] **Step 3: Build the gauges**
+- [x] **Step 3: Build the gauges**
 
 In `_build`, replace the `const card = h(` statement with:
 
@@ -550,7 +550,7 @@ In `_build`, replace the `const card = h(` statement with:
     );
 ```
 
-- [ ] **Step 4: Rework `_update` into sections**
+- [x] **Step 4: Rework `_update` into sections**
 
 Replace the whole `_update` method with:
 
@@ -615,7 +615,7 @@ Replace the whole `_update` method with:
 
 `this._peakHumidity` is deliberately undefined until Task 3 populates it from the statistics fetch; the guard renders an empty footer until then.
 
-- [ ] **Step 5: Check syntax and rebuild**
+- [x] **Step 5: Check syntax and rebuild**
 
 ```bash
 node --check packages/gratkit-firefly-card/gratkit-firefly-card.js && echo "SYNTAX OK"
@@ -624,7 +624,7 @@ nix build .#gratkit-firefly-card --no-link --print-out-paths
 
 Expected: `SYNTAX OK`, and a store path whose hash suffix **differs** from Task 1's — confirming the content-hashed version works.
 
-- [ ] **Step 6: Deploy and confirm visually**
+- [x] **Step 6: Deploy and confirm visually** (deploy done by the controller; visual confirmation substituted with the headless DOM-shim harness)
 
 ```bash
 nix run .#switch iserlohn -- --build-host iserlohn
@@ -634,7 +634,7 @@ Reload the `3d-printing` dashboard in Chrome and screenshot.
 
 Expected: two radial gauges. Chamber reads roughly 65 °C with its arc about five-sixths of the way round the 40–70 range and a `target 65` footer; humidity reads about 10% with a short arc and no footer yet.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 nix fmt
@@ -656,7 +656,7 @@ state_on is pinned to \"1\" and so misses every other fault code."
 - Consumes: `svgEl`, `h`, `stateOf`, `num`, `STYLE`, and `GratkitFireflyCard._build` / `_updateGauges` from Tasks 1–2.
 - Produces: `this._peakHumidity` (number or null) consumed by `_updateGauges`; `_fetchStats()`, `_drawGraph()`; lifecycle hooks `connectedCallback` / `disconnectedCallback`.
 
-- [ ] **Step 1: Extend the stylesheet**
+- [x] **Step 1: Extend the stylesheet**
 
 Append to `STYLE` before its closing backtick:
 
@@ -669,7 +669,7 @@ Append to `STYLE` before its closing backtick:
             justify-content: center; font-size: 12px; color: var(--gkf-muted); }
 ```
 
-- [ ] **Step 2: Add the graph node to `_build`**
+- [x] **Step 2: Add the graph node to `_build`**
 
 Immediately before `const card = h(` in `_build`, add:
 
@@ -690,7 +690,7 @@ Immediately before `const card = h(` in `_build`, add:
 
 and add `graph,` to the `h("div", {class: "wrap"}, …)` argument list, immediately after `gauges,`.
 
-- [ ] **Step 3: Add the statistics fetch and lifecycle hooks**
+- [x] **Step 3: Add the statistics fetch and lifecycle hooks**
 
 Add these methods to the class, after `_updateGauges`:
 
@@ -763,7 +763,7 @@ Add these methods to the class, after `_updateGauges`:
   }
 ```
 
-- [ ] **Step 4: Add the renderer**
+- [x] **Step 4: Add the renderer**
 
 Add after `_fetchStats`:
 
@@ -840,7 +840,7 @@ Add after `_fetchStats`:
   }
 ```
 
-- [ ] **Step 5: Fetch once the card first receives `hass`**
+- [x] **Step 5: Fetch once the card first receives `hass`**
 
 `connectedCallback` can run before Lovelace assigns `hass`, in which case its immediate `_fetchStats()` returns early. Add a one-shot fetch to the setter. Replace `set hass(hass)` with:
 
@@ -854,7 +854,7 @@ Add after `_fetchStats`:
   }
 ```
 
-- [ ] **Step 6: Check syntax, build, deploy**
+- [x] **Step 6: Check syntax, build, deploy** (deploy done by the controller)
 
 ```bash
 node --check packages/gratkit-firefly-card/gratkit-firefly-card.js && echo "SYNTAX OK"
@@ -864,7 +864,7 @@ nix run .#switch iserlohn -- --build-host iserlohn
 
 Expected: `SYNTAX OK`, a fresh store hash, a clean deploy.
 
-- [ ] **Step 7: Confirm the graph draws**
+- [x] **Step 7: Confirm the graph draws** (done by the controller; substituted with the headless DOM-shim harness, no browser reachable)
 
 Reload the dashboard in Chrome and screenshot.
 
@@ -874,7 +874,7 @@ Check the browser console for warnings:
 
 Expected: no `statistics unavailable` warning. If one appears, read its payload — an `unknown command` there means the recorder integration is not loaded, which would be a separate fault.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/gratkit-firefly-card/gratkit-firefly-card.js
@@ -896,7 +896,7 @@ permanent, and already recorded back to February."
 - Consumes: everything from Tasks 1–3.
 - Produces: `fmtDuration(minutes)`; `LIGHT_COLOURS`, `LIGHT_EFFECTS`; `fillSelect(sel, options)`; methods `_setNumber`, `_settleOptimistic`, `_updateDiagnostics`, `_updateControls`.
 
-- [ ] **Step 1: Add the duration formatter and light tables**
+- [x] **Step 1: Add the duration formatter and light tables**
 
 Insert after `errorInfo` in the module:
 
@@ -953,7 +953,7 @@ const fillSelect = (sel, options) => {
 };
 ```
 
-- [ ] **Step 2: Extend the stylesheet**
+- [x] **Step 2: Extend the stylesheet**
 
 Append to `STYLE` before its closing backtick:
 
@@ -987,7 +987,7 @@ Append to `STYLE` before its closing backtick:
         border: 1px solid var(--gkf-line); }
 ```
 
-- [ ] **Step 3: Add the debounced number setter**
+- [x] **Step 3: Add the debounced number setter**
 
 Also extend the constructor and `setConfig` written in Task 1 with the three
 maps this step introduces (`_pending`, `_optimistic`, and a new `_expiry`) —
@@ -1069,7 +1069,7 @@ Add to the class, after `_moreInfo`:
   }
 ```
 
-- [ ] **Step 4: Build the diagnostics strip and controls**
+- [x] **Step 4: Build the diagnostics strip and controls**
 
 In `_build`, immediately before `const card = h(`, add:
 
@@ -1146,7 +1146,7 @@ plain and is set from the light entity's state in `_updateControls` (Step 5).
 
 Then add `this._els.diag,` and `controls,` to the `h("div", {class: "wrap"}, …)` argument list, after `graph,`.
 
-- [ ] **Step 5: Add the nudge helpers and section updaters**
+- [x] **Step 5: Add the nudge helpers and section updaters**
 
 Add to the class, after `_setNumber`:
 
@@ -1236,7 +1236,7 @@ Add to the class, after `_setNumber`:
   }
 ```
 
-- [ ] **Step 6: Call the new updaters**
+- [x] **Step 6: Call the new updaters**
 
 Replace `_update` with:
 
@@ -1250,7 +1250,7 @@ Replace `_update` with:
   }
 ```
 
-- [ ] **Step 7: Check syntax, build, deploy**
+- [x] **Step 7: Check syntax, build, deploy** (deploy done by the controller)
 
 ```bash
 node --check packages/gratkit-firefly-card/gratkit-firefly-card.js && echo "SYNTAX OK"
@@ -1260,7 +1260,7 @@ nix run .#switch iserlohn -- --build-host iserlohn
 
 Expected: `SYNTAX OK`, fresh store hash, clean deploy.
 
-- [ ] **Step 8: Verify every control against the live device**
+- [x] **Step 8: Verify every control against the live device** (done by the controller; the browser portion substituted with the headless DOM-shim harness)
 
 Reload the dashboard and screenshot.
 
@@ -1278,7 +1278,7 @@ Click the timer `+` once. Expected: the display reads `30 m` and `number.gratkit
 
 The steppers are debounced by 400 ms, so click, then pause before re-reading.
 
-- [ ] **Step 9: Confirm graceful degradation**
+- [x] **Step 9: Confirm graceful degradation** (done by the controller, against the live device)
 
 Temporarily point one key at a nonexistent entity to prove the disabled path, using `ha_config_set_dashboard` to set `"sound": "switch.does_not_exist"`.
 
@@ -1286,7 +1286,7 @@ Expected: the Sound chip renders greyed and unclickable; the rest of the card is
 
 Restore the correct entity id afterwards.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add packages/gratkit-firefly-card/gratkit-firefly-card.js
@@ -1306,7 +1306,7 @@ device offers but nothing documents."
 **Interfaces:**
 - Consumes: the deployed card from Tasks 1–4.
 
-- [ ] **Step 1: Confirm the original fault is gone**
+- [x] **Step 1: Confirm the original fault is gone** (done by the controller)
 
 ```bash
 ssh iserlohn 'curl -s -o /dev/null -w "%{http_code}\n" \
@@ -1321,13 +1321,13 @@ ssh -A iserlohn 'sudo grep -c "nixos-lovelace-modules" /etc/home-assistant/confi
 
 Expected: `1`.
 
-- [ ] **Step 2: Confirm there is exactly one source of truth for resources**
+- [x] **Step 2: Confirm there is exactly one source of truth for resources** (done by the controller)
 
 Call `ha_config_list_dashboard_resources`.
 
 Expected: `total_count: 0` — the storage collection is empty and the YAML entry is the only registration.
 
-- [ ] **Step 3: Check Home Assistant logged nothing new**
+- [x] **Step 3: Check Home Assistant logged nothing new** (done by the controller)
 
 ```bash
 ssh -A iserlohn 'sudo journalctl -u home-assistant.service --since "30 min ago" \
@@ -1336,13 +1336,13 @@ ssh -A iserlohn 'sudo journalctl -u home-assistant.service --since "30 min ago" 
 
 Expected: no errors mentioning the card or its resource.
 
-- [ ] **Step 4: Screenshot the finished card at two widths**
+- [x] **Step 4: Screenshot the finished card at two widths** (done by the controller; no browser was reachable throughout this work, substituted with the headless DOM-shim harness — pixel rendering, CSS layout, and real <select> behaviour were never verified in a browser)
 
 Using the Chrome MCP tools, load the `3d-printing` dashboard at 1280px and at 420px wide, screenshotting each.
 
 Expected: at both widths the card renders whole, the graph scales without overflowing its `ha-card`, and the chip row wraps rather than clipping. The page body must not scroll horizontally.
 
-- [ ] **Step 5: Verify the cache-buster actually changes**
+- [x] **Step 5: Verify the cache-buster actually changes** (done by the controller)
 
 ```bash
 git log --oneline -4 -- packages/gratkit-firefly-card/gratkit-firefly-card.js
@@ -1351,7 +1351,7 @@ nix eval --raw .#gratkit-firefly-card.version
 
 Expected: the version ends in an 8-character hex suffix. Confirm it differs from the value recorded in Task 1 Step 4 — proving an edited card cannot be served from browser cache.
 
-- [ ] **Step 6: Record the behaviour change in the repository**
+- [x] **Step 6: Record the behaviour change in the repository** (done in the final pre-merge review pass — this step had been missed until now)
 
 `resource_mode` is now `yaml`, so Lovelace resources are managed by Nix and the
 Home Assistant UI can no longer add or edit them. That is a surprise waiting for

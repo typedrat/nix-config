@@ -19,8 +19,8 @@ const num = (s) => {
 };
 
 // Format a number for display, falling back to an em dash.
-const fmt = (n, digits = 0, suffix = "") =>
-  n === null || n === undefined ? DASH : `${n.toFixed(digits)}${suffix}`;
+const fmt = (n, suffix = "") =>
+  n === null || n === undefined ? DASH : `${n.toFixed(0)}${suffix}`;
 
 // Terse element builder: h("div", {class: "x"}, "text", childNode)
 const h = (tag, attrs = {}, ...kids) => {
@@ -59,8 +59,9 @@ const errorInfo = (s) => {
 
 // DP 101 is `countdown`, in minutes, but localtuya declares its unit as "s".
 const fmtDuration = (mins) => {
-  if (mins === null || mins <= 0) return "Off";
+  if (mins === null) return "Off";
   mins = Math.round(mins);
+  if (mins <= 0) return "Off";
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   if (!h) return `${m} m`;
@@ -79,7 +80,8 @@ const RAINBOW = "linear-gradient(90deg,#e53935,#fdd835,#43a047,#1e88e5)";
 
 // The select also offers "13".."20", which have no documented meaning.
 const lightOptions = (s) => {
-  const all = s?.attributes?.options || [];
+  const raw = s?.attributes?.options;
+  const all = Array.isArray(raw) ? raw : [];
   const known = ["OFF", ...Object.keys(LIGHT_COLOURS), ...LIGHT_EFFECTS];
   const shown = all.filter((o) => known.includes(o));
   // Keep the current value selectable even when it is one of the unnamed ones.
@@ -94,17 +96,19 @@ const lightSwatch = (option) => {
 };
 
 // A <select> with no options to show renders as an empty greyed box; give it
-// a single disabled option so a disabled select reads the same em dash as
-// every other disabled control.
+// a single selectable placeholder so a disabled select paints the same em
+// dash as every other disabled control. (The select itself is already
+// disabled, so a selectable placeholder is still inert to the user.)
 const fillSelect = (sel, options) => {
-  const key = options.join(" ");
+  if (!Array.isArray(options)) options = [];
+  const key = JSON.stringify(options);
   if (sel.dataset.options === key) return;
   sel.dataset.options = key;
   sel.textContent = "";
   if (options.length) {
     for (const o of options) sel.appendChild(h("option", { value: o }, o));
   } else {
-    sel.appendChild(h("option", { value: "", disabled: "" }, DASH));
+    sel.appendChild(h("option", { value: "" }, DASH));
   }
 };
 
@@ -113,7 +117,7 @@ const GAUGE_SWEEP = 270;
 
 // A 270-degree radial gauge. Returns the SVG node plus a setter so the caller
 // can update it without rebuilding the DOM.
-const gauge = ({ label, unit, colour, digits = 0 }) => {
+const gauge = ({ label, unit, colour }) => {
   const R = 44, CX = 64, CY = 60;
   const point = (deg) => [
     CX + R * Math.cos((deg * Math.PI) / 180),
@@ -148,7 +152,7 @@ const gauge = ({ label, unit, colour, digits = 0 }) => {
   node.append(track, fill, value, foot, cap);
 
   const set = ({ value: v, lo, hi, foot: footText }) => {
-    value.textContent = v === null ? DASH : `${v.toFixed(digits)}${unit}`;
+    value.textContent = v === null ? DASH : `${v.toFixed(0)}${unit}`;
     foot.textContent = footText || "";
     const frac = v === null || hi === lo ? 0 : Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
     if (frac > 0.001) {
@@ -191,6 +195,7 @@ const STYLE = `
             justify-content: center; font-size: 12px; color: var(--gkf-muted); }
   .diag { display: flex; gap: 6px; flex-wrap: wrap; font-size: 11px;
           color: var(--gkf-muted); margin-top: 10px; }
+  .diag:empty { margin-top: 0; }
   .rule { height: 1px; background: var(--gkf-line); margin: 12px 0; }
   .row { display: flex; align-items: center; justify-content: space-between;
          gap: 10px; padding: 5px 0; }
@@ -207,6 +212,8 @@ const STYLE = `
            padding: 6px 10px; font-size: 13px; color: inherit;
            font-family: inherit; cursor: pointer; }
   select:disabled { opacity: .35; cursor: default; }
+  select option { background: var(--card-background-color, #fff);
+                  color: var(--primary-text-color, #212121); }
   .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .chip { display: flex; align-items: center; gap: 6px; font-size: 12px;
           padding: 6px 11px; border-radius: 16px; background: var(--gkf-line);
@@ -226,6 +233,9 @@ class GratkitFireflyCard extends HTMLElement {
     this._hass = null;
     this._els = {};
     this._built = false;
+    // Set once connectedCallback has run at least once, so a reconnect (but
+    // not the very first connect) knows to refetch statistics itself.
+    this._everConnected = false;
     // entityId -> setTimeout handle for a debounced number.set_value write.
     this._pending = {};
     // entityId -> value shown in place of the (stale) device state until the
@@ -256,11 +266,9 @@ class GratkitFireflyCard extends HTMLElement {
   }
 
   set hass(hass) {
-    const first = !this._hass;
     this._hass = hass;
     if (!this._built) this._build();
     this._update();
-    if (first && this.isConnected) this._fetchStats();
   }
 
   getCardSize() {
@@ -277,6 +285,10 @@ class GratkitFireflyCard extends HTMLElement {
 
   // Holding a stepper button would otherwise fire one Tuya write per click.
   _setNumber(entityId, value) {
+    // A stale expiry from a previously dropped write must not be left free to
+    // wipe the fresh optimistic value being set below.
+    clearTimeout(this._expiry[entityId]);
+    delete this._expiry[entityId];
     this._optimistic[entityId] = value;
     clearTimeout(this._pending[entityId]);
     this._pending[entityId] = setTimeout(() => {
@@ -290,13 +302,27 @@ class GratkitFireflyCard extends HTMLElement {
       // Hold the optimistic value across those pushes instead of falling back
       // to the stale device state; the expiry is only a backstop in case the
       // write is dropped and the device never echoes it back.
-      clearTimeout(this._expiry[entityId]);
       this._expiry[entityId] = setTimeout(() => {
         delete this._expiry[entityId];
         delete this._optimistic[entityId];
         this._updateControls();
       }, 5000);
     }, 400);
+    this._updateControls();
+  }
+
+  // The select/chip equivalent of _setNumber: holds an optimistic string
+  // state across the 1-3s localtuya round-trip. Unlike the steppers, a
+  // select/chip action is not debounced — it fires its service call
+  // immediately — but it holds the same 5000ms backstop expiry.
+  _setOptimistic(entityId, value) {
+    clearTimeout(this._expiry[entityId]);
+    this._optimistic[entityId] = value;
+    this._expiry[entityId] = setTimeout(() => {
+      delete this._expiry[entityId];
+      delete this._optimistic[entityId];
+      this._updateControls();
+    }, 5000);
     this._updateControls();
   }
 
@@ -334,10 +360,17 @@ class GratkitFireflyCard extends HTMLElement {
     const c = this._config;
     const bits = [];
     const heater = num(stateOf(hass, c.heating_temp));
-    if (c.heating_temp) bits.push(`Heater ${fmt(heater, 0, " °C")}`);
+    if (c.heating_temp) bits.push(`Heater ${fmt(heater, " °C")}`);
     const rpm = num(stateOf(hass, c.fan_speed));
-    if (c.fan_speed) bits.push(`Fan ${fmt(rpm, 0, " rpm")}`);
-    this._els.diag.textContent = bits.join(" · ");
+    if (c.fan_speed) bits.push(`Fan ${fmt(rpm, " rpm")}`);
+    const diag = this._els.diag;
+    diag.textContent = "";
+    // One element per bit (plus a separator element) so `gap` and
+    // `flex-wrap` on .diag actually apply, instead of one unbreakable text node.
+    bits.forEach((bit, i) => {
+      if (i) diag.appendChild(h("span", { class: "sep" }, "·"));
+      diag.appendChild(h("span", {}, bit));
+    });
   }
 
   _updateControls() {
@@ -345,17 +378,20 @@ class GratkitFireflyCard extends HTMLElement {
     const c = this._config;
 
     const material = stateOf(hass, c.material);
+    const materialAlive = !isDead(material);
+    this._settleOptimistic(c.material, materialAlive ? material.state : null);
+    const materialVal = materialAlive ? (this._optimistic[c.material] ?? material.state) : null;
     const sel = this._els.material;
-    sel.disabled = isDead(material);
-    fillSelect(sel, material?.attributes?.options || []);
-    if (!isDead(material)) sel.value = material.state;
+    sel.disabled = !materialAlive;
+    fillSelect(sel, materialAlive ? (material.attributes?.options || []) : []);
+    if (materialAlive) sel.value = materialVal;
 
     const target = stateOf(hass, c.target_temp);
     this._settleOptimistic(c.target_temp, num(target));
     const targetVal = this._optimistic[c.target_temp] ?? num(target);
     const targetLo = target?.attributes?.min ?? 40;
     const targetHi = target?.attributes?.max ?? 70;
-    this._els.temp.v.textContent = fmt(targetVal, 0, " °C");
+    this._els.temp.v.textContent = fmt(targetVal, " °C");
     this._els.temp.down.disabled = targetVal === null || targetVal <= targetLo;
     this._els.temp.up.disabled = targetVal === null || targetVal >= targetHi;
 
@@ -367,30 +403,38 @@ class GratkitFireflyCard extends HTMLElement {
     this._els.timer.up.disabled = timerVal === null || timerVal >= 1440;
 
     const fan = stateOf(hass, c.fan);
-    const on = fan && fan.state === "on";
-    this._els.power.textContent = `⏻ ${isDead(fan) ? DASH : on ? "On" : "Off"}`;
+    const fanAlive = !isDead(fan);
+    this._settleOptimistic(c.fan, fanAlive ? fan.state : null);
+    const fanVal = fanAlive ? (this._optimistic[c.fan] ?? fan.state) : null;
+    const on = fanVal === "on";
+    this._els.power.textContent = `⏻ ${fanVal === null ? DASH : on ? "On" : "Off"}`;
     this._els.power.className = on ? "chip on" : "chip";
-    this._els.power.disabled = isDead(fan);
+    this._els.power.disabled = !fanAlive;
 
     const light = stateOf(hass, c.light);
-    const lsel = this._els.light;
     const lightAlive = !isDead(light);
+    this._settleOptimistic(c.light, lightAlive ? light.state : null);
+    const lightVal = lightAlive ? (this._optimistic[c.light] ?? light.state) : null;
+    const lsel = this._els.light;
     lsel.disabled = !lightAlive;
-    fillSelect(lsel, lightOptions(light));
+    fillSelect(lsel, lightAlive ? lightOptions(light) : []);
     if (lightAlive) {
-      lsel.value = light.state;
-      this._els.lightSw.style.background = lightSwatch(light.state);
+      lsel.value = lightVal;
+      this._els.lightSw.style.background = lightSwatch(lightVal);
     } else {
       this._els.lightSw.style.background = "transparent";
     }
-    this._els.lightChip.className = lightAlive && light.state !== "OFF" ? "chip on" : "chip";
+    this._els.lightChip.className = lightAlive && lightVal !== "OFF" ? "chip on" : "chip";
 
     for (const [key, icon, label] of [["lcd", "▣", "LCD"], ["sound", "♪", "Sound"]]) {
       const s = stateOf(hass, c[key]);
+      const alive = !isDead(s);
+      this._settleOptimistic(c[key], alive ? s.state : null);
+      const val = alive ? (this._optimistic[c[key]] ?? s.state) : null;
       const el = this._els[key];
       el.textContent = `${icon} ${label}`;
-      el.className = s && s.state === "on" ? "chip on" : "chip";
-      el.disabled = isDead(s);
+      el.className = val === "on" ? "chip on" : "chip";
+      el.disabled = !alive;
     }
   }
 
@@ -434,11 +478,13 @@ class GratkitFireflyCard extends HTMLElement {
     this._els.diag = h("div", { class: "diag" });
 
     this._els.material = h("select", {
-      onchange: (e) =>
+      onchange: (e) => {
+        this._setOptimistic(c.material, e.target.value);
         this._hass.callService("select", "select_option", {
           entity_id: c.material,
           option: e.target.value,
-        }).catch(() => {}),
+        }).catch(() => {});
+      },
     });
 
     const stepper = (onDown, onUp) => {
@@ -459,24 +505,38 @@ class GratkitFireflyCard extends HTMLElement {
 
     this._els.power = h("button", {
       class: "chip",
-      onclick: () => this._hass.callService("fan", "toggle", { entity_id: c.fan }).catch(() => {}),
+      onclick: () => {
+        const fan = stateOf(this._hass, c.fan);
+        this._setOptimistic(c.fan, fan && fan.state === "on" ? "off" : "on");
+        this._hass.callService("fan", "toggle", { entity_id: c.fan }).catch(() => {});
+      },
     });
     this._els.lightSw = h("span", { class: "sw" });
     this._els.light = h("select", {
-      onchange: (e) =>
+      onchange: (e) => {
+        this._setOptimistic(c.light, e.target.value);
         this._hass.callService("select", "select_option", {
           entity_id: c.light,
           option: e.target.value,
-        }).catch(() => {}),
+        }).catch(() => {});
+      },
     });
     this._els.lightChip = h("span", { class: "chip" }, this._els.lightSw, this._els.light);
     this._els.lcd = h("button", {
       class: "chip",
-      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.lcd }).catch(() => {}),
+      onclick: () => {
+        const s = stateOf(this._hass, c.lcd);
+        this._setOptimistic(c.lcd, s && s.state === "on" ? "off" : "on");
+        this._hass.callService("switch", "toggle", { entity_id: c.lcd }).catch(() => {});
+      },
     });
     this._els.sound = h("button", {
       class: "chip",
-      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.sound }).catch(() => {}),
+      onclick: () => {
+        const s = stateOf(this._hass, c.sound);
+        this._setOptimistic(c.sound, s && s.state === "on" ? "off" : "on");
+        this._hass.callService("switch", "toggle", { entity_id: c.sound }).catch(() => {});
+      },
     });
 
     const controls = h(
@@ -520,6 +580,7 @@ class GratkitFireflyCard extends HTMLElement {
     style.textContent = STYLE;
     this.shadowRoot.append(style, card);
     this._built = true;
+    this._fetchStats();
   }
 
   _update() {
@@ -585,7 +646,13 @@ class GratkitFireflyCard extends HTMLElement {
     // Statistics change at most once every five minutes; polling faster only
     // costs recorder queries.
     this._statsTimer = setInterval(() => this._fetchStats(), 5 * 60 * 1000);
-    this._fetchStats();
+    // _build() already fetches once hass/config land, which covers the very
+    // first connect regardless of whether hass arrives before or after this
+    // callback. Only a genuine reconnect (this callback firing again) needs
+    // an immediate refetch here, to replace data that went stale while
+    // disconnected.
+    if (this._everConnected) this._fetchStats();
+    this._everConnected = true;
   }
 
   disconnectedCallback() {
@@ -593,9 +660,12 @@ class GratkitFireflyCard extends HTMLElement {
     this._statsTimer = null;
     // _pending write timers are left running deliberately: a click the user
     // already made should still reach the device even if the card leaves the
-    // DOM before the debounce fires. _expiry timers exist only to repaint
-    // this card, so there is nothing left for them to do.
+    // DOM before the debounce fires. _expiry timers repaint this card and
+    // are cleared with the optimistic values they'd otherwise strand: a
+    // dropped write whose callback lands after this fires would leave
+    // _optimistic set forever, showing a target the device never accepted.
     for (const t of Object.values(this._expiry)) clearTimeout(t);
+    this._optimistic = {};
     this._expiry = {};
   }
 
@@ -668,16 +738,25 @@ class GratkitFireflyCard extends HTMLElement {
     const t1 = Math.max(...stamps);
     const span = t1 - t0 || 1;
 
+    const x = (p) => ((p.t - t0) / span) * W;
+
     const path = (pts, lo, hi) => {
       const range = hi - lo || 1;
       return pts
         .map((p, i) => {
-          const x = ((p.t - t0) / span) * W;
-          const y = H - PAD - ((p.v - lo) / range) * (H - PAD * 2);
-          return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+          // A reading outside [lo, hi] (chamber at room temp after a
+          // power-off, a wet spool's humidity spike) must flatten against the
+          // plot's edge, not be left to plot outside the viewBox and vanish.
+          const y = Math.max(PAD, Math.min(H - PAD, H - PAD - ((p.v - lo) / range) * (H - PAD * 2)));
+          return `${i ? "L" : "M"}${x(p).toFixed(1)} ${y.toFixed(1)}`;
         })
         .join(" ");
     };
+
+    // Truthful axis label: the actual span of the plotted data, not the
+    // configured window, which the recorder may not be able to fill. `empty`
+    // returned above, so there is always at least one point here.
+    this._els.axisFrom.textContent = `${Math.round((Date.now() - t0) / 3600000)}h ago`;
 
     for (let i = 1; i < 3; i++) {
       plot.appendChild(svgEl("line", {
@@ -700,12 +779,18 @@ class GratkitFireflyCard extends HTMLElement {
       plot.appendChild(defs);
 
       const d = path(hums, 0, c.humidity_max);
+      // Close at the last humidity point's own x, not the plot's right edge —
+      // when the humidity series ends earlier than the temperature series,
+      // t1 comes from the temperature data and W would cut a diagonal edge.
+      const lastX = x(hums[hums.length - 1]).toFixed(1);
       plot.appendChild(svgEl("path", {
-        d: `${d} L ${W} ${H} L 0 ${H} Z`, fill: `url(#${gradId})`,
+        d: `${d} L ${lastX} ${H} L 0 ${H} Z`, fill: `url(#${gradId})`,
+        "vector-effect": "non-scaling-stroke",
       }));
       plot.appendChild(svgEl("path", {
         d, fill: "none", stroke: "var(--gkf-humidity)", "stroke-width": 2,
         "stroke-linejoin": "round", "stroke-linecap": "round",
+        "vector-effect": "non-scaling-stroke",
       }));
     }
 
@@ -715,12 +800,16 @@ class GratkitFireflyCard extends HTMLElement {
         d: path(temps, target?.attributes?.min ?? 40, target?.attributes?.max ?? 70),
         fill: "none", stroke: "var(--gkf-temp)", "stroke-width": 2,
         "stroke-linejoin": "round", "stroke-linecap": "round",
+        "vector-effect": "non-scaling-stroke",
       }));
     }
   }
 }
 
-customElements.define(CARD_TAG, GratkitFireflyCard);
+// A double resource load (e.g. a stale resource plus the YAML one, briefly,
+// during a migration) would otherwise throw NotSupportedError and take the
+// whole module out.
+if (!customElements.get(CARD_TAG)) customElements.define(CARD_TAG, GratkitFireflyCard);
 
 window.customCards = window.customCards || [];
 window.customCards.push({

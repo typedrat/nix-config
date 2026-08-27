@@ -226,6 +226,23 @@ Use this when deciding whether a merged nixpkgs PR is already in your locked nix
 - SOPS configuration is in `modules/nixos/sops.nix`
 - Terraform secrets are decrypted by the terranix wrapper at runtime
 
+### Lovelace Custom Cards
+
+Custom Lovelace modules are packages in `packages/`, installed to
+`$out/<pname>.js` and listed in `rat.services.home-assistant.customLovelaceModules`.
+
+Setting that option to a non-empty list makes the nixpkgs module set
+`lovelace.resource_mode = "yaml"`, which means Home Assistant loads resources
+from `configuration.yaml` and **ignores `.storage/lovelace_resources`**. The
+UI's Settings → Dashboards → Resources page stops working; add packages to
+`customLovelaceModules` instead. Any resource registered through the UI must be
+deleted *before* the list becomes non-empty, because the resource-management
+websocket API disappears with the switch to YAML mode.
+
+Give each card a content-hashed `version` — the module appends it to the
+resource URL as a query string, so a card edited without a version bump is
+served from browser cache.
+
 ### Custom Package Development
 
 - Add new packages to `packages/` directory

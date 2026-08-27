@@ -263,6 +263,22 @@ host — a startup crash-loop, a service that could never start, wrong MQTT ACLs
 a `KeyError` on restore — surfaced only from running the artifact. `nix build`
 succeeded in every one of those cases.
 
+**Substitution actually taken at Step 6:** no browser was reachable when this
+step came due — the `claude-in-chrome` extension was not connected and Chrome
+had no DevTools port open. A headless DOM-shim harness
+(`scratchpad/harness.mjs`) was substituted, driving the card with real entity
+shapes captured from the live instance and asserting on its internal state
+(registration, rendered text, plotted path data, the filtered light list, the
+error-code path, and the empty-config throw). This is not the same test the
+step specifies, and the residual risk is real: pixel rendering, CSS layout,
+and actual `<select>` behaviour (value assignment, the disabled-option
+rendering path) were never verified in a browser, because the shim does not
+implement `<select>` selectedness or `style.display`. The final pre-merge
+review found two Important defects — the em-dash paths for both `<select>`
+elements (A1), and the graph's temperature trace vanishing off-scale (A2) —
+that fell in exactly the class of thing a real-browser screenshot, and only
+that, would have caught.
+
 ## Out of scope
 
 - Rewriting the localtuya entity definitions to fix the timer unit or widen the
