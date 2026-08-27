@@ -185,6 +185,8 @@
       waste_collection_schedule
     ];
 
+    customLovelaceModules = [pkgs.gratkit-firefly-card];
+
     extraComponents = [
       # Components required to complete the onboarding
       "analytics"
