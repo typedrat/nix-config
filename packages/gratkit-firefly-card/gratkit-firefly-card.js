@@ -60,8 +60,9 @@ const errorInfo = (s) => {
 // DP 101 is `countdown`, in minutes, but localtuya declares its unit as "s".
 const fmtDuration = (mins) => {
   if (mins === null || mins <= 0) return "Off";
+  mins = Math.round(mins);
   const h = Math.floor(mins / 60);
-  const m = Math.round(mins % 60);
+  const m = mins % 60;
   if (!h) return `${m} m`;
   return m ? `${h} h ${m} m` : `${h} h`;
 };
@@ -90,6 +91,21 @@ const lightSwatch = (option) => {
   if (option === "OFF") return "transparent";
   if (LIGHT_EFFECTS.includes(option)) return RAINBOW;
   return LIGHT_COLOURS[option] || "var(--gkf-muted)";
+};
+
+// A <select> with no options to show renders as an empty greyed box; give it
+// a single disabled option so a disabled select reads the same em dash as
+// every other disabled control.
+const fillSelect = (sel, options) => {
+  const key = options.join(" ");
+  if (sel.dataset.options === key) return;
+  sel.dataset.options = key;
+  sel.textContent = "";
+  if (options.length) {
+    for (const o of options) sel.appendChild(h("option", { value: o }, o));
+  } else {
+    sel.appendChild(h("option", { value: "", disabled: "" }, DASH));
+  }
 };
 
 const GAUGE_START = 135;
@@ -210,6 +226,13 @@ class GratkitFireflyCard extends HTMLElement {
     this._hass = null;
     this._els = {};
     this._built = false;
+    // entityId -> setTimeout handle for a debounced number.set_value write.
+    this._pending = {};
+    // entityId -> value shown in place of the (stale) device state until the
+    // write round-trips.
+    this._optimistic = {};
+    // entityId -> setTimeout handle that gives up on an optimistic value.
+    this._expiry = {};
   }
 
   setConfig(config) {
@@ -222,6 +245,14 @@ class GratkitFireflyCard extends HTMLElement {
     this._built = false;
     this._els = {};
     this.shadowRoot.innerHTML = "";
+    // A config change can repoint target_temp/timer at a different entity;
+    // without this the old entity's optimistic value and timers would linger
+    // in the maps forever.
+    for (const t of Object.values(this._pending)) clearTimeout(t);
+    for (const t of Object.values(this._expiry)) clearTimeout(t);
+    this._pending = {};
+    this._optimistic = {};
+    this._expiry = {};
   }
 
   set hass(hass) {
@@ -246,33 +277,51 @@ class GratkitFireflyCard extends HTMLElement {
 
   // Holding a stepper button would otherwise fire one Tuya write per click.
   _setNumber(entityId, value) {
-    this._pending = this._pending || {};
-    this._optimistic = this._optimistic || {};
     this._optimistic[entityId] = value;
     clearTimeout(this._pending[entityId]);
     this._pending[entityId] = setTimeout(() => {
       delete this._pending[entityId];
-      delete this._optimistic[entityId];
       this._hass.callService("number", "set_value", {
         entity_id: entityId,
         value,
-      });
+      }).catch(() => {});
+      // A Tuya write takes 1-3s to round-trip through localtuya, and hass
+      // pushes a fresh state several times a second from unrelated entities.
+      // Hold the optimistic value across those pushes instead of falling back
+      // to the stale device state; the expiry is only a backstop in case the
+      // write is dropped and the device never echoes it back.
+      clearTimeout(this._expiry[entityId]);
+      this._expiry[entityId] = setTimeout(() => {
+        delete this._expiry[entityId];
+        delete this._optimistic[entityId];
+        this._updateControls();
+      }, 5000);
     }, 400);
     this._updateControls();
   }
 
+  // Drop a held optimistic value once the device echoes it back. Does not
+  // call _updateControls itself — the caller is already mid-render.
+  _settleOptimistic(entityId, real) {
+    if (entityId in this._optimistic && this._optimistic[entityId] === real) {
+      delete this._optimistic[entityId];
+      clearTimeout(this._expiry[entityId]);
+      delete this._expiry[entityId];
+    }
+  }
+
   _nudgeTemp(delta) {
     const s = stateOf(this._hass, this._config.target_temp);
-    const current = this._optimistic?.[this._config.target_temp] ?? num(s);
+    const current = this._optimistic[this._config.target_temp] ?? num(s);
     if (current === null) return;
-    const lo = s.attributes?.min ?? 40;
-    const hi = s.attributes?.max ?? 70;
+    const lo = s?.attributes?.min ?? 40;
+    const hi = s?.attributes?.max ?? 70;
     this._setNumber(this._config.target_temp, Math.min(hi, Math.max(lo, current + delta)));
   }
 
   _nudgeTimer(delta) {
     const s = stateOf(this._hass, this._config.timer);
-    const current = this._optimistic?.[this._config.timer] ?? num(s);
+    const current = this._optimistic[this._config.timer] ?? num(s);
     if (current === null) return;
     // Snap off-grid values (the device counts down continuously) onto the step.
     const base = delta > 0 ? Math.floor(current / TIMER_STEP) * TIMER_STEP
@@ -298,22 +347,24 @@ class GratkitFireflyCard extends HTMLElement {
     const material = stateOf(hass, c.material);
     const sel = this._els.material;
     sel.disabled = isDead(material);
-    const options = material?.attributes?.options || [];
-    if (sel.dataset.options !== options.join(" ")) {
-      sel.dataset.options = options.join(" ");
-      sel.textContent = "";
-      for (const o of options) sel.appendChild(h("option", { value: o }, o));
-    }
+    fillSelect(sel, material?.attributes?.options || []);
     if (!isDead(material)) sel.value = material.state;
 
     const target = stateOf(hass, c.target_temp);
-    const targetVal = this._optimistic?.[c.target_temp] ?? num(target);
+    this._settleOptimistic(c.target_temp, num(target));
+    const targetVal = this._optimistic[c.target_temp] ?? num(target);
+    const targetLo = target?.attributes?.min ?? 40;
+    const targetHi = target?.attributes?.max ?? 70;
     this._els.temp.v.textContent = fmt(targetVal, 0, " °C");
-    this._els.temp.down.disabled = this._els.temp.up.disabled = targetVal === null;
+    this._els.temp.down.disabled = targetVal === null || targetVal <= targetLo;
+    this._els.temp.up.disabled = targetVal === null || targetVal >= targetHi;
 
-    const timerVal = this._optimistic?.[c.timer] ?? num(stateOf(hass, c.timer));
+    const timer = stateOf(hass, c.timer);
+    this._settleOptimistic(c.timer, num(timer));
+    const timerVal = this._optimistic[c.timer] ?? num(timer);
     this._els.timer.v.textContent = timerVal === null ? DASH : fmtDuration(timerVal);
-    this._els.timer.down.disabled = this._els.timer.up.disabled = timerVal === null;
+    this._els.timer.down.disabled = timerVal === null || timerVal <= 0;
+    this._els.timer.up.disabled = timerVal === null || timerVal >= 1440;
 
     const fan = stateOf(hass, c.fan);
     const on = fan && fan.state === "on";
@@ -323,17 +374,16 @@ class GratkitFireflyCard extends HTMLElement {
 
     const light = stateOf(hass, c.light);
     const lsel = this._els.light;
-    lsel.disabled = isDead(light);
-    const lopts = lightOptions(light);
-    if (lsel.dataset.options !== lopts.join(" ")) {
-      lsel.dataset.options = lopts.join(" ");
-      lsel.textContent = "";
-      for (const o of lopts) lsel.appendChild(h("option", { value: o }, o));
-    }
-    if (!isDead(light)) {
+    const lightAlive = !isDead(light);
+    lsel.disabled = !lightAlive;
+    fillSelect(lsel, lightOptions(light));
+    if (lightAlive) {
       lsel.value = light.state;
       this._els.lightSw.style.background = lightSwatch(light.state);
+    } else {
+      this._els.lightSw.style.background = "transparent";
     }
+    this._els.lightChip.className = lightAlive && light.state !== "OFF" ? "chip on" : "chip";
 
     for (const [key, icon, label] of [["lcd", "▣", "LCD"], ["sound", "♪", "Sound"]]) {
       const s = stateOf(hass, c[key]);
@@ -388,7 +438,7 @@ class GratkitFireflyCard extends HTMLElement {
         this._hass.callService("select", "select_option", {
           entity_id: c.material,
           option: e.target.value,
-        }),
+        }).catch(() => {}),
     });
 
     const stepper = (onDown, onUp) => {
@@ -409,7 +459,7 @@ class GratkitFireflyCard extends HTMLElement {
 
     this._els.power = h("button", {
       class: "chip",
-      onclick: () => this._hass.callService("fan", "toggle", { entity_id: c.fan }),
+      onclick: () => this._hass.callService("fan", "toggle", { entity_id: c.fan }).catch(() => {}),
     });
     this._els.lightSw = h("span", { class: "sw" });
     this._els.light = h("select", {
@@ -417,15 +467,16 @@ class GratkitFireflyCard extends HTMLElement {
         this._hass.callService("select", "select_option", {
           entity_id: c.light,
           option: e.target.value,
-        }),
+        }).catch(() => {}),
     });
+    this._els.lightChip = h("span", { class: "chip" }, this._els.lightSw, this._els.light);
     this._els.lcd = h("button", {
       class: "chip",
-      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.lcd }),
+      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.lcd }).catch(() => {}),
     });
     this._els.sound = h("button", {
       class: "chip",
-      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.sound }),
+      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.sound }).catch(() => {}),
     });
 
     const controls = h(
@@ -440,7 +491,7 @@ class GratkitFireflyCard extends HTMLElement {
         "div",
         { class: "chips" },
         this._els.power,
-        h("span", { class: "chip on" }, this._els.lightSw, this._els.light),
+        this._els.lightChip,
         this._els.lcd,
         this._els.sound,
       ),
@@ -540,6 +591,12 @@ class GratkitFireflyCard extends HTMLElement {
   disconnectedCallback() {
     clearInterval(this._statsTimer);
     this._statsTimer = null;
+    // _pending write timers are left running deliberately: a click the user
+    // already made should still reach the device even if the card leaves the
+    // DOM before the debounce fires. _expiry timers exist only to repaint
+    // this card, so there is nothing left for them to do.
+    for (const t of Object.values(this._expiry)) clearTimeout(t);
+    this._expiry = {};
   }
 
   async _fetchStats() {
