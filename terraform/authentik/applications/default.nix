@@ -22,6 +22,7 @@
     ./romm.nix
     ./sillytavern.nix
     ./sonarr.nix
+    ./spoolman.nix
     ./traefik.nix
     ./zipline.nix
   ];
