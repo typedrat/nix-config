@@ -57,6 +57,41 @@ const errorInfo = (s) => {
   return { fault: s.state === "on", code: s.state === "on" ? "1" : null };
 };
 
+// DP 101 is `countdown`, in minutes, but localtuya declares its unit as "s".
+const fmtDuration = (mins) => {
+  if (mins === null || mins <= 0) return "Off";
+  const h = Math.floor(mins / 60);
+  const m = Math.round(mins % 60);
+  if (!h) return `${m} m`;
+  return m ? `${h} h ${m} m` : `${h} h`;
+};
+
+const TIMER_STEP = 30;
+
+const LIGHT_COLOURS = {
+  Red: "#e53935", Green: "#43a047", Blue: "#1e88e5", White: "#fafafa",
+  Yellow: "#fdd835", Cyan: "#00acc1", Purple: "#8e24aa", Orange: "#fb8c00",
+  Pink: "#ec407a",
+};
+const LIGHT_EFFECTS = ["Rainbow Fade", "Rainbow Blink", "Rainbow Smooth"];
+const RAINBOW = "linear-gradient(90deg,#e53935,#fdd835,#43a047,#1e88e5)";
+
+// The select also offers "13".."20", which have no documented meaning.
+const lightOptions = (s) => {
+  const all = s?.attributes?.options || [];
+  const known = ["OFF", ...Object.keys(LIGHT_COLOURS), ...LIGHT_EFFECTS];
+  const shown = all.filter((o) => known.includes(o));
+  // Keep the current value selectable even when it is one of the unnamed ones.
+  if (s && !shown.includes(s.state) && all.includes(s.state)) shown.push(s.state);
+  return shown;
+};
+
+const lightSwatch = (option) => {
+  if (option === "OFF") return "transparent";
+  if (LIGHT_EFFECTS.includes(option)) return RAINBOW;
+  return LIGHT_COLOURS[option] || "var(--gkf-muted)";
+};
+
 const GAUGE_START = 135;
 const GAUGE_SWEEP = 270;
 
@@ -138,6 +173,33 @@ const STYLE = `
           color: var(--gkf-muted); margin-top: 2px; }
   .nodata { position: absolute; inset: 0; display: flex; align-items: center;
             justify-content: center; font-size: 12px; color: var(--gkf-muted); }
+  .diag { display: flex; gap: 6px; flex-wrap: wrap; font-size: 11px;
+          color: var(--gkf-muted); margin-top: 10px; }
+  .rule { height: 1px; background: var(--gkf-line); margin: 12px 0; }
+  .row { display: flex; align-items: center; justify-content: space-between;
+         gap: 10px; padding: 5px 0; }
+  .row .k { font-size: 13px; }
+  .stepper { display: flex; align-items: center; gap: 2px;
+             background: var(--gkf-line); border-radius: 16px; padding: 2px; }
+  .stepper button { width: 26px; height: 26px; border: 0; border-radius: 50%;
+                    background: transparent; color: inherit; font-size: 15px;
+                    line-height: 1; cursor: pointer; }
+  .stepper button:disabled { opacity: .35; cursor: default; }
+  .stepper .v { min-width: 66px; text-align: center; font-size: 13px;
+                font-variant-numeric: tabular-nums; }
+  select { background: var(--gkf-line); border: 0; border-radius: 8px;
+           padding: 6px 10px; font-size: 13px; color: inherit;
+           font-family: inherit; cursor: pointer; }
+  select:disabled { opacity: .35; cursor: default; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { display: flex; align-items: center; gap: 6px; font-size: 12px;
+          padding: 6px 11px; border-radius: 16px; background: var(--gkf-line);
+          cursor: pointer; border: 0; color: inherit; font-family: inherit; }
+  .chip:disabled { opacity: .35; cursor: default; }
+  .chip.on { background: color-mix(in srgb, var(--primary-color, #03a9f4) 20%, transparent);
+             color: var(--primary-color, #03a9f4); }
+  .sw { width: 12px; height: 12px; border-radius: 50%;
+        border: 1px solid var(--gkf-line); }
 `;
 
 class GratkitFireflyCard extends HTMLElement {
@@ -182,6 +244,106 @@ class GratkitFireflyCard extends HTMLElement {
     this.dispatchEvent(ev);
   }
 
+  // Holding a stepper button would otherwise fire one Tuya write per click.
+  _setNumber(entityId, value) {
+    this._pending = this._pending || {};
+    this._optimistic = this._optimistic || {};
+    this._optimistic[entityId] = value;
+    clearTimeout(this._pending[entityId]);
+    this._pending[entityId] = setTimeout(() => {
+      delete this._pending[entityId];
+      delete this._optimistic[entityId];
+      this._hass.callService("number", "set_value", {
+        entity_id: entityId,
+        value,
+      });
+    }, 400);
+    this._updateControls();
+  }
+
+  _nudgeTemp(delta) {
+    const s = stateOf(this._hass, this._config.target_temp);
+    const current = this._optimistic?.[this._config.target_temp] ?? num(s);
+    if (current === null) return;
+    const lo = s.attributes?.min ?? 40;
+    const hi = s.attributes?.max ?? 70;
+    this._setNumber(this._config.target_temp, Math.min(hi, Math.max(lo, current + delta)));
+  }
+
+  _nudgeTimer(delta) {
+    const s = stateOf(this._hass, this._config.timer);
+    const current = this._optimistic?.[this._config.timer] ?? num(s);
+    if (current === null) return;
+    // Snap off-grid values (the device counts down continuously) onto the step.
+    const base = delta > 0 ? Math.floor(current / TIMER_STEP) * TIMER_STEP
+                           : Math.ceil(current / TIMER_STEP) * TIMER_STEP;
+    this._setNumber(this._config.timer, Math.min(1440, Math.max(0, base + delta)));
+  }
+
+  _updateDiagnostics() {
+    const hass = this._hass;
+    const c = this._config;
+    const bits = [];
+    const heater = num(stateOf(hass, c.heating_temp));
+    if (c.heating_temp) bits.push(`Heater ${fmt(heater, 0, " °C")}`);
+    const rpm = num(stateOf(hass, c.fan_speed));
+    if (c.fan_speed) bits.push(`Fan ${fmt(rpm, 0, " rpm")}`);
+    this._els.diag.textContent = bits.join(" · ");
+  }
+
+  _updateControls() {
+    const hass = this._hass;
+    const c = this._config;
+
+    const material = stateOf(hass, c.material);
+    const sel = this._els.material;
+    sel.disabled = isDead(material);
+    const options = material?.attributes?.options || [];
+    if (sel.dataset.options !== options.join(" ")) {
+      sel.dataset.options = options.join(" ");
+      sel.textContent = "";
+      for (const o of options) sel.appendChild(h("option", { value: o }, o));
+    }
+    if (!isDead(material)) sel.value = material.state;
+
+    const target = stateOf(hass, c.target_temp);
+    const targetVal = this._optimistic?.[c.target_temp] ?? num(target);
+    this._els.temp.v.textContent = fmt(targetVal, 0, " °C");
+    this._els.temp.down.disabled = this._els.temp.up.disabled = targetVal === null;
+
+    const timerVal = this._optimistic?.[c.timer] ?? num(stateOf(hass, c.timer));
+    this._els.timer.v.textContent = timerVal === null ? DASH : fmtDuration(timerVal);
+    this._els.timer.down.disabled = this._els.timer.up.disabled = timerVal === null;
+
+    const fan = stateOf(hass, c.fan);
+    const on = fan && fan.state === "on";
+    this._els.power.textContent = `⏻ ${isDead(fan) ? DASH : on ? "On" : "Off"}`;
+    this._els.power.className = on ? "chip on" : "chip";
+    this._els.power.disabled = isDead(fan);
+
+    const light = stateOf(hass, c.light);
+    const lsel = this._els.light;
+    lsel.disabled = isDead(light);
+    const lopts = lightOptions(light);
+    if (lsel.dataset.options !== lopts.join(" ")) {
+      lsel.dataset.options = lopts.join(" ");
+      lsel.textContent = "";
+      for (const o of lopts) lsel.appendChild(h("option", { value: o }, o));
+    }
+    if (!isDead(light)) {
+      lsel.value = light.state;
+      this._els.lightSw.style.background = lightSwatch(light.state);
+    }
+
+    for (const [key, icon, label] of [["lcd", "▣", "LCD"], ["sound", "♪", "Sound"]]) {
+      const s = stateOf(hass, c[key]);
+      const el = this._els[key];
+      el.textContent = `${icon} ${label}`;
+      el.className = s && s.state === "on" ? "chip on" : "chip";
+      el.disabled = isDead(s);
+    }
+  }
+
   _build() {
     const c = this._config;
 
@@ -219,6 +381,71 @@ class GratkitFireflyCard extends HTMLElement {
       h("div", { class: "axis" }, this._els.axisFrom, h("span", {}, "now")),
     );
 
+    this._els.diag = h("div", { class: "diag" });
+
+    this._els.material = h("select", {
+      onchange: (e) =>
+        this._hass.callService("select", "select_option", {
+          entity_id: c.material,
+          option: e.target.value,
+        }),
+    });
+
+    const stepper = (onDown, onUp) => {
+      const down = h("button", { onclick: onDown }, "−");
+      const up = h("button", { onclick: onUp }, "+");
+      const v = h("span", { class: "v" });
+      return { node: h("span", { class: "stepper" }, down, v, up), down, up, v };
+    };
+
+    this._els.temp = stepper(
+      () => this._nudgeTemp(-1),
+      () => this._nudgeTemp(1),
+    );
+    this._els.timer = stepper(
+      () => this._nudgeTimer(-TIMER_STEP),
+      () => this._nudgeTimer(TIMER_STEP),
+    );
+
+    this._els.power = h("button", {
+      class: "chip",
+      onclick: () => this._hass.callService("fan", "toggle", { entity_id: c.fan }),
+    });
+    this._els.lightSw = h("span", { class: "sw" });
+    this._els.light = h("select", {
+      onchange: (e) =>
+        this._hass.callService("select", "select_option", {
+          entity_id: c.light,
+          option: e.target.value,
+        }),
+    });
+    this._els.lcd = h("button", {
+      class: "chip",
+      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.lcd }),
+    });
+    this._els.sound = h("button", {
+      class: "chip",
+      onclick: () => this._hass.callService("switch", "toggle", { entity_id: c.sound }),
+    });
+
+    const controls = h(
+      "div",
+      {},
+      h("div", { class: "rule" }),
+      h("div", { class: "row" }, h("span", { class: "k" }, "Material"), this._els.material),
+      h("div", { class: "row" }, h("span", { class: "k" }, "Target temp"), this._els.temp.node),
+      h("div", { class: "row" }, h("span", { class: "k" }, "Timer"), this._els.timer.node),
+      h("div", { class: "rule" }),
+      h(
+        "div",
+        { class: "chips" },
+        this._els.power,
+        h("span", { class: "chip on" }, this._els.lightSw, this._els.light),
+        this._els.lcd,
+        this._els.sound,
+      ),
+    );
+
     const card = h(
       "ha-card",
       {},
@@ -233,6 +460,8 @@ class GratkitFireflyCard extends HTMLElement {
         ),
         gauges,
         graph,
+        this._els.diag,
+        controls,
       ),
     );
 
@@ -246,6 +475,8 @@ class GratkitFireflyCard extends HTMLElement {
     if (!this._hass || !this._config) return;
     this._updateHeader();
     this._updateGauges();
+    this._updateDiagnostics();
+    this._updateControls();
   }
 
   _updateHeader() {
