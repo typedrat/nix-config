@@ -133,6 +133,21 @@
       box-shadow: 0 0 0 3px fade(@accent, 15%);
     }
 
+    /* The wordmark sits inside an <a>, so it picks up the global link color
+       and reads as a link rather than as the product name. */
+    .logo {
+      color: @text;
+    }
+
+    /* spoolman.svg is a multi-color raster-ish mark (orange body, blue
+       highlights) loaded through <img>, so it cannot be reached with `fill`.
+       The palette filters flatten it to black first, then tint, which collapses
+       it to a single accent-colored silhouette. A <span class="mark"> elsewhere
+       is unrelated, hence the element qualifier. */
+    img.mark {
+      filter: @accent-filter;
+    }
+
     /* Zebra striping done with white alpha, which disappears against a light
        page in Latte. */
     .row {
