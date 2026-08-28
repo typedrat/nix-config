@@ -2,6 +2,7 @@
   lib,
   inputs,
   stdenv,
+  callPackage,
   makeWrapper,
   kicad,
 }:
@@ -13,19 +14,28 @@ let
   upstream =
     inputs.konnect.packages.${stdenv.hostPlatform.system}.konnect
     or inputs.konnect.packages.x86_64-linux.konnect;
+
+  schematic-viewer = callPackage ./viewer.nix {};
 in
   upstream.overrideAttrs (prev: {
     nativeBuildInputs = prev.nativeBuildInputs ++ [makeWrapper];
 
-    # Exports, ERC/DRC, and schematic rendering shell out to `kicad-cli`, looked up
-    # bare on PATH. Suffixed so a KiCAD the user installed themselves still wins —
-    # the CLI has to match the KiCAD generating the files it reads.
+    # PATH: exports, ERC/DRC, and schematic rendering shell out to `kicad-cli`,
+    # looked up bare. Suffixed so a KiCAD the user installed themselves still
+    # wins — the CLI has to match the KiCAD generating the files it reads.
+    #
+    # Symlink: `open_schematic_viewer` locates the viewer beside its own
+    # executable, and nowhere else worth relying on.
     postInstall =
       (prev.postInstall or "")
       + ''
         wrapProgram $out/bin/konnect \
           --suffix PATH : ${lib.makeBinPath [kicad]}
+
+        ln -s ${lib.getExe schematic-viewer} $out/bin/schematic-viewer
       '';
+
+    passthru = (prev.passthru or {}) // {inherit schematic-viewer;};
 
     meta =
       prev.meta
