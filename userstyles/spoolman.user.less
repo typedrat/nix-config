@@ -1,0 +1,145 @@
+/* ==UserStyle==
+@name           Spoolman Catppuccin
+@namespace      thisratis.gay/spoolman
+@version        1.0.0
+@description    Catppuccin theme for the Spoolman filament inventory
+@author         Alexis Williams
+@license        MIT
+
+@preprocessor   less
+@var select lightFlavor "Light Flavor" ["latte:Latte*", "frappe:Frappé", "macchiato:Macchiato", "mocha:Mocha"]
+@var select darkFlavor "Dark Flavor" ["latte:Latte", "frappe:Frappé*", "macchiato:Macchiato", "mocha:Mocha"]
+@var select accentColor "Accent" ["rosewater:Rosewater", "flamingo:Flamingo", "pink:Pink", "mauve:Mauve", "red:Red", "maroon:Maroon", "peach:Peach", "yellow:Yellow", "green:Green", "teal:Teal", "blue:Blue", "sapphire:Sapphire", "sky:Sky", "lavender:Lavender*", "subtext0:Gray"]
+@var text urls "Spoolman URL(s), comma separated" "spoolman\.thisratis\.gay,localhost\:7912"
+==/UserStyle== */
+
+@import "https://userstyles.catppuccin.com/lib/lib.less";
+
+@-moz-document regexp(
+    replace(replace(%("https?://(%s)/.*", @urls), ",", "|", "g"), " ", "", "g")
+  ) {
+  /* Spoolman defines its dark palette on bare `:root` and its light palette on
+     `:root[data-theme="light"]`, so a bare `:root` here would lose to the app's
+     own light rule on specificity. Leading with `html` outranks both. */
+  html:root:not([data-theme="light"]) {
+    #catppuccin(@darkFlavor);
+  }
+  html:root[data-theme="light"] {
+    #catppuccin(@lightFlavor);
+  }
+
+  #catppuccin(@flavor) {
+    #lib.palette();
+    #lib.defaults();
+
+    /* Spoolman layers surfaces from sunken to raised. In the dark flavors that
+       ramp runs upward from base; Latte has nothing lighter than base, so it
+       runs the page down onto mantle and lets raised elements sit at base. */
+    & when not (@flavor = latte) {
+      --bg: @base;
+      --bg-app: @base;
+      --surface: @surface0;
+      --surface-2: @surface0;
+      --surface-raised: @surface1;
+      --surface-sunken: @mantle;
+      --input-bg: @crust;
+    }
+    & when (@flavor = latte) {
+      --bg: @mantle;
+      --bg-app: @mantle;
+      --surface: @base;
+      --surface-2: @base;
+      --surface-raised: @base;
+      --surface-sunken: @crust;
+      --input-bg: @base;
+    }
+
+    /* Borders read as "more contrast" in the same direction in every flavor:
+       surface0 is the faintest against the page, surface2 the strongest. */
+    --border: @surface1;
+    --border-soft: @surface0;
+    --border-strong: @surface2;
+    --border-input: @surface1;
+    --hairline: fade(@overlay0, 20%);
+    --track: @surface1;
+    --swatch-border: @surface1;
+    --swatch-border-hover: @surface2;
+
+    /* Five-step text ramp onto the palette's own. */
+    --text: @text;
+    --text-2: @subtext1;
+    --text-muted: @subtext0;
+    --text-dim: @overlay2;
+    --text-faint: @overlay1;
+
+    --accent: @accent;
+    --accent-fill: @accent;
+    --accent-link: @accent;
+    --accent-muted: @overlay2;
+    --accent-muted-2: @subtext0;
+    --accent-wash: fade(@accent, 14%);
+    --accent-wash-soft: fade(@accent, 6%);
+    --accent-border: fade(@accent, 30%);
+
+    /* Spoolman brightens the accent on hover in dark and darkens it in light,
+       so the two directions have to be mirrored rather than shared. */
+    & when not (@flavor = latte) {
+      --accent-hover: lighten(@accent, 8%);
+      --accent-fill-hover: darken(@accent, 8%);
+      --accent-link-hover: lighten(@accent, 8%);
+      --accent-soft: lighten(@accent, 4%);
+    }
+    & when (@flavor = latte) {
+      --accent-hover: darken(@accent, 8%);
+      --accent-fill-hover: darken(@accent, 12%);
+      --accent-link-hover: darken(@accent, 8%);
+      --accent-soft: darken(@accent, 4%);
+    }
+
+    --danger: @red;
+    --danger-soft: @maroon;
+    --danger-wash: fade(@red, 14%);
+    --success: @green;
+    --success-border: fade(@green, 40%);
+
+    /* The "unused spool" state is a warning, not an error. */
+    --unused-bg: fade(@peach, 12%);
+    --unused-border: fade(@peach, 30%);
+    --unused-text: @peach;
+
+    /* Everything below bypasses the variables above with literal colors. */
+
+    /* White text baked onto filled accent and danger controls. The palette's
+       accents are pastel in the dark flavors and saturated in Latte, so crust
+       is the foreground that stays legible on both. */
+    .primary,
+    .danger,
+    .day.selected,
+    .done,
+    .add-mobile,
+    .mode-btn.active,
+    .msg {
+      color: @crust;
+    }
+
+    /* The toggle knob is a literal white dot that has to read against both
+       states of its own track: --accent when on, --track when off. */
+    .knob {
+      background: @crust;
+    }
+
+    /* A focus ring hardcoded to Spoolman's own orange. */
+    .search-big:focus-within {
+      box-shadow: 0 0 0 3px fade(@accent, 15%);
+    }
+
+    /* Zebra striping done with white alpha, which disappears against a light
+       page in Latte. */
+    .row {
+      background: fade(@overlay0, 4%);
+    }
+    .instances {
+      background: fade(@overlay0, 3%);
+    }
+  }
+}
