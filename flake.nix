@@ -255,6 +255,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Konnect: AI-assisted PCB design for KiCAD over MCP
+    konnect = {
+      url = "github:mixelpixx/Konnect";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mediatek-mt7927-dkms = {
       url = "github:jetm/mediatek-mt7927-dkms";
       flake = false;

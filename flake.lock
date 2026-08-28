@@ -2051,6 +2051,27 @@
         "type": "github"
       }
     },
+    "konnect": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay_2"
+      },
+      "locked": {
+        "lastModified": 1787858101,
+        "narHash": "sha256-28ZFclLZh27pXeMjOGsEGEQw7CmI1+mycd0/cxZHcCQ=",
+        "owner": "mixelpixx",
+        "repo": "Konnect",
+        "rev": "e2a204bb4b1b676d44c18d98fb72fa7daefd5e30",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mixelpixx",
+        "repo": "Konnect",
+        "type": "github"
+      }
+    },
     "lanzaboote": {
       "inputs": {
         "crane": "crane",
@@ -2058,7 +2079,7 @@
           "nixpkgs"
         ],
         "pre-commit": "pre-commit",
-        "rust-overlay": "rust-overlay_2"
+        "rust-overlay": "rust-overlay_3"
       },
       "locked": {
         "lastModified": 1782141370,
@@ -3111,6 +3132,7 @@
         "hyprlock": "hyprlock",
         "impermanence": "impermanence",
         "jellarr": "jellarr",
+        "konnect": "konnect",
         "lanzaboote": "lanzaboote",
         "lanzaboote-rust-overlay": "lanzaboote-rust-overlay",
         "mediatek-mt7927-dkms": "mediatek-mt7927-dkms",
@@ -3187,6 +3209,27 @@
       }
     },
     "rust-overlay_2": {
+      "inputs": {
+        "nixpkgs": [
+          "konnect",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786680812,
+        "narHash": "sha256-5lDFwethgqSULdupYl3Eu5n80jfcbb85gSJX/jb58GQ=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "f1dcc7e4ea4fdb6d8f276face22f353832b161e3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_3": {
       "inputs": {
         "nixpkgs": [
           "lanzaboote",
