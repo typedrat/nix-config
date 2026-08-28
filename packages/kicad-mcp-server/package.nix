@@ -49,6 +49,15 @@ in
 
     npmDepsHash = "sha256-LBUZmYzYnaVyuU0/fwy6t3yoIIb8Qbve/mF/Fv6Y6qg=";
 
+    patches = [
+      # The IPC backend still speaks the kipy 0.6 API: `ping()` now times out on
+      # a live connection, `get_open_documents()` demands a document type, and
+      # `pcbnew.GetGlobalFootprintLib()` is gone in KiCAD 10, so footprints are
+      # loaded straight out of a `.pretty` directory instead.
+      # (mixelpixx/KiCAD-MCP-Server#378)
+      ./kipy-0.7-kicad-10-compat.patch
+    ];
+
     nativeBuildInputs = [
       makeWrapper
     ];
@@ -66,6 +75,10 @@ in
       cp -r config $out/lib/kicad-mcp-server/
       cp package.json $out/lib/kicad-mcp-server/
 
+      # KICAD_FOOTPRINTS_DIR is the patched footprint loader's own lookup root,
+      # unversioned and distinct from KiCAD's own vars; unset, it falls back to
+      # a hardcoded Windows path.
+      #
       # The 3rd-party dir goes through --run because --set-default shell-quotes
       # its value, which would leave $HOME literal.
       makeWrapper ${lib.getExe nodejs} $out/bin/kicad-mcp-server \
@@ -75,6 +88,7 @@ in
         --set-default PYTHONPATH ${pythonEnv}/${python3.sitePackages} \
         --set-default KICAD${kicadMajor}_SYMBOL_DIR ${kicad.libraries.symbols}/share/kicad/symbols \
         --set-default KICAD${kicadMajor}_FOOTPRINT_DIR ${kicad.libraries.footprints}/share/kicad/footprints \
+        --set-default KICAD_FOOTPRINTS_DIR ${kicad.libraries.footprints}/share/kicad/footprints \
         --set-default FREEROUTING_JAR ${freerouting}/share/freerouting/freerouting-executable.jar \
         --run 'export KICAD${kicadMajor}_3RD_PARTY="''${KICAD${kicadMajor}_3RD_PARTY:-''${XDG_DATA_HOME:-$HOME/.local/share}/kicad/${kicadSeries}/3rdparty}"'
 

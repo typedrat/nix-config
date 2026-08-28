@@ -1,0 +1,123 @@
+diff --git a/python/kicad_api/ipc_backend.py b/python/kicad_api/ipc_backend.py
+index 6f9a813..96dc136 100644
+--- a/python/kicad_api/ipc_backend.py
++++ b/python/kicad_api/ipc_backend.py
+@@ -145,8 +145,10 @@ class IPCBackend(KiCADBackend):
+ 
+         def worker() -> None:
+             try:
+-                kicad = KiCad(socket_path=path) if path else KiCad()
+-                kicad.ping()  # returns None on success, raises on failure
++                # kipy 0.7.1: KiCad() auto-dials the running KiCad; ping() can
++                # time out even when connected, so verify with get_version().
++                kicad = KiCad() if not path else KiCad(socket_path=path)
++                kicad.get_version()
+                 result["kicad"] = kicad
+             except Exception as e:  # noqa: BLE001 — surfaced to caller below
+                 result["error"] = e
+@@ -679,29 +681,33 @@ class IPCBoardAPI(BoardAPI):
+                 lib_name = None
+                 fp_name = footprint_path
+ 
+-            # Get the footprint library table
+-            fp_lib_table = pcbnew.GetGlobalFootprintLib()
+-
+-            if lib_name:
+-                # Load from specific library
++            # KiCad 10 removed GetGlobalFootprintLib; load by .pretty dir path.
++            def _pretty_dirs() -> list:
++                roots = [
++                    os.environ.get("KICAD_FOOTPRINTS_DIR", r"D:\kicad\share\kicad\footprints"),
++                    r"D:\kicad\custom-lib",
++                    os.path.expanduser(r"~\Documents\KiCad\10.0\libraries"),
++                ]
++                dirs: list = []
++                for root in roots:
++                    if lib_name:
++                        dirs.append(os.path.join(root, lib_name + ".pretty"))
++                    elif os.path.isdir(root):
++                        dirs.extend(
++                            os.path.join(root, d)
++                            for d in os.listdir(root)
++                            if d.endswith(".pretty")
++                        )
++                return dirs
++
++            for pretty_dir in _pretty_dirs():
+                 try:
+-                    loaded_fp = pcbnew.FootprintLoad(fp_lib_table, lib_name, fp_name)
++                    loaded_fp = pcbnew.FootprintLoad(pretty_dir, fp_name)
+                     if loaded_fp:
+-                        logger.info(f"Loaded footprint '{fp_name}' from library '{lib_name}'")
++                        logger.info(f"Loaded footprint '{fp_name}' from {pretty_dir}")
+                         return loaded_fp
+                 except Exception as e:
+-                    logger.warning(f"Could not load from {lib_name}: {e}")
+-            else:
+-                # Search all libraries for the footprint
+-                lib_names = fp_lib_table.GetLogicalLibs()
+-                for lib in lib_names:
+-                    try:
+-                        loaded_fp = pcbnew.FootprintLoad(fp_lib_table, lib, fp_name)
+-                        if loaded_fp:
+-                            logger.info(f"Found footprint '{fp_name}' in library '{lib}'")
+-                            return loaded_fp
+-                    except:
+-                        continue
++                    logger.debug(f"FootprintLoad failed for {pretty_dir}: {e}")
+ 
+             logger.warning(f"Footprint '{footprint_path}' not found in any library")
+             return None
+@@ -741,8 +747,19 @@ class IPCBoardAPI(BoardAPI):
+ 
+             # Try to get the board path from kipy
+             try:
+-                docs = self._kicad.get_open_documents()
++                from kipy.proto.common.types import DocumentType
++                docs = self._kicad.get_open_documents(DocumentType.DOCTYPE_PCB)
+                 for doc in docs:
++                    # kipy 0.7.x DocumentSpecifier: board_filename + project.path
++                    bf = getattr(doc, "board_filename", None)
++                    proj = getattr(doc, "project", None)
++                    proj_path = getattr(proj, "path", None) if proj else None
++                    if bf:
++                        if proj_path:
++                            board_path = os.path.join(str(proj_path), str(bf))
++                        else:
++                            board_path = str(bf)
++                        break
+                     if hasattr(doc, "path") and str(doc.path).endswith(".kicad_pcb"):
+                         board_path = str(doc.path)
+                         break
+diff --git a/python/kicad_interface.py b/python/kicad_interface.py
+index 8efe337..c5e094f 100644
+--- a/python/kicad_interface.py
++++ b/python/kicad_interface.py
+@@ -5274,7 +5274,7 @@ print("ok")
+         """IPC handler for place_component - places component with real-time UI update"""
+         try:
+             reference = params.get("reference", params.get("componentId", ""))
+-            footprint = params.get("footprint", "")
++            footprint = params.get("footprint") or params.get("componentId", "")
+             position = params.get("position", {})
+             x = position.get("x", 0) if isinstance(position, dict) else params.get("x", 0)
+             y = position.get("y", 0) if isinstance(position, dict) else params.get("y", 0)
+diff --git a/src/command-timeout.ts b/src/command-timeout.ts
+index 1fe464c..8e1b71d 100644
+--- a/src/command-timeout.ts
++++ b/src/command-timeout.ts
+@@ -17,6 +17,14 @@ export const LONG_COMMAND_TIMEOUT_MS = 600_000;
+  * parameter the caller passes.
+  */
+ export const LONG_RUNNING_COMMANDS = [
++  "open_project",
++  "create_project",
++  "open_board",
++  "reload_board",
++  "close_project",
++  "place_component",
++  "get_component_list",
++  "get_board_info",
+   "run_drc",
+   "export_gerber",
+   "export_pdf",
