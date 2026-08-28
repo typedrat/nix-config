@@ -139,17 +139,20 @@
       color: @text;
     }
 
-    /* spoolman.svg is an opaque orange tile (#dc7734) with the spool drawn on
-       top in neutral greys, loaded through <img> so `fill` cannot reach it. The
-       palette's own filters open with `brightness(0)`, which blackens the tile
-       and the spool alike and leaves nothing but the rounded square -- so the
-       mark is rotated in hue instead. hue-rotate's matrix leaves R=G=B untouched
-       (its rows sum to 1 and the sine terms cancel), so every grey survives and
-       only the tile moves. The result tracks the accent's hue rather than
-       matching it exactly, because the filter is an approximation of a true HSL
-       rotation. A <span class="mark"> elsewhere is unrelated, hence `img`. */
+    /* spoolman.svg is an opaque orange tile with the spool drawn on top in
+       neutral greys, loaded through <img> so `fill` cannot reach it, and the
+       palette's filters open with `brightness(0)` -- which flattens tile and
+       spool alike into a bare rounded rectangle. So the mark is substituted
+       outright for a recoloured copy of the same artwork. escape() emits the
+       colours as %23rrggbb, since a literal # would end the URI early.
+       A <span class="mark"> elsewhere is unrelated, hence `img`. */
+    @logo-tile: escape(~"@{accent}");
+    @logo-hub: escape(~"@{mantle}");
+    @logo-arm: escape(~"@{crust}");
+    @logo-filament: escape(~"@{surface2}");
+
     img.mark {
-      filter: hue-rotate(unit(hue(@accent) - hue(#dc7734), deg));
+      content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cpath style='fill:@{logo-tile}' d='M -116.78 -67.23 C -116.78 -94.6 -94.6 -116.78 -67.23 -116.78 L 67.23 -116.78 L 67.23 -116.78 C 94.6 -116.78 116.78 -94.6 116.78 -67.23 L 116.78 67.23 L 116.78 67.23 C 116.78 94.6 94.6 116.78 67.23 116.78 L -67.23 116.78 L -67.23 116.78 C -94.6 116.78 -116.78 94.6 -116.78 67.23 z' transform='matrix(0.94,0,0,0.94,110,110)'/%3E%3Cpath style='fill:@{logo-hub}' d='M 0 -22.46 C 12.4 -22.46 22.46 -12.4 22.46 0 C 22.46 12.4 12.4 22.46 0 22.46 C -12.4 22.46 -22.46 12.4 -22.46 0 C -22.46 -12.4 -12.4 -22.46 0 -22.46 z' transform='matrix(4.01,0,0,4.01,110,110)'/%3E%3Cpath style='fill:@{logo-arm}' d='M -33.16 25.3 C -35.27 24.71 -37.02 23.25 -37.99 21.29 C -38.95 19.33 -39.03 17.05 -38.21 15.02 L -38.21 15.02 L -38.21 15.02 C -28.42 -9.21 -9.21 -28.42 15.01 -38.21 L 15.05 -38.22 L 15.05 -38.22 C 17.07 -39.04 19.34 -38.96 21.29 -38 C 23.25 -37.03 24.7 -35.29 25.29 -33.19 L 38 12.2 L 38 12.2 C 40.04 19.48 37.99 27.3 32.64 32.65 C 27.29 38 19.48 40.04 12.19 38 z' transform='matrix(-0.66,0.66,-0.66,-0.66,170,110)'/%3E%3Cpath style='fill:@{logo-filament}' d='M -29.98 19.8 L -29.17 17.09 L -29.17 17.09 C -22.39 -5.57 -4.47 -23.19 18.32 -29.57 L 19.89 -30.01 L 29.21 3.47 L 29.21 3.47 C 31.24 10.76 29.18 18.57 23.83 23.91 C 18.47 29.24 10.65 31.28 3.38 29.22 z' transform='matrix(-0.66,0.66,-0.66,-0.66,158.49,110.08)'/%3E%3Cpath style='fill:@{logo-arm}' d='M -33.16 25.3 C -35.27 24.71 -37.02 23.25 -37.99 21.29 C -38.95 19.33 -39.03 17.05 -38.21 15.02 L -38.21 15.02 L -38.21 15.02 C -28.42 -9.21 -9.21 -28.42 15.01 -38.21 L 15.05 -38.22 L 15.05 -38.22 C 17.07 -39.04 19.34 -38.96 21.29 -38 C 23.25 -37.03 24.7 -35.29 25.29 -33.19 L 38 12.2 L 38 12.2 C 40.04 19.48 37.99 27.3 32.64 32.65 C 27.29 38 19.48 40.04 12.19 38 z' transform='matrix(-0.24,-0.9,0.9,-0.24,81.1,162.74)'/%3E%3Cpath style='fill:@{logo-filament}' d='M -29.98 19.8 L -29.17 17.09 L -29.17 17.09 C -22.39 -5.57 -4.47 -23.19 18.32 -29.57 L 19.89 -30.01 L 29.21 3.47 L 29.21 3.47 C 31.24 10.76 29.18 18.57 23.83 23.91 C 18.47 29.24 10.65 31.28 3.38 29.22 z' transform='matrix(-0.24,-0.9,0.9,-0.24,86.78,152.73)'/%3E%3Cpath style='fill:@{logo-arm}' d='M -33.16 25.3 C -35.27 24.71 -37.02 23.25 -37.99 21.29 C -38.95 19.33 -39.03 17.05 -38.21 15.02 L -38.21 15.02 L -38.21 15.02 C -28.42 -9.21 -9.21 -28.42 15.01 -38.21 L 15.05 -38.22 L 15.05 -38.22 C 17.07 -39.04 19.34 -38.96 21.29 -38 C 23.25 -37.03 24.7 -35.29 25.29 -33.19 L 38 12.2 L 38 12.2 C 40.04 19.48 37.99 27.3 32.64 32.65 C 27.29 38 19.48 40.04 12.19 38 z' transform='matrix(0.9,0.24,-0.24,0.9,80.68,58.48)'/%3E%3Cpath style='fill:@{logo-filament}' d='M -29.98 19.8 L -29.17 17.09 L -29.17 17.09 C -22.39 -5.57 -4.47 -23.19 18.32 -29.57 L 19.89 -30.01 L 29.21 3.47 L 29.21 3.47 C 31.24 10.76 29.18 18.57 23.83 23.91 C 18.47 29.24 10.65 31.28 3.38 29.22 z' transform='matrix(0.9,0.24,-0.24,0.9,86.51,68.41)'/%3E%3C/svg%3E");
     }
 
     /* Zebra striping done with white alpha, which disappears against a light
