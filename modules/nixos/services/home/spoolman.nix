@@ -58,27 +58,6 @@ in {
     (modules.mkIf cfg.enable {
       links.spoolman.protocol = "http";
 
-      # inline-snapshot reaches the build as one of FastAPI's test dependencies,
-      # and its documentation tests assert that the code samples in the shipped
-      # markdown match what the current black emits. They no longer do. The
-      # tests skip themselves on every interpreter except 3.12, so nixpkgs'
-      # default interpreter never runs them and the breakage is invisible
-      # upstream; Spoolman pins 3.12, which is what exposes it. Scoped to
-      # Spoolman's own interpreter so nothing else rebuilds.
-      nixpkgs.overlays = [
-        (_: prev: {
-          spoolman = prev.spoolman.override {
-            python312 = prev.python312.override {
-              packageOverrides = _: pyPrev: {
-                inline-snapshot = pyPrev.inline-snapshot.overridePythonAttrs (old: {
-                  disabledTestPaths = (old.disabledTestPaths or []) ++ ["tests/test_docs.py"];
-                });
-              };
-            };
-          };
-        })
-      ];
-
       services.spoolman = {
         enable = true;
         listen = config.links.spoolman.ipv4;
