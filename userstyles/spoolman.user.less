@@ -109,16 +109,28 @@
 
     /* Everything below bypasses the variables above with literal colors. */
 
-    /* White text baked onto filled accent and danger controls. The palette's
-       accents are pastel in the dark flavors and saturated in Latte, so crust
-       is the foreground that stays legible on both. */
+    /* White text baked onto controls filled with --accent-fill or --danger.
+       The palette's accents are pastel in the dark flavors and saturated in
+       Latte, so crust is the foreground that stays legible on both.
+
+       Deliberately not `.msg`, which looks like one of these but is the
+       scanner's caption: white on a translucent black scrim over the camera
+       feed, where a dark foreground would vanish. */
     .primary,
+    .btn.primary,
     .danger,
     .day.selected,
     .done,
     .add-mobile,
     .mode-btn.active,
-    .msg {
+    /* Only the theme picker's segmented control is filled with --accent-fill;
+       the sort and filter ones use --accent-wash with --accent-soft text and
+       are already legible, so this cannot be widened to a bare
+       `.seg-btn.active`. The suffix is Svelte's per-component build hash and
+       will change if Spoolman's own styles are rebuilt -- if the active
+       segment goes back to white-on-pastel, re-find it by searching the
+       stylesheets for `.seg-btn.active` paired with `background:var(--accent-fill)`. */
+    .seg-btn.active.svelte-1i19ct2 {
       color: @crust;
     }
 
