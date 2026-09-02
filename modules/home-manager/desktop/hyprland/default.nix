@@ -4,6 +4,7 @@
   pkgs,
   lib,
   hlLib,
+  wakeDisplays,
   ...
 }: let
   inherit (lib) modules;
@@ -50,6 +51,9 @@ in {
     # Shared Lua-config helpers (hlLib module arg)
     ./lua-helpers.nix
 
+    # `wake-displays` recovery command (wakeDisplays module arg)
+    ./wake-displays.nix
+
     # Simple toggles
     ./bitwarden-resize.nix
     ./blur.nix
@@ -73,6 +77,7 @@ in {
 
     home.packages = with pkgs;
       [
+        wakeDisplays
         hyprpolkitagent
         mpvpaper
         waytrogen
@@ -143,6 +148,7 @@ in {
           (bind "SUPER + s" (dsp.exec "hyprshot -m window"))
           (bind "SUPER + SHIFT + s" (dsp.exec "hyprshot -m region"))
           (bind "SUPER + l" (dsp.exec "loginctl lock-session"))
+          (bind "SUPER + SHIFT + d" (dsp.exec (lib.getExe wakeDisplays)))
           (bind "SUPER + f" dsp.toggleFloating)
           (bind "SUPER + k" dsp.close)
           (bind "SUPER + SHIFT + k" dsp.forceKill)

@@ -1,0 +1,46 @@
+--- a/src/output/Monitor.cpp
++++ b/src/output/Monitor.cpp
+@@ -2350,8 +2350,12 @@
+ }
+ 
+ void CMonitor::setDPMS(bool on) {
+-    // Don't trigger animation if the target state is the same
+-    if (m_dpmsStatus == on)
++    // Don't trigger animation if the target state is the same. Turning on is
++    // exempt: nothing ever observes a panel switched off at its own power
++    // button, so this record goes stale with no way to correct it, and
++    // re-committing the enable is what forces the modeset that retrains the
++    // link and lights the panel again.
++    if (!on && !m_dpmsStatus)
+         return;
+ 
+     m_dpmsStatus = on;
+@@ -2388,6 +2392,16 @@
+     if (!state)
+         m_usedAsyncBuffers.clear();
+ 
++    // A sleeping sink reports no VRR capability, and the backend rejects the
++    // whole commit rather than just the adaptive sync bit, so an enable that
++    // still carries a latched flag can never land. Drop it the way ensureVRR
++    // does, and clear m_vrrActive so ensureVRR puts it back once the link is
++    // up and the capability reads true again.
++    if (state && !m_state.test()) {
++        m_output->state->setAdaptiveSync(false);
++        m_vrrActive = false;
++    }
++
+     if (!m_state.commit()) {
+         Log::logger->log(Log::ERR, "Couldn't commit output {} for DPMS = {}, will retry.", m_name, state);
+ 
+@@ -2407,6 +2421,11 @@
+ 
+                 if (!m_state.commit()) {
+                     Log::logger->log(Log::ERR, "Couldn't retry committing output {} for DPMS = {}", m_name, m_dpmsStatus);
++                    // Nothing landed, so the output still holds its previous
++                    // state; keeping the optimistic record would leave every
++                    // later request for that state believing it is satisfied.
++                    m_dpmsStatus = !m_dpmsStatus;
++                    m_events.dpmsChanged.emit();
+                     return;
+                 }
+ 

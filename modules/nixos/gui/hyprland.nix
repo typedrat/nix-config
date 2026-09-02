@@ -52,7 +52,14 @@ in {
       enable = true;
       withUWSM = true;
 
-      package = inputs'.hyprland.packages.hyprland;
+      # Three DPMS defects, all reachable when a display is switched off at its
+      # own power button: `dpms on` is a no-op because setDPMS trusts a record
+      # nothing ever corrects; an enable carrying a latched adaptive-sync flag
+      # is rejected outright by the backend while the sink sleeps; and a commit
+      # that never lands still leaves that record claiming it did.
+      package = inputs'.hyprland.packages.hyprland.overrideAttrs (old: {
+        patches = (old.patches or []) ++ [./hyprland-dpms-fixes.patch];
+      });
       portalPackage = inputs'.hyprland.packages.xdg-desktop-portal-hyprland;
     };
 
