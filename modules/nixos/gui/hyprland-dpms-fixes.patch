@@ -1,6 +1,6 @@
 --- a/src/output/Monitor.cpp
 +++ b/src/output/Monitor.cpp
-@@ -2350,8 +2350,12 @@
+@@ -2364,8 +2364,12 @@
  }
  
  void CMonitor::setDPMS(bool on) {
@@ -15,7 +15,7 @@
          return;
  
      m_dpmsStatus = on;
-@@ -2388,6 +2392,16 @@
+@@ -2402,6 +2406,16 @@
      if (!state)
          m_usedAsyncBuffers.clear();
  
@@ -30,12 +30,12 @@
 +    }
 +
      if (!m_state.commit()) {
-         Log::logger->log(Log::ERR, "Couldn't commit output {} for DPMS = {}, will retry.", m_name, state);
+         LOG(Log::ERR, "Couldn't commit output {} for DPMS = {}, will retry.", m_name, state);
  
-@@ -2407,6 +2421,11 @@
+@@ -2421,6 +2435,11 @@
  
                  if (!m_state.commit()) {
-                     Log::logger->log(Log::ERR, "Couldn't retry committing output {} for DPMS = {}", m_name, m_dpmsStatus);
+                     LOG(Log::ERR, "Couldn't retry committing output {} for DPMS = {}", m_name, m_dpmsStatus);
 +                    // Nothing landed, so the output still holds its previous
 +                    // state; keeping the optimistic record would leave every
 +                    // later request for that state believing it is satisfied.
