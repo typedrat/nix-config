@@ -168,6 +168,21 @@
     };
   };
 
+  # Enabled by rat.services.home-assistant.musicAssistant below; this only
+  # picks which providers' dependencies get installed. Each still has to be
+  # added and signed in to from Music Assistant's own UI.
+  rat.services.music-assistant.providers = [
+    # Players
+    "airplay"
+    "heos"
+    # sendspin is a builtin provider, so its dependencies are always present.
+
+    # Music sources
+    "jellyfin"
+    "spotify"
+    "ytmusic"
+  ];
+
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;
@@ -175,6 +190,7 @@
     # discovery creates stay unavailable and their controls do nothing.
     mqtt.extraAclRules = ["readwrite printguard/#"];
     go2rtc.enable = true;
+    musicAssistant.enable = true;
 
     customComponents =
       (with pkgs.home-assistant-custom-components; [

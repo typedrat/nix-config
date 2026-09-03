@@ -12,6 +12,7 @@ in {
     ./authentik.nix
     ./go2rtc.nix
     ./mqtt.nix
+    ./music-assistant.nix
   ];
   options.rat.services.home-assistant = {
     enable = options.mkEnableOption "Home Assistant";

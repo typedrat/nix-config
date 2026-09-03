@@ -11,17 +11,23 @@
   # source range picks its own binary.
   rules =
     lib.concatMap (
-      entry:
+      entry: let
+        # `--dport` takes `low:high` for a range, so both forms reduce to one
+        # argument and the rule shape stays identical.
+        dports =
+          map toString entry.ports
+          ++ map (range: "${toString range.from}:${toString range.to}") entry.portRanges;
+      in
         lib.concatMap (
           source:
-            map (port: {
+            map (dport: {
               binary =
                 if lib.hasInfix ":" source
                 then "ip6tables"
                 else "iptables";
-              match = "-s ${source} -p ${entry.protocol} --dport ${toString port} -j nixos-fw-accept";
+              match = "-s ${source} -p ${entry.protocol} --dport ${dport} -j nixos-fw-accept";
             })
-            entry.ports
+            dports
         )
         entry.sources
     )
@@ -46,7 +52,24 @@ in {
       options = {
         ports = options.mkOption {
           type = types.listOf types.port;
+          default = [];
           description = "Ports to open.";
+        };
+        portRanges = options.mkOption {
+          type = types.listOf (types.submodule {
+            options = {
+              from = options.mkOption {
+                type = types.port;
+                description = "First port in the range.";
+              };
+              to = options.mkOption {
+                type = types.port;
+                description = "Last port in the range, inclusive.";
+              };
+            };
+          });
+          default = [];
+          description = "Contiguous port ranges to open, in addition to {option}`ports`.";
         };
         sources = options.mkOption {
           type = types.listOf types.str;

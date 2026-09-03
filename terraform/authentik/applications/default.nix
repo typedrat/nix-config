@@ -12,6 +12,7 @@
     ./lidarr.nix
     ./jellyfin.nix
     ./matrix.nix
+    ./music-assistant.nix
     ./prometheus.nix
     ./printguard.nix
     ./prowlarr.nix

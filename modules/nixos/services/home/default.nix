@@ -5,6 +5,7 @@
     ./home-assistant
     ./matter-server.nix
     ./mosquitto.nix
+    ./music-assistant.nix
     ./printguard.nix
     ./spoolman.nix
     ./zwave-js.nix
