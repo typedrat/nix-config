@@ -36,8 +36,8 @@
                 links_to_tunnel
               );
             in ''
-              AWS_ACCESS_KEY_ID=$(sops decrypt ../secrets/default.yaml --extract '["b2"]["keyId"]')
-              AWS_SECRET_ACCESS_KEY=$(sops decrypt ../secrets/default.yaml --extract '["b2"]["applicationKey"]')
+              AWS_ACCESS_KEY_ID=$(sops decrypt ../secrets/cloudflare.yaml --extract '["r2"]["accessKeyId"]')
+              AWS_SECRET_ACCESS_KEY=$(sops decrypt ../secrets/cloudflare.yaml --extract '["r2"]["secretAccessKey"]')
               TF_VAR_passphrase=$(sops decrypt ../secrets/default.yaml --extract '["terraformPassphrase"]')
               export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY TF_VAR_passphrase
 

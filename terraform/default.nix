@@ -27,12 +27,17 @@
         };
       };
 
-      backend.s3 = rec {
+      # Cloudflare R2. The account id is not a secret in the way the API
+      # token is -- it appears in every R2 endpoint URL -- but it lives in
+      # sops with the rest of the Cloudflare config, and a backend block
+      # cannot interpolate, so it is spelled out here.
+      backend.s3 = {
         bucket = "typedrat-terraform-state";
         key = "terraform.tfstate";
-        region = "us-west-002";
+        # R2 presents a single global region.
+        region = "auto";
         endpoints = {
-          s3 = "https://s3.${region}.backblazeb2.com";
+          s3 = "https://be548483948975c1a68eebfc032a31ff.r2.cloudflarestorage.com";
         };
 
         skip_credentials_validation = true;

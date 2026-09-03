@@ -21,10 +21,13 @@
 
     authentik_policy_expression."discord-auth-policy-guild-sync" = {
       name = "discord-authentication-policy-guild-sync";
-      expression = lib.concatLines [
+      # Authentik stores the expression with trailing whitespace stripped, so
+      # anything ending in a newline reads back different from what was sent
+      # and every plan shows the policy as changed.
+      expression = lib.concatStringsSep "\n" [
         "GUILD_ID = \"\${local.discord_guild_id}\""
         "GUILD_NAME = \"\${local.discord_guild_name}\""
-        (builtins.readFile ./guild-sync.py)
+        (lib.removeSuffix "\n" (builtins.readFile ./guild-sync.py))
       ];
     };
 
