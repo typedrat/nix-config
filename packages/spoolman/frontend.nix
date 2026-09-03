@@ -8,16 +8,19 @@
   # project.inlang/settings.json loads these over the network at build time, and
   # the sandbox has none -- paraglide then silently compiles an empty message
   # catalogue and vite only warns, so the build succeeds and every translated
-  # string blows up at runtime. Vendored and pointed at locally instead. The
-  # i18next entry is upstream's `@latest`, pinned here to the version that tag
-  # resolved to.
+  # string blows up at runtime. Vendored and pointed at locally instead.
+  #
+  # settings.json asks for floating tags (`@4`, `@2`, `@latest`), which break
+  # these fixed-output hashes the moment upstream publishes. Each URL pins the
+  # exact version its tag resolved to; the substitutions below still have to
+  # match settings.json's floating URLs verbatim.
   inlangModules = {
     "plugin-message-format" = fetchurl {
-      url = "https://cdn.jsdelivr.net/npm/@inlang/plugin-message-format@4/dist/index.js";
-      hash = "sha256-Z4Hj9pNdMxklu3GrgK1QimfaLDTs4Q3rtqV8bsCN3ZA=";
+      url = "https://cdn.jsdelivr.net/npm/@inlang/plugin-message-format@4.4.4/dist/index.js";
+      hash = "sha256-siz2DrKLPIw84ftjAGEaBVLxLQ2ZXTfE3SyW462AxkU=";
     };
     "plugin-m-function-matcher" = fetchurl {
-      url = "https://cdn.jsdelivr.net/npm/@inlang/plugin-m-function-matcher@2/dist/index.js";
+      url = "https://cdn.jsdelivr.net/npm/@inlang/plugin-m-function-matcher@2.2.13/dist/index.js";
       hash = "sha256-hYYvYwV5O1a/2a/lNosJbmP7Kuqzi3eZwFFRe+NJnAs=";
     };
     "plugin-i18next" = fetchurl {
