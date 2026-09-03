@@ -60,6 +60,10 @@
       powerManagement.enable = false;
       cuda.enable = true;
       package = "legacy_580";
+      # Headless: the card is here to transcode, and nothing renders a console
+      # on it. Keeping the driver out of the initrd cuts it from ~203MB to
+      # ~120MB, which is what the 1GB ESP has to hold a copy of per generation.
+      earlyKms = false;
     };
 
     impermanence = {

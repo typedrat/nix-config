@@ -36,6 +36,22 @@ in {
       description = "Enable NVIDIA power management for suspend/resume support";
     };
 
+    earlyKms = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Load the NVIDIA modules from the initrd so the console is on the
+        driver before stage 2, which avoids a mode switch part-way through
+        boot.
+
+        The driver is by far the largest thing in the initrd -- around 85MB of
+        it -- so a machine with no display attached should turn this off. The
+        modules still load afterwards: `nvidia` matches the GPU by PCI ID at
+        udev time and `nvidia-uvm` follows it through a modprobe softdep, so
+        CUDA and NVENC are unaffected.
+      '';
+    };
+
     package = mkOption {
       type = types.enum [
         "stable"
@@ -110,9 +126,7 @@ in {
     # Blacklist nouveau to prevent conflicts
     boot.blacklistedKernelModules = ["nouveau"];
 
-    # Early KMS - load nvidia modules in initrd for earlier boot
-    # This enables DRM kernel mode setting early in the boot process
-    boot.initrd.kernelModules = [
+    boot.initrd.kernelModules = lib.optionals cfg.earlyKms [
       "nvidia"
       "nvidia_modeset"
       "nvidia_uvm"
