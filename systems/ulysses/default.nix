@@ -5,7 +5,6 @@
   ...
 }: {
   imports = [
-    # ./comfyui
     ./dell-no-audio
     ./disko-config.nix
     ./superio.nix
@@ -352,10 +351,7 @@
     # User configuration
     users.awilliams = {
       enable = true;
-      extraGroups = [
-        "comfyui"
-        "ydotool"
-      ];
+      extraGroups = ["ydotool"];
       cli = {
         enable = true;
         ai.peon-ping.enable = true;

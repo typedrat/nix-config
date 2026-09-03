@@ -309,10 +309,6 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    nixified-ai = {
-      url = "https://flakehub.com/f/nixified-ai/flake/*";
-    };
-
     # Pinned: later revs have a duplicate `home.file` key in the HM module
     peon-ping = {
       url = "github:PeonPing/peon-ping/7a16f0b1da9dc73b5ada2393ba36482a89b42913";
