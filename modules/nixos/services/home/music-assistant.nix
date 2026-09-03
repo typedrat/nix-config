@@ -8,6 +8,10 @@
   impermanenceCfg = config.rat.impermanence;
 
   stateDir = "/var/lib/music-assistant";
+
+  # Reads back the merged list, which is what the upstream module keys its own
+  # PATH and hardening off, rather than `cfg.providers` alone.
+  enabled = provider: lib.elem provider config.services.music-assistant.providers;
 in {
   options.rat.services.music-assistant = {
     enable = options.mkEnableOption "Music Assistant";
@@ -75,9 +79,10 @@ in {
       description = ''
         Source ranges allowed to reach Music Assistant directly rather than
         through Traefik: the web/API port it advertises over mDNS, the audio
-        stream port every player fetches from, the AirPlay and Sendspin
-        listeners, and the ephemeral ranges AirPlay's RTP sockets and Spotify's
-        pairing endpoint draw from. None of those can stay on loopback.
+        stream port every player fetches from, the AirPlay, AirPlay receiver
+        and Sendspin listeners, and the ephemeral ranges AirPlay's RTP sockets
+        and Spotify's pairing endpoint draw from. None of those can stay on
+        loopback.
 
         These ranges are already exempt from Authentik via
         {option}`lanBypass`, so the direct path grants them nothing the
@@ -111,9 +116,7 @@ in {
         openFirewall = false;
       };
 
-      rat.networking.scopedPorts = let
-        enabled = provider: lib.elem provider config.services.music-assistant.providers;
-      in [
+      rat.networking.scopedPorts = [
         {
           sources = cfg.openPortsFrom;
           ports =
@@ -139,11 +142,32 @@ in {
         }
         {
           sources = cfg.openPortsFrom;
+          # shairport-sync's RTSP port is `7000 + hash(instance_id) % 1000`,
+          # and Python salts `hash` per process, so a receiver lands somewhere
+          # else in that span every time the server restarts.
+          portRanges = lib.optional (enabled "airplay_receiver") {
+            from = 7000;
+            to = 7999;
+          };
+        }
+        {
+          sources = cfg.openPortsFrom;
+          protocol = "udp";
+          # The audio, control and timing sockets of an AirPlay 1 session, from
+          # shairport-sync's `udp_port_base` and `udp_port_range` defaults --
+          # the generated config leaves both alone.
+          portRanges = lib.optional (enabled "airplay_receiver") {
+            from = 6001;
+            to = 6010;
+          };
+        }
+        {
+          sources = cfg.openPortsFrom;
           # The Spotify app reaches librespot's zeroconf endpoint to list and
-          # pair the device, and librespot draws that port from the ephemeral
-          # range on every launch -- the provider never passes
-          # `--zeroconf-port`, so there is nothing narrower to open.
-          portRanges = lib.optional (enabled "spotify") {
+          # pair the device, and either librespot build draws that port from
+          # the ephemeral range on every launch -- neither provider pins it, so
+          # there is nothing narrower to open.
+          portRanges = lib.optional (enabled "spotify" || enabled "spotify_connect") {
             from = 32768;
             to = 65535;
           };
@@ -167,6 +191,12 @@ in {
         PrivateTmp = true;
         ProtectSystem = "strict";
         RemoveIPC = true;
+
+        # shairport-sync prefers the avahi mDNS backend and only falls back to
+        # its own bundled responder once the D-Bus system socket turns out to
+        # be unreachable. Two responders answering for the same host makes
+        # discovery a coin flip, so let it reach the avahi already running.
+        RestrictAddressFamilies = lib.optionals (enabled "airplay_receiver") ["AF_UNIX"];
       };
 
       users.users.music-assistant = {

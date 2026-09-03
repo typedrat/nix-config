@@ -177,6 +177,12 @@
     "heos"
     # sendspin is a builtin provider, so its dependencies are always present.
 
+    # Sources that arrive from another device rather than being pulled: a
+    # phone AirPlaying to the server, or the Spotify app picking it as a
+    # Connect target. Each appears as a plugin to add in the UI, not a player.
+    "airplay_receiver"
+    "spotify_connect"
+
     # Music sources
     "jellyfin"
     "spotify"
