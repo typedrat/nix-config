@@ -75,8 +75,9 @@ in {
       description = ''
         Source ranges allowed to reach Music Assistant directly rather than
         through Traefik: the web/API port it advertises over mDNS, the audio
-        stream port every player fetches from, and the AirPlay and Sendspin
-        listeners. None of those can stay on loopback.
+        stream port every player fetches from, the AirPlay and Sendspin
+        listeners, and the ephemeral ranges AirPlay's RTP sockets and Spotify's
+        pairing endpoint draw from. None of those can stay on loopback.
 
         These ranges are already exempt from Authentik via
         {option}`lanBypass`, so the direct path grants them nothing the
@@ -132,6 +133,17 @@ in {
           # libraop picks its RTP timing and control sockets out of the
           # ephemeral range and the speaker answers to whichever it drew.
           portRanges = lib.optional (enabled "airplay") {
+            from = 32768;
+            to = 65535;
+          };
+        }
+        {
+          sources = cfg.openPortsFrom;
+          # The Spotify app reaches librespot's zeroconf endpoint to list and
+          # pair the device, and librespot draws that port from the ephemeral
+          # range on every launch -- the provider never passes
+          # `--zeroconf-port`, so there is nothing narrower to open.
+          portRanges = lib.optional (enabled "spotify") {
             from = 32768;
             to = 65535;
           };

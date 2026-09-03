@@ -24,6 +24,12 @@ in {
       nssmdns4 = true;
       nssmdns6 = true;
 
+      # An address record is published for every interface avahi runs on, and
+      # the hostname resolves to whichever one answers first. The docker bridge
+      # carries 172.17.0.1 on every host that has it, so a client that picks
+      # that record is sent to its own bridge instead of this machine.
+      denyInterfaces = ["docker0"];
+
       publish = {
         enable = true;
         userServices = true;
