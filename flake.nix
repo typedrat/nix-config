@@ -42,32 +42,6 @@
       flake = false;
     };
 
-    # Bump claude-code to 2.1.247 and switch to the zstd-compressed native
-    # distribution Anthropic introduced in 2.1.243 (NixOS/nixpkgs#556673)
-    nixpkgs-patch-556673 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/556673.diff";
-      flake = false;
-    };
-
-    # Bump claude-code to 2.1.252, rebased onto the zstd manifest
-    # (NixOS/nixpkgs#558682)
-    nixpkgs-patch-558682 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/558682.diff";
-      flake = false;
-    };
-
-    # Bump claude-code to 2.1.257 (NixOS/nixpkgs#558900)
-    nixpkgs-patch-558900 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/558900.diff";
-      flake = false;
-    };
-
-    # Bump claude-code to 2.1.258 (NixOS/nixpkgs#559012)
-    nixpkgs-patch-559012 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/559012.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
