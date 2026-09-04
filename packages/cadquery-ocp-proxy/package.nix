@@ -10,7 +10,7 @@
 # so the version comes from the OCP release it tracks.
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "cadquery-ocp-proxy";
-  version = "7.9.3.1.1";
+  version = "8.0.0.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
