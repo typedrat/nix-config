@@ -200,6 +200,26 @@ in {
             onnxruntime
             ;
         };
+
+        # Enabling CUDA adds OptiX and the CUDA redistributable to blender's
+        # license, so Hydra never builds it and no CUDA cache carries it
+        # either, leaving a from-source rebuild on every nixpkgs bump. Since
+        # suitesparse 7 that rebuild fails outright: cholmod.h spells the GPU
+        # fields of its public struct as cublas/cuda types, and ceres-solver --
+        # which blender pulls in, and which includes that header -- compiles
+        # with no CUDA headers of its own (NixOS/nixpkgs#560909).
+        #
+        # The cost is Cycles losing OptiX and falling back to CPU rendering.
+        #
+        # Blender's own `cudaSupport` flag is not enough here either, for the
+        # same reason as onnxruntime above.
+        inherit
+          (import prev.path {
+            inherit (prev.stdenv.hostPlatform) system;
+            config = prev.config // {cudaSupport = false;};
+          })
+          blender
+          ;
       })
     ];
 
