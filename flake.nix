@@ -42,6 +42,13 @@
       flake = false;
     };
 
+    # Bump claude-code to 2.1.263; merged upstream but not yet in the locked
+    # nixpkgs, which still carries 2.1.260 (NixOS/nixpkgs#560772)
+    nixpkgs-patch-560772 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/560772.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
