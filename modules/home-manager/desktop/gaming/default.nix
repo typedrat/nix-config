@@ -20,10 +20,10 @@
 in {
   imports = [
     ./anime-game-launchers.nix
+    ./classic-mac.nix
     ./eden.nix
     ./retroarch.nix
     ./sgdboop.nix
-    ./sheepshaver.nix
     ./skyscraper.nix
     ./sunshine.nix
     ./xmage.nix

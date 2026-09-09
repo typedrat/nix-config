@@ -365,7 +365,7 @@
       gui = {
         enable = true;
         gaming.eden.enable = true;
-        gaming.sheepshaver.enable = true;
+        gaming.classicMac.enable = true;
         hyprland = {
           launcher.variant = "vicinae";
           idle.mediaInhibit = true;

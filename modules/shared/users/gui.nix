@@ -147,7 +147,7 @@
         xmage.enable = options.mkEnableOption "XMage" // {default = true;};
         sgdboop.enable = options.mkEnableOption "SGDBoop" // {default = true;};
         eden.enable = options.mkEnableOption "Eden Switch emulator";
-        sheepshaver.enable = options.mkEnableOption "SheepShaver PowerPC Mac OS emulator";
+        classicMac.enable = options.mkEnableOption "BasiliskII and SheepShaver classic Mac OS emulators";
         retroarch = {
           enable = options.mkEnableOption "RetroArch emulator frontend";
           cores = options.mkOption {
