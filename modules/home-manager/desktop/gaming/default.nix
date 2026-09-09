@@ -23,6 +23,7 @@ in {
     ./eden.nix
     ./retroarch.nix
     ./sgdboop.nix
+    ./sheepshaver.nix
     ./skyscraper.nix
     ./sunshine.nix
     ./xmage.nix

@@ -186,6 +186,12 @@
     # leaves the boot-time `loglevel=` parameter alone, so the splash stays
     # clean and the console only turns verbose once userspace is up.
     "kernel.printk" = 7;
+
+    # SheepShaver maps the emulated Mac's low-memory globals at address 0, so it
+    # refuses to start unless the kernel allows mapping the NULL page. The cost
+    # is that a kernel NULL-pointer dereference becomes exploitable instead of
+    # just an oops.
+    "vm.mmap_min_addr" = 0;
   };
 
   # Recovery only, not diagnosis: the SP5100 TCO timer exposes no pretimeout
@@ -359,6 +365,7 @@
       gui = {
         enable = true;
         gaming.eden.enable = true;
+        gaming.sheepshaver.enable = true;
         hyprland = {
           launcher.variant = "vicinae";
           idle.mediaInhibit = true;
