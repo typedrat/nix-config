@@ -11,7 +11,8 @@
 # Strategy:
 #   1. Use find with -xdev so we never descend into bind mounts (persisted dirs).
 #   2. Prune symlinks pointing into /nix or /persist (nix-managed / persisted).
-#   3. Report what remains grouped by top-level directory.
+#   3. Report what remains grouped by top-level directory, descending into
+#      XDG base directories (".local/share" rather than ".local").
 
 set -euo pipefail
 
@@ -42,8 +43,30 @@ if [[ ${#files[@]} -eq 0 ]]; then
   exit 0
 fi
 
-# Two-level grouping: top-level dir -> sub-dir -> count
-# Also track files directly in a top-level dir (no further nesting)
+# XDG base directories, honouring the environment where it overrides a default.
+xdg_dirs=(
+  "${XDG_CONFIG_HOME:-$home/.config}"
+  "${XDG_CACHE_HOME:-$home/.cache}"
+  "${XDG_DATA_HOME:-$home/.local/share}"
+  "${XDG_STATE_HOME:-$home/.local/state}"
+  "${XDG_BIN_HOME:-$home/.local/bin}"
+)
+
+# Ancestors of those directories, e.g. ".local". Grouping descends through an
+# ancestor so the XDG directory itself becomes the heading and the per-app
+# directories inside it become its entries.
+declare -A xdg_ancestors
+for xdg_dir in "${xdg_dirs[@]}"; do
+  xdg_rel="${xdg_dir#"$home"/}"
+  [[ "$xdg_rel" == "$xdg_dir" ]] && continue # not under $HOME
+  while [[ "$xdg_rel" == */* ]]; do
+    xdg_rel="${xdg_rel%/*}"
+    xdg_ancestors["$xdg_rel"]=1
+  done
+done
+
+# Two-level grouping: heading dir -> sub-dir -> count
+# Also track files directly in a heading dir (no further nesting)
 declare -A top_counts       # top -> total file count
 declare -A sub_counts       # top/sub -> file count
 declare -A top_direct_files # top -> newline-separated list of filenames directly in top
@@ -56,16 +79,27 @@ for f in "${files[@]}"; do
     # File directly in $HOME
     root_files+=("$rel")
   else
-    top="${rel%%/*}"
-    rest="${rel#*/}"
+    dir="${rel%/*}"
+    fname="${rel##*/}"
+
+    top="${dir%%/*}"
+    rest=""
+    [[ "$dir" == */* ]] && rest="${dir#*/}"
+    # Keep absorbing components while the heading is only an ancestor of an
+    # XDG directory, so ".local" grows into ".local/share".
+    while [[ -n "$rest" && -n "${xdg_ancestors["$top"]:-}" ]]; do
+      top="$top/${rest%%/*}"
+      if [[ "$rest" == */* ]]; then rest="${rest#*/}"; else rest=""; fi
+    done
+
     top_counts["$top"]=$(( ${top_counts["$top"]:-0} + 1 ))
-    if [[ "$rest" == */* ]]; then
-      # Has a subdirectory under top
+    if [[ -n "$rest" ]]; then
+      # Has a subdirectory under the heading
       sub="${rest%%/*}"
       sub_counts["$top/$sub"]=$(( ${sub_counts["$top/$sub"]:-0} + 1 ))
     else
-      # File directly in the top-level dir
-      top_direct_files["$top"]+="$rest"$'\n'
+      # File directly in the heading dir
+      top_direct_files["$top"]+="$fname"$'\n'
     fi
   fi
   (( ++total ))
@@ -88,9 +122,8 @@ for top in "${sorted_tops[@]}"; do
   # Collect and sort subdirectories by count descending
   mapfile -t sorted_subs < <(
     for key in "${!sub_counts[@]}"; do
-      if [[ "$key" == "$top/"* ]]; then
-        sub="${key#"$top"/}"
-        printf '%d\t%s\n' "${sub_counts[$key]}" "$sub"
+      if [[ "${key%/*}" == "$top" ]]; then
+        printf '%d\t%s\n' "${sub_counts[$key]}" "${key##*/}"
       fi
     done | sort -rn | cut -f2
   )
