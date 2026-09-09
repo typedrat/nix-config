@@ -2476,7 +2476,7 @@
     "nixpkgs-patch-550231": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-//QRR6/gEVHkCBQb+91UaIgPCafRnSyrVgZ4GWlp2PU=",
+        "narHash": "sha256-+ieg3SvgZiyIFrM5mk8H5DHP//v7bsRnPzK7aypYIu4=",
         "type": "file",
         "url": "https://github.com/NixOS/nixpkgs/pull/550231.diff"
       },
