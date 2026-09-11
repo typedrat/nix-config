@@ -38,6 +38,24 @@
     restartUnits = ["mosquitto.service"];
   };
 
+  sops.secrets."esphome/mqtt_password" = {
+    sopsFile = ../../secrets/esphome.yaml;
+    key = "mqtt_password";
+    # Mosquitto bakes this into its password database at preStart; the devices
+    # carry their own copy flashed into the firmware. Rotating the password
+    # means reflashing every node as well as restarting the broker.
+    restartUnits = ["mosquitto.service"];
+  };
+
+  sops.secrets."moonraker/mqtt_password" = {
+    sopsFile = ../../secrets/moonraker.yaml;
+    key = "mqtt_password";
+    # Moonraker runs on the printer itself, so nothing here reads this file --
+    # the password is typed into moonraker.conf by hand. Only the broker needs
+    # it, and only at preStart.
+    restartUnits = ["mosquitto.service"];
+  };
+
   rat.services.printguard = {
     enable = true;
 
@@ -124,6 +142,36 @@
     ];
   };
 
+  # ESPHome nodes and the printer's Moonraker both speak MQTT from elsewhere on
+  # the network, so the broker cannot stay on loopback. Anonymous connections
+  # are already refused, and every user below is confined by its ACL.
+  rat.services.mosquitto = {
+    listenAddress = "0.0.0.0";
+    openFirewall = true;
+
+    users.esphome = {
+      passwordFile = config.sops.secrets."esphome/mqtt_password".path;
+      acl = [
+        # Each node sets mqtt.topic_prefix to esphome/<name>, so the whole
+        # fleet shares one subtree rather than scattering bare device names
+        # across the root.
+        "readwrite esphome/#"
+        # Read-only on the printer tree: nodes react to print state, they never
+        # drive the printer.
+        "read klipper/#"
+        "readwrite homeassistant/#"
+        "read homeassistant/status"
+      ];
+    };
+
+    users.moonraker = {
+      passwordFile = config.sops.secrets."moonraker/mqtt_password".path;
+      # Moonraker puts everything under {instance_name}/, so its moonraker.conf
+      # sets instance_name = klipper to land in this tree.
+      acl = ["readwrite klipper/#"];
+    };
+  };
+
   rat.services.go2rtc = {
     enable = true;
 
@@ -192,9 +240,13 @@
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;
-    # Home Assistant needs the PrintGuard topic tree too, or the entities
+    # Home Assistant needs the other services' topic trees too, or the entities
     # discovery creates stay unavailable and their controls do nothing.
-    mqtt.extraAclRules = ["readwrite printguard/#"];
+    mqtt.extraAclRules = [
+      "readwrite printguard/#"
+      "readwrite esphome/#"
+      "readwrite klipper/#"
+    ];
     go2rtc.enable = true;
     musicAssistant.enable = true;
 

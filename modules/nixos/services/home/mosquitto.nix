@@ -16,6 +16,16 @@ in {
       description = "Whether to open the firewall for Mosquitto.";
     };
 
+    listenAddress = options.mkOption {
+      type = types.str;
+      default = "127.0.0.1";
+      description = ''
+        Address the broker binds to. Devices that cannot reach loopback --
+        anything speaking MQTT from elsewhere on the network -- need this
+        widened to "0.0.0.0" along with `openFirewall`.
+      '';
+    };
+
     users = options.mkOption {
       type = types.attrsOf (types.submodule {
         options = {
@@ -81,7 +91,7 @@ in {
         listeners = [
           {
             inherit (config.links.mosquitto) port;
-            address = "127.0.0.1";
+            address = cfg.listenAddress;
 
             users =
               lib.mapAttrs (
