@@ -166,8 +166,10 @@
 
     users.moonraker = {
       passwordFile = config.sops.secrets."moonraker/mqtt_password".path;
-      # Moonraker puts everything under {instance_name}/, so its moonraker.conf
-      # sets instance_name = klipper to land in this tree.
+      # Moonraker has no topic-prefix option -- {instance_name} is the whole
+      # namespace, and it is interpolated into topics verbatim. Only wildcards
+      # are rejected, so a name carrying a slash (klipper/centauri) nests each
+      # printer under a shared root and keeps this ACL good for the next one.
       acl = ["readwrite klipper/#"];
     };
   };
