@@ -239,6 +239,29 @@
     "ytmusic"
   ];
 
+  # The moonraker integration's own code is clean -- these four tests reach for
+  # hass.data["device_registry"].devices, which Home Assistant 2026.9 reports as
+  # deprecated. The call sits under tests/ rather than custom_components/, so
+  # the frame helper cannot attribute it to an integration and falls back to the
+  # core behaviour: a hard RuntimeError where a custom integration would only
+  # get a log line. Upstream master still has it, so a version bump won't help.
+  nixpkgs.overlays = [
+    (_final: prev: {
+      home-assistant-custom-components = prev.home-assistant-custom-components.extend (
+        _hassFinal: hassPrev: {
+          moonraker = hassPrev.moonraker.overridePythonAttrs {
+            disabledTests = [
+              "test_set_custom_gcode_service"
+              "test_send_gcode_list_payload_normalizes_script"
+              "test_send_gcode_empty_payload_skips_send"
+              "test_send_gcode_accepts_config_entry_id_and_deduplicates"
+            ];
+          };
+        }
+      );
+    })
+  ];
+
   rat.services.home-assistant = {
     enable = true;
     mqtt.enable = true;

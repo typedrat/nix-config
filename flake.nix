@@ -25,27 +25,11 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # Home Assistant renamed its Vizio client from pyvizio to vizaio, and
-    # nixpkgs packages neither, so the vizio component is unsupported and its
-    # config entry dies on `No module named 'vizaio'`. Adds the package and
-    # registers it in component-packages.nix (NixOS/nixpkgs#550231)
-    nixpkgs-patch-550231 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/550231.diff";
-      flake = false;
-    };
-
     # Set skyscraper's XDG define via qmake instead of uncommenting it in
     # skyscraper.pro, whose spacing upstream changed in 3.20.3 — the exact
     # --replace-fail has failed every enableXdg build since (NixOS/nixpkgs#555827)
     nixpkgs-patch-555827 = {
       url = "https://github.com/NixOS/nixpkgs/pull/555827.diff";
-      flake = false;
-    };
-
-    # Bump claude-code to 2.1.263; merged upstream but not yet in the locked
-    # nixpkgs, which still carries 2.1.260 (NixOS/nixpkgs#560772)
-    nixpkgs-patch-560772 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/560772.diff";
       flake = false;
     };
 
