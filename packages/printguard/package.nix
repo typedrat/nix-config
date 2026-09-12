@@ -13,14 +13,14 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "printguard";
-  version = "2.4.0";
+  version = "2.4.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "oliverbravery";
     repo = "PrintGuard";
     tag = "v${version}";
-    hash = "sha256-Wm/tzjm96SMUA860YzaFqXHOpZzOB/6LVa6eO35OApg=";
+    hash = "sha256-wTgHG0B3tLtlTLRGuAf6q+kJnZupY1zfUtn73NOP01k=";
   };
 
   frontend = buildNpmPackage {
