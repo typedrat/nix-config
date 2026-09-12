@@ -9,6 +9,7 @@
     oauth2 = {
       clientId = "qui";
       clientSecret = "\${ data.sops_file.qui.data[\"oidcClientSecret\"] }";
+      signingKey = "\${ data.authentik_certificate_key_pair.self-signed.id }";
       launchUrl = "https://qui.thisratis.gay/";
       redirectUris = [
         {

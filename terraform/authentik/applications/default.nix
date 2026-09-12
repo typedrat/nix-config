@@ -156,6 +156,16 @@
         default = null;
         description = "LDAP configuration for backchannel authentication";
       };
+
+      signingKey = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          Certificate/key pair used to sign ID tokens, as an asymmetric RS256
+          JWT. Without one Authentik signs with HS256 using the client secret
+          and publishes an empty JWKS, which clients built on go-oidc reject.
+        '';
+      };
     };
   };
 
@@ -235,6 +245,7 @@ in {
               })
               cfg.oauth2.redirectUris;
             property_mappings = "\${ data.authentik_property_mapping_provider_scope.with-entitlements.ids }";
+            signing_key = lib.mkIf (cfg.oauth2.signingKey != null) cfg.oauth2.signingKey;
           }
       ) (lib.filterAttrs (_name: cfg: cfg.oauth2 != null) config.authentik.applications);
 

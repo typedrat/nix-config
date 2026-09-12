@@ -26,5 +26,9 @@
     data.sops_file.authentik = {
       source_file = "../secrets/authentik.yaml";
     };
+
+    data.authentik_certificate_key_pair.self-signed = {
+      name = "authentik Self-signed Certificate";
+    };
   };
 }
