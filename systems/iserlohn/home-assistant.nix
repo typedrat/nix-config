@@ -245,13 +245,14 @@
     "ytmusic"
   ];
 
-  # The moonraker integration's own code is clean -- these four tests reach for
-  # hass.data["device_registry"].devices, which Home Assistant 2026.9 reports as
-  # deprecated. The call sits under tests/ rather than custom_components/, so
-  # the frame helper cannot attribute it to an integration and falls back to the
-  # core behaviour: a hard RuntimeError where a custom integration would only
-  # get a log line. Upstream master still has it, so a version bump won't help.
   nixpkgs.overlays = [
+    # The moonraker integration's own code is clean -- these four tests reach
+    # for hass.data["device_registry"].devices, which Home Assistant 2026.9
+    # reports as deprecated. The call sits under tests/ rather than
+    # custom_components/, so the frame helper cannot attribute it to an
+    # integration and falls back to the core behaviour: a hard RuntimeError
+    # where a custom integration would only get a log line. Upstream master
+    # still has it, so a version bump won't help.
     (_final: prev: {
       home-assistant-custom-components = prev.home-assistant-custom-components.extend (
         _hassFinal: hassPrev: {
@@ -261,6 +262,28 @@
               "test_send_gcode_list_payload_normalizes_script"
               "test_send_gcode_empty_payload_skips_send"
               "test_send_gcode_accepts_config_entry_id_and_deduplicates"
+            ];
+          };
+        }
+      );
+    })
+
+    # The test waits for the client to see the disconnect, then asserts on the
+    # reason the server recorded -- two different code paths. Under enough
+    # parallel load the socket dies abnormally (close_code=1006) before the
+    # server works through its own unpair goodbye, and the reason is still
+    # unset. This box runs 28 pytest workers on cores slow enough to lose that
+    # race regularly; the build passes on a retry, which is the tell.
+    #
+    # Deselected by node id rather than by name: a client-side test in
+    # tests/client/ is spelled identically, and `disabledTests` matches on the
+    # bare name, so it would take both.
+    (_final: prev: {
+      python3Packages = prev.python3Packages.overrideScope (
+        _pyFinal: pyPrev: {
+          aiosendspin = pyPrev.aiosendspin.overridePythonAttrs {
+            disabledTestPaths = [
+              "tests/integration/test_management_flow.py::test_unpair_keeps_shared_psk_record"
             ];
           };
         }
