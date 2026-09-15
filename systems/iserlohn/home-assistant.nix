@@ -218,6 +218,12 @@
     };
   };
 
+  # The `airplay` provider's grandmaster and the AirPlay 2 receiver's nqptp
+  # both want UDP 319 and 320, and only one process per host can hold them.
+  # Sending to the speakers around the house is what this server is for; the
+  # receiver is a convenience, and classic AirPlay serves it.
+  rat.services.music-assistant.airplay2 = false;
+
   # Enabled by rat.services.home-assistant.musicAssistant below; this only
   # picks which providers' dependencies get installed. Each still has to be
   # added and signed in to from Music Assistant's own UI.

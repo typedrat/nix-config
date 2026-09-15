@@ -70,6 +70,12 @@ in {
         started alongside Music Assistant. Turn it off to fall back to the
         classic receiver, which needs neither.
 
+        Those two ports are also the only ones {command}`cliairplay` can run
+        its own grandmaster on, so a host cannot both receive AirPlay 2 and
+        group AirPlay 2 speakers of its own. With the `airplay` provider
+        enabled, leaving this on costs the sender its clock: sessions
+        negotiate, report `state=stalled`, and play silence.
+
         Only meaningful with the `airplay_receiver` provider.
       '';
     };
@@ -171,7 +177,7 @@ in {
         {
           sources = cfg.openPortsFrom;
           protocol = "udp";
-          # libraop picks its RTP timing and control sockets out of the
+          # cliairplay picks its RTP timing and control sockets out of the
           # ephemeral range and the speaker answers to whichever it drew. An
           # AirPlay 2 session's control socket is bound the same way, by asking
           # for port 0 rather than from `udp_port_base`.
@@ -205,10 +211,14 @@ in {
         {
           sources = cfg.openPortsFrom;
           protocol = "udp";
-          # nqptp's PTP sockets. The sender is the clock master and drives the
-          # whole AirPlay 2 timing exchange over these, so a session set up
-          # over the RTSP port still fails without them.
-          ports = lib.optionals airplay2 [319 320];
+          # The PTP sockets, for whichever grandmaster holds them: nqptp when
+          # this host receives AirPlay 2 and the remote sender drives the
+          # clock, cliairplay when it sends and drives the clock itself. Only
+          # one process per host can bind them, which is what makes the two
+          # mutually exclusive. Either way a session negotiated over RTSP still
+          # plays silence without these -- the far end never slaves to the
+          # grandmaster, so it can seat no render anchor.
+          ports = lib.optionals (airplay2 || enabled "airplay") [319 320];
         }
         {
           sources = cfg.openPortsFrom;
