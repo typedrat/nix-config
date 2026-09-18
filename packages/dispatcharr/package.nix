@@ -10,13 +10,13 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "dispatcharr";
-  version = "0.30.0";
+  version = "0.31.0";
 
   src = fetchFromGitHub {
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-2ry4DzYyxek906hlPCJ67xlRYsk6z5DJYzRG3+toJFU=";
+    hash = "sha256-ZJM8RWjWav72kE8eIdxIv4JRiUXVB0X+VanT1jjki5k=";
     leaveDotGit = true;
   };
 
@@ -31,7 +31,7 @@ python3Packages.buildPythonApplication rec {
     # Peer dependency conflicts with React 19 vs packages expecting React 16-18
     npmFlags = ["--legacy-peer-deps"];
 
-    npmDepsHash = "sha256-ZumwuAzNVrKK0Ky9viAZQ2pj30VSaExX71EzPHaS0GE=";
+    npmDepsHash = "sha256-e2FcAf3rw/U1Vsa9qJ8koUr6b/SIbj7rWD+gln05fUk=";
     forceGitDeps = true;
     makeCacheWritable = true;
 
