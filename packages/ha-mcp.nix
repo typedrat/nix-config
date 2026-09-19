@@ -13,7 +13,7 @@ let
 
   # Tied to the submodule commit this tag pins, so it only stays valid for the
   # version nixpkgs is on. Reprefetch after a nixpkgs bump changes `version`.
-  version = "8.4.0";
+  version = "8.4.3";
 in
   assert ha-mcp.version == version;
     toPythonApplication (
@@ -23,7 +23,7 @@ in
           repo = "ha-mcp";
           tag = "v${version}";
           fetchSubmodules = true;
-          hash = "sha256-egUWdgV20+ALREPsPKv6GABWNM2Dc9ASYMFYqf5BXDw=";
+          hash = "sha256-qS18zj3QT/GuaRq2Xulwao2ONHnlgw4lUDixY2hrP+M=";
         };
       }
     )
