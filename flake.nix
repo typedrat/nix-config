@@ -25,14 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # Music Assistant 2.9.13 -> 2.10.3, which replaces the vendored cliraop/cliap2
-    # AirPlay binaries with airplay-cli and drags along the python bumps that
-    # 2.10 needs (NixOS/nixpkgs#547702)
-    nixpkgs-patch-547702 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/547702.diff";
-      flake = false;
-    };
-
     # Set skyscraper's XDG define via qmake instead of uncommenting it in
     # skyscraper.pro, whose spacing upstream changed in 3.20.3 — the exact
     # --replace-fail has failed every enableXdg build since (NixOS/nixpkgs#555827)

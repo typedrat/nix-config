@@ -95,7 +95,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   preInstall = ''
     CI=true pnpm --ignore-scripts --prod prune
     find . -type f \( -name "*.ts" -not -name "*.d.ts" -o -name "*.map" \) -delete
-    # https://github.com/pnpm/pnpm/issues/3645
+    # `--prod prune` unlinks dev-only packages from the virtual store but leaves
+    # the node_modules/.pnpm/node_modules symlinks that pointed at them — 272 of
+    # them on pnpm 12.3.4. pnpm/pnpm#3645 is closed as no-longer-reproducing,
+    # but only for workspace deps; the --prod prune case still dangles.
     find node_modules -xtype l -delete
     rm -f node_modules/.modules.yaml
   '';
