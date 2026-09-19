@@ -43,7 +43,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     inherit pnpm;
     fetcherVersion = 4;
-    hash = "sha256-+zW1FPbgPx7mzsYf+5VmOwI8i8nLGVz6mJ2tpsD9DHQ=";
+    # Skip the same supply-chain pass during install: it costs a registry round
+    # trip per lockfile entry (19 minutes here) to re-establish what this
+    # derivation's own output hash already pins.
+    prePnpmInstall = "pnpm config set trust-lockfile true";
+    hash = "sha256-etL9PQNNGmyMGn1+kolpS5KXBRPMAZZjQK69EJnIoD0=";
   };
 
   nativeBuildInputs =
@@ -93,6 +97,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   # Drop dev dependencies and non-deterministic / unnecessary files.
   preInstall = ''
+    # prune re-checks the lockfile against pnpm's supply-chain policies, and the
+    # default minimumReleaseAge makes that fetch a publish timestamp for all 486
+    # entries -- 19 minutes of retries against a network the sandbox does not
+    # have, then a hard failure. Zero means no timestamp is needed. trustLockfile
+    # would be the direct way to say this, but it only covers `pnpm install`.
+    export pnpm_config_minimum_release_age=0
     CI=true pnpm --ignore-scripts --prod prune
     find . -type f \( -name "*.ts" -not -name "*.d.ts" -o -name "*.map" \) -delete
     # `--prod prune` unlinks dev-only packages from the virtual store but leaves
