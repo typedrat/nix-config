@@ -2,10 +2,12 @@
   lib,
   python3Packages,
   fetchFromGitHub,
+  bd-materials,
   cadquery-ocp-novtk,
   lib3mf-python,
   ocp-gordon,
   ocpsvg,
+  threejs-materials,
   trianglesolver,
   nix-update-script,
 }:
@@ -44,10 +46,12 @@ python3Packages.buildPythonPackage (finalAttrs: {
 
   dependencies =
     [
+      bd-materials
       cadquery-ocp-novtk
       lib3mf-python
       ocp-gordon
       ocpsvg
+      threejs-materials
       trianglesolver
     ]
     ++ (with python3Packages; [
@@ -73,8 +77,11 @@ python3Packages.buildPythonPackage (finalAttrs: {
   ];
 
   disabledTests = [
-    # The one test that actually needs the sample assembly downloaded above.
+    # Needs the sample assembly whose download is stubbed out above.
     "test_assembly_with_oriented_parts"
+    # Fetches a NIST STEP archive itself rather than in setUpClass, so the
+    # stub above doesn't cover it.
+    "test_unnamed_component"
   ];
 
   disabledTestPaths = [
