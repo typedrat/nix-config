@@ -25,6 +25,7 @@ python3.pkgs.buildPythonApplication rec {
   ];
 
   dependencies = with python3.pkgs; [
+    blake3
     charset-normalizer
     click
     cookiecutter
@@ -62,7 +63,9 @@ python3.pkgs.buildPythonApplication rec {
     "comfy_cli"
   ];
 
-  pythonRelaxDeps = ["mixpanel"];
+  # blake3 is a declared dependency nothing in the tree imports, so the
+  # >=1.0.9 floor buys nothing over nixpkgs' 1.0.8.
+  pythonRelaxDeps = ["blake3" "mixpanel"];
 
   postFixup = ''
     rm $out/bin/comfy-cli $out/bin/comfycli
