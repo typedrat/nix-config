@@ -2,7 +2,7 @@
   lib,
   python3Packages,
   fetchFromGitHub,
-  nix-update-script,
+  cadquery-ocp-novtk,
 }:
 # A do-nothing distribution whose only job is to carry the OCP version number,
 # so `cadquery-ocp` and `cadquery-ocp-novtk` can never end up installed side by
@@ -10,7 +10,12 @@
 # so the version comes from the OCP release it tracks.
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "cadquery-ocp-proxy";
-  version = "8.0.1.0.0";
+
+  # The bindings pin `cadquery-ocp-proxy==<their own version>`, so a version of
+  # its own fails their runtime dependency check. PyPI carries proxy releases
+  # for OCP versions that can't be built here yet, so there is no updateScript
+  # either — bumping the bindings bumps this.
+  inherit (cadquery-ocp-novtk) version;
   pyproject = true;
 
   src = fetchFromGitHub {
@@ -40,10 +45,6 @@ python3Packages.buildPythonPackage (finalAttrs: {
   pythonImportsCheck = [
     "cadquery_ocp_proxy"
   ];
-
-  # Without --flake, nix-update resolves this file to its store path and then
-  # fails to `git diff` it against the working tree.
-  passthru.updateScript = nix-update-script {extraArgs = ["--flake"];};
 
   meta = {
     description = "Proxy package pinning the cadquery-ocp / cadquery-ocp-novtk version";
