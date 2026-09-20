@@ -20,6 +20,13 @@ python3.pkgs.buildPythonApplication rec {
     pythonRelaxDepsHook
   ];
 
+  # Upstream ships a placeholder version for its release pipeline to fill in,
+  # and `comfy version` reads it back out of the installed metadata.
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail 'version = "0.0.0"' 'version = "${version}"'
+  '';
+
   build-system = [
     python3.pkgs.setuptools
   ];
