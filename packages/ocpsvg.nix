@@ -8,14 +8,14 @@
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "ocpsvg";
-  version = "0.6.0";
+  version = "0.7.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "snoyer";
     repo = "ocpsvg";
     tag = finalAttrs.version;
-    hash = "sha256-/E5z9LXvxtoXxZO0JyeXTm4BUG9CcPDT6UnkX4R6tEA=";
+    hash = "sha256-SlDYWFc8MfnraArCGtlJrKHnEm+j09bMmQCbeDMjJ6A=";
   };
 
   build-system = with python3Packages; [
