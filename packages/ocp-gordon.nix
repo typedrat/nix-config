@@ -8,14 +8,14 @@
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "ocp-gordon";
-  version = "0.2.2";
+  version = "0.3.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "gongfan99";
     repo = "ocp_gordon";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-FcRQ/7A49LbbtBF5uC1MRa/4E4KlkxKX9AhU4B4QAe8=";
+    hash = "sha256-3WyyrjVPhAXbGyhYwfJDpkhNxz8DR8echX54aEFXaRA=";
   };
 
   # setuptools_scm derives the version from git metadata that the tarball drops.
