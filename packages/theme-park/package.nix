@@ -9,13 +9,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "theme-park";
-  version = "1.22.2";
+  version = "1.23.0";
 
   src = fetchFromGitHub {
     owner = "themepark-dev";
     repo = "theme.park";
     tag = version;
-    sha256 = "sha256-XGfc0ta5LQ7aKXdqaUWHkLTUJiRAF4IKF5rHuw7ui70=";
+    sha256 = "sha256-TtfQncHFhRRO2hRNZnogy1YJd9pxuQiLF3nCghUoVsw=";
   };
 
   patches = [./remove-chdir.patch];
