@@ -13,14 +13,14 @@
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "build123d";
-  version = "0.12.0";
+  version = "0.13.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "gumyr";
     repo = "build123d";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Y7exoa2/94AdTN4CnQ/YWhc3H8VwJPBEQnm1D+xspSA=";
+    hash = "sha256-TDTvDF2gjmBdAVhYec4ymO42IjHoIK79aJx+XVTsHro=";
   };
 
   # setuptools_scm derives the version from git metadata that the tarball drops.
