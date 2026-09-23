@@ -32,12 +32,18 @@ python3Packages.buildPythonPackage (finalAttrs: {
   # Python bindings plus a pile of conda-only tooling. Upstream's own release
   # pipeline skips that step and compiles the generated C++ attached to each
   # tag, so this does the same.
-  src = fetchzip {
-    url = "https://github.com/CadQuery/OCP/releases/download/${finalAttrs.version}/OCP_src_stubs_Linux.zip";
-    # The 8.x archives dropped the wrapping directory the 7.x ones had.
-    stripRoot = false;
-    hash = "sha256-chuQybk97eJdhuGO3YIm7F0I146rPufomVQauJavhGM=";
-  };
+  #
+  # An OCP version is <OCCT version>.<OCP build>, and the bindings only compile
+  # against the OCCT they were generated for — which updateScript, running
+  # unattended, has no idea about. A mismatch is a wall of missing headers well
+  # into the build, so refuse it up front.
+  src = assert lib.hasPrefix "${opencascade-occt_8.version}." finalAttrs.version;
+    fetchzip {
+      url = "https://github.com/CadQuery/OCP/releases/download/${finalAttrs.version}/OCP_src_stubs_Linux.zip";
+      # The 8.x archives dropped the wrapping directory the 7.x ones had.
+      stripRoot = false;
+      hash = "sha256-chuQybk97eJdhuGO3YIm7F0I146rPufomVQauJavhGM=";
+    };
 
   # Upstream's wheel scaffolding: pyproject.toml, the OCP/__init__.py shim and
   # ocp-tree.py, which walks the compiled module to lay out the submodule
