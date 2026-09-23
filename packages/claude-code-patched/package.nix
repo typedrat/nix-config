@@ -26,6 +26,27 @@ in
     preFixup =
       (prev.preFixup or "")
       + ''
+        # tweakcc's patches key off one specific Claude Code bundle, and a
+        # mismatch is silent: Anthropic re-minifies on most releases, the
+        # patches stop matching, and the result still boots and reports a
+        # version while behaving wrong. tweakcc-fixed declares the release it
+        # tracks, so refuse a CC newer than that rather than shipping the
+        # damage. The reverse (tweakcc ahead, as the nightly bump can leave it)
+        # only warns, since its patches usually still match the older bundle.
+        supportedCC="$(jq -r '.supportedClaudeCode // ""' \
+          ${tweakcc-fixed}/lib/tweakcc-fixed/package.json)"
+        if [ -z "$supportedCC" ]; then
+          echo "tweakcc-fixed ${tweakcc-fixed.version} declares no supportedClaudeCode; the version gate needs rewriting" >&2
+          exit 1
+        elif [ "$supportedCC" != "${prev.version}" ]; then
+          newest="$(printf '%s\n%s\n' "$supportedCC" "${prev.version}" | sort -V | tail -n1)"
+          if [ "$newest" = "${prev.version}" ]; then
+            echo "tweakcc-fixed ${tweakcc-fixed.version} tracks Claude Code $supportedCC, but claude-code is ${prev.version}: bump tweakcc-fixed first" >&2
+            exit 1
+          fi
+          echo "warning: tweakcc-fixed ${tweakcc-fixed.version} tracks Claude Code $supportedCC, ahead of claude-code ${prev.version}" >&2
+        fi
+
         # Stage tweakcc's expected HOME / config layout in the sandbox.
         export TWEAKCC_CONFIG_DIR="$TMPDIR/tweakcc"
         export HOME="$TMPDIR/home"
