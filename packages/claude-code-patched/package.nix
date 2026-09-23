@@ -35,7 +35,7 @@ in
         # tweakcc seeds defaults into system-prompts/ and system-reminders/
         # on first --apply, so they must be writable — symlinks back to
         # the immutable prompt-overrides source are insufficient.
-        cp -RL ${promptOverrides}/system-prompts-opus-5 "$TWEAKCC_CONFIG_DIR/system-prompts"
+        cp -RL ${promptOverrides}/system-prompts-lcc "$TWEAKCC_CONFIG_DIR/system-prompts"
         cp -RL ${promptOverrides}/system-reminders "$TWEAKCC_CONFIG_DIR/system-reminders"
         chmod -R u+w "$TWEAKCC_CONFIG_DIR/system-prompts" "$TWEAKCC_CONFIG_DIR/system-reminders"
 
