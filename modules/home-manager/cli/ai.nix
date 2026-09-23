@@ -90,7 +90,15 @@ in {
         (lib.hiPrio python3Packages.huggingface-hub)
         vast-cli
       ])
-      ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp;
+      ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp
+      # The full model set is all 83 model runtimes, so this is a long build
+      # from source; the CUDA backend is the reason to bother on these hosts.
+      ++ lib.optional hasNvidia (pkgs.audio-cpp.override {
+        cudaSupport = true;
+        modelSet = "full";
+        nativeModelManagerSupport = true;
+        inherit (osConfig.rat.hardware.gpu) cudaArchitectures;
+      });
 
     home.sessionVariables =
       {

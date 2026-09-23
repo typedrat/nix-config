@@ -50,6 +50,8 @@
     hardware.gpu = {
       vendor = "nvidia";
       vram = 4;
+      # GP107, compute capability 6.1.
+      cudaArchitectures = ["61"];
     };
 
     boot.loader = "lanzaboote";

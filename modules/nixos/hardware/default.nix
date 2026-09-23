@@ -48,6 +48,21 @@ in {
         description = "GPU VRAM in gigabytes";
         example = 16;
       };
+
+      cudaArchitectures = options.mkOption {
+        type = types.nullOr (types.listOf types.str);
+        default = null;
+        description = ''
+          CUDA compute capabilities of this host's NVIDIA GPU(s), spelled the
+          way CMAKE_CUDA_ARCHITECTURES wants them.
+
+          The nixpkgs default covers every capability the CUDA release
+          supports, which compiles each kernel once per entry and still leaves
+          out anything older than the oldest entry. Naming the cards actually
+          present builds far less and builds the right thing.
+        '';
+        example = ["120"];
+      };
     };
 
     network.mainInterface = options.mkOption {

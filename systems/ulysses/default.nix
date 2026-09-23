@@ -228,6 +228,8 @@
       gpu = {
         vendor = "nvidia";
         vram = 32;
+        # GB202, compute capability 12.0.
+        cudaArchitectures = ["120"];
       };
 
       # MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 + Bluetooth combo card.
