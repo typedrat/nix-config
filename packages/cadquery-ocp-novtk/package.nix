@@ -7,7 +7,7 @@
   ninja,
   fmt,
   rapidjson,
-  opencascade-occt,
+  opencascade-occt_8,
   cadquery-ocp-proxy,
   freetype,
   fontconfig,
@@ -23,7 +23,9 @@
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "cadquery-ocp-novtk";
-  version = "7.9.3.1.1";
+  # Tracks the OCP release tag, which is what the src URL below resolves; the
+  # PyPI wheels carry a fifth component the tags do not.
+  version = "8.0.1.0";
   pyproject = true;
 
   # The bindings are machine-written by pywrap, which needs a clang 21 with
@@ -32,7 +34,9 @@ python3Packages.buildPythonPackage (finalAttrs: {
   # tag, so this does the same.
   src = fetchzip {
     url = "https://github.com/CadQuery/OCP/releases/download/${finalAttrs.version}/OCP_src_stubs_Linux.zip";
-    hash = "sha256-gfZFv/evrLHX5TSjAmc6ap45nCbAuNUGkb989BrfqhY=";
+    # The 8.x archives dropped the wrapping directory the 7.x ones had.
+    stripRoot = false;
+    hash = "sha256-chuQybk97eJdhuGO3YIm7F0I146rPufomVQauJavhGM=";
   };
 
   # Upstream's wheel scaffolding: pyproject.toml, the OCP/__init__.py shim and
@@ -52,6 +56,11 @@ python3Packages.buildPythonPackage (finalAttrs: {
   postPatch = ''
     rm IVtk*.cpp IVtk*.hxx vtk_pybind.h
     sed -i '/register_IVtk/d' OCP.cpp
+    # 8.x also reaches for IVtk from the collections units, which the 7.x
+    # generator kept confined to the IVtk* ones: an IVtk_Types.hxx include plus
+    # NCollection templates instantiated over IVtk types. Every IVtk mention in
+    # those files is one of the two, so they all go.
+    sed -i '/IVtk/d' collections_*.cpp
     sed -i \
       -e '/^find_package( VTK REQUIRED/,/^)$/d' \
       -e '/^message(STATUS "VTK ''${VTK_VERSION} found")$/d' \
@@ -70,7 +79,7 @@ python3Packages.buildPythonPackage (finalAttrs: {
   dontUseCmakeConfigure = true;
 
   buildInputs = [
-    opencascade-occt
+    opencascade-occt_8
     fmt
     rapidjson
     python3Packages.pybind11
@@ -101,7 +110,7 @@ python3Packages.buildPythonPackage (finalAttrs: {
       -DCMAKE_CXX_FLAGS="-DFMT_HEADER_ONLY -fvisibility=hidden -w" \
       -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-      -DCMAKE_INSTALL_RPATH="${lib.getLib opencascade-occt}/lib;${lib.getLib fmt}/lib"
+      -DCMAKE_INSTALL_RPATH="${lib.getLib opencascade-occt_8}/lib;${lib.getLib fmt}/lib"
     ninja -C build -j "$NIX_BUILD_CORES"
 
     wheelSrc="$NIX_BUILD_TOP/wheel"
