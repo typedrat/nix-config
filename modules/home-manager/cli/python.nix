@@ -37,6 +37,7 @@
       numba
       numpy
       opencv-python
+      ortools
       pandas
       pdfplumber
       pint
