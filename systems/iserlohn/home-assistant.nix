@@ -56,6 +56,14 @@
     restartUnits = ["mosquitto.service"];
   };
 
+  sops.secrets."openmqttgateway/mqtt_password" = {
+    sopsFile = ../../secrets/openmqttgateway.yaml;
+    key = "mqtt_password";
+    # The gateway keeps its own copy, entered through its WiFi manager portal,
+    # so only the broker reads this file, and only at preStart.
+    restartUnits = ["mosquitto.service"];
+  };
+
   rat.services.printguard = {
     enable = true;
 
@@ -142,8 +150,8 @@
     ];
   };
 
-  # ESPHome nodes and the printer's Moonraker both speak MQTT from elsewhere on
-  # the network, so the broker cannot stay on loopback. Anonymous connections
+  # ESPHome nodes, the printer's Moonraker and the RTL_433 gateway all speak
+  # MQTT from elsewhere on the network, so the broker cannot stay on loopback. Anonymous connections
   # are already refused, and every user below is confined by its ACL.
   rat.services.mosquitto = {
     listenAddress = "0.0.0.0";
@@ -171,6 +179,17 @@
       # are rejected, so a name carrying a slash (klipper/centauri) nests each
       # printer under a shared root and keeps this ACL good for the next one.
       acl = ["readwrite klipper/#"];
+    };
+
+    users.openmqttgateway = {
+      passwordFile = config.sops.secrets."openmqttgateway/mqtt_password".path;
+      acl = [
+        # The gateway's base topic defaults to a bare home/, so it has to be
+        # set to openmqttgateway/ on the device for this rule to match.
+        "readwrite openmqttgateway/#"
+        "readwrite homeassistant/#"
+        "read homeassistant/status"
+      ];
     };
   };
 
@@ -300,6 +319,7 @@
       "readwrite printguard/#"
       "readwrite esphome/#"
       "readwrite klipper/#"
+      "readwrite openmqttgateway/#"
     ];
     go2rtc.enable = true;
     musicAssistant.enable = true;
