@@ -23,7 +23,7 @@ in {
       # nixpkgs' claude-code with skrabe's system-prompt + system-
       # reminder overrides applied via tweakcc-fixed at build time.
       # See packages/claude-code-patched.nix.
-      claude-code-patched
+      (osConfig.rat.agentSlice.wrap claude-code-patched)
       cclogviewer
     ];
 

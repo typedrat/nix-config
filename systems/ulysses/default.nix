@@ -343,6 +343,12 @@
       netconsole.forwardTo = "iserlohn.lan";
     };
 
+    # Keep agents off the V-Cache CCD (CPUs 0-7,16-23) while gaming.
+    agentSlice = {
+      enable = true;
+      pinnedCpus = "8-15,24-31";
+    };
+
     # Software
     flatpak.enable = true;
     java.enable = true;

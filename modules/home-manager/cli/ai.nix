@@ -82,7 +82,7 @@ in {
 
     home.packages =
       (with pkgs; [
-        codex
+        (osConfig.rat.agentSlice.wrap codex)
         llm
         # hiPrio: wins the `hf` binary collision against huggingface-hub
         # pulled transitively into the cli/python.nix scripting environment
@@ -117,6 +117,7 @@ in {
 
     programs.opencode = {
       enable = true;
+      package = osConfig.rat.agentSlice.wrap pkgs.opencode;
 
       tui = {
         theme = "catppuccin-frappe";

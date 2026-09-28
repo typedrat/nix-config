@@ -11,6 +11,7 @@
     ./theming
     ./virtualisation
     ./networking
+    ./agent-slice.nix
     ./alien.nix
     ./appimage.nix
     ./avahi.nix
