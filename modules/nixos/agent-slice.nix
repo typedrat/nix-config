@@ -112,6 +112,22 @@
         ) 9>"$holders/lock"
       }
 
+      # A pin set by hand outlives any runs in progress; unpinning by hand
+      # clears that, so the last run out does not re-pin either.
+      manual() {
+        mkdir -p "$holders"
+        (
+          ${pkgs.util-linux}/bin/flock 9
+          if [[ "$1" == on ]]; then
+            pin
+            touch "$holders/manual"
+          else
+            unpin
+            rm -f "$holders/manual"
+          fi
+        ) 9>"$holders/lock"
+      }
+
       # Pinning is best-effort: a launch option that fails would keep the game
       # from starting at all.
       run() {
@@ -140,9 +156,9 @@
           release "$2" >/dev/null
           exit
           ;;
-        on) pin ;;
-        off) unpin ;;
-        toggle) if [[ -n "$(allowed)" ]]; then unpin; else pin; fi ;;
+        on) manual on ;;
+        off) manual off ;;
+        toggle) if [[ -n "$(allowed)" ]]; then manual off; else manual on; fi ;;
         status) ;;
         *) usage ;;
       esac
