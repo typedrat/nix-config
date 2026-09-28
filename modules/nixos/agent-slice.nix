@@ -37,6 +37,7 @@
     text = ''
       usage() {
         echo "usage: agent-pin [on|off|toggle|status]" >&2
+        echo "       agent-pin run <command> [args...]" >&2
         exit 2
       }
 
@@ -44,15 +45,101 @@
         ${systemctl} --user show --property=AllowedCPUs --value ${slice}
       }
 
-      # --runtime so a reboot always comes back unpinned.
+      # --runtime so a reboot always comes back unpinned. The weights cover what
+      # pinning cannot: disk bandwidth is shared regardless of which CCD asks.
       pin() {
-        ${systemctl} --user set-property --runtime ${slice} AllowedCPUs=${cfg.pinnedCpus}
+        ${systemctl} --user set-property --runtime ${slice} \
+          AllowedCPUs=${cfg.pinnedCpus} CPUWeight=20 IOWeight=20
       }
       unpin() {
-        ${systemctl} --user set-property --runtime ${slice} AllowedCPUs=
+        ${systemctl} --user set-property --runtime ${slice} \
+          AllowedCPUs= CPUWeight= IOWeight=
+      }
+
+      # Each `run` leaves a pidfile here while its command is alive, so
+      # overlapping runs only unpin when the last one exits.
+      holders="''${XDG_RUNTIME_DIR:-/run/user/$UID}/agent-pin"
+
+      # Counts live holders and deletes the rest. A holder only goes stale if
+      # its release service never ran, so a stale file means a leftover pin
+      # from a run rather than one set by hand.
+      prune_holders() {
+        local f
+        live=0 stale=0
+        for f in "$holders"/*.pid; do
+          [[ -e "$f" ]] || continue
+          if kill -0 "$(${pkgs.coreutils}/bin/basename "$f" .pid)" 2>/dev/null; then
+            live=$((live + 1))
+          else
+            rm -f "$f"
+            stale=$((stale + 1))
+          fi
+        done
+      }
+
+      # A pin already on when the first holder arrives was set by hand, and is
+      # left on after the last holder leaves.
+      acquire() {
+        (
+          ${pkgs.util-linux}/bin/flock 9
+          prune_holders
+          if ((live == 0 && stale == 0)); then
+            if [[ -n "$(allowed)" ]]; then
+              touch "$holders/manual"
+            else
+              rm -f "$holders/manual"
+              pin
+            fi
+          elif ((live == 0)) && [[ -z "$(allowed)" ]]; then
+            pin
+          fi
+          touch "$holders/$1.pid"
+        ) 9>"$holders/lock"
+      }
+
+      release() {
+        (
+          ${pkgs.util-linux}/bin/flock 9
+          rm -f "$holders/$1.pid"
+          prune_holders
+          if ((live == 0)); then
+            if [[ -e "$holders/manual" ]]; then
+              rm -f "$holders/manual"
+            else
+              unpin
+            fi
+          fi
+        ) 9>"$holders/lock"
+      }
+
+      # Pinning is best-effort: a launch option that fails would keep the game
+      # from starting at all.
+      run() {
+        [[ $# -gt 0 ]] || usage
+        if mkdir -p "$holders" && acquire $$ >/dev/null; then
+          # The release waits in its own user service instead of a child
+          # process: Steam's reaper kills every descendant when a game stops,
+          # and exec leaves nothing of this script behind to clean up.
+          ${config.systemd.package}/bin/systemd-run --user --quiet --collect \
+            --unit="agent-pin-release-$$" \
+            "$(${pkgs.coreutils}/bin/readlink -f "$0")" _release $$ ||
+            release $$ >/dev/null || true
+        else
+          echo "agent-pin: could not pin ${slice}" >&2
+        fi
+        exec "$@"
       }
 
       case "''${1:-status}" in
+        run)
+          shift
+          run "$@"
+          ;;
+        _release)
+          ${pkgs.coreutils}/bin/tail --pid="$2" -f /dev/null
+          release "$2" >/dev/null
+          exit
+          ;;
         on) pin ;;
         off) unpin ;;
         toggle) if [[ -n "$(allowed)" ]]; then unpin; else pin; fi ;;
@@ -66,6 +153,7 @@
       else
         echo "${slice}: unpinned"
       fi
+      ${systemctl} --user show --property=CPUWeight --property=IOWeight ${slice}
     '';
   };
 in {
