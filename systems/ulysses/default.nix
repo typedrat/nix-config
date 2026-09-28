@@ -343,10 +343,11 @@
       netconsole.forwardTo = "iserlohn.lan";
     };
 
-    # Keep agents off the V-Cache CCD (CPUs 0-7,16-23) while gaming.
+    # While gaming, games get the V-Cache CCD and agents get the other one.
     agentSlice = {
       enable = true;
       pinnedCpus = "8-15,24-31";
+      gameCpus = "0-7,16-23";
     };
 
     # Software
@@ -391,6 +392,7 @@
           aiDiffusion.enable = true;
         };
         terminals.ghostty.enable = true;
+        easyeffects.enable = true;
       };
     };
   };

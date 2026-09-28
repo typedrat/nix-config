@@ -23,8 +23,10 @@
       exec "$@"
     fi
 
-    # No user manager to ask, e.g. a shell entered through su.
-    if [[ ! -S "''${XDG_RUNTIME_DIR:-/run/user/$UID}/bus" ]]; then
+    # No user manager to ask, e.g. a shell entered through su. systemd-run
+    # finds the bus only through XDG_RUNTIME_DIR, so the socket existing at
+    # the usual path is not enough.
+    if [[ -z "''${XDG_RUNTIME_DIR:-}" || ! -S "$XDG_RUNTIME_DIR/bus" ]]; then
       exec "$@"
     fi
 
@@ -143,6 +145,16 @@
         else
           echo "agent-pin: could not pin ${slice}" >&2
         fi
+
+        # A cgroup limit rather than an affinity mask, which the game or Wine
+        # could widen again. --scope execs in place, so the release service is
+        # still waiting on the right PID.
+        local game_cpus=${lib.escapeShellArg (lib.defaultTo "" cfg.gameCpus)}
+        if [[ -n "$game_cpus" && -n "''${XDG_RUNTIME_DIR:-}" && -S "$XDG_RUNTIME_DIR/bus" ]]; then
+          exec ${config.systemd.package}/bin/systemd-run --user --scope --quiet --collect \
+            --property=AllowedCPUs="$game_cpus" --description="''${1##*/}" -- "$@"
+        fi
+
         exec "$@"
       }
 
@@ -180,6 +192,16 @@ in {
       type = types.str;
       example = "8-15,24-31";
       description = "CPU list that `agent-pin on` confines ${slice} to.";
+    };
+
+    gameCpus = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      example = "0-7,16-23";
+      description = ''
+        CPU list that `agent-pin run` confines its command to, or null to
+        leave the command free to use every CPU.
+      '';
     };
 
     wrap = mkOption {
