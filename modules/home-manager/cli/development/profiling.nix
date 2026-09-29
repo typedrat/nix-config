@@ -13,7 +13,7 @@ in {
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
     home.packages = with pkgs; [
       # Sampling profilers
-      perf
+      (osConfig.rat.security.perf.wrap perf)
       samply
 
       # Flame graphs from `perf script` output

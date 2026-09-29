@@ -4,18 +4,46 @@
   pkgs,
   ...
 }: let
+  inherit (lib) types;
   inherit (lib.modules) mkIf;
-  inherit (lib.options) mkEnableOption;
+  inherit (lib.options) mkEnableOption mkOption;
   cfg = config.rat.security.perf;
   group = "perf_users";
+  wrapper = "${config.security.wrapperDir}/perf";
 
   perfUsers =
     lib.filterAttrs
     (_: userCfg: userCfg.enable && (userCfg.cli.development.enable or false))
     config.rat.users;
 in {
-  options.rat.security.perf.enable =
-    mkEnableOption "kernel profiling with perf for development users, without loosening perf_event_paranoid or kptr_restrict";
+  options.rat.security.perf = {
+    enable =
+      mkEnableOption "kernel profiling with perf for development users, without loosening perf_event_paranoid or kptr_restrict";
+
+    wrap = mkOption {
+      type = types.functionTo types.package;
+      readOnly = true;
+      description = ''
+        Wraps a perf package so its `perf` runs the capability wrapper.
+        Returns the package unchanged when kernel profiling is disabled.
+        The wrapper always runs the system's perf, not the one passed in.
+      '';
+      default = pkg:
+        if !cfg.enable
+        then pkg
+        else
+          pkgs.symlinkJoin {
+            name = "${pkg.name}-capabilities";
+            paths = [pkg];
+            postBuild = ''
+              rm "$out/bin/perf"
+              ln -s ${wrapper} "$out/bin/perf"
+            '';
+            inherit (pkg) meta;
+            passthru = pkg.passthru or {};
+          };
+    };
+  };
 
   config = mkIf cfg.enable {
     users.groups.${group} = {};
