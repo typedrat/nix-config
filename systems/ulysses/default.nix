@@ -362,6 +362,7 @@
     # Security
     polkit.unprivilegedPowerManagement = true;
     security.sudo.extendedTimeout.enable = true;
+    security.perf.enable = true;
 
     # User configuration
     users.awilliams = {
