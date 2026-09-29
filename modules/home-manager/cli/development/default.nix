@@ -20,6 +20,7 @@ in {
     ./hunk.nix
     ./languages.nix
     ./nix-tools.nix
+    ./profiling.nix
   ];
 
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
