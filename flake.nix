@@ -33,6 +33,13 @@
       flake = false;
     };
 
+    # Bump claude-code 2.1.283 -> 2.1.284, which claude-code-patched needs and
+    # the locked nixpkgs does not have yet (NixOS/nixpkgs#567989)
+    nixpkgs-patch-567989 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/567989.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
