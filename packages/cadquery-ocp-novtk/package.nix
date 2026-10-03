@@ -25,7 +25,7 @@ python3Packages.buildPythonPackage (finalAttrs: {
   pname = "cadquery-ocp-novtk";
   # Tracks the OCP release tag, which is what the src URL below resolves; the
   # PyPI wheels carry a fifth component the tags do not.
-  version = "8.0.1.0";
+  version = "8.0.1.1";
   pyproject = true;
 
   # The bindings are machine-written by pywrap, which needs a clang 21 with
@@ -42,7 +42,7 @@ python3Packages.buildPythonPackage (finalAttrs: {
       url = "https://github.com/CadQuery/OCP/releases/download/${finalAttrs.version}/OCP_src_stubs_Linux.zip";
       # The 8.x archives dropped the wrapping directory the 7.x ones had.
       stripRoot = false;
-      hash = "sha256-chuQybk97eJdhuGO3YIm7F0I146rPufomVQauJavhGM=";
+      hash = "sha256-LNGEV6V2KPFvdkb6u0tmSqI9S7XVBtso626WQBOdZVk=";
     };
 
   # Upstream's wheel scaffolding: pyproject.toml, the OCP/__init__.py shim and
