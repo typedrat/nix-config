@@ -38,9 +38,15 @@ in {
       # Agentic desktop control (native Hyprland windowing backend).
       computerUseUi.enable = true;
 
-      # Experimental "drive this desktop from ChatGPT mobile" support. Adds the
-      # remote-mobile-control feature; the app-server itself is run declaratively
-      # via systemd below rather than by the Desktop launcher.
+      # Experimental "drive this desktop from ChatGPT mobile" support. Desktop
+      # runs its own `codex app-server --remote-control`, so phones can only
+      # reach this machine while the app is open.
+      #
+      # remoteControl.enable (a systemd-owned app-server) must stay off: it
+      # puts Desktop in proxy mode, where `codex app-server proxy` pipes raw
+      # JSON-RPC into a control socket that only speaks WebSocket. The server
+      # drops the connection, `initialize` never answers, and Desktop sits on
+      # launch without ever opening a window.
       remoteMobileControl.enable = true;
 
       linuxFeatures = [
@@ -49,9 +55,8 @@ in {
         "mcp-helper-reaper"
         "node-repl-reaper"
         "persistent-status-panel"
+        "pet-overlay"
       ];
-
-      remoteControl.enable = true;
     };
 
     home.packages = [
