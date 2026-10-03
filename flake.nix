@@ -33,10 +33,19 @@
       flake = false;
     };
 
-    # Bump claude-code 2.1.283 -> 2.1.284, which claude-code-patched needs and
-    # the locked nixpkgs does not have yet (NixOS/nixpkgs#567989)
-    nixpkgs-patch-567989 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/567989.diff";
+    # Bump claude-code 2.1.285 -> 2.1.288 for claude-code-patched. Each PR's
+    # manifest hunk assumes the previous version, so these must stay stacked
+    # (NixOS/nixpkgs#568898, NixOS/nixpkgs#569297, NixOS/nixpkgs#569711)
+    nixpkgs-patch-568898 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/568898.diff";
+      flake = false;
+    };
+    nixpkgs-patch-569297 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/569297.diff";
+      flake = false;
+    };
+    nixpkgs-patch-569711 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/569711.diff";
       flake = false;
     };
 
