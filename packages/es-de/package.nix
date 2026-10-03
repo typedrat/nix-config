@@ -11,11 +11,11 @@
   coreutils,
 }: let
   pname = "es-de";
-  version = "3.4.1";
+  version = "3.5.0";
 
   src = fetchurl {
-    url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/288156961/download";
-    hash = "sha256-PGGkTXONVRY9qljt5wcgtCWg32JGDATcI908pYZyNYE=";
+    url = "https://gitlab.com/es-de/emulationstation-de/-/package_files/357718352/download";
+    hash = "sha256-q8KZmhI4X4V3W9P5hvqJHHa2nfN5H3wS5MeDzzw2MPU=";
     name = "ES-DE_v${version}.AppImage";
   };
 
