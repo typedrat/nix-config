@@ -1,4 +1,4 @@
-"""Bridge newline-delimited JSON-RPC on stdio to a Codex app-server control socket.
+"""Bridge JSON-RPC lines on stdio to a Codex app-server control socket.
 
 The control socket only accepts WebSocket connections and carries one JSON-RPC
 message per text frame, while Desktop's app-server child speaks JSON lines.
