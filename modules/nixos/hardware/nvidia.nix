@@ -175,31 +175,54 @@ in {
     # The fix is to use cudaPackages.backendStdenv, which provides a GCC version
     # compatible with the CUDA toolkit.
     nixpkgs.overlays = mkIf cfg.cuda.enable [
-      (final: prev: {
+      (final: prev: let
+        noCudaPkgs = import prev.path {
+          inherit (prev.stdenv.hostPlatform) system;
+          config = prev.config // {cudaSupport = false;};
+        };
+      in {
         zfp = prev.zfp.override {
           stdenv = final.cudaPackages.backendStdenv;
         };
 
         # Mozilla mach (firefox/thunderbird) hardcodes onnxruntime as a build
         # input. With cudaSupport=true globally this drags cudnn/nccl/cufft into
-        # the closure. firefox-unwrapped is built by cache.nixos-cuda.org so it
-        # substitutes fine, but thunderbird-unwrapped is not on either cache,
+        # the closure, and the CUDA variants are not reliably on either cache,
         # forcing a multi-hour from-source rebuild on every nixpkgs bump.
+        # thunderbird-unwrapped is a direct dependency; firefox-esr-153-unwrapped
+        # is pulled in by zotero, which bundles it as its XULRunner runtime.
         #
         # Overriding onnxruntime's own `cudaSupport` flag is not enough: its
         # opencv/openvino inputs still resolve through the cudaSupport=true
         # package set (CUDA builds on the GCC 14 backend stdenv), so the hash
-        # diverges from Hydra's and never substitutes. Re-import nixpkgs with
-        # cudaSupport fully off to reproduce Hydra's cache.nixos.org hash.
+        # diverges from Hydra's and never substitutes. Take onnxruntime from a
+        # nixpkgs re-imported with cudaSupport fully off to reproduce Hydra's
+        # cache.nixos.org hash.
         thunderbird-unwrapped = prev.thunderbird-unwrapped.override {
-          inherit
-            (import prev.path {
-              inherit (prev.stdenv.hostPlatform) system;
-              config = prev.config // {cudaSupport = false;};
-            })
-            onnxruntime
-            ;
+          inherit (noCudaPkgs) onnxruntime;
         };
+        firefox-esr-153-unwrapped = prev.firefox-esr-153-unwrapped.override {
+          inherit (noCudaPkgs) onnxruntime;
+        };
+
+        # SCIP reaches CUDA through ipopt -> spral -> hwloc, which gives
+        # or-tools (and python3Packages.ortools, built from it) a hash that no
+        # cache has. or-tools gains nothing from GPU-enabled sparse solvers.
+        or-tools = prev.or-tools.override {
+          inherit (noCudaPkgs) scipopt-scip;
+        };
+
+        # blosc2 only uses torch in its test suite, but a CUDA torch there still
+        # changes its hash and that of everything above it (e.g. tables).
+        pythonPackagesExtensions =
+          prev.pythonPackagesExtensions
+          ++ [
+            (_pyfinal: pyprev: {
+              blosc2 = pyprev.blosc2.override {
+                inherit (noCudaPkgs.${pyprev.python.pythonAttr}.pkgs) torch;
+              };
+            })
+          ];
       })
     ];
 
