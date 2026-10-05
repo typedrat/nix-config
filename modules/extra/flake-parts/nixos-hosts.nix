@@ -103,7 +103,7 @@ in
             cfg.sharedModules
             ++ hostConfig.modules
             ++ [
-              {nixpkgs.overlays = [self.overlays.localPackages];}
+              {nixpkgs.overlays = lib.attrValues self.overlays;}
               {
                 _module.args = withSystem system (
                   {
