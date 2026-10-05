@@ -2,6 +2,7 @@
   osConfig,
   inputs,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib.modules) mkIf;
@@ -20,20 +21,26 @@ in {
       # Vesktop is the preferred client; disable the bundled Discord package.
       discord = {
         enable = true;
-        vencord.enable = true;
-        # krisp.enable = true;
+        equicord.enable = true;
+        krisp.enable = true;
       };
 
-      # Theming: Catppuccin Frappé (lavender accent) loaded via Vencord's
-      # native theme support. Font overrides live in quickCss since they're
-      # not first-class config.
       config = {
         useQuickCss = true;
+        enabledThemeLinks = [
+          "https://catppuccin.github.io/discord/dist/catppuccin-frappe-lavender.theme.css"
+        ];
         plugins = {
           sendTimestamps.enable = true;
           readAllNotificationsButton.enable = true;
         };
       };
+      extraConfig.plugins.GithubPrivateEmbeds = {
+        enable = true;
+        ghPath = lib.getExe pkgs.gh;
+      };
+      userPlugins.githubPrivateEmbeds = ../../../../users/awilliams/discord-plugins/githubPrivateEmbeds;
+
       quickCss = ''
         :root {
             --font-primary: sans-serif;
@@ -45,7 +52,7 @@ in {
     };
 
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
-      directories = [".config/discord" ".config/Vesktop" ".config/Vencord"];
+      directories = [".config/discord" ".config/Vesktop" ".config/Vencord" ".config/Equicord"];
     };
   };
 }
