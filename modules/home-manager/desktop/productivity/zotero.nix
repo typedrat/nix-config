@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  pkgs,
   lib,
   ...
 }: let
@@ -18,6 +17,9 @@ in {
       directories = [".zotero"];
     };
 
-    home.packages = [pkgs.zotero];
+    # Zotero 10 needs Firefox ESR 140, which nixpkgs dropped, and fails to
+    # build against ESR 153 (NixOS/nixpkgs#568692). Restore once
+    # NixOS/nixpkgs#569006 is merged and cached:
+    #   home.packages = [pkgs.zotero];
   };
 }
