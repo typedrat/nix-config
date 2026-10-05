@@ -33,6 +33,14 @@
       flake = false;
     };
 
+    # Drop a volatile return type from ltrace's demangle test: GCC 16 defaults to
+    # C++20, which warns on it, and DejaGnu treats any compiler output as a
+    # failed compile (NixOS/nixpkgs#569799)
+    nixpkgs-patch-569799 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/569799.diff";
+      flake = false;
+    };
+
     # Bump claude-code 2.1.285 -> 2.1.288 for claude-code-patched. Each PR's
     # manifest hunk assumes the previous version, so these must stay stacked
     # (NixOS/nixpkgs#568898, NixOS/nixpkgs#569297, NixOS/nixpkgs#569711)
