@@ -34,15 +34,12 @@ in {
       bottles
       gamescope
       igir
-      pegasus-frontend
       umu-launcher
       wineWow64Packages.stagingFull
       winetricks
     ];
 
     xdg.userDirs.extraConfig.XDG_GAMES_DIR = "$HOME/Games";
-
-    xdg.configFile."pegasus-frontend/themes/colorful".source = "${pkgs.pegasus-theme-colorful}/share/pegasus-frontend/themes/colorful";
 
     home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
       {
