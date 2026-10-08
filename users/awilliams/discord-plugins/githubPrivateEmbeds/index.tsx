@@ -166,7 +166,7 @@ export default definePlugin({
     name: "GithubPrivateEmbeds",
     description: "Embeds links to private GitHub repos, issues and pull requests using your `gh` login",
     tags: ["Appearance", "Chat"],
-    authors: [{ name: "typedrat", id: 0n }],
+    authors: [{ name: "typedrat", id: 232222900516552705n }],
     dependencies: ["MessageUpdaterAPI", "MessageAccessoriesAPI"],
     settings,
 
