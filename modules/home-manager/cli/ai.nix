@@ -91,12 +91,10 @@ in {
         vast-cli
       ])
       ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp
-      # The full model set is all 83 model runtimes, so this is a long build
-      # from source; the CUDA backend is the reason to bother on these hosts.
-      ++ lib.optional hasNvidia (pkgs.audio-cpp.override {
+      ++ lib.optional hasNvidia (pkgs.nemo-speech.override {
+        japaneseSupport = true;
+        mandarinSupport = true;
         cudaSupport = true;
-        modelSet = "full";
-        nativeModelManagerSupport = true;
         inherit (osConfig.rat.hardware.gpu) cudaArchitectures;
       });
 
