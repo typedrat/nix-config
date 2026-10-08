@@ -256,6 +256,7 @@
       usbmuxd.enable = true;
       nintendoSwitch.rcm.enable = true;
       esp32Dev.enable = true;
+      sigrok.enable = true;
     };
 
     # Audio

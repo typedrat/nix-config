@@ -13,6 +13,7 @@ in {
     ./printing.nix
     ./scanning.nix
     ./security-key.nix
+    ./sigrok.nix
     ./topping-e2x2.nix
     ./udisks2.nix
     ./usbmuxd.nix
