@@ -12,7 +12,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tweakcc-fixed";
-  version = "2.8.34";
+  version = "2.8.44";
 
   # Tracks skrabe/tweakcc-fixed upstream. We previously pinned a typedrat fork
   # carrying a \uXXXX-escape fix for injected non-ASCII glyphs (raw multibyte
@@ -24,7 +24,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "skrabe";
     repo = "tweakcc-fixed";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-pNleN5v+ly7So3TyCwqm18btwytfmOgDVmp0MOJ/Iow=";
+    hash = "sha256-C+4iBNufpRQJ3FP3moWDTNh7+JcRzqEwYs82qp6sOoA=";
   };
 
   # Repacking a Bun single-file executable appends the rebuilt .bun after the
@@ -47,7 +47,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     # trip per lockfile entry (19 minutes here) to re-establish what this
     # derivation's own output hash already pins.
     prePnpmInstall = "pnpm config set trust-lockfile true";
-    hash = "sha256-etL9PQNNGmyMGn1+kolpS5KXBRPMAZZjQK69EJnIoD0=";
+    hash = "sha256-MPlffr6vXCAFNHfPAvsgz8yAwM5gMRjHxT2j/fU+ifE=";
   };
 
   nativeBuildInputs =
@@ -135,8 +135,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     promptOverrides = fetchFromGitHub {
       owner = "skrabe";
       repo = "lobotomized-claude-code";
-      rev = "5d6bac749839bb5c03d47702d02717e035314bf8";
-      hash = "sha256-isVgTDfKyopHEhlkfMj1mxXOxLrywWEJyREiFhlipfY=";
+      rev = "60f8be0391e4c53ca7b3153cc949b3344cbde3f9";
+      hash = "sha256-AKZWzx6MrIOZMlj2DhAPtBWz7MZhZHpcswcArU2Pf3s=";
     };
 
     updateScript = ./update.sh;
