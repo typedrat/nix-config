@@ -131,10 +131,23 @@ in
           ))
         ];
 
-      # The tools/ targets declare no install rules.
-      postInstall = optionalString buildTools ''
-        install -Dm755 -t $out/bin bin/check_backend_coverage bin/bench_asr_batching bin/nanocodec
-      '';
+      # The vendored llama.cpp is patched and shares upstream's sonames, so keep
+      # it out of lib/ where it would collide with llama-cpp in a profile.
+      postInstall =
+        ''
+          mkdir $out/lib/nemo-speech
+          mv $out/lib/libggml* $out/lib/libllama* $out/lib/nemo-speech/
+          for f in $out/bin/nemo-speech $(find $out/lib -maxdepth 1 -type f -name 'libnemo_speech_*.so*'); do
+            patchelf --add-rpath $out/lib/nemo-speech "$f"
+          done
+        ''
+        # The tools/ targets declare no install rules.
+        + optionalString buildTools ''
+          install -Dm755 -t $out/bin bin/check_backend_coverage bin/bench_asr_batching bin/nanocodec
+          for f in $out/bin/check_backend_coverage $out/bin/bench_asr_batching $out/bin/nanocodec; do
+            patchelf --add-rpath $out/lib/nemo-speech "$f"
+          done
+        '';
 
       postFixup = optionalString (micCaptureSupport && effectiveStdenv.hostPlatform.isLinux) ''
         patchelf --add-rpath ${lib.makeLibraryPath audioBackends} $out/bin/nemo-speech
