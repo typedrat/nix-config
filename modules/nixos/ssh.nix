@@ -29,7 +29,6 @@ in {
       # Ensure SSH and mosh are globally available
       environment.systemPackages = with pkgs; [
         ghostty.terminfo
-        wezterm.terminfo
         openssh
       ];
 
