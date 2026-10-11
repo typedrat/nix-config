@@ -45,6 +45,23 @@
             ];
         })
 
+        # gradio's streaming-video lead-tolerance test asserts on ffmpeg's
+        # audio padding length, which comes out longer than its bound with the
+        # ffmpeg in nixpkgs (0.1587 s vs 0.128 s at 16 kHz).
+        (_final: prev: {
+          pythonPackagesExtensions =
+            prev.pythonPackagesExtensions
+            ++ [
+              (_python-final: python-prev: {
+                gradio = python-prev.gradio.overrideAttrs (oldAttrs: {
+                  disabledTests =
+                    (oldAttrs.disabledTests or [])
+                    ++ ["test_the_first_segment_s_padding_stays_inside_the_lead_tolerance"];
+                });
+              })
+            ];
+        })
+
         # nodejs 20 (bundled by github-runner for the Actions Node 20 runtime)
         # fails its check phase on this host: test-fs-readdir-ucs2 creates a file
         # with an invalid UCS-2 byte sequence as its name, but iserlohn's ZFS
