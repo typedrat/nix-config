@@ -81,11 +81,25 @@ in {
         ''
       );
 
-      history.size = 10000;
+      history = {
+        size = 100000;
+        extended = true;
+        ignoreAllDups = true;
+        saveNoDups = true;
+        findNoDups = true;
+      };
 
       setOptions = [
         "AUTO_CD"
+        "AUTO_PUSHD"
+        "PUSHD_IGNORE_DUPS"
+        "PUSHD_SILENT"
         "GLOB_DOTS"
+        "NUMERIC_GLOB_SORT"
+        "COMPLETE_IN_WORD"
+        "ALWAYS_TO_END"
+        "HIST_REDUCE_BLANKS"
+        "HIST_VERIFY"
         "INTERACTIVE_COMMENTS"
       ];
     };
