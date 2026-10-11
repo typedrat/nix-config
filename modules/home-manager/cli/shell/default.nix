@@ -82,6 +82,12 @@ in {
       );
 
       history.size = 10000;
+
+      setOptions = [
+        "AUTO_CD"
+        "GLOB_DOTS"
+        "INTERACTIVE_COMMENTS"
+      ];
     };
 
     home.file.".p10k.zsh".source = ./p10k.zsh;
