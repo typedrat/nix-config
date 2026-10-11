@@ -21,7 +21,7 @@
           ++ [
             (prev.fetchurl {
               url = "https://github.com/maralorn/nix-output-monitor/pull/321.diff";
-              hash = "sha256-YXpElsb9i1k2Bf52IYmSU9CQJNMMwH0XuJkXHkpmzDY=";
+              hash = "sha256-XLc2IEpwQYw2lfcVnI58BeZ0EgNS4LF+U63Rnpgqcmc=";
             })
           ];
       });
