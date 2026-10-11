@@ -252,6 +252,11 @@
 
       openrgb.enable = true;
       topping-e2x2.enable = true;
+      denon-avr = {
+        enable = true;
+        alsaDevice = "alsa_card.pci-0000_01_00.1";
+        pcInput = "BD";
+      };
       securityKey.enable = true;
       usbmuxd.enable = true;
       nintendoSwitch.rcm.enable = true;

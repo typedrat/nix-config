@@ -193,6 +193,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    denon-pipewire-audio-control = {
+      url = "github:typedrat/denon-pipewire-audio-control";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-parts.follows = "flake-parts";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
+
     claude-desktop-debian = {
       url = "github:aaddrick/claude-desktop-debian";
       inputs.nixpkgs.follows = "nixpkgs";
