@@ -33,18 +33,6 @@
       flake = false;
     };
 
-    # Bump claude-code 2.1.292 -> 2.1.295 for claude-code-patched. Each PR's
-    # manifest hunk assumes the previous version, so these must stay stacked
-    # (NixOS/nixpkgs#571475, NixOS/nixpkgs#571990)
-    nixpkgs-patch-571475 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/571475.diff";
-      flake = false;
-    };
-    nixpkgs-patch-571990 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/571990.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
