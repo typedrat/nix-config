@@ -37,7 +37,6 @@ in {
           "$font" = "TX02 Nerd Font";
 
           general = {
-            disable_loading_bar = true;
             hide_cursor = true;
           };
 

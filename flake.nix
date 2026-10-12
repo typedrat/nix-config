@@ -169,7 +169,12 @@
     #region Hyprland
     hyprland.url = "github:hyprwm/Hyprland";
 
-    hyprlock.url = "github:hyprwm/hyprlock";
+    # hyprlock dlopens the system's PAM modules, so it must link the same glibc
+    # they were built against or every auth attempt fails.
+    hyprlock = {
+      url = "github:hyprwm/hyprlock";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
