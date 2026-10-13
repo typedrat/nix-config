@@ -139,7 +139,6 @@ in {
 
       settings = {
         plugin = [
-          "@ex-machina/opencode-anthropic-auth@1.8.1"
           "opencode-pty"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
@@ -195,54 +194,15 @@ in {
 
         agent = {
           build = {
-            model = "anthropic/claude-opus-4-8";
+            model = "openai/gpt-6.1-sol";
           };
           plan = {
-            model = "anthropic/claude-opus-4-8";
+            model = "openai/gpt-6.1-sol";
           };
           explore = {
-            model = "anthropic/claude-haiku-4-5";
+            model = "openai/gpt-6-luna";
           };
         };
-      };
-
-      agents = {
-        haiku = ''
-          ---
-          description: Fast, lightweight agent using Claude Haiku 4.5
-          mode: subagent
-          model: anthropic/claude-haiku-4-5
-          ---
-          You are a fast, efficient coding assistant powered by Claude Haiku.
-          Prioritize speed and conciseness. Good for quick lookups, simple edits, and routine tasks.
-        '';
-        sonnet = ''
-          ---
-          description: Balanced agent using Claude Sonnet 4.6
-          mode: subagent
-          model: anthropic/claude-sonnet-4-6
-          ---
-          You are a capable coding assistant powered by Claude Sonnet.
-          Balance thoroughness with efficiency. Good for most development tasks.
-        '';
-        opus = ''
-          ---
-          description: Most capable agent using Claude Opus 4.8
-          mode: subagent
-          model: anthropic/claude-opus-4-8
-          ---
-          You are an expert coding assistant powered by Claude Opus.
-          Prioritize depth, correctness, and thorough analysis. Good for complex tasks, architecture decisions, and difficult debugging.
-        '';
-        codex = ''
-          ---
-          description: OpenAI GPT-5.4 agent
-          mode: subagent
-          model: openai/gpt-5.5
-          ---
-          You are a coding assistant powered by OpenAI GPT-5.4.
-          Leverage your strengths in code generation, reasoning, and problem-solving.
-        '';
       };
     };
 
