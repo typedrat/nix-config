@@ -65,6 +65,10 @@ in {
 
     security.pam.services.hyprlock = {};
 
+    environment.systemPackages = [
+      pkgs.grim
+    ];
+
     xdg.portal = {
       enable = true;
       extraPortals = with pkgs; [
