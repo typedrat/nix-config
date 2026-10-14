@@ -300,6 +300,12 @@
       inputs.bun2nix.inputs.systems.follows = "systems-linux";
     };
 
+    synapdeck = {
+      url = "https://flakehub.com/f/synapdeck/synapdeck/*";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-parts.follows = "flake-parts";
+    };
+
     # Personal wallpaper collection (private repo). Consumed as raw files so the
     # images live in the store rather than being copied into ~/Pictures by hand.
     wallpapers = {
