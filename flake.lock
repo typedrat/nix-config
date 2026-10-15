@@ -3772,6 +3772,7 @@
         "peon-ping": "peon-ping",
         "plasma-manager": "plasma-manager",
         "pyprland": "pyprland",
+        "send-to-qui": "send-to-qui",
         "sops-nix": "sops-nix",
         "spicetify-nix": "spicetify-nix",
         "style-search": "style-search",
@@ -3897,6 +3898,29 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "send-to-qui": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792104297,
+        "narHash": "sha256-Hv39Hla499i5PE0cJWzSOwg4Zb/QmqWCNmpFYazYU0k=",
+        "owner": "typedrat",
+        "repo": "send-to-qui-firefox",
+        "rev": "60250bf28786751966ffa99ffc370b00535454c4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "typedrat",
+        "repo": "send-to-qui-firefox",
         "type": "github"
       }
     },
