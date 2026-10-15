@@ -271,7 +271,8 @@
     # custom_components/, so the frame helper cannot attribute it to an
     # integration and falls back to the core behaviour: a hard RuntimeError
     # where a custom integration would only get a log line. Upstream master
-    # still has it, so a version bump won't help.
+    # still has it, so a version bump won't help. nixpkgs marks the package
+    # broken over those same tests, so the flag is cleared here too.
     (_final: prev: {
       home-assistant-custom-components = prev.home-assistant-custom-components.extend (
         _hassFinal: hassPrev: {
@@ -282,6 +283,7 @@
               "test_send_gcode_empty_payload_skips_send"
               "test_send_gcode_accepts_config_entry_id_and_deduplicates"
             ];
+            meta.broken = false;
           };
         }
       );
