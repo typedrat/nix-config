@@ -33,6 +33,14 @@
       flake = false;
     };
 
+    # Wire alsa-lib into claude-code's DT_RPATH instead of LD_LIBRARY_PATH, which
+    # leaked into every child process and broke libasound users built against an
+    # older glibc (NixOS/nixpkgs#569098)
+    nixpkgs-patch-569098 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/569098.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
