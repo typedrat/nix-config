@@ -19,6 +19,13 @@ in {
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;
+
+      # Avalonia apps run through steam-run (e.g. Shin Ryu Mod Manager)
+      # dlopen these at startup.
+      extraPackages = with pkgs; [
+        libice
+        libsm
+      ];
     };
 
     hardware = {
