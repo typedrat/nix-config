@@ -21,10 +21,14 @@ in {
       localNetworkGameTransfers.openFirewall = true;
 
       # Avalonia apps run through steam-run (e.g. Shin Ryu Mod Manager)
-      # dlopen these at startup.
+      # dlopen libice/libsm at startup. Ren'Py 7 games' bundled libGLEW needs
+      # libxmu/libGLU, or the GL renderer fails to load and it falls back to
+      # software rendering.
       extraPackages = with pkgs; [
         libice
         libsm
+        libxmu
+        libGLU
       ];
     };
 
