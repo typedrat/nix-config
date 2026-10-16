@@ -91,7 +91,7 @@ in {
         vast-cli
       ])
       ++ lib.optional (hasNvidia && hasLargeVram) pkgs.llama-cpp
-      ++ lib.optional hasNvidia (pkgs.nemo-speech.override {
+      ++ lib.optional (hasNvidia && hasLargeVram) (pkgs.nemo-speech.override {
         japaneseSupport = true;
         mandarinSupport = true;
         cudaSupport = true;
