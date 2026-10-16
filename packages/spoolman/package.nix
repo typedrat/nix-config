@@ -60,6 +60,7 @@ in
       hishel_0_1
       httptools
       httpx
+      influxdb-client
       aiosqlite
       platformdirs
       prometheus-client

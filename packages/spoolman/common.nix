@@ -2,7 +2,7 @@
   lib,
   fetchFromGitHub,
 }: let
-  version = "0.26.1";
+  version = "0.27.0";
 in {
   inherit version;
 
@@ -10,12 +10,12 @@ in {
     owner = "Donkie";
     repo = "Spoolman";
     tag = "v${version}";
-    hash = "sha256-tBHU4WvknqkRNxlQJ/wuzM3mrQVyMS3eED1Kimi6rsU=";
+    hash = "sha256-vaN2VgTj8JJmJl7KQfvLCq4kV1mfJs77m60xRljNk9s=";
   };
 
   # Lives beside the version so the update script, which edits only this file,
   # refreshes it too.
-  npmDepsHash = "sha256-DYUwz3rOdnah3EUBM7dciCdEsRlZG9ijoHiPWLIdRuc=";
+  npmDepsHash = "sha256-JCyDOhgaKdMnnhbuOjmI/emqYyve/c0i+fvRJP7lkng=";
 
   meta = {
     description = "Keep track of your inventory of 3D-printer filament spools";
