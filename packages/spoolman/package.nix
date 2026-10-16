@@ -91,8 +91,9 @@ in
       --prefix PATH : "${python3.pkgs.alembic}/bin"
     '';
 
+    passthru.frontend = frontend;
     passthru.updateScript = nix-update-script {
-      extraArgs = ["--flake" "--subpackage" "frontend"];
+      extraArgs = ["--flake" "--override-filename" "packages/spoolman/common.nix" "--subpackage" "frontend"];
     };
 
     meta =

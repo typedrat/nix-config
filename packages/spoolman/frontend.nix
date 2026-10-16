@@ -32,11 +32,9 @@ in
   buildNpmPackage {
     pname = "spoolman-frontend";
 
-    inherit (common) version;
+    inherit (common) version npmDepsHash;
 
     src = "${common.src}/client_v2";
-
-    npmDepsHash = "sha256-DYUwz3rOdnah3EUBM7dciCdEsRlZG9ijoHiPWLIdRuc=";
 
     VITE_APIURL = "/api/v1";
 
