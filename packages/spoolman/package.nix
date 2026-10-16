@@ -1,5 +1,5 @@
 {
-  python312,
+  python3,
   lib,
   callPackage,
   writeShellScript,
@@ -9,20 +9,7 @@
   common = callPackage ./common.nix {};
   frontend = callPackage ./frontend.nix {};
 
-  # inline-snapshot arrives as one of FastAPI's test dependencies, and its
-  # documentation tests assert that the code samples in the shipped markdown
-  # match what the current black emits. They no longer do. Those tests skip
-  # themselves on every interpreter except 3.12, so the default interpreter
-  # never runs them and the breakage is invisible upstream -- pinning 3.12 here
-  # is what exposes it.
-  python = python312.override {
-    packageOverrides = _: pyPrev: {
-      inline-snapshot = pyPrev.inline-snapshot.overridePythonAttrs (old: {
-        disabledTestPaths = (old.disabledTestPaths or []) ++ ["tests/test_docs.py"];
-      });
-    };
-  };
-  hishel_0_1 = python.pkgs.hishel.overrideAttrs (old: rec {
+  hishel_0_1 = python3.pkgs.hishel.overrideAttrs (old: rec {
     version = "0.1.5";
     src = old.src.override {
       tag = version;
@@ -30,7 +17,7 @@
     };
   });
 in
-  python.pkgs.buildPythonPackage rec {
+  python3.pkgs.buildPythonPackage rec {
     pname = "spoolman";
     inherit (common) version src;
 
@@ -38,8 +25,8 @@ in
 
     nativeBuildInputs = [
       makeWrapper
-      python.pkgs.setuptools
-      python.pkgs.pythonRelaxDepsHook
+      python3.pkgs.setuptools
+      python3.pkgs.pythonRelaxDepsHook
     ];
 
     pythonRelaxDeps = [
@@ -63,7 +50,7 @@ in
       EOF
     '';
 
-    propagatedBuildInputs = with python.pkgs; [
+    propagatedBuildInputs = with python3.pkgs; [
       uvloop
       alembic
       aiomysql
@@ -90,7 +77,7 @@ in
 
     postInstall = let
       start_script = writeShellScript "start-spoolman" ''
-        ${lib.getExe python.pkgs.uvicorn} "$@" spoolman.main:app;
+        ${lib.getExe python3.pkgs.uvicorn} "$@" spoolman.main:app;
       '';
     in ''
       mkdir -p $out/runpath/client_v2/build $out/bin
@@ -99,9 +86,9 @@ in
 
       makeWrapper ${start_script} $out/bin/spoolman \
       --chdir $out/runpath \
-      --prefix PYTHONPATH : "$out/${python.sitePackages}" \
-      --prefix PYTHONPATH : "${python.pkgs.makePythonPath propagatedBuildInputs}" \
-      --prefix PATH : "${python.pkgs.alembic}/bin"
+      --prefix PYTHONPATH : "$out/${python3.sitePackages}" \
+      --prefix PYTHONPATH : "${python3.pkgs.makePythonPath propagatedBuildInputs}" \
+      --prefix PATH : "${python3.pkgs.alembic}/bin"
     '';
 
     passthru.updateScript = nix-update-script {
