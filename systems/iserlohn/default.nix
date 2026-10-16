@@ -284,6 +284,7 @@
       enable = true;
       extraGroups = lib.mkAfter ["libvirtd"];
       gui.enable = false;
+      cli.development.python.cad.enable = false;
     };
 
     users.boldingd = {

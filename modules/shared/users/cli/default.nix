@@ -28,6 +28,10 @@ in {
         development = {
           enable = options.mkEnableOption "development CLI tools" // {default = true;};
 
+          python.cad.enable =
+            options.mkEnableOption "CAD libraries (build123d, yacv-server) in the scripting Python"
+            // {default = true;};
+
           hunk = {
             enable = options.mkEnableOption "hunk, a review-first terminal diff viewer" // {default = true;};
             gitIntegration.enable = options.mkEnableOption "using hunk as the default git pager";
