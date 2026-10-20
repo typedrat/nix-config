@@ -5,7 +5,7 @@
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "threejs-materials";
-  version = "1.2.3";
+  version = "1.2.5";
   pyproject = true;
 
   # The v1.2.3 tag sits two commits behind the release and still carries the
@@ -13,7 +13,7 @@ python3Packages.buildPythonPackage (finalAttrs: {
   src = python3Packages.fetchPypi {
     pname = "threejs_materials";
     inherit (finalAttrs) version;
-    hash = "sha256-ids0HasKAideWX76l82XmCMHRlS8ori6MEKjN4rLmQE=";
+    hash = "sha256-IMUVcJ0mrMsEOi6iiAHvfZ160MrXy7qZyzAEvSLcXEA=";
   };
 
   build-system = with python3Packages; [
