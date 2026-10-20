@@ -21,7 +21,11 @@ in {
     home.packages = [
       (pkgs.writeShellApplication {
         name = "tv-power";
-        runtimeInputs = [pkgs.vizaio];
+        # nixpkgs keeps the CLI's dependencies behind the `cli` extra, so the
+        # bare package's `vizaio` entry point refuses to start.
+        runtimeInputs = [
+          (pkgs.python3.withPackages (ps: [ps.vizaio] ++ ps.vizaio.optional-dependencies.cli))
+        ];
         text = ''
           if [ "$#" -ne 1 ] || { [ "$1" != "on" ] && [ "$1" != "off" ]; }; then
             echo "Usage: tv-power [on|off]" >&2
