@@ -1,0 +1,27 @@
+/* Claude Desktop's own windows: the title bar, quick entry, find in page and
+   about. They carry no data-color-version, follow the OS scheme through
+   prefers-color-scheme, and mirror it as .darkTheme on <body>, which
+   redeclares the tokens and so needs overriding as well as the root. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-color-version]),
+  body.darkTheme {
+    #catppuccin(@darkFlavor);
+    #electron(@darkFlavor);
+  }
+}
+
+@media not (prefers-color-scheme: dark) {
+  :root:not([data-color-version]) {
+    #catppuccin(@lightFlavor);
+    #electron(@lightFlavor);
+  }
+}
+
+#electron(@flavor) {
+  #lib.palette();
+
+  /* The legacy windows paint html and body from these, not from --bg-*. */
+  --claude-background-color: @base;
+  --claude-foreground-color: @text;
+  --claude-text-500: @subtext0;
+}
