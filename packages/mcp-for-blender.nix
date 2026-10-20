@@ -6,15 +6,15 @@
 }:
 python3Packages.buildPythonApplication {
   pname = "mcp-for-blender";
-  version = "2.1.9";
+  version = "0-unstable-2026-10-18";
   pyproject = true;
 
   # Upstream publishes no tags.
   src = fetchFromGitHub {
     owner = "ahujasid";
     repo = "blender-mcp";
-    rev = "7a0373ec9199183cb460068c4f96aed9c579fb4f";
-    hash = "sha256-bL8x9AMHbQKX0e3pLDrlzndY5xUD1ApKBPaRCTHn45Q=";
+    rev = "25e1fe008fc523b1a947c6f3d28510a362a0f06e";
+    hash = "sha256-sn/ZNfTRHt55qeG93hXeaYxhtszhLycksAT8SmnYyek=";
   };
 
   # telemetry.py imports blender_mcp.config, which upstream gitignores because
