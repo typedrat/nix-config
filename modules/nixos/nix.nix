@@ -101,6 +101,9 @@
           # nodejs 20 is EOL but still required by GitHub Actions itself.
           "nodejs-20.20.2"
           "nodejs-slim-20.20.2"
+          # Zotero 10 runs on Firefox ESR 140, which nixpkgs only keeps as an
+          # EOL prebuilt binary.
+          "firefox-esr-140-bin-unwrapped-140.17.0esr"
         ];
       };
     };
