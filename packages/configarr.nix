@@ -11,13 +11,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "configarr";
-  version = "1.33.0";
+  version = "1.35.0";
 
   src = fetchFromGitHub {
     owner = "raydak-labs";
     repo = "configarr";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Z4eSImumTj1rVbcCMt2M5BqmcR7tiupMeA/7aKqaLzw=";
+    hash = "sha256-gLai84M/JTKyKS8TPz+Nc0lFJ2wlkvErnr/rf6TfkCQ=";
   };
 
   nativeBuildInputs = [
