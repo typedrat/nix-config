@@ -13,14 +13,14 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "printguard";
-  version = "2.5.0";
+  version = "2.6.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "oliverbravery";
     repo = "PrintGuard";
     tag = "v${version}";
-    hash = "sha256-NDWzdVhln8/htjk4CSTysWT1WrP9kokoZBnF01o45BU=";
+    hash = "sha256-v10zM2tsN9tMxKjAwQVc11apIj+LpdX/tLrTcvQ4IHg=";
   };
 
   frontend = buildNpmPackage {
@@ -29,7 +29,7 @@ python3Packages.buildPythonApplication rec {
 
     sourceRoot = "${src.name}/web";
 
-    npmDepsHash = "sha256-jOKaBBR8Q3QZ0bn9gM3iLaBhDtxe8NND6pi8KwHkRsQ=";
+    npmDepsHash = "sha256-iTAX0lr+hYXpMpCiejXT2TVEUe/PTFqsAHd3Bn5I0Kc=";
 
     installPhase = ''
       runHook preInstall
