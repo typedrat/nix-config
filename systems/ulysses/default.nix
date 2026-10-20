@@ -308,12 +308,12 @@
         primaryMonitor = "DP-1";
         tvMonitor = "HDMI-A-1";
         monitors = [
-          # vrr=1: always-on VRR (G-SYNC Compatible / FreeSync).
-          # The S2725QS has a 48-120Hz VRR range. Always-on gives smoother
-          # desktop scrolling and reliable VRR in borderless-windowed games
-          # (where vrr=2's fullscreen detection can miss). Drop to vrr=2 if
-          # this specific panel turns out to flicker on the desktop.
-          "DP-1,3840x2160@120.0,0x1080,1.0,vrr,1"
+          # vrr=2: VRR only for fullscreen windows. The S2725QS (48-120Hz
+          # VRR range) flickers and shows black frames under always-on VRR
+          # whenever a windowed XWayland Vulkan client drives the refresh
+          # rate. Games wanting VRR in a window should run under gamescope
+          # with --adaptive-sync instead.
+          "DP-1,3840x2160@120.0,0x1080,1.0,vrr,2"
           "HDMI-A-1,1920x1080@60.0,960x0,1.0"
         ];
         workspaces = [
