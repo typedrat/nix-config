@@ -5,13 +5,13 @@
   gradle,
   python3Packages,
 }: let
-  version = "7.2.1";
+  version = "7.3.1";
 
   src = fetchFromGitHub {
     owner = "cyberkaida";
     repo = "reverse-engineering-assistant";
     rev = "v${version}";
-    hash = "sha256-zyySyQ59R0QW45RT9VT2sHdylSKWeLZQRgeI4VA0y9o=";
+    hash = "sha256-eYZeyhXlGwLVa/k77Y5x2OeGo/m9fh3VauzAqB+obxw=";
   };
 
   self = buildGhidraExtension {
