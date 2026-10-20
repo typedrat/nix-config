@@ -5,11 +5,11 @@
   nix-update-script,
 }: let
   pname = "sheepshaver-bin";
-  version = "2026-09-11";
+  version = "2026-10-11";
 
   src = fetchurl {
     url = "https://github.com/Korkman/macemu-appimage-builder/releases/download/${version}/SheepShaver-x86_64.AppImage";
-    hash = "sha256-O9ZEMkBfWszLS0711yiSN7XIvya7/VlFV2tnJU4TDtk=";
+    hash = "sha256-8t1CzAz1u833jaZMPSXTQwuSFeyWkp894PNr1CFbvhg=";
   };
 
   contents = appimageTools.extract {inherit pname version src;};
