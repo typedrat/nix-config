@@ -13,7 +13,7 @@
   # The commit `main` pointed at when this was pinned. hf-hub resolves a repo by
   # reading refs/<revision> and joining the result onto snapshots/, so the hash
   # has to be baked in rather than fetched.
-  rev = "d5249700b2382bf5c5024c2421d101b8db54a629";
+  rev = "843b1b175ace04f5a89d379c79e2518c0d065b25";
 
   # Handy's bundled catalog names Q8_0 as this model's default quant, and it
   # derives the catalog entry's id and filename from that choice. Shipping any
@@ -28,7 +28,7 @@
 in
   stdenvNoCC.mkDerivation {
     pname = "handy-parakeet-unified-en";
-    version = "0-unstable-2026-09-15";
+    version = "0-unstable-2026-10-16";
 
     dontUnpack = true;
 
