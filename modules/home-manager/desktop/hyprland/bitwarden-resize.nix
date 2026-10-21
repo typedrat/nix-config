@@ -32,7 +32,8 @@
           # Check if the title matches the characteristics of the Bitwarden popup window
           if [[ "$window_title" == *"(Bitwarden Password Manager) - Bitwarden"* ]]; then
 
-            hyprctl --batch "dispatch togglefloating address:0x$window_id ; dispatch resizewindowpixel exact 500 800,address:0x$window_id"
+            hyprctl dispatch "hl.dsp.window.float({ action = 'toggle', window = 'address:0x$window_id' })"
+            hyprctl dispatch "hl.dsp.window.resize({ x = 500, y = 800, window = 'address:0x$window_id' })"
           fi
           ;;
       esac

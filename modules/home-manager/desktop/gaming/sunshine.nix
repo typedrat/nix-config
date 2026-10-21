@@ -7,7 +7,8 @@
   ...
 }: let
   inherit (lib.modules) mkIf mkMerge;
-  inherit (hlLib) execOnce;
+  inherit (hlLib) execOnce parseMonitor parseWorkspace;
+  toLua = lib.generators.toLua {multiline = false;};
   inherit (config.home) username;
   sunshineCfg = osConfig.rat.gaming.sunshine or {};
   impermanenceCfg = osConfig.rat.impermanence;
@@ -40,11 +41,23 @@
       hyprctl output create headless "$NAME"
       sleep 0.5
 
+      # `hyprctl keyword` is gone under configType = "lua"; rules are applied by
+      # evaluating the same hl.* calls the config uses. Like dispatch, eval
+      # exits 0 and reports failure only on stdout.
+      eval_lua() {
+        local out
+        out=$(hyprctl eval "$1")
+        if [ "$out" != ok ]; then
+          printf 'sunshine-headless-start: %s\n' "$out" >&2
+          return 1
+        fi
+      }
+
       # Off-screen position so the cursor can't wander onto it; 1080p60.
-      hyprctl keyword monitor "$NAME,1920x1080@60,9999x0,1"
+      eval_lua ${lib.escapeShellArg "hl.monitor(${toLua (parseMonitor "${headlessName},1920x1080@60,9999x0,1")})"}
 
       # Dedicate a `stream` workspace to the headless output and keep it there.
-      hyprctl keyword workspace "name:stream, monitor:$NAME, default:true, persistent:true"
+      eval_lua ${lib.escapeShellArg "hl.workspace_rule(${toLua (parseWorkspace "name:stream, monitor:${headlessName}, default:true, persistent:true")})"}
 
       # Now that the headless exists, start Sunshine (it caches output_name).
       systemctl --user start sunshine.service
