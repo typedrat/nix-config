@@ -129,9 +129,8 @@
 
       [ -z "$addr" ] && exit 0
 
-      ws=$(hyprctl activeworkspace -j | jq -r '.id')
-      hyprctl dispatch movetoworkspace "$ws,address:$addr"
-      hyprctl dispatch focuswindow "address:$addr"
+      hyprctl dispatch "hl.dsp.window.move({ workspace = hl.get_active_workspace(), window = 'address:$addr' })"
+      hyprctl dispatch "hl.dsp.focus({ window = 'address:$addr' })"
     '';
   };
 in {

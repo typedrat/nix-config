@@ -39,7 +39,7 @@
           | jq -r '.[] | select(.class == "steam" and .title == "Steam Big Picture Mode") | .address' \
           | head -n1)"
         if [ -n "$addr" ]; then
-          hyprctl dispatch movetoworkspacesilent "name:stream,address:$addr"
+          hyprctl dispatch "hl.dsp.window.move({ workspace = 'name:stream', window = 'address:$addr', follow = false })"
           exit 0
         fi
         sleep 0.5

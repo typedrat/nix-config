@@ -25,17 +25,17 @@
     {
       bg = mkRgb "red";
       icon = "󰖭";
-      action = "hyprctl dispatch killactive";
+      action = "hyprctl dispatch 'hl.dsp.window.close()'";
     }
     {
       bg = mkRgb "yellow";
       icon = "󰖰";
-      action = "hyprctl dispatch movetoworkspacesilent special:minimized";
+      action = "hyprctl dispatch 'hl.dsp.window.move({ workspace = \"special:minimized\", follow = false })'";
     }
     {
       bg = mkRgb "green";
       icon = "󰘖";
-      action = "hyprctl dispatch fullscreen 1";
+      action = "hyprctl dispatch 'hl.dsp.window.fullscreen({ mode = \"maximized\" })'";
     }
   ];
   renderButton = b: ''hl.plugin.hyprbars.add_button({ bg_color = ${builtins.toJSON b.bg}, fg_color = ${builtins.toJSON (mkRgb "base")}, size = 20, icon = ${builtins.toJSON b.icon}, action = ${builtins.toJSON b.action} })'';
