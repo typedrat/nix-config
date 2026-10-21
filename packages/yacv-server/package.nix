@@ -42,7 +42,7 @@
 
     offlineCache = fetchYarnDeps {
       inherit yarnLock;
-      hash = "sha256-YZuqo9Y2JlujzoFhTceK+ukea/hN9e3XkErGi/vSU6k=";
+      hash = "sha256-56eLScExCQXyxM9VFixXI9POq90dXKJNT0VQvr4T0AY=";
     };
 
     # yarnConfigHook insists the lockfile in the tree matches the one the offline
