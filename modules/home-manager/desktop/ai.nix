@@ -47,7 +47,7 @@
         main=$(jq -r .main "$work/app/package.json")
         substitute ${./claude-desktop-catppuccin.js} "$work/app/catppuccin.js" \
           --replace-fail @main@ "./$main"
-        cp ${catppuccinClaude}/catppuccin.css "$work/app/catppuccin.css"
+        cp ${catppuccinClaude}/catppuccin.css ${catppuccinClaude}/titlebar.json "$work/app/"
         jq '.main = "catppuccin.js"' "$work/app/package.json" > "$work/package.json"
         mv "$work/package.json" "$work/app/package.json"
 

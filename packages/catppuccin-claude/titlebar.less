@@ -1,0 +1,18 @@
+// Colors for the native window controls overlay, which CSS can't reach. The
+// build turns each rule into an entry of titlebar.json.
+@import "lib.less";
+
+#titlebar(@flavor) {
+  #lib.palette();
+
+  color: @mantle;
+  symbol-color: @text;
+}
+
+dark {
+  #titlebar(@darkFlavor);
+}
+
+light {
+  #titlebar(@lightFlavor);
+}

@@ -1,12 +1,33 @@
 // Claude Desktop entrypoint: themes claude.ai and the app's own windows with
 // Catppuccin, then starts the real app.
-const { app, webFrameMain } = require("electron");
+const { app, BrowserWindow, nativeTheme, webFrameMain } = require("electron");
 const fs = require("node:fs");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 
 const css = fs.readFileSync(path.join(__dirname, "catppuccin.css"), "utf8");
+const titlebar = JSON.parse(fs.readFileSync(path.join(__dirname, "titlebar.json"), "utf8"));
 const appUrl = pathToFileURL(app.getAppPath()).href;
+
+// The minimize/maximize/close buttons are Chromium's native window controls
+// overlay, colored only through setTitleBarOverlay. The app recolors it on
+// every theme change, so rewrite the colors of each call and keep its height.
+const setTitleBarOverlay = BrowserWindow.prototype.setTitleBarOverlay;
+const recolor = (options) => ({
+  ...options,
+  ...titlebar[nativeTheme.shouldUseDarkColors ? "dark" : "light"],
+});
+BrowserWindow.prototype.setTitleBarOverlay = function (options) {
+  return setTitleBarOverlay.call(this, recolor(options));
+};
+
+// Windows created with an overlay never pass through setTitleBarOverlay
+// until the theme changes; a window without one throws, which is fine.
+app.on("browser-window-created", (_event, window) => {
+  try {
+    window.setTitleBarOverlay({});
+  } catch {}
+});
 
 // Only Anthropic's pages and the app's own windows: the same WebContents also
 // host arbitrary sites (link previews, the browser tool).

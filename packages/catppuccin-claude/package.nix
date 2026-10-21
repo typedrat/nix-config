@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   lessc,
+  jq,
   lightFlavor ? "latte",
   darkFlavor ? "mocha",
   accent ? "mauve",
@@ -20,10 +21,14 @@ stdenvNoCC.mkDerivation {
       ./claude.user.less
       ./lib.less
       ./electron.less
+      ./titlebar.less
     ];
   };
 
-  nativeBuildInputs = [lessc];
+  nativeBuildInputs = [
+    lessc
+    jq
+  ];
 
   dontConfigure = true;
 
@@ -56,12 +61,25 @@ stdenvNoCC.mkDerivation {
       exit 1
     fi
 
+    lessc \
+      --global-var=lightFlavor=${lightFlavor} \
+      --global-var=darkFlavor=${darkFlavor} \
+      --global-var=accentColor=${accent} \
+      titlebar.less \
+      | jq -Rn '
+          [inputs | capture("^(?<mode>\\w+) \\{") // capture("^ *(?<key>[\\w-]+): (?<value>#[0-9a-f]+);")]
+          | reduce .[] as $l ({}; if $l.mode then .[$l.mode] = {} | .mode = $l.mode
+              else .[.mode][$l.key | sub("-(?<c>.)"; .c | ascii_upcase)] = $l.value end)
+          | del(.mode)
+        ' > titlebar.json
+    jq -e '[.dark, .light] | all(.color and .symbolColor)' titlebar.json > /dev/null
+
     runHook postBuild
   '';
 
   installPhase = ''
     runHook preInstall
-    install -Dm644 catppuccin.css $out/catppuccin.css
+    install -Dm644 -t $out catppuccin.css titlebar.json
     runHook postInstall
   '';
 
