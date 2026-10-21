@@ -30,7 +30,13 @@ buildNpmPackage (finalAttrs: {
   # `pkg`-built helper binary, and pins the helper path, since
   # process.resourcesPath points into Electron's own dist when the app is
   # launched by a wrapper.
-  patches = [./offline-packaging.patch];
+  patches = [
+    ./offline-packaging.patch
+    # Patreon's page data no longer names the target, so "No target identified"
+    # appeared on every page; this falls back to the browser URL.
+    # patrickkfkan/patreon-dl-gui#88 at b02bb88
+    ./target-from-url.patch
+  ];
 
   postPatch = ''
     substituteInPlace src/main/Constants.ts \
