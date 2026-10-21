@@ -19,7 +19,7 @@
 
   # --- Boot ---
 
-  boot.kernelPackages = pkgs.linuxPackages_xanmod;
+  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
@@ -234,13 +234,10 @@
       };
 
       # MediaTek MT7927 / MT6639 (Filogic 380) WiFi 7 + Bluetooth combo card.
-      # Builds out-of-tree patched btusb/btmtk (for BT USB 0489:e110, not yet in
-      # mainline) and patched mt7925e/mt7921e (320MHz EHT fixes), plus extracts the
-      # BT/WiFi firmware. disableAspm fixes a PCIe ASPM "stuck upload" issue.
+      # Both drivers are in-tree; this only supplies the BT firmware that
+      # linux-firmware lacks. disableAspm fixes a PCIe ASPM "stuck upload" issue.
       mt7927 = {
         enable = true;
-        enableWifi = true;
-        enableBluetooth = true;
         disableAspm = true;
       };
 
