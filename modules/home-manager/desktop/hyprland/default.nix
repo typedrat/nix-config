@@ -15,6 +15,19 @@
   hyprlandCfg = guiCfg.hyprland or {};
   hostHyprlandCfg = osConfig.rat.gui.hyprland or {};
 
+  # Since Hyprland 0.56, windows on special workspaces (the pyprland
+  # scratchpads) report no workspace.id, and the null makes hyprshot's jq
+  # filter throw, which empties the window list `-m window` hands to slurp.
+  hyprshot = pkgs.hyprshot.overrideAttrs (old: {
+    postPatch =
+      (old.postPatch or "")
+      + ''
+        substituteInPlace hyprshot --replace-fail \
+          'select(.workspace.id | contains(' \
+          'select((.workspace.id // empty) | contains('
+      '';
+  });
+
   # Determine monitor configuration: user config if set, else host defaults if enabled
   monitorConfig =
     if (hyprlandCfg.monitors or []) != []
