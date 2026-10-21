@@ -8,6 +8,9 @@
   zip,
   icoutils,
   autoPatchelfHook,
+  deno,
+  ffmpeg,
+  yt-dlp,
   makeWrapper,
   copyDesktopItems,
   makeDesktopItem,
@@ -111,6 +114,7 @@ buildNpmPackage (finalAttrs: {
 
     makeWrapper ${lib.getExe electron} $out/bin/patreon-dl-gui \
       --add-flags $out/share/patreon-dl-gui/resources/app.asar \
+      --suffix PATH : ${lib.makeBinPath [deno ffmpeg yt-dlp]} \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
       --inherit-argv0
 
