@@ -11,6 +11,18 @@
   group = "perf_users";
   wrapper = "${config.security.wrapperDir}/perf";
 
+  # nixpkgs ships bin/perf as a shell wrapper that puts objdump and python on
+  # PATH, and security.wrappers refuses non-ELF sources. Rebuild that wrapper
+  # as a binary one around the real executable.
+  perfBinary =
+    pkgs.runCommand "${pkgs.perf.name}-binary-wrapper" {
+      nativeBuildInputs = [pkgs.makeBinaryWrapper];
+    } ''
+      makeBinaryWrapper ${pkgs.perf}/bin/.perf-wrapped $out/bin/perf \
+        --inherit-argv0 \
+        --prefix PATH : ${lib.makeBinPath [pkgs.binutils-unwrapped pkgs.python3]}
+    '';
+
   perfUsers =
     lib.filterAttrs
     (_: userCfg: userCfg.enable && (userCfg.cli.development.enable or false))
@@ -59,7 +71,7 @@ in {
       inherit group;
       permissions = "u+rx,g+x";
       capabilities = "cap_perfmon,cap_syslog+ep";
-      source = lib.getExe pkgs.perf;
+      source = "${perfBinary}/bin/perf";
     };
   };
 }
