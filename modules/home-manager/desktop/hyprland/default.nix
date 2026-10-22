@@ -223,6 +223,25 @@ in {
               };
               float = true;
             }
+            # Ghidra's hover popups are undecorated JWindows that arrive as
+            # managed dialogs titled with AWT's default "winN". Taking focus
+            # makes Ghidra dismiss them immediately, so all that's visible is
+            # the open/close animation.
+            {
+              name = "ghidra-popups";
+              match = {
+                initial_class = "^(ghidra-Ghidra)$";
+                initial_title = "^(win\\d+)$";
+              };
+              float = true;
+              no_initial_focus = true;
+              no_focus = true;
+              no_anim = true;
+              no_blur = true;
+              no_shadow = true;
+              border_size = 0;
+              rounding = 0;
+            }
           ]
           ++ lib.optional (tvMonitor != null) {
             name = "mpv-to-tv";
