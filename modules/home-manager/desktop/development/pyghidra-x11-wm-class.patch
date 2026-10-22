@@ -1,0 +1,45 @@
+diff --git a/src/pyghidra/launcher.py b/src/pyghidra/launcher.py
+index e8a3ebe..ec41b4f 100644
+--- a/src/pyghidra/launcher.py
++++ b/src/pyghidra/launcher.py
+@@ -704,6 +704,30 @@ class GuiPyGhidraLauncher(PyGhidraLauncher):
+     GUI pyghidra launcher
+     """
+ 
++    def __init__(self, *args, **kwargs):
++        super().__init__(*args, **kwargs)
++        if sys.platform == "linux":
++            self.vm_args.append("--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED")
++
++    @staticmethod
++    def _set_x11_wm_class():
++        # XToolkit names the X11 WM_CLASS after the class at the bottom of the
++        # stack that first constructs it, and offers no override. Ghidra runs on
++        # a java.lang.Thread here, so windows would get "java-lang-Thread";
++        # construct the toolkit now and rewrite the name to what the java
++        # launcher produces, so desktop entries and WM rules still match.
++        from java.awt import GraphicsEnvironment, Toolkit # type:ignore @UnresolvedImport
++        from java.lang import Class # type:ignore @UnresolvedImport
++        if GraphicsEnvironment.isHeadless():
++            return
++        Toolkit.getDefaultToolkit()
++        try:
++            field = Class.forName("sun.awt.X11.XToolkit").getDeclaredField("awtAppClassName")
++            field.setAccessible(True)
++            field.set(None, "ghidra-Ghidra")
++        except Exception as e:
++            logger.warning("could not set X11 WM_CLASS: %s", e)
++
+     @classmethod
+     def popup_error(cls, header: str, msg: str) -> NoReturn:
+         import tkinter.messagebox
+@@ -731,6 +755,9 @@ class GuiPyGhidraLauncher(PyGhidraLauncher):
+             appid = ctypes.c_wchar_p(self.app_info.name)
+             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appid) # @UndefinedVariable
+ 
++        if sys.platform == "linux":
++            self._set_x11_wm_class()
++
+         stdout = _PyGhidraStdOut(sys.stdout)
+         stderr = _PyGhidraStdOut(sys.stderr)
+         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
