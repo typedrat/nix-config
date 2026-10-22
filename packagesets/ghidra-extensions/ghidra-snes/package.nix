@@ -27,7 +27,13 @@
     # source (.slaspec/.sinc) only. Ghidra would otherwise compile it to .sla on
     # first use, writing next to the source — which fails in the read-only Nix
     # store. Pre-compile here so the .sla is part of the package.
+    #
+    # The upstream Module.manifest also declares `MODULE DEPENDENCIES:` with an
+    # indented `Ghidra` line, which isn't manifest syntax. Ghidra reports each
+    # bad line on stdout at startup, corrupting stdio MCP sessions (mcp-reva).
     postInstall = ''
+      echo "MODULE NAME: Ghidra-SNES" > $out/lib/ghidra/Ghidra/Extensions/ghidra-snes/Module.manifest
+
       langDir=$out/lib/ghidra/Ghidra/Extensions/ghidra-snes/data/languages
       for slaspec in "$langDir"/*.slaspec; do
         echo "Pre-compiling SLEIGH: $slaspec"
