@@ -36,6 +36,20 @@ in {
         WINEPREFIX = "${config.xdg.dataHome}/wine";
       };
 
+      # Python and less write history files but won't create the parent
+      # directory. `%S` is XDG_STATE_HOME.
+      systemd.user.tmpfiles.rules = [
+        "d %S/python 0700 - - -"
+        "d %S/less 0700 - - -"
+      ];
+
+      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+        directories = [
+          ".local/state/python"
+          ".local/state/less"
+        ];
+      };
+
       home.sessionPath = [
         "${config.home.sessionVariables.CARGO_HOME}/bin"
         "${config.home.sessionVariables.BUN_INSTALL}/bin"
