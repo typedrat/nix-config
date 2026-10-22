@@ -44,6 +44,24 @@
     ps.tkinter
   ]);
 
+  # Ghidra's browser launcher runs `firefox` unless reconfigured per tool. For
+  # processor manuals it passes an HTML page that embeds the PDF, so pull the
+  # PDF URL back out and give it to Okular, which honors its #page= fragment.
+  browserShim = pkgs.writeShellApplication {
+    name = "firefox";
+    text = ''
+      case "$1" in
+        file:*/pdfView*.html)
+          pdf=$(sed -n 's/.*<embed src="\([^"]*\)".*/\1/p' "''${1#file:}")
+          if [ -n "$pdf" ]; then
+            exec ${pkgs.kdePackages.okular}/bin/okular "$pdf"
+          fi
+          ;;
+      esac
+      exec ${pkgs.xdg-utils}/bin/xdg-open "$1"
+    '';
+  };
+
   ghidraWrapped = pkgs.symlinkJoin {
     name = "ghidra-wrapped";
     paths = [ghidraWithExtensions];
@@ -51,6 +69,7 @@
 
     postBuild = ''
       wrapProgram "$out/bin/ghidra" \
+        --prefix PATH : "${browserShim}/bin" \
         --set _JAVA_AWT_WM_NONREPARENTING 1 \
         --set JAVA_HOME "${pkgs.jre}"
 
@@ -66,6 +85,7 @@
           --set GHIDRA_INSTALL_DIR "${ghidra}/lib/ghidra" \
           --set NIX_GHIDRAHOME "${ghidraWithExtensions}/lib/ghidra/Ghidra" \
           --set _JAVA_AWT_WM_NONREPARENTING 1 \
+          --prefix PATH : "${browserShim}/bin" \
           --set JAVA_HOME "${pkgs.jre}"
       done
       ln -s pyghidraw "$out/bin/pyghidra-gui"
