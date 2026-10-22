@@ -230,7 +230,7 @@ in {
         })
 
         (lib.mkIf osConfig.services.tailscale.enable {
-          tailscale-systray.text = autostartScope "tailscale-systray" "tailscale systray";
+          tailscale-systray.text = autostartScope "tailscale-systray" "tailscale systray --theme=dark:nobg";
         })
       ];
 
