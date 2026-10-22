@@ -386,6 +386,7 @@
         enable = true;
         gaming.eden.enable = true;
         gaming.classicMac.enable = true;
+        gaming.dosboxX.enable = true;
         hyprland = {
           launcher.variant = "vicinae";
           idle.mediaInhibit = true;

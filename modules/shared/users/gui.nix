@@ -148,6 +148,7 @@
         sgdboop.enable = options.mkEnableOption "SGDBoop" // {default = true;};
         eden.enable = options.mkEnableOption "Eden Switch emulator";
         classicMac.enable = options.mkEnableOption "BasiliskII and SheepShaver classic Mac OS emulators";
+        dosboxX.enable = options.mkEnableOption "DOSBox-X DOS and PC-98 emulator";
         retroarch = {
           enable = options.mkEnableOption "RetroArch emulator frontend";
           cores = options.mkOption {
