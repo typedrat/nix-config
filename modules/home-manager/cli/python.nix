@@ -5,21 +5,17 @@
   lib,
   ...
 }: let
-  inherit (lib) modules;
+  inherit (lib) modules options types;
   inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
-  # Single source of truth for the scripting Python's package set: this same
-  # function builds the `python3.withPackages` closure below and renders
-  # ~/.python-packages.md, so the two can never drift out of sync.
-  #
   # build123d is a local package (packages/build123d.nix) exposed as a
   # top-level pkgs.* attribute rather than merged into python3Packages, so
   # `with pkgs;` supplies the fallback that `with ps;` doesn't shadow.
-  pythonPackagesFor = ps:
+  basePackages = ps:
     with pkgs;
     with ps;
       [
@@ -72,9 +68,27 @@
         yacv-server
       ];
 
-  pythonPackageNames = map (p: p.pname or p.name) (pythonPackagesFor pkgs.python3.pkgs);
+  # Single source of truth for the scripting Python's package set: the same
+  # function builds the `python3.withPackages` closure below and renders
+  # ~/.python-packages.md, so the two can never drift out of sync.
+  pythonPackagesFor = config.rat.python.packages;
+  pythonPackageNames = lib.sort lib.lessThan (lib.unique (map (p: p.pname or p.name) (pythonPackagesFor pkgs.python3.pkgs)));
 in {
+  options.rat.python.packages = options.mkOption {
+    type = types.functionTo (types.listOf types.package);
+    default = _: [];
+    example = options.literalExpression "ps: [ps.pyghidra pkgs.ghidra-stubs]";
+    description = ''
+      Packages for the scripting `python3` on PATH, as a function from the
+      Python package set to a list. Every module's definition is called and
+      the results concatenated. Local packages aren't in the package set, so
+      take those from `pkgs`.
+    '';
+  };
+
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
+    rat.python.packages = basePackages;
+
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       directories = [
         ".config/ipython"

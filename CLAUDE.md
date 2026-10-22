@@ -177,6 +177,7 @@ The terranix wrapper automatically:
   - User-level: `rat.users.<name>.gui.enable`, `rat.users.<name>.gui.development.enable`
   - Per-app: `rat.users.<name>.gui.development.vscode.enable`
 - Option sub-keys match directory names: `development`, `gaming`, `terminals` (not `devtools`, `games`, `terminal`)
+- Any Home Manager module can add to the scripting `python3` on PATH with `rat.python.packages = ps: [ ... ];` (declared in `cli/python.nix`; definitions are concatenated, local packages come from `pkgs`)
 
 ### Nixpkgs/Home-Manager Patches
 
