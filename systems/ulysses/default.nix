@@ -202,7 +202,10 @@
 
   rat = {
     # Networking
-    networking.networkManager.enable = true;
+    networking = {
+      networkManager.enable = true;
+      tailscale.enable = true;
+    };
     # Boot
     boot = {
       loader = "limine";

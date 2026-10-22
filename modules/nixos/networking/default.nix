@@ -4,6 +4,7 @@ in {
   imports = [
     ./networkmanager.nix
     ./scoped-ports.nix
+    ./tailscale.nix
   ];
 
   options.rat.networking.lanRanges = options.mkOption {
