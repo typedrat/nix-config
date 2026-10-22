@@ -1,0 +1,499 @@
+[
+  {
+    "processor": "6502",
+    "filename": "mcs6500_family_programming_manual.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/6502/data/manuals/mcs6500_family_programming_manual.pdf"
+    ],
+    "hash": "sha256-kdBL6vg/eVX4U9n6Qwz/k21/exdL2iFspNUM6qtoBHs="
+  },
+  {
+    "processor": "6502",
+    "filename": "wdc_65816_programming_manual.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/6502/data/manuals/wdc_65816_programming_manual.pdf"
+    ],
+    "hash": "sha256-28yvzEfW5TQ2vcHABJs8VP+s/JA0pAQafZK25sXXK7U="
+  },
+  {
+    "processor": "68000",
+    "filename": "CFPRM.pdf",
+    "urls": [
+      "https://www.nxp.com.cn/docs/en/reference-manual/CFPRM.pdf",
+      "https://web.archive.org/web/20190821093710id_/https://www.nxp.com/docs/en/reference-manual/CFPRM.pdf",
+      "https://web.archive.org/web/20250312003711id_/https://www.nxp.com/docs/en/reference-manual/CFPRM.pdf"
+    ],
+    "hash": "sha256-wtAhkeRCfHr4mGLnVtdZv03pO2MqLG6MRGAqB1oWJ9Y="
+  },
+  {
+    "processor": "68000",
+    "filename": "M68000PRM.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/68000/data/manuals/M68000PRM.pdf"
+    ],
+    "hash": "sha256-BuSGS3jaDoFQVM6tkya37JkUZh8kD9OaRV8gYf9HxOg="
+  },
+  {
+    "processor": "8048",
+    "filename": "8048.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/8048/data/manuals/8048.pdf"
+    ],
+    "hash": "sha256-LuznzsSg99Hdp10CsrrHeGyTE2iPd0JeIORsRiUXxgE="
+  },
+  {
+    "processor": "8051",
+    "filename": "8xc251sx_um.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/8051/data/manuals/8xc251sx_um.pdf",
+      "https://www.keil.com/dd/docs/datashts/intel/8xc251sx_um.pdf"
+    ],
+    "hash": "sha256-v/2kPxKNQVoHxZbkcg6HMdV6uf+mKE6+zqHwqQyPNf0="
+  },
+  {
+    "processor": "AARCH64",
+    "filename": "DDI0487H_a_a-profile_architecture_reference_manual.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/AARCH64/data/manuals/DDI0487H_a_a-profile_architecture_reference_manual.pdf",
+      "http://kib.kiev.ua/x86docs/ARM/ARMARMv8/DDI0487H_a_a-profile_architecture_reference_manual.pdf"
+    ],
+    "hash": "sha256-Yq9NL5CDR8MBi9Y1cvDOHV7fDTSrrivuPBjefJfQbkM="
+  },
+  {
+    "processor": "ARM",
+    "filename": "DDI0487H_a_a-profile_architecture_reference_manual.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/ARM/data/manuals/DDI0487H_a_a-profile_architecture_reference_manual.pdf",
+      "http://kib.kiev.ua/x86docs/ARM/ARMARMv8/DDI0487H_a_a-profile_architecture_reference_manual.pdf"
+    ],
+    "hash": "sha256-Yq9NL5CDR8MBi9Y1cvDOHV7fDTSrrivuPBjefJfQbkM="
+  },
+  {
+    "processor": "Atmel",
+    "filename": "atmel-0856-avr-instruction-set-manual.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Atmel/data/manuals/atmel-0856-avr-instruction-set-manual.pdf"
+    ],
+    "hash": "sha256-2/V4IYyfUvL9IszFOPU7nbSJAyCDVyVnjAK3tY9kGYE="
+  },
+  {
+    "processor": "Atmel",
+    "filename": "doc32000.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Atmel/data/manuals/doc32000.pdf",
+      "https://ww1.microchip.com/downloads/en/devicedoc/doc32000.pdf"
+    ],
+    "hash": "sha256-bZrvboPXuN3q++7aGIMxT0TgQ64a6pcSIWPW4OqrJ9k="
+  },
+  {
+    "processor": "CR16",
+    "filename": "prog16c.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/CR16/data/manuals/prog16c.pdf"
+    ],
+    "hash": "sha256-MQmVXNdkTI4gDXvPTsHdCPnC7CnvUIAw8aWR/8/SWdE="
+  },
+  {
+    "processor": "HCS08",
+    "filename": "CPU08RM.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/HCS08/data/manuals/CPU08RM.pdf",
+      "http://aprs.facile.free.fr/pdfs/CPU08RM-M68HC08.pdf"
+    ],
+    "hash": "sha256-PLA0s6xFTMpF9hEzfO1JeK0oMq0QaYS8ncwhnwfYcWk="
+  },
+  {
+    "processor": "HCS08",
+    "filename": "HCS08RMV1.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/HCS08/data/manuals/HCS08RMV1.pdf"
+    ],
+    "hash": "sha256-jW/8U8E8EYuBzj9UR8pDIFn83SpWaNnCagZHaZF+pQk="
+  },
+  {
+    "processor": "HCS08",
+    "filename": "M68HC05TB.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/HCS08/data/manuals/M68HC05TB.pdf",
+      "http://www.bitsavers.org/components/motorola/6805/_dataSheets/M68HC05TB.pdf"
+    ],
+    "hash": "sha256-Jc94C13bWjVrDdmxbFY7yaL/TRn1GfePgv9EZMuN+H8="
+  },
+  {
+    "processor": "HCS12",
+    "filename": "MC9S12XEP100RMV1.pdf",
+    "urls": [
+      "https://www.nxp.com.cn/docs/en/data-sheet/MC9S12XEP100RMV1.pdf",
+      "https://web.archive.org/web/20170815012359id_/https://www.nxp.com/docs/en/data-sheet/MC9S12XEP100RMV1.pdf"
+    ],
+    "hash": "sha256-22oiUHm+eN41pNaLB46sX+deshFZ51b0zmHZvH68/eQ="
+  },
+  {
+    "processor": "HCS12",
+    "filename": "S12XCPUV2.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/HCS12/data/manuals/S12XCPUV2.pdf",
+      "http://www.ee.nmt.edu/~erives/308L_11/S12CPUV2.pdf"
+    ],
+    "hash": "sha256-8ozfpQRGBCPjg5MNPAM74OJBS7uXf8Exu2sWuVZsYMs="
+  },
+  {
+    "processor": "JVM",
+    "filename": "jvms8.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/JVM/data/manuals/jvms8.pdf",
+      "https://docs.oracle.com/javase/specs/jvms/se8/jvms8.pdf"
+    ],
+    "hash": "sha256-DAT4i9aAiuFT/A04O0v/dzMbwdodzi75zQpCf/qeioU="
+  },
+  {
+    "processor": "Loongarch",
+    "filename": "LoongArch-Vol1-EN.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Loongarch/data/manuals/LoongArch-Vol1-EN.pdf",
+      "https://github.com/loongson/LoongArch-Documentation/releases/download/2022.03.17/LoongArch-Vol1-v1.00-EN.pdf"
+    ],
+    "hash": "sha256-AuG0nRrns/K7vCa9XCeU3jFIvAapanOX0JUYR4MBR3g="
+  },
+  {
+    "processor": "M16C",
+    "filename": "m16c80.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/M16C/data/manuals/m16c80.pdf"
+    ],
+    "hash": "sha256-g0+nAfLs6iUsTKQ3ki/yYczDTnz2E7ulPf+b1Spx0Jk="
+  },
+  {
+    "processor": "M16C",
+    "filename": "m16csm.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/M16C/data/manuals/m16csm.pdf"
+    ],
+    "hash": "sha256-9MG/a+W4pKgJKVE8BXjywfoojh2MHdcKFJrL6stbYkI="
+  },
+  {
+    "processor": "MC6800",
+    "filename": "M6809PM.rev0_May83.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/MC6800/data/manuals/M6809PM.rev0_May83.pdf",
+      "http://www.bitsavers.org/components/motorola/6809/M6809PM.rev0_May83.pdf",
+      "https://archive.org/download/bitsavers_motorola68_13419254/M6809PM.rev0_May83.pdf"
+    ],
+    "hash": "sha256-0izd21gOtdFX2BSbF4I9HAVGbOwcMhi7SeArwr3wkn0="
+  },
+  {
+    "processor": "MCS96",
+    "filename": "1991_Intel_16-Bit_Embedded_Controller_Handbook.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/MCS96/data/manuals/1991_Intel_16-Bit_Embedded_Controller_Handbook.pdf",
+      "http://www.bitsavers.org/components/intel/_dataBooks/1991_Intel_16-Bit_Embedded_Controller_Handbook.pdf",
+      "https://archive.org/download/bitsavers_inteldataBmbeddedControllerHandbook_44609783/1991_Intel_16-Bit_Embedded_Controller_Handbook.pdf"
+    ],
+    "hash": "sha256-0/IFHqCQ3raZNr0C8NK2JpfchW/wMq7G6hPMXd7ktJk="
+  },
+  {
+    "processor": "MIPS",
+    "filename": "MD00076-2B-MIPS1632-AFP-02.63.pdf",
+    "urls": [
+      "https://web.archive.org/web/20180823104222id_/https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00076-2B-MIPS1632-AFP-02.63.pdf",
+      "https://web.archive.org/web/20221115160016id_/https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00076-2B-MIPS1632-AFP-02.63.pdf"
+    ],
+    "hash": "sha256-nNfrLS8yciqqherzZqqd70+r3pQpM9KN6eLOszJbwvo="
+  },
+  {
+    "processor": "MIPS",
+    "filename": "MD00087-2B-MIPS64BIS-AFP-6.06.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/MIPS/data/manuals/MD00087-2B-MIPS64BIS-AFP-6.06.pdf"
+    ],
+    "hash": "sha256-vgAmWFQwsGQ9IBktZ04SY46MpFGQWX/N4lK9dyOHeFY="
+  },
+  {
+    "processor": "MIPS",
+    "filename": "MD00594-2B-microMIPS64-AFP-6.05.pdf",
+    "urls": [
+      "https://web.archive.org/web/20180823050451id_/https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00594-2B-microMIPS64-AFP-6.05.pdf",
+      "https://web.archive.org/web/20220623160025id_/https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MD00594-2B-microMIPS64-AFP-6.05.pdf"
+    ],
+    "hash": "sha256-44+7S5hd9J79+ZCvORNVtWeL7GgTssfUFTIlqGzqPZc="
+  },
+  {
+    "processor": "MIPS",
+    "filename": "mips64v2.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/MIPS/data/manuals/mips64v2.pdf"
+    ],
+    "hash": "sha256-O3uAT8uunBOtevLPAwZHniCy+xHE5hCXjEzlE295Les="
+  },
+  {
+    "processor": "MIPS",
+    "filename": "MIPS_Architecture_microMIPS32_InstructionSet_AFP_P_MD00582_06.04.pdf",
+    "urls": [
+      "https://web.archive.org/web/20180823050614id_/https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MIPS_Architecture_microMIPS32_InstructionSet_AFP_P_MD00582_06.04.pdf"
+    ],
+    "hash": "sha256-lv4QdLaCPbpm5JKGUbWfb1YiM2BBLwQ4QBhHPaytyxA="
+  },
+  {
+    "processor": "MIPS",
+    "filename": "r4000.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/MIPS/data/manuals/r4000.pdf",
+      "https://groups.csail.mit.edu/cag/raw/documents/R4400_Uman_book_Ed2.pdf"
+    ],
+    "hash": "sha256-B1d1plmcCp9Px/SwhVdeAA9CaAyy3AvX1w9CX33fGX4="
+  },
+  {
+    "processor": "PA-RISC",
+    "filename": "pa11_acd.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PA-RISC/data/manuals/pa11_acd.pdf",
+      "http://ftp.parisc-linux.org/docs/arch/pa11_acd.pdf"
+    ],
+    "hash": "sha256-nrteuaF4ICAn8m1BWt44dxDwgA+hCqkyZiIn+LBRCUk="
+  },
+  {
+    "processor": "PIC",
+    "filename": "70000157g.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PIC/data/manuals/70000157g.pdf",
+      "https://ww1.microchip.com/downloads/en/DeviceDoc/70000157g.pdf"
+    ],
+    "hash": "sha256-8Rg0afIpUCIeqeGL8Zc+FN/pqSXTXBO0gThaC4buCw0="
+  },
+  {
+    "processor": "PIC",
+    "filename": "PIC12_40139e.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PIC/data/manuals/PIC12_40139e.pdf",
+      "https://ww1.microchip.com/downloads/en/devicedoc/40139e.pdf"
+    ],
+    "hash": "sha256-A4zPzJ4OiZayZox4KE/4YC52EgMWMZ9eZ4CnBuplN2o="
+  },
+  {
+    "processor": "PIC",
+    "filename": "PIC16_33023a.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PIC/data/manuals/PIC16_33023a.pdf",
+      "https://ww1.microchip.com/downloads/en/devicedoc/33023a.pdf"
+    ],
+    "hash": "sha256-c3Jo5V0Y4O2qJ9DMitqVDe6PJKfzPDXijz0YWhx2gq0="
+  },
+  {
+    "processor": "PIC",
+    "filename": "PIC16F_40001761E.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PIC/data/manuals/PIC16F_40001761E.pdf",
+      "https://ww1.microchip.com/downloads/en/DeviceDoc/40001761E.pdf"
+    ],
+    "hash": "sha256-bErEhGOQ/UrtdlXp6zMpQiR2S5LPbt/YGEMyc8LqGYo="
+  },
+  {
+    "processor": "PIC",
+    "filename": "PIC17_30289b.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PIC/data/manuals/PIC17_30289b.pdf",
+      "https://ww1.microchip.com/downloads/en/devicedoc/30289b.pdf"
+    ],
+    "hash": "sha256-kISozJJY1kWBgdcbfqa49bW5VAytuG7mMUVHnZ48FKM="
+  },
+  {
+    "processor": "PIC",
+    "filename": "PIC18_14702.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PIC/data/manuals/PIC18_14702.pdf"
+    ],
+    "hash": "sha256-OSwdOwKlJ0hLjBbeJKnCuiE6girRg9fLefX9GMU4gLU="
+  },
+  {
+    "processor": "PowerPC",
+    "filename": "OPF_PowerISA_v3.1.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PowerPC/data/manuals/OPF_PowerISA_v3.1.pdf",
+      "https://files.openpowerfoundation.org/s/Z6tnDjW9zwX5FTZ/download"
+    ],
+    "hash": "sha256-u6PTFnV1z5XCYPEZzDgLuoODHswIqYGYlNzWYE8UsoE="
+  },
+  {
+    "processor": "PowerPC",
+    "filename": "PowerISA_V2.06_PUBLIC.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PowerPC/data/manuals/PowerISA_V2.06_PUBLIC.pdf"
+    ],
+    "hash": "sha256-as0cIQ5VN7uH2XnbMcX1dC5uFDJil4dxKpIY8XVlPmc="
+  },
+  {
+    "processor": "PowerPC",
+    "filename": "PowerISA_V2.07B.pdf",
+    "urls": [
+      "https://wiki.raptorcs.com/w/images/c/c5/PowerISA_V2.07B.pdf",
+      "https://kib.kiev.ua/x86docs/POWER/ISA/PowerISA_V2.07B.pdf"
+    ],
+    "hash": "sha256-VyHwzLZbJTvsPt9Ysy4UkrKVc5/bWZoBmvOe+MvadQU="
+  },
+  {
+    "processor": "PowerPC",
+    "filename": "PowerISA_V3.0.pdf",
+    "urls": [
+      "https://wiki.raptorcs.com/w/images/4/45/PowerISA_V3.0.pdf",
+      "https://kib.kiev.ua/x86docs/POWER/ISA/PowerISA_V3.0.pdf"
+    ],
+    "hash": "sha256-jLpwJijYrOIkx8S6L3RQ5bk6aLmlxtToX8eSNC7QZuc="
+  },
+  {
+    "processor": "PowerPC",
+    "filename": "powerpc.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/PowerPC/data/manuals/powerpc.pdf"
+    ],
+    "hash": "sha256-xeY2kwgLuJkPNCTM8yFR/39uqjGyZncN/uBrLktGhQ8="
+  },
+  {
+    "processor": "Sparc",
+    "filename": "SPARCV9.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Sparc/data/manuals/SPARCV9.pdf",
+      "https://cr.yp.to/2005-590/sparcv9.pdf"
+    ],
+    "hash": "sha256-cs1VNPLFgmzqOvpaG3eOoomgp+M4b08s8MMWlxR0DWI="
+  },
+  {
+    "processor": "SuperH",
+    "filename": "h12p0.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/SuperH/data/manuals/h12p0.pdf",
+      "https://antime.kapsi.fi/sega/files/h12p0.pdf"
+    ],
+    "hash": "sha256-AzZPrnJcI5gK52118mb3YIRKbOTk7FS3xAiXsYC+XUQ="
+  },
+  {
+    "processor": "SuperH4",
+    "filename": "rej09b0318_sh_4sm.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/SuperH4/data/manuals/rej09b0318_sh_4sm.pdf",
+      "https://web.archive.org/web/20121126051215if_/http://documentation.renesas.com/doc/products/mpumcu/rej09b0318_sh_4sm.pdf"
+    ],
+    "hash": "sha256-V3qZjdD5JqXdnedWvZfDyIa1laeJKpYACbO9vuiVsec="
+  },
+  {
+    "processor": "TI_MSP430",
+    "filename": "MSP430.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/TI_MSP430/data/manuals/MSP430.pdf",
+      "https://e2echina.ti.com/cfs-file/__key/telligent-evolution-components-attachments/00-55-01-00-00-00-61-61/MSP430x2xx-Family-User_26002300_39_3B00_s-Guide-_2800_Rev.-E_2900_.pdf"
+    ],
+    "hash": "sha256-P3KvqkwwmeYOJxd8dzUDmOBo3+Asqov9D1C1Os35eyE="
+  },
+  {
+    "processor": "tricore",
+    "filename": "Infineon-TC2xx_Architecture_vol2-UM-v01_00-EN.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/tricore/data/manuals/Infineon-TC2xx_Architecture_vol2-UM-v01_00-EN.pdf"
+    ],
+    "hash": "sha256-1CjjwvOqzcf2I3g/xV++lAT7deS5GyGV+er4MIw8HpA="
+  },
+  {
+    "processor": "tricore",
+    "filename": "tc_v131_instructionset_v138.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/tricore/data/manuals/tc_v131_instructionset_v138.pdf"
+    ],
+    "hash": "sha256-895H2httwhYBdcb6GfKKI+lXHTu/JfvIMwuKF/esolg="
+  },
+  {
+    "processor": "V850",
+    "filename": "r01us0001ej0100_v850e2m.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/V850/data/manuals/r01us0001ej0100_v850e2m.pdf",
+      "https://web.archive.org/web/20180127202640if_/https://www.renesas.com/en-us/doc/products/mpumcu/doc/v850/r01us0001ej0100_v850e2m.pdf"
+    ],
+    "hash": "sha256-a9EmX/PmyUq2OAlwhWm2I7GEWXBuoccRGFKrxLWd2iQ="
+  },
+  {
+    "processor": "V850",
+    "filename": "r01us0143ej0130-rh850g3mh.pdf",
+    "urls": [
+      "https://www.renesas.com/en/document/man/rh850g3mh-users-manual-software-0",
+      "https://web.archive.org/web/20221106002123id_/https://www.renesas.com/us/en/document/man/rh850g3mh-users-manual-software-0"
+    ],
+    "hash": "sha256-JEkmnFKDM6M19Aquw/5SzMP8xNNFp3AbURTZV1/AoJk="
+  },
+  {
+    "processor": "x86",
+    "filename": "24594.pdf",
+    "urls": [
+      "https://web.archive.org/web/20210408181855id_/https://www.amd.com/system/files/TechDocs/24594.pdf",
+      "http://kib.kiev.ua/x86docs/AMD/AMD64/24594_APM_v3-r3.32.pdf"
+    ],
+    "hash": "sha256-q8lC/cA9YYzg0fLhfZKuYz8LvOB2Cauk7Xipoua4P2o="
+  },
+  {
+    "processor": "x86",
+    "filename": "26568.pdf",
+    "urls": [
+      "https://web.archive.org/web/20201105081817id_/https://www.amd.com/system/files/TechDocs/26568.pdf",
+      "http://kib.kiev.ua/x86docs/AMD/AMD64/26568_APM_v4-r3.24.pdf"
+    ],
+    "hash": "sha256-UR5FAZfQ/tCCqYiKg6ThcIllfZde0+gQjcUWZPl4+mc="
+  },
+  {
+    "processor": "x86",
+    "filename": "26569_APM_V5.pdf",
+    "urls": [
+      "https://web.archive.org/web/20180713145348id_/https://support.amd.com/TechDocs/26569_APM_v5.pdf",
+      "http://kib.kiev.ua/x86docs/AMD/AMD64/26569_APM_v5-r3.15.pdf"
+    ],
+    "hash": "sha256-YiVbE//MNnqPPHfagpeC3uJeb9QH23EK49bWHhFmPcI="
+  },
+  {
+    "processor": "x86",
+    "filename": "325383-sdm-vol-2abcd.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/x86/data/manuals/325383-sdm-vol-2abcd.pdf",
+      "https://web.archive.org/web/20251012072112id_/https://community.intel.com/legacyfs/online/drupal_files/managed/a4/60/325383-sdm-vol-2abcd.pdf"
+    ],
+    "hash": "sha256-7op+jXRyiIm4hWyrfsRLQtObVKImbTXLYCzsjZEOvGE="
+  },
+  {
+    "processor": "x86",
+    "filename": "326019-074.pdf",
+    "urls": [
+      "https://kib.kiev.ua/x86docs/Intel/SDMs/326019-074.pdf",
+      "https://web.archive.org/web/20240802110110id_/https://kib.kiev.ua/x86docs/Intel/SDMs/326019-074.pdf"
+    ],
+    "hash": "sha256-O8M50kmkNNhtJBFd1SefQvmeTxDNSIlIyw60yKusWWU="
+  },
+  {
+    "processor": "x86",
+    "filename": "AMD64_128-bit_SSE5_Instructions.pdf",
+    "urls": [
+      "https://web.archive.org/web/20081205042933id_/http://www.amd.com/us-en/assets/content_type/white_papers_and_tech_docs/43479.pdf",
+      "http://kib.kiev.ua/x86docs/AMD/AMD64/43479_APM_v6-r3.01.pdf"
+    ],
+    "hash": "sha256-ep3JqBVD43Hauy6TRZ8DKnEI247e3SSEMwS5lENQSZg="
+  },
+  {
+    "processor": "Xtensa",
+    "filename": "isa_summary.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Xtensa/data/manuals/isa_summary.pdf"
+    ],
+    "hash": "sha256-R0xKry1Cn/ecSBJ+c4xBEM7NgHITMWmtbQCgUO3yRLc="
+  },
+  {
+    "processor": "Z80",
+    "filename": "um0050.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Z80/data/manuals/um0050.pdf"
+    ],
+    "hash": "sha256-gh+W0Dq5FSBqPKOe826zjywuWoBP0plYAgYYRQRRiSY="
+  },
+  {
+    "processor": "Z80",
+    "filename": "UM0080.pdf",
+    "urls": [
+      "https://github.com/meenmachine1/ghidra-processor-manuals/raw/main/Ghidra/Processors/Z80/data/manuals/UM0080.pdf",
+      "https://www.zilog.com/force_download.php?filepath=YUhSMGNEb3ZMM2QzZHk1NmFXeHZaeTVqYjIwdlpHOWpjeTk2T0RBdlZVMHdNRGd3TG5Ca1pnPT0="
+    ],
+    "hash": "sha256-48g9paXY43I2TCD6U2Zeb7sWXsasOMjB7rw1lgNEe14="
+  }
+]

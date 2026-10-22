@@ -8,7 +8,28 @@
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
 
-  ghidraWithExtensions = pkgs.ghidra.withExtensions (_: [
+  # Ghidra resolves its install root and each manual's directory through
+  # canonical paths, so the manuals can't be layered on with symlinks; it
+  # needs a real copy of the tree. The PDFs themselves can stay links.
+  ghidra = pkgs.runCommand "ghidra-with-manuals-${pkgs.ghidra.version}" {inherit (pkgs.ghidra) pname version meta;} ''
+    cp -r ${pkgs.ghidra} $out
+    chmod -R u+w $out
+    cd ${pkgs.ghidra-processor-manuals}/lib/ghidra
+    for manual in Ghidra/Processors/*/data/manuals/*; do
+      if [ ! -d "$out/lib/ghidra/$(dirname "$manual")" ]; then
+        echo "Ghidra has no $(dirname "$manual")" >&2
+        exit 1
+      fi
+      ln -s "$(readlink "$manual")" "$out/lib/ghidra/$manual"
+    done
+  '';
+
+  withExtensions =
+    pkgs.callPackage
+    (pkgs.path + "/pkgs/tools/security/ghidra/with-extensions.nix")
+    {inherit ghidra;};
+
+  ghidraWithExtensions = withExtensions (_: [
     pkgs.ghidra-extensions.reverse-engineering-assistant
     pkgs.ghidra-extensions.ghidra-snes
     pkgs.ghidra-extensions.ghidra-boy
@@ -42,7 +63,7 @@
         ${lib.getExe pkgs.ghidra-extensions.reverse-engineering-assistant.python-wrapper}
       do
         makeWrapper "$prog" "$out/bin/$(basename "$prog")" \
-          --set GHIDRA_INSTALL_DIR "${pkgs.ghidra}/lib/ghidra" \
+          --set GHIDRA_INSTALL_DIR "${ghidra}/lib/ghidra" \
           --set NIX_GHIDRAHOME "${ghidraWithExtensions}/lib/ghidra/Ghidra" \
           --set _JAVA_AWT_WM_NONREPARENTING 1 \
           --set JAVA_HOME "${pkgs.jre}"
@@ -54,9 +75,9 @@
       # symlink into the ghidra package, so rebuild it.
       rm "$out/share"
       mkdir -p "$out/share/applications"
-      ln -s "${pkgs.ghidra}/share/icons" "$out/share/icons"
+      ln -s "${ghidra}/share/icons" "$out/share/icons"
       sed 's/^Exec=ghidra$/Exec=pyghidraw\nKeywords=pyghidra;/' \
-        "${pkgs.ghidra}/share/applications/ghidra.desktop" \
+        "${ghidra}/share/applications/ghidra.desktop" \
         > "$out/share/applications/ghidra.desktop"
       grep -qx 'Exec=pyghidraw' "$out/share/applications/ghidra.desktop"
       grep -qx 'Keywords=pyghidra;' "$out/share/applications/ghidra.desktop"
@@ -83,7 +104,7 @@ in {
     # For `import pyghidra` from the scripting Python. JAVA_HOME_OVERRIDE pins
     # pyghidra's JVM without disturbing JAVA_HOME for everything else.
     home.sessionVariables = {
-      GHIDRA_INSTALL_DIR = "${pkgs.ghidra}/lib/ghidra";
+      GHIDRA_INSTALL_DIR = "${ghidra}/lib/ghidra";
       NIX_GHIDRAHOME = "${ghidraWithExtensions}/lib/ghidra/Ghidra";
       JAVA_HOME_OVERRIDE = "${pkgs.jre}";
     };
