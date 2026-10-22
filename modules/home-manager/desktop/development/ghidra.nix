@@ -50,14 +50,16 @@
       ln -s pyghidraw "$out/bin/pyghidra-gui"
 
       # Launch from the desktop with PyGhidra so the GUI has a Python
-      # interpreter. share/ is a symlink into the ghidra package, so rebuild it.
+      # interpreter, and let launchers find it by that name too. share/ is a
+      # symlink into the ghidra package, so rebuild it.
       rm "$out/share"
       mkdir -p "$out/share/applications"
       ln -s "${pkgs.ghidra}/share/icons" "$out/share/icons"
-      sed 's/^Exec=ghidra$/Exec=pyghidraw/' \
+      sed 's/^Exec=ghidra$/Exec=pyghidraw\nKeywords=pyghidra;/' \
         "${pkgs.ghidra}/share/applications/ghidra.desktop" \
         > "$out/share/applications/ghidra.desktop"
       grep -qx 'Exec=pyghidraw' "$out/share/applications/ghidra.desktop"
+      grep -qx 'Keywords=pyghidra;' "$out/share/applications/ghidra.desktop"
     '';
   };
 in {
