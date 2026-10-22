@@ -228,6 +228,10 @@ in {
         (lib.mkIf osConfig.programs.coolercontrol.enable {
           coolercontrol.text = autostartScope "coolercontrol" "coolercontrol";
         })
+
+        (lib.mkIf osConfig.services.tailscale.enable {
+          tailscale-systray.text = autostartScope "tailscale-systray" "tailscale systray";
+        })
       ];
 
       # --- Misc Config ---

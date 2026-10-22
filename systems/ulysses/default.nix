@@ -204,7 +204,10 @@
     # Networking
     networking = {
       networkManager.enable = true;
-      tailscale.enable = true;
+      tailscale = {
+        enable = true;
+        operator = "awilliams";
+      };
     };
     # Boot
     boot = {

@@ -3,13 +3,25 @@
   lib,
   ...
 }: let
-  inherit (lib.options) mkEnableOption;
+  inherit (lib) types;
+  inherit (lib.options) mkEnableOption mkOption;
   inherit (lib.modules) mkIf mkMerge;
 
   cfg = config.rat.networking.tailscale;
   impermanenceCfg = config.rat.impermanence;
 in {
-  options.rat.networking.tailscale.enable = mkEnableOption "Tailscale";
+  options.rat.networking.tailscale = {
+    enable = mkEnableOption "Tailscale";
+
+    operator = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        User allowed to drive tailscaled without root. The tray app needs
+        this to connect, disconnect, or switch exit nodes.
+      '';
+    };
+  };
 
   config = mkMerge [
     (mkIf cfg.enable {
@@ -21,6 +33,7 @@ in {
         # Loosens reverse-path filtering so traffic from subnet routes and
         # exit nodes isn't dropped as spoofed.
         useRoutingFeatures = "client";
+        extraSetFlags = lib.optional (cfg.operator != null) "--operator=${cfg.operator}";
       };
     })
     (mkIf (cfg.enable && impermanenceCfg.enable) {
