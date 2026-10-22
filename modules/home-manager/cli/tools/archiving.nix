@@ -13,6 +13,7 @@ in {
   config = modules.mkIf (cliCfg.enable && cliCfg.tools.enable) {
     home.packages = with pkgs; [
       _7zz-rar
+      unar
       unrar
       unzip
       xz
