@@ -33,6 +33,7 @@
     pkgs.ghidra-extensions.reverse-engineering-assistant
     pkgs.ghidra-extensions.ghidra-snes
     pkgs.ghidra-extensions.ghidra-boy
+    pkgs.ghidra-extensions.ghidra-dos-interrupt-resolver
   ]);
 
   # tkinter is only for pyghidraw's usage/error dialogs.
