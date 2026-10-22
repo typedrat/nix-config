@@ -69,6 +69,21 @@ in {
       ];
     };
 
-    home.packages = [ghidraWrapped];
+    # Wins over the scripting Python's own bin/pyghidra, which lacks the env.
+    home.packages = [(lib.hiPrio ghidraWrapped)];
+
+    rat.python.packages = ps: [
+      ps.pyghidra
+      pkgs.ghidra-stubs
+      pkgs.java-stubs-converted-strings
+    ];
+
+    # For `import pyghidra` from the scripting Python. JAVA_HOME_OVERRIDE pins
+    # pyghidra's JVM without disturbing JAVA_HOME for everything else.
+    home.sessionVariables = {
+      GHIDRA_INSTALL_DIR = "${pkgs.ghidra}/lib/ghidra";
+      NIX_GHIDRAHOME = "${ghidraWithExtensions}/lib/ghidra/Ghidra";
+      JAVA_HOME_OVERRIDE = "${pkgs.jre}";
+    };
   };
 }
