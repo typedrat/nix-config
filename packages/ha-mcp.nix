@@ -17,7 +17,10 @@ let
 in
   assert ha-mcp.version == version;
     toPythonApplication (
-      ha-mcp.overrideAttrs {
+      ha-mcp.overrideAttrs (old: {
+        # The version follows nixpkgs, so the inherited updateScript would only
+        # ever trip the assert above.
+        passthru = old.passthru // {updateScript = null;};
         src = fetchFromGitHub {
           owner = "homeassistant-ai";
           repo = "ha-mcp";
@@ -25,5 +28,5 @@ in
           fetchSubmodules = true;
           hash = "sha256-Ime1/iHhFLwMUg3IzWliMGxchwDAFmDt51zJdCnjxfM=";
         };
-      }
+      })
     )

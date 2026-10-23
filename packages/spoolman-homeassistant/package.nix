@@ -18,7 +18,17 @@ buildHomeAssistantComponent rec {
 
   # Upstream stamps the real version into the manifest only when it builds a
   # release archive, so Home Assistant reports this integration as 0.0.0.
-  passthru.updateScript = nix-update-script {};
+  #
+  # Upstream also tags prereleases as vX.Y.Z-dev.N. buildHomeAssistantComponent's
+  # position points into nixpkgs, so nix-update needs this file named.
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version-regex"
+      "^v([0-9]+\\.[0-9]+\\.[0-9]+)$"
+      "--override-filename"
+      "packages/spoolman-homeassistant/package.nix"
+    ];
+  };
 
   meta = {
     description = "Home Assistant integration for the Spoolman filament inventory";
