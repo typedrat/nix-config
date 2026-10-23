@@ -33,32 +33,6 @@
       flake = false;
     };
 
-    # Wire alsa-lib into claude-code's DT_RPATH instead of LD_LIBRARY_PATH, which
-    # leaked into every child process and broke libasound users built against an
-    # older glibc (NixOS/nixpkgs#569098)
-    nixpkgs-patch-569098 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/569098.diff";
-      flake = false;
-    };
-
-    # claude-code 2.1.300 -> 2.1.301 (NixOS/nixpkgs#574646)
-    nixpkgs-patch-574646 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/574646.diff";
-      flake = false;
-    };
-
-    # claude-code 2.1.301 -> 2.1.302 (NixOS/nixpkgs#575166)
-    nixpkgs-patch-575166 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/575166.diff";
-      flake = false;
-    };
-
-    # claude-code 2.1.302 -> 2.1.303 (NixOS/nixpkgs#575849)
-    nixpkgs-patch-575849 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/575849.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
@@ -336,6 +310,7 @@
       url = "https://flakehub.com/f/synapdeck/synapdeck/*";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-parts.follows = "flake-parts";
+      inputs.determinate.follows = "determinate";
     };
 
     # Personal wallpaper collection (private repo). Consumed as raw files so the
