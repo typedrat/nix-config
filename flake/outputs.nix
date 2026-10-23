@@ -19,9 +19,12 @@
         patches =
           (old.patches or [])
           ++ [
+            # maralorn/nix-output-monitor#321 as merged, unreleased as of
+            # 2.2.0. Pinned by commit range: GitHub re-renders a PR's .diff
+            # when it merges, which changes the hash.
             (prev.fetchurl {
-              url = "https://github.com/maralorn/nix-output-monitor/pull/321.diff";
-              hash = "sha256-XLc2IEpwQYw2lfcVnI58BeZ0EgNS4LF+U63Rnpgqcmc=";
+              url = "https://github.com/maralorn/nix-output-monitor/compare/c40cb120262d9e9b1b988898708b124f6ffc0913...d48ff7935da72a5a5764ee8c5358d38417b0f337.diff";
+              hash = "sha256-fOS80YxNS7gewc+CIcMtnHddqio4phlRLii5f1OShlQ=";
             })
           ];
       });
