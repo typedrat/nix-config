@@ -33,6 +33,24 @@
       flake = false;
     };
 
+    # claude-code 2.1.303 -> 2.1.304 (NixOS/nixpkgs#576249)
+    nixpkgs-patch-576249 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/576249.diff";
+      flake = false;
+    };
+
+    # Trust only the system CA store in claude-code (NixOS/nixpkgs#576509)
+    nixpkgs-patch-576509 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/576509.diff";
+      flake = false;
+    };
+
+    # claude-code 2.1.304 -> 2.1.308 (NixOS/nixpkgs#577193)
+    nixpkgs-patch-577193 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/577193.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
