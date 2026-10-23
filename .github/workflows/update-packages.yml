@@ -21,6 +21,24 @@ jobs:
       - name: Update packages
         run: |
           packages=$(nix eval .#packages.x86_64-linux --apply 'pkgs: builtins.filter (n: (pkgs.${n}.passthru.updateScript or null) != null) (builtins.attrNames pkgs)' --json | jq -r '.[]')
+
+          # `nix-update --use-update-script` runs the script inside
+          # `mkShell { inputsFrom = [pkg]; }`, which builds every build input
+          # first. When the script is nix-update-script that shell is pure
+          # overhead, and for packages with uncached heavy inputs (build123d
+          # pulls in cadquery-ocp-novtk) it outlives the runner. Record those
+          # scripts' arguments so nix-update can be called directly instead.
+          nix eval .#packages.x86_64-linux --json --apply '
+            pkgs: let
+              scriptOf = n: let s = pkgs.${n}.passthru.updateScript or null; in if s == null then null else s.command or s;
+              isNixUpdate = c: builtins.isList c && baseNameOf (toString (builtins.head c)) == "nix-update";
+            in
+              builtins.listToAttrs (map (n: {
+                name = n;
+                value = builtins.tail (map toString (scriptOf n));
+              }) (builtins.filter (n: isNixUpdate (scriptOf n)) (builtins.attrNames pkgs)))
+          ' > "$RUNNER_TEMP/nix-update-args.json"
+
           updated_packages=""
           failed_packages=""
 
@@ -63,7 +81,12 @@ jobs:
                 continue
               fi
             else
-              if ! nix run nixpkgs#nix-update -- --flake "$pkg" --use-update-script --write-commit-message "$commit_msg"; then
+              if jq -e --arg p "$pkg" 'has($p)' "$RUNNER_TEMP/nix-update-args.json" >/dev/null; then
+                mapfile -t update_args < <(jq -r --arg p "$pkg" '.[$p][]' "$RUNNER_TEMP/nix-update-args.json")
+              else
+                update_args=(--use-update-script)
+              fi
+              if ! nix run nixpkgs#nix-update -- --flake "$pkg" "${update_args[@]}" --write-commit-message "$commit_msg"; then
                 echo "::error::Failed to update $pkg"
                 failed_packages="$failed_packages- $pkg\n"
                 rm -f "$commit_msg"
