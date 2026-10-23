@@ -214,6 +214,7 @@
     anime-game-launcher = {
       url = "github:ezKEa/aagl-gtk-on-nix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.rust-overlay.follows = "lanzaboote-rust-overlay";
     };
 
     denon-pipewire-audio-control = {
