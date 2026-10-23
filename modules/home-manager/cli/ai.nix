@@ -113,16 +113,20 @@ in {
       package = pkgs.comfy-cli;
     };
 
+    catppuccin.opencode.enable = false;
+
     programs.opencode = {
       enable = true;
       package = osConfig.rat.agentSlice.wrap pkgs.opencode;
 
-      tui = {
-        theme = "catppuccin-frappe";
-        plugin = [
-          [
-            "oc-plugin-rainbow"
-            {
+      # catppuccin/nix's opencode port still writes tui.json, which OpenCode 2
+      # ignores, so the theme is set here and the port is disabled below.
+      cli = {
+        theme.name = "catppuccin-frappe";
+        plugins = [
+          {
+            package = "oc-plugin-rainbow";
+            options = {
               enabled = true;
               fg = true;
               bg = true;
@@ -132,8 +136,8 @@ in {
               keybinds = {
                 logo_splash = "ctrl+shift+r";
               };
-            }
-          ]
+            };
+          }
         ];
       };
 
