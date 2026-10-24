@@ -17,8 +17,8 @@
     postPatch =
       (old.postPatch or "")
       + ''
-        substituteInPlace packages/desktop/src/main/windows.ts \
-          --replace-fail $'    height: state.height,\n    show:' $'    height: state.height,\n    autoHideMenuBar: true,\n    show:'
+        substituteInPlace packages/desktop/src/main/windows/index.ts \
+          --replace-fail $'        height: state.height,\n        show:' $'        height: state.height,\n        autoHideMenuBar: true,\n        show:'
       '';
   });
 
