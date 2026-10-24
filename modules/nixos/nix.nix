@@ -45,9 +45,11 @@
             ];
         })
 
-        # gradio's streaming-video lead-tolerance test asserts on ffmpeg's
-        # audio padding length, which comes out longer than its bound with the
-        # ffmpeg in nixpkgs (0.1587 s vs 0.128 s at 16 kHz).
+        # gradio's streaming-video tests assert on timings ffmpeg doesn't hold to:
+        # the lead-tolerance test on audio padding, which comes out longer than
+        # its bound with the ffmpeg in nixpkgs (0.1587 s vs 0.128 s at 16 kHz),
+        # and the continuous-stream test on segment durations, which drift past
+        # its 0.3 s bound on slower CPUs (0.35 s on iserlohn).
         (_final: prev: {
           pythonPackagesExtensions =
             prev.pythonPackagesExtensions
@@ -56,7 +58,10 @@
                 gradio = python-prev.gradio.overrideAttrs (oldAttrs: {
                   disabledTests =
                     (oldAttrs.disabledTests or [])
-                    ++ ["test_the_first_segment_s_padding_stays_inside_the_lead_tolerance"];
+                    ++ [
+                      "test_the_first_segment_s_padding_stays_inside_the_lead_tolerance"
+                      "test_streamed_video_is_one_continuous_stream"
+                    ];
                 });
               })
             ];
