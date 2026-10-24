@@ -13,8 +13,9 @@
 #      system generation.
 #   3. Configuration Nix doesn't declare at all: real files among Claude
 #      Code's config paths, and MCP servers registered in ~/.claude.json.
-#      State Claude Code owns (claude.ai's synced skills, per-project MCP
-#      servers) is left out unless --all is given.
+#      Paths Claude Code maintains itself (rat.claude-code.appOwned, read
+#      from this repository's flake for the current host and user) and
+#      per-project MCP servers are left out unless --all is given.
 #
 # Usage: claude-config-drift.sh [--all] [--hm GENERATION] [--system TOPLEVEL]
 #
@@ -123,17 +124,23 @@ section "not declared in Nix (kept only because $config_dir is persisted)"
 before=$found
 # Claude Code's configuration paths; everything else in the directory is
 # application state (sessions, history, caches, plugin installs).
-# Paths below config_dir that Claude Code itself maintains.
-app_owned=(skills/synced)
+app_owned=()
+if [[ $all -eq 0 ]]; then
+  flake=$(cd "$(dirname "$0")/.." && pwd)
+  attr="nixosConfigurations.$(uname -n).config.home-manager.users.$USER.rat.claude-code.appOwned"
+  owned_json=$(nix eval --json "$flake#$attr") || {
+    echo "could not evaluate $attr; pass --all to skip it" >&2
+    exit 2
+  }
+  mapfile -t app_owned < <(jq -r '.[]' <<<"$owned_json")
+fi
 
 undeclared() {
   local path=$1 rel=${1#"$config_dir"/} child owned
   [[ -n "${managed[$rel]:-}" ]] && return 0
-  if [[ $all -eq 0 ]]; then
-    for owned in "${app_owned[@]}"; do
-      [[ "$rel" == "$owned" ]] && return 0
-    done
-  fi
+  for owned in "${app_owned[@]}"; do
+    [[ "$rel" == "$owned" ]] && return 0
+  done
   # A directory the generation links into is only partly ours; look inside.
   if [[ -n "${managed_parent[$rel]:-}" && -d "$path" && ! -L "$path" ]]; then
     for child in "$path"/* "$path"/.[!.]*; do

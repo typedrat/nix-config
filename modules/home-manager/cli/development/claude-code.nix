@@ -21,7 +21,20 @@
   inherit (impermanenceCfg) persistDir;
   inherit (config.programs.claude-code) configDir;
 in {
+  options.rat.claude-code.appOwned = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [];
+    description = ''
+      Paths under Claude Code's configuration directory that Claude Code
+      maintains itself rather than Nix. scripts/claude-config-drift.sh leaves
+      them out of its report.
+    '';
+  };
+
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
+    # claude.ai's skill sync writes here.
+    rat.claude-code.appOwned = ["skills/synced"];
+
     rat.userSecrets = lib.mkIf hasUserSecrets {
       github.personalAccessToken = {};
     };
