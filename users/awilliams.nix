@@ -33,6 +33,61 @@ in {
     ];
 
     cli.enable = true;
+    cli.ai.claude-code = {
+      context = ./awilliams/claude/CLAUDE.md;
+      rules = {
+        context7 = ./awilliams/claude/rules/context7.md;
+        no-find-root = ./awilliams/claude/rules/no-find-root.md;
+      };
+      settings = {
+        theme = "auto";
+        editorMode = "normal";
+        verbose = true;
+        permissions.defaultMode = "auto";
+        skipAutoPermissionPrompt = true;
+        skipWorkflowUsageWarning = true;
+        remoteControlAtStartup = true;
+        agentPushNotifEnabled = true;
+        inputNeededNotifEnabled = true;
+        preferredNotifChannel = "ghostty";
+        statusLine = {
+          type = "command";
+          command = lib.getExe (pkgs.writeShellApplication {
+            name = "claude-statusline";
+            runtimeInputs = with pkgs; [git jq];
+            # Every lookup is allowed to come up empty.
+            bashOptions = [];
+            text = builtins.readFile ./awilliams/claude/statusline.sh;
+          });
+        };
+        trustedDirectories = ["/home/awilliams/Development/vira"];
+        enabledPlugins = {
+          "superpowers@superpowers-marketplace" = true;
+          "rust-analyzer-lsp@claude-plugins-official" = true;
+          "cloudflare@cloudflare" = true;
+          "cc-plugin-you-should-know@builtin" = true;
+          "posthog@anthropic-plugin-directory" = true;
+          "frontend-design@claude-plugins-official" = false;
+          "context7@claude-plugins-official" = false;
+          "code-review@claude-plugins-official" = false;
+          "productivity@synced" = false;
+          "product-management@synced" = false;
+          "engineering@synced" = false;
+        };
+        extraKnownMarketplaces =
+          lib.mapAttrs (_: repo: {
+            source = {
+              source = "github";
+              inherit repo;
+            };
+          }) {
+            superpowers-marketplace = "obra/superpowers-marketplace";
+            comfyui-mcp = "artokun/comfyui-mcp";
+            cloudflare = "cloudflare/skills";
+            reva = "cyberkaida/reverse-engineering-assistant";
+          };
+      };
+    };
     cli.ai.peon-ping = {
       packs = [
         "glados"

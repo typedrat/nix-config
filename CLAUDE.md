@@ -254,6 +254,15 @@ such as `hooks` merge with the user's own; scalar keys set there can no longer
 be changed from Claude Code's UI, so keep preferences like `theme`, `model` and
 plugins out of it.
 
+Each user's own Claude Code configuration comes from
+`rat.users.<name>.cli.ai.claude-code` (`context` for the global CLAUDE.md,
+`rules`, `settings`), which `modules/home-manager/cli/development/claude-code.nix`
+hands to home-manager's `programs.claude-code`. `settings.json` is read-only:
+anything changed from Claude Code's UI (theme, `/model`, plugin toggles) lasts
+one session, so make lasting changes in the user's Nix config. Permission
+approvals are unaffected; Claude Code saves them to each project's
+`.claude/settings.local.json`.
+
 gstack is built by `packages/gstack` (its own `./setup` runs inside the build)
 and linked into each AI user's Claude Code, Codex and OpenCode skill
 directories by `modules/home-manager/cli/gstack.nix`. Its hooks come from the

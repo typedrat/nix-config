@@ -38,17 +38,6 @@
         // extra)
     ];
   };
-
-  # peon.sh is linked per user by home-manager, so users who haven't enabled
-  # peon-ping get a no-op instead of a missing-command hook error.
-  peonHook = pkgs.writeShellScript "peon-ping-hook" ''
-    hook="''${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/peon-ping/peon.sh"
-    [ -x "$hook" ] || exit 0
-    exec "$hook"
-  '';
-  peonEvent = matcher: async:
-    {inherit matcher;}
-    // command (toString peonHook) ({timeout = 10;} // lib.optionalAttrs async {inherit async;});
 in {
   options.rat.ai = {
     enable =
@@ -71,38 +60,21 @@ in {
   };
 
   config = mkIf cfg.enable {
-    rat.ai.claude-code.settings = lib.mkMerge [
-      {
-        "00-base" = {
-          attribution = {
-            commit = "";
-            pr = "";
-            sessionUrl = false;
-          };
-          cleanupPeriodDays = 3650;
+    rat.ai.claude-code.settings = {
+      "00-base" = {
+        attribution = {
+          commit = "";
+          pr = "";
+          sessionUrl = false;
         };
+        cleanupPeriodDays = 3650;
+      };
 
-        "10-guards".hooks.PreToolUse = [
-          ({matcher = "Bash";} // command (lib.getExe (mkGuard "block-find-root")) {timeout = 5;})
-          ({matcher = "Bash|Monitor";} // command (lib.getExe (mkGuard "block-pgrep-self-wait")) {timeout = 5;})
-        ];
-      }
-
-      (mkIf (lib.any (u: u.cli.ai.peon-ping.enable or false) (lib.attrValues aiUsers)) {
-        "30-peon-ping".hooks = {
-          SessionStart = [(peonEvent "" false)];
-          SessionEnd = [(peonEvent "" true)];
-          SubagentStart = [(peonEvent "" true)];
-          SubagentStop = [(peonEvent "" true)];
-          UserPromptSubmit = [(peonEvent "" true)];
-          Stop = [(peonEvent "" true)];
-          Notification = [(peonEvent "" true)];
-          PermissionRequest = [(peonEvent "" true)];
-          PostToolUseFailure = [(peonEvent "Bash" true)];
-          PreCompact = [(peonEvent "" true)];
-        };
-      })
-    ];
+      "10-guards".hooks.PreToolUse = [
+        ({matcher = "Bash";} // command (lib.getExe (mkGuard "block-find-root")) {timeout = 5;})
+        ({matcher = "Bash|Monitor";} // command (lib.getExe (mkGuard "block-pgrep-self-wait")) {timeout = 5;})
+      ];
+    };
 
     # Each drop-in is copied rather than linked: Claude Code warns about a
     # managed file whose link leads out of /etc/claude-code.

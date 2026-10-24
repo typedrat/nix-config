@@ -17,6 +17,29 @@ in {
             description = "Token threshold for Morph compaction (MORPH_COMPACT_TOKEN_LIMIT)";
           };
 
+          claude-code = {
+            context = options.mkOption {
+              type = types.either types.lines types.path;
+              default = "";
+              description = "Global CLAUDE.md, as inline text or a path.";
+            };
+
+            rules = options.mkOption {
+              type = types.attrsOf (types.either types.lines types.path);
+              default = {};
+              description = "Files for ~/.claude/rules, keyed by name without the .md suffix.";
+            };
+
+            settings = options.mkOption {
+              type = types.attrsOf types.anything;
+              default = {};
+              description = ''
+                Personal settings.json. The file is read-only, so a change made
+                from Claude Code's UI lasts only for that session.
+              '';
+            };
+          };
+
           peon-ping = {
             enable = options.mkEnableOption "peon-ping AI agent notifications";
 
