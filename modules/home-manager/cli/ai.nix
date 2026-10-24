@@ -38,6 +38,35 @@
     echo '{"name": "comfy-cli"}' > $out/.claude-plugin/plugin.json
     ln -s ${config.programs.comfy-cli.package.src}/comfy_cli/skills $out/skills
   '';
+
+  mcpServers =
+    {
+      context7.url = "https://mcp.context7.com/mcp/oauth";
+      linear-server.url = "https://mcp.linear.app/mcp";
+    }
+    // lib.optionalAttrs hasChromium {
+      # https://github.com/ChromeDevTools/chrome-devtools-mcp
+      # Drives the user's real Chrome via --autoConnect: it attaches to an
+      # already-running Chrome (>= 144) using the default profile rather than
+      # launching its own. Requires a one-time opt-in in Chrome at
+      # chrome://inspect/#remote-debugging. If Chrome is not running, browser
+      # tool calls fail (the server will not spawn a browser on its own).
+      chrome-devtools = {
+        command = "npx";
+        args = [
+          "-y"
+          "chrome-devtools-mcp@latest"
+          "--autoConnect"
+          # No phoning home: disable CrUX field-data lookups and usage stats.
+          "--no-performance-crux"
+          "--no-usage-statistics"
+        ];
+        env = {
+          CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS = "1";
+          CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS = "1";
+        };
+      };
+    };
 in {
   imports = [
     inputs.peon-ping.homeManagerModules.default
@@ -129,38 +158,13 @@ in {
 
     catppuccin.opencode.enable = false;
 
-    # Shared by Claude Code and OpenCode.
+    # OpenCode gets every server. Claude Code reaches Linear and Context7
+    # through claude.ai's connectors, so it only takes the local ones.
     programs.mcp = {
       enable = true;
-      servers =
-        {
-          context7.url = "https://mcp.context7.com/mcp/oauth";
-          linear-server.url = "https://mcp.linear.app/mcp";
-        }
-        // lib.optionalAttrs hasChromium {
-          # https://github.com/ChromeDevTools/chrome-devtools-mcp
-          # Drives the user's real Chrome via --autoConnect: it attaches to an
-          # already-running Chrome (>= 144) using the default profile rather than
-          # launching its own. Requires a one-time opt-in in Chrome at
-          # chrome://inspect/#remote-debugging. If Chrome is not running, browser
-          # tool calls fail (the server will not spawn a browser on its own).
-          chrome-devtools = {
-            command = "npx";
-            args = [
-              "-y"
-              "chrome-devtools-mcp@latest"
-              "--autoConnect"
-              # No phoning home: disable CrUX field-data lookups and usage stats.
-              "--no-performance-crux"
-              "--no-usage-statistics"
-            ];
-            env = {
-              CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS = "1";
-              CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS = "1";
-            };
-          };
-        };
+      servers = mcpServers;
     };
+    programs.claude-code.mcpServers = lib.filterAttrs (_: server: server ? command) mcpServers;
 
     programs.opencode = {
       enable = true;

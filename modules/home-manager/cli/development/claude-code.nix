@@ -34,7 +34,6 @@ in {
       # reminder overrides applied via tweakcc-fixed at build time.
       # See packages/claude-code-patched.nix.
       package = osConfig.rat.agentSlice.wrap pkgs.claude-code-patched;
-      enableMcpIntegration = true;
 
       plugins = modules.mkIf config.catppuccin.enable {
         catppuccin = "${pkgs.claude-themes}/catppuccin";
