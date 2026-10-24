@@ -43,7 +43,18 @@ in {
     programs.ydotool.enable = true;
 
     boot = {
-      extraModulePackages = [config.boot.kernelPackages.v4l2loopback];
+      # The kernel's modules_install runs depmod itself, so the output carries
+      # its own modules.dep, modules.softdep, ... that collide with the
+      # kernel's when the module tree is merged.
+      extraModulePackages = [
+        (config.boot.kernelPackages.v4l2loopback.overrideAttrs (old: {
+          postInstall =
+            (old.postInstall or "")
+            + ''
+              rm -f "$out"/lib/modules/*/modules.*
+            '';
+        }))
+      ];
       kernelModules = ["v4l2loopback"];
     };
   };
