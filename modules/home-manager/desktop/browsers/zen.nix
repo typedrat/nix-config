@@ -266,5 +266,9 @@ in {
 
     home.file.".config/zen/default/chrome/zen-logo-latte.svg".source = "${inputs.catppuccin-zen}/themes/Latte/${zenRepoAccent}/zen-logo-latte.svg";
     home.file.".config/zen/default/chrome/zen-logo-${flavor}.svg".source = "${inputs.catppuccin-zen}/themes/${zenRepoFlavor}/${zenRepoAccent}/zen-logo-${flavor}.svg";
+
+    # Tools that import Firefox profiles (e.g. the Claude desktop app's browser)
+    # only look in Firefox's own directories, so expose Zen's profile there.
+    home.file.".mozilla/firefox".source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/zen";
   };
 }
