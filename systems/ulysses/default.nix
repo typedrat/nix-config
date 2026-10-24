@@ -381,6 +381,12 @@
       cli = {
         enable = true;
         ai.peon-ping.enable = true;
+        # volnutt is shared in from a friend's tailnet for League Pass.
+        networking.tailsocks.nba = {
+          exitNode = "100.105.121.67";
+          socksPort = 5040;
+          browser.enable = true;
+        };
       };
       gui = {
         enable = true;

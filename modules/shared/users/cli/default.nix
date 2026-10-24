@@ -3,6 +3,7 @@
 in {
   imports = [
     ./ai.nix
+    ./tailsocks.nix
   ];
 
   options.rat.users = options.mkOption {
