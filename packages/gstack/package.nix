@@ -10,6 +10,9 @@
   git,
   jq,
   perl,
+  # /plan-tune's AskUserQuestion logging and preference hooks, which gstack's
+  # setup only registers on request.
+  withPlanTuneHooks ? true,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "gstack";
@@ -130,6 +133,11 @@ stdenv.mkDerivation (finalAttrs: {
     export HOME=$TMPDIR/home
     mkdir -p $HOME/.claude $HOME/.codex $HOME/.config/opencode
     export GSTACK_HOME=$TMPDIR/state
+    export GSTACK_PLAN_TUNE_HOOKS=${
+      if withPlanTuneHooks
+      then "yes"
+      else "no"
+    }
 
     printf '%s\n' claude codex opencode > $root/.gstack-installed-hosts
 
@@ -148,6 +156,15 @@ stdenv.mkDerivation (finalAttrs: {
     if [ -d $HOME/.config/opencode/commands ]; then
       cp -a $HOME/.config/opencode/commands $out/share/gstack-hosts/opencode/commands
     fi
+
+    # The hooks setup registered, as a Claude Code managed-settings drop-in
+    # pointing at this package instead of the throwaway home.
+    jq --arg home "$HOME/.claude/skills/gstack" --arg root "$root" '
+      {hooks: (.hooks | walk(
+        if type == "object" then del(._gstack_source)
+        elif type == "string" and startswith($home) then $root + ltrimstr($home)
+        else . end))}
+    ' $HOME/.claude/settings.json > $out/share/gstack-hosts/claude/managed-settings.json
 
     # Upgrades come from bumping this package, and the self-upgrade skill
     # would try to git-pull the store path. gstack refuses to disable it.

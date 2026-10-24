@@ -244,6 +244,22 @@ Give each card a content-hashed `version` — the module appends it to the
 resource URL as a query string, so a card edited without a version bump is
 served from browser cache.
 
+### Coding Agent Configuration
+
+Claude Code policy is machine-wide: `modules/nixos/ai/` writes drop-ins to
+`/etc/claude-code/managed-settings.d/`, which Claude Code applies above each
+user's `~/.claude/settings.json`. Add hooks, permissions and other policy keys
+through `rat.ai.claude-code.settings` (one attribute per drop-in file). Lists
+such as `hooks` merge with the user's own; scalar keys set there can no longer
+be changed from Claude Code's UI, so keep preferences like `theme`, `model` and
+plugins out of it.
+
+gstack is built by `packages/gstack` (its own `./setup` runs inside the build)
+and linked into each AI user's Claude Code, Codex and OpenCode skill
+directories by `modules/home-manager/cli/gstack.nix`. Its hooks come from the
+same build as the `20-gstack` drop-in. It updates through `update-packages`;
+gstack's in-session updater is turned off.
+
 ### Custom Package Development
 
 - Add new packages to `packages/` directory

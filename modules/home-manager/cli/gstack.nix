@@ -21,7 +21,7 @@
     "opencode/commands" = ".config/opencode/commands";
   };
 in {
-  config = modules.mkIf (cliCfg.enable && cliCfg.ai.enable) {
+  config = modules.mkIf (cliCfg.enable && cliCfg.ai.enable && osConfig.rat.ai.gstack.enable) {
     # The skill directories share their parents with skills from other
     # sources and their names come from the build, so they are linked one by
     # one here instead of through home.file. Each set of links is recorded in
