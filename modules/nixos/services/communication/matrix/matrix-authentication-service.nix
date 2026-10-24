@@ -89,14 +89,13 @@ in {
 
     sops.templates."matrix-auth/synapse-msc3861.yaml" = {
       content = builtins.toJSON {
-        experimental_features.msc3861 = {
+        # Synapse 1.163 dropped experimental_features.msc3861 for this, which
+        # authenticates to MAS with the shared matrix.secret instead of an OAuth
+        # client of its own.
+        matrix_authentication_service = {
           enabled = true;
-          issuer = "https://${cfg.subdomain}.${domainName}/";
-          client_id = synapseMscClientId;
-          client_auth_method = "client_secret_basic";
-          client_secret = config.sops.placeholder."matrix-auth/synapse/clientSecret";
-          admin_token = config.sops.placeholder."matrix-auth/synapse/adminToken";
-          account_management_url = "https://${cfg.subdomain}.${domainName}/account/";
+          endpoint = config.links.matrix-auth.url;
+          secret = config.sops.placeholder."matrix-auth/synapse/adminToken";
         };
       };
       owner = "matrix-synapse";
