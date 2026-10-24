@@ -33,6 +33,11 @@ following your change, and not as a record of how the code got here.
   "same as Z"), no references to sibling files, no pointers to the discussion
   or PR that produced the code. If a reader would need the rest of the
   codebase or the change history to care, cut it.
+- Issue numbers are fine when the issue is still live: a
+  `TODO(<issue id>): <what is wrong>` on a tracked deficiency, or a pointer to
+  an open issue the reader needs. A closed issue can stay when it is where
+  important design context lives. Don't leave closed-issue numbers behind just
+  to record that something was fixed here once.
 - No meta-commentary. Drop "we now…", "this was changed to…", "NOTE:", and
   speculative asides about features that don't exist yet.
 - Don't restate types or signatures in prose. Doc comments say what an export
