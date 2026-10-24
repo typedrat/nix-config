@@ -72,7 +72,7 @@ python3.pkgs.buildPythonApplication rec {
 
   # blake3 is a declared dependency nothing in the tree imports, so the
   # >=1.0.9 floor buys nothing over nixpkgs' 1.0.8.
-  pythonRelaxDeps = ["blake3" "mixpanel"];
+  pythonRelaxDeps = ["blake3" "mixpanel" "semver"];
 
   postFixup = ''
     rm $out/bin/comfy-cli $out/bin/comfycli
