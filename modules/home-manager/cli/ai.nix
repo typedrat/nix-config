@@ -30,6 +30,14 @@
   hasChromium = (guiCfg.enable or false) && (guiCfg.browsers.chromium.enable or false);
   peonPingCfg = cliCfg.ai.peon-ping or {};
   peonSettings = peonPingCfg.settings or {};
+
+  # comfy-cli ships Claude Code skills without a plugin manifest; wrapping its
+  # skills directory as a plugin picks up whatever the installed version has.
+  comfySkillsPlugin = pkgs.runCommand "comfy-cli-claude-plugin" {} ''
+    mkdir -p $out/.claude-plugin
+    echo '{"name": "comfy-cli"}' > $out/.claude-plugin/plugin.json
+    ln -s ${config.programs.comfy-cli.package.src}/comfy_cli/skills $out/skills
+  '';
 in {
   imports = [
     inputs.peon-ping.homeManagerModules.default
@@ -111,6 +119,12 @@ in {
     programs.comfy-cli = {
       enable = true;
       package = pkgs.comfy-cli;
+    };
+
+    programs.claude-code.plugins.comfy-cli = comfySkillsPlugin;
+
+    home.file.".config/opencode/plugins/peon-ping.ts" = modules.mkIf config.programs.peon-ping.enable {
+      source = "${config.programs.peon-ping.package}/share/peon-ping/adapters/opencode/peon-ping.ts";
     };
 
     catppuccin.opencode.enable = false;
@@ -211,10 +225,6 @@ in {
           };
         };
       };
-    };
-
-    home.file.".config/opencode/plugins/peon-ping.ts" = modules.mkIf config.programs.peon-ping.enable {
-      source = "${config.programs.peon-ping.package}/share/peon-ping/adapters/opencode/peon-ping.ts";
     };
 
     programs.peon-ping = modules.mkIf peonPingCfg.enable {

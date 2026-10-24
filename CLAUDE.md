@@ -256,7 +256,7 @@ plugins out of it.
 
 Each user's own Claude Code configuration comes from
 `rat.users.<name>.cli.ai.claude-code` (`context` for the global CLAUDE.md,
-`rules`, `settings`), which `modules/home-manager/cli/development/claude-code.nix`
+`rules`, `skills`, `settings`), which `modules/home-manager/cli/development/claude-code.nix`
 hands to home-manager's `programs.claude-code`. `settings.json` is read-only:
 anything changed from Claude Code's UI (theme, `/model`, plugin toggles) lasts
 one session, so make lasting changes in the user's Nix config. Permission

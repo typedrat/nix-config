@@ -30,6 +30,15 @@ in {
               description = "Files for ~/.claude/rules, keyed by name without the .md suffix.";
             };
 
+            skills = options.mkOption {
+              type = types.attrsOf (types.either types.lines types.path);
+              default = {};
+              description = ''
+                Skills for ~/.claude/skills, keyed by directory name: a SKILL.md
+                as text or a path, or a path to a whole skill directory.
+              '';
+            };
+
             settings = options.mkOption {
               type = types.attrsOf types.anything;
               default = {};

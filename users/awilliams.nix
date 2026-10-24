@@ -39,6 +39,7 @@ in {
         context7 = ./awilliams/claude/rules/context7.md;
         no-find-root = ./awilliams/claude/rules/no-find-root.md;
       };
+      skills.doc-artifact = ./awilliams/claude/skills/doc-artifact;
       settings = {
         editorMode = "normal";
         verbose = true;

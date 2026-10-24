@@ -74,7 +74,7 @@ in {
         })
       ];
 
-      inherit (claudeCfg) context rules;
+      inherit (claudeCfg) context rules skills;
     };
 
     # These replace files that predate home-manager owning them. Changes made
@@ -87,6 +87,7 @@ in {
         "${configDir}/CLAUDE.md".force = true;
       })
       (lib.mapAttrs' (name: _: lib.nameValuePair "${configDir}/rules/${name}.md" {force = true;}) claudeCfg.rules)
+      (lib.mapAttrs' (name: _: lib.nameValuePair "${configDir}/skills/${name}" {force = true;}) claudeCfg.skills)
       (modules.mkIf config.programs.peon-ping.enable {
         ".claude/hooks/peon-ping/peon.sh".source = "${config.programs.peon-ping.package}/share/peon-ping/peon.sh";
       })
