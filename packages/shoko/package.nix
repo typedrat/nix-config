@@ -77,6 +77,6 @@ buildDotnetModule (finalAttrs: {
     description = "Backend for the Shoko anime management system";
     license = lib.licenses.mit;
     mainProgram = "Shoko.CLI";
-    inherit (dotnet-sdk_10.meta) platforms;
+    platforms = lib.intersectLists dotnet-sdk_10.meta.platforms avdump3.meta.platforms;
   };
 })

@@ -106,6 +106,6 @@ in
       changelog = "https://github.com/yeicor-3d/yet-another-cad-viewer/releases/tag/v${version}";
       license = lib.licenses.mit;
       maintainers = with lib.maintainers; [];
-      platforms = lib.platforms.linux;
+      inherit (build123d.meta) platforms;
     };
   }

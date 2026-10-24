@@ -105,6 +105,6 @@ python3Packages.buildPythonPackage (finalAttrs: {
     changelog = "https://github.com/gumyr/build123d/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [];
-    platforms = lib.platforms.linux;
+    platforms = lib.intersectLists cadquery-ocp-novtk.meta.platforms lib3mf-python.meta.platforms;
   };
 })

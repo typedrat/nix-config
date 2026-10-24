@@ -55,5 +55,6 @@ python3Packages.buildPythonPackage (finalAttrs: {
     homepage = "https://github.com/gongfan99/ocp_gordon";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [];
+    inherit (cadquery-ocp-novtk.meta) platforms;
   };
 })

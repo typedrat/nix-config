@@ -48,5 +48,6 @@ python3Packages.buildPythonPackage (finalAttrs: {
     homepage = "https://github.com/snoyer/ocpsvg";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [];
+    inherit (cadquery-ocp-novtk.meta) platforms;
   };
 })
