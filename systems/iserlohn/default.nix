@@ -120,16 +120,7 @@
       jellyfin.enable = true;
       mysql.enable = true;
 
-      traefik = {
-        enable = true;
-
-        routes.deploy-webhook = {
-          enable = true;
-          subdomain = "iserlohn-webhook";
-          serviceUrl = "http://127.0.0.1:9876";
-          authentik = false;
-        };
-      };
+      traefik.enable = true;
 
       postgres.enable = true;
 
