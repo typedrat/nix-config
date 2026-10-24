@@ -55,20 +55,26 @@ in {
       services.shoko.enable = true;
 
       systemd.services.shoko = {
-        after = ["mysql.service"];
+        after = ["mysql.service" "network-online.target"];
+        wants = ["network-online.target"];
         inherit environment;
         preStart = modules.mkAfter ''
           mkdir -p /var/lib/shoko/themes
           ln -sf ${inputs.catppuccin-shoko-webui}/themes/*/* /var/lib/shoko/themes/
 
-          # Update AniDB HTTP cache on each start without overwriting existing files
+          # Update AniDB HTTP cache on each start without overwriting existing
+          # files. It only saves AniDB requests, so a failed download must not
+          # keep Shoko from starting.
           echo "Updating AniDB HTTP cache..."
-          ${pkgs.curl}/bin/curl -fsSL -o /tmp/Anime_HTTP.zip \
-            "https://files.shokoanime.com/files/shoko-server/other/Anime_HTTP.zip"
-          mkdir -p "$STATE_DIRECTORY/Anime_HTTP"
-          # Zip contains a nested Anime_HTTP/ directory — extract to temp then move
-          ${pkgs.unzip}/bin/unzip -n -q /tmp/Anime_HTTP.zip -d /tmp/Anime_HTTP_extract
-          mv -n /tmp/Anime_HTTP_extract/Anime_HTTP/* "$STATE_DIRECTORY/Anime_HTTP/" 2>/dev/null || true
+          if ${pkgs.curl}/bin/curl -fsSL --retry 3 -o /tmp/Anime_HTTP.zip \
+            "https://files.shokoanime.com/files/shoko-server/other/Anime_HTTP.zip"; then
+            mkdir -p "$STATE_DIRECTORY/Anime_HTTP"
+            # Zip contains a nested Anime_HTTP/ directory — extract to temp then move
+            ${pkgs.unzip}/bin/unzip -n -q /tmp/Anime_HTTP.zip -d /tmp/Anime_HTTP_extract
+            mv -n /tmp/Anime_HTTP_extract/Anime_HTTP/* "$STATE_DIRECTORY/Anime_HTTP/" 2>/dev/null || true
+          else
+            echo "warning: could not download the AniDB HTTP cache; starting with the existing one" >&2
+          fi
           rm -rf /tmp/Anime_HTTP.zip /tmp/Anime_HTTP_extract
         '';
         serviceConfig.ExtraGroups = ["media" "mysql" persistentGroup];
