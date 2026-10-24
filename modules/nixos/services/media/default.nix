@@ -13,7 +13,7 @@
     ./radarr-anime.nix
     ./chaptarr.nix
     ./romm.nix
-    ./shoko.nix
+    ./shoko
     ./sonarr.nix
     ./sonarr-anime.nix
     ./torrents.nix

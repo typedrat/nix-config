@@ -211,6 +211,18 @@ in {
       internal = true;
       description = "Internal: plugin repository definitions assembled by sub-modules.";
     };
+
+    _runtimeSecrets = options.mkOption {
+      type = types.attrsOf types.str;
+      default = {};
+      internal = true;
+      description = ''
+        Internal: secrets that only exist at runtime, such as keys another
+        service generates, by name and file. The string
+        `@JELLARR_RUNTIME_SECRET_<name>@` anywhere in the configuration is
+        replaced with the file's contents before Jellarr runs.
+      '';
+    };
   };
 
   config = modules.mkMerge [
@@ -304,7 +316,19 @@ in {
             fi
             sleep 1
           done
-          install -m 0400 ${config.sops.templates."jellarr.yml".path} /var/lib/jellarr/config/config.yml
+          ${
+            if cfg._runtimeSecrets == {}
+            then "install -m 0400 ${config.sops.templates."jellarr.yml".path} /var/lib/jellarr/config/config.yml"
+            else let
+              args = lib.concatStringsSep " " (lib.mapAttrsToList (name: file: "--rawfile ${lib.escapeShellArg name} ${lib.escapeShellArg file}") cfg._runtimeSecrets);
+              substitutions = lib.concatStringsSep " | " (lib.mapAttrsToList (name: _: ''if . == "@JELLARR_RUNTIME_SECRET_${name}@" then ($ARGS.named[${builtins.toJSON name}] | rtrimstr("\n")) else . end'') cfg._runtimeSecrets);
+            in ''
+              umask 0377
+              ${pkgs.jq}/bin/jq ${args} ${lib.escapeShellArg "walk(if type == \"string\" then (${substitutions}) else . end)"} \
+                ${config.sops.templates."jellarr.yml".path} > /var/lib/jellarr/config/config.yml.new
+              mv -f /var/lib/jellarr/config/config.yml.new /var/lib/jellarr/config/config.yml
+            ''
+          }
         '';
         script = ''
           exec ${jellarrPackage}/bin/jellarr

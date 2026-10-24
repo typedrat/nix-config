@@ -239,7 +239,10 @@
         };
       };
 
-      shoko.enable = true;
+      shoko = {
+        enable = true;
+        adminUser = "typedrat";
+      };
       sonarr.enable = true;
       #style-search.enable = true;
       sonarr.anime.enable = true;

@@ -370,8 +370,9 @@ in {
 
     username = options.mkOption {
       type = types.str;
-      default = "Default";
-      description = "Shoko server username.";
+      default = config.rat.services.shoko.adminUser;
+      defaultText = lib.literalExpression "config.rat.services.shoko.adminUser";
+      description = "Shoko server username. The generated API key belongs to this user.";
     };
 
     # --- Third-party IDs ---
@@ -950,11 +951,14 @@ in {
   };
 
   config = modules.mkIf (jellarrCfg.enable && cfg.enable) {
-    sops.secrets."jellarr/shokofin/apiKey" = {
-      sopsFile = ../../../../../secrets/jellyfin.yaml;
-      key = "jellarr/shokofin/apiKey";
-      owner = "jellarr";
-      mode = "0400";
+    # Shoko issues the key; its reconcile service hands it over through a
+    # file that Jellarr substitutes into the plugin configuration.
+    rat.services.shoko.apiKeys.shokofin.group = "jellarr";
+    rat.services.jellarr._runtimeSecrets.shokofin = "/var/lib/shoko-reconcile/shokofin.key";
+
+    systemd.services.jellarr = {
+      after = ["shoko-reconcile.service"];
+      wants = ["shoko-reconcile.service"];
     };
 
     rat.services.jellarr._jellarrPluginRepos = [
@@ -974,7 +978,7 @@ in {
           PublicUrl = cfg.publicUrl;
           WebPrefix = cfg.webPrefix;
           Username = cfg.username;
-          ApiKey = config.sops.placeholder."jellarr/shokofin/apiKey";
+          ApiKey = "@JELLARR_RUNTIME_SECRET_shokofin@";
           HasPluginsExposed = false;
 
           # Third-party IDs

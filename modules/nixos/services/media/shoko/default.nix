@@ -37,12 +37,21 @@
     SHOKO_PLUGIN_UPGRADE_ON_START_ENABLED = "false";
   };
 in {
+  imports = [./reconcile.nix];
+
   options.rat.services.shoko = {
     enable = options.mkEnableOption "Shoko";
     subdomain = options.mkOption {
       type = types.str;
       default = "shoko";
       description = "The subdomain for Shoko";
+    };
+    adminUser = options.mkOption {
+      type = types.str;
+      description = ''
+        The Shoko user the reconcile service signs in as. Its password is read
+        from `users/<name>/password` in secrets/shoko.yaml.
+      '';
     };
   };
 
@@ -54,10 +63,33 @@ in {
       # builds and override nixpkgs' stable shoko and shoko-webui.
       services.shoko.enable = true;
 
+      sops.secrets = {
+        "shoko/anidb/username" = {
+          sopsFile = ../../../../../secrets/shoko.yaml;
+          key = "anidb/username";
+        };
+        "shoko/anidb/password" = {
+          sopsFile = ../../../../../secrets/shoko.yaml;
+          key = "anidb/password";
+        };
+      };
+
+      # ANIDB_USER and ANIDB_PASS lock the AniDB login the way the other
+      # environment settings are locked. Single-quoted so systemd takes the
+      # values verbatim.
+      sops.templates."shoko.env" = {
+        content = ''
+          ANIDB_USER='${config.sops.placeholder."shoko/anidb/username"}'
+          ANIDB_PASS='${config.sops.placeholder."shoko/anidb/password"}'
+        '';
+        mode = "0400";
+      };
+
       systemd.services.shoko = {
         after = ["mysql.service" "network-online.target"];
         wants = ["network-online.target"];
         inherit environment;
+        serviceConfig.EnvironmentFile = config.sops.templates."shoko.env".path;
         preStart = modules.mkAfter ''
           mkdir -p /var/lib/shoko/themes
           ln -sf ${inputs.catppuccin-shoko-webui}/themes/*/* /var/lib/shoko/themes/
