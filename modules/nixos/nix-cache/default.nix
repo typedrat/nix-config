@@ -7,7 +7,7 @@
   inherit (lib) modules options types;
   cfg = config.rat.nix-cache;
 
-  storeUri = "s3://${cfg.bucket}?endpoint=${cfg.endpoint}&region=${cfg.region}";
+  storeUri = "s3://${cfg.bucket}?endpoint=${cfg.endpoint}&region=${cfg.region}&profile=${cfg.profile}";
   stateDir = "/var/lib/nix-cache";
   gcRootDir = "/nix/var/nix/gcroots/nix-cache-push";
 
@@ -91,6 +91,16 @@ in {
       type = types.str;
       default = "us-west-002";
       description = "Region of the bucket.";
+    };
+
+    profile = options.mkOption {
+      type = types.str;
+      default = "nix-cache";
+      description = ''
+        AWS profile named in the store URI. Environment credentials take
+        precedence over it, so the daemon is unaffected; it is what lets
+        user-side store access authenticate.
+      '';
     };
 
     publicKey = options.mkOption {
