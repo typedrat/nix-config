@@ -1,5 +1,5 @@
 let
-  reviewedPackages = "shoko shoko-webui shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom";
+  reviewedPackages = "shoko shoko-webui shoko-plugin-anilist shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom";
 
   mkUpdateJob = {
     env,

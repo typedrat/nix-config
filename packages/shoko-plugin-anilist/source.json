@@ -1,0 +1,18 @@
+{
+  "repo": "Shoko.Plugin.Anilist",
+  "id": "e73c1e23-111a-4cf0-bab8-054b738c5101",
+  "name": "AniList",
+  "version": "1.5.0",
+  "url": "https://github.com/ShokoAnime/Shoko.Plugin.Anilist/releases/download/v1.5.0/AniList-v1.5.0-any.zip",
+  "hash": "sha256-3qjD0a7L7l+cV8ueo+nJVR4yLXSIptXU4zrmVpk0BV4=",
+  "images": {
+    "thumbnail": {
+      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.Anilist/v1.5.0/source/Assets/thumbnail.svg",
+      "hash": "sha256-81G9xpzTYHF4FpAn9FLOHnn+/bq5UrgbNFSlb2thKqE="
+    },
+    "icon": {
+      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.Anilist/v1.5.0/source/Assets/icon.svg",
+      "hash": "sha256-a7AVzg/6BSuEiac3oBAJW3hojHvGv0XcSD1m23X5Hlo="
+    }
+  }
+}

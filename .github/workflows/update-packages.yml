@@ -19,7 +19,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       - env:
-          UPDATE_EXCLUDE: shoko shoko-webui shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom
+          UPDATE_EXCLUDE: shoko shoko-webui shoko-plugin-anilist shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom
         name: Update packages
         run: scripts/update-packages.sh
       - if: always()
@@ -50,7 +50,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       - env:
-          UPDATE_ONLY: shoko shoko-webui shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom
+          UPDATE_ONLY: shoko shoko-webui shoko-plugin-anilist shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom
         name: Update packages
         run: scripts/update-packages.sh
       - if: always()

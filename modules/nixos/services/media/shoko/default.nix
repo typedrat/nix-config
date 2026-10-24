@@ -48,6 +48,8 @@ in {
     };
     plugins = options.mkOption {
       type = types.listOf types.package;
+      # The plugins official builds bundle. The AniList plugin, the rest of
+      # the core repository, is opt-in upstream as well.
       default = with pkgs; [
         shoko-plugin-tmdb
         shoko-plugin-offlineimporter
