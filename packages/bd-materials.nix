@@ -7,14 +7,14 @@
 }:
 python3Packages.buildPythonPackage (finalAttrs: {
   pname = "bd-materials";
-  version = "0.2.4";
+  version = "0.2.5";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "bernhard-42";
     repo = "bd_materials";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-R0hkxJNJdEa59TjnaFMxQyZvaxQSNqDZoxVYKRYkA7E=";
+    hash = "sha256-MHDUFiejXXnODEeFPWF3A5NYDn4MYu2HBMxeUL/Ls44=";
   };
 
   build-system = with python3Packages; [
