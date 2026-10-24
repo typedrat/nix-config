@@ -168,13 +168,29 @@ in {
     services.postgresql = {
       enable = true;
 
-      ensureUsers = [
-        {
-          name = "matrix-synapse";
-          ensureDBOwnership = true;
-        }
-      ];
-      ensureDatabases = ["matrix-synapse"];
+      ensureUsers = [{name = "matrix-synapse";}];
+    };
+
+    # Synapse refuses to start on a database whose collation isn't C, and
+    # ensureDatabases creates it with the server's locale, so the database is
+    # created here instead.
+    systemd.services.matrix-synapse-database = {
+      description = "Create Synapse's PostgreSQL database";
+      after = ["postgresql-setup.service"];
+      requires = ["postgresql-setup.service"];
+      before = ["matrix-synapse.service"];
+      requiredBy = ["matrix-synapse.service"];
+      path = [config.services.postgresql.package];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        User = "postgres";
+      };
+      script = ''
+        if [ -z "$(psql -tAc "SELECT 1 FROM pg_database WHERE datname = 'matrix-synapse'")" ]; then
+          psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"matrix-synapse\" OWNER \"matrix-synapse\" TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE 'C' LC_CTYPE 'C'"
+        fi
+      '';
     };
 
     environment.persistence.${impermanenceCfg.persistDir} = modules.mkIf impermanenceCfg.enable {
