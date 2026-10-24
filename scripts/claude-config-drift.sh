@@ -13,8 +13,10 @@
 #      system generation.
 #   3. Configuration Nix doesn't declare at all: real files among Claude
 #      Code's config paths, and MCP servers registered in ~/.claude.json.
+#      State Claude Code owns (claude.ai's synced skills, per-project MCP
+#      servers) is left out unless --all is given.
 #
-# Usage: claude-config-drift.sh [--hm GENERATION] [--system TOPLEVEL]
+# Usage: claude-config-drift.sh [--all] [--hm GENERATION] [--system TOPLEVEL]
 #
 # Both default to what is active now; the home-manager generation comes from
 # the system generation's activation unit. Pass a freshly built one to see
@@ -28,11 +30,13 @@ set -euo pipefail
 
 hm=
 system=/run/current-system
+all=0
 while [[ $# -gt 0 ]]; do
   case $1 in
     --hm) hm=$2; shift 2 ;;
     --system) system=$2; shift 2 ;;
-    -h|--help) sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --all) all=1; shift ;;
+    -h|--help) sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
@@ -119,9 +123,17 @@ section "not declared in Nix (kept only because $config_dir is persisted)"
 before=$found
 # Claude Code's configuration paths; everything else in the directory is
 # application state (sessions, history, caches, plugin installs).
+# Paths below config_dir that Claude Code itself maintains.
+app_owned=(skills/synced)
+
 undeclared() {
-  local path=$1 rel=${1#"$config_dir"/} child
+  local path=$1 rel=${1#"$config_dir"/} child owned
   [[ -n "${managed[$rel]:-}" ]] && return 0
+  if [[ $all -eq 0 ]]; then
+    for owned in "${app_owned[@]}"; do
+      [[ "$rel" == "$owned" ]] && return 0
+    done
+  fi
   # A directory the generation links into is only partly ours; look inside.
   if [[ -n "${managed_parent[$rel]:-}" && -d "$path" && ! -L "$path" ]]; then
     for child in "$path"/* "$path"/.[!.]*; do
@@ -144,8 +156,10 @@ if [[ -f "$HOME/.claude.json" ]]; then
   while IFS= read -r server; do
     report mcp "$server (user-scope server in ~/.claude.json)"
   done < <(jq -r '.mcpServers // {} | keys[]' "$HOME/.claude.json")
-  projects=$(jq '[.projects // {} | .[] | select((.mcpServers // {}) != {})] | length' "$HOME/.claude.json")
-  [[ $projects -gt 0 ]] && report mcp "$projects project(s) with project-scope servers in ~/.claude.json"
+  if [[ $all -eq 1 ]]; then
+    projects=$(jq '[.projects // {} | .[] | select((.mcpServers // {}) != {})] | length' "$HOME/.claude.json")
+    [[ $projects -gt 0 ]] && report mcp "$projects project(s) with project-scope servers in ~/.claude.json"
+  fi
 fi
 [[ $found -eq $before ]] && echo "  nothing"
 
