@@ -956,10 +956,18 @@ in {
     rat.services.shoko.apiKeys.shokofin.group = "jellarr";
     rat.services.jellarr._runtimeSecrets.shokofin = "/var/lib/shoko-reconcile/shokofin.key";
 
-    systemd.services.jellarr = {
-      after = ["shoko-reconcile.service"];
-      wants = ["shoko-reconcile.service"];
-    };
+    # shoko-reconcile writes the key once Shoko has started, which can take a
+    # while after a Shoko upgrade.
+    systemd.services.jellarr.preStart = lib.mkBefore ''
+      for _ in $(seq 1 360); do
+        [ -s /var/lib/shoko-reconcile/shokofin.key ] && break
+        sleep 5
+      done
+      if [ ! -s /var/lib/shoko-reconcile/shokofin.key ]; then
+        echo "no Shokofin API key from shoko-reconcile after 30 minutes" >&2
+        exit 1
+      fi
+    '';
 
     rat.services.jellarr._jellarrPluginRepos = [
       {

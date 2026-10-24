@@ -20,8 +20,9 @@
       tmp=$(mktemp -d)
       trap 'rm -rf "$tmp"' EXIT
 
-      # Init/Status answers without authentication once the API is up.
-      deadline=$((SECONDS + 600))
+      # Init/Status answers without authentication once the API is up. Shoko
+      # can spend a long time migrating its database on the first start of a
+      # new version, so there is no deadline; a failed start ends the wait.
       while :; do
         state=$(curl -sf ${lib.escapeShellArg "${api}/v3/Init/Status"} | jq -r '.State' || true)
         case "$state" in
@@ -31,10 +32,6 @@
             exit 1
             ;;
         esac
-        if ((SECONDS >= deadline)); then
-          echo "timed out waiting for Shoko to start (state: ''${state:-unreachable})" >&2
-          exit 1
-        fi
         sleep 5
       done
 
@@ -105,8 +102,9 @@ in {
       # Re-run whenever Shoko restarts, since that is when its state is reread.
       partOf = ["shoko.service"];
       serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
+        # Not oneshot: waiting out a database migration would hold up the
+        # switch that started it. Consumers wait for the key files instead.
+        Type = "exec";
         ExecStart = lib.getExe script;
         StateDirectory = "shoko-reconcile";
         # Readers of the key files need to get into the directory, not list it.

@@ -183,7 +183,9 @@ in {
         after = ["network-online.target"];
         wants = ["network-online.target"];
         serviceConfig = {
-          Type = "oneshot";
+          # Not oneshot: a push can take hours, and a switch waits for every
+          # oneshot it starts to finish.
+          Type = "exec";
           ExecStart = lib.getExe push;
           EnvironmentFile = config.sops.templates."nix-cache-writer.env".path;
         };
@@ -213,7 +215,7 @@ in {
           GRACE_DAYS = toString cfg.push.graceDays;
         };
         serviceConfig = {
-          Type = "oneshot";
+          Type = "exec";
           ExecStart = "${gc} ${cfg.bucket} ${lib.escapeShellArg storeUri}";
           EnvironmentFile = config.sops.templates."nix-cache-writer.env".path;
         };
