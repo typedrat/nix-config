@@ -18,7 +18,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Update packages
+      - env:
+          UPDATE_EXCLUDE: shoko shoko-webui
+        name: Update packages
         run: scripts/update-packages.sh
       - if: always()
         name: Create Pull Request
@@ -32,6 +34,36 @@ jobs:
           delete-branch: true
           labels: automerge
           title: Update packages
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
+  update-shoko:
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/determinate-nix-action@v3
+      - uses: DeterminateSystems/flakehub-cache-action@main
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - env:
+          UPDATE_ONLY: shoko shoko-webui
+        name: Update packages
+        run: scripts/update-packages.sh
+      - if: always()
+        name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          body: |-
+            ## Updated packages
+
+            ${{ env.UPDATED_PACKAGES }}
+          branch: update-shoko
+          delete-branch: true
+          title: Update Shoko
           token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
 name: Update packages
 "on":
