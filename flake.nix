@@ -288,8 +288,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # The GitHub mirror of git.theless.one, which is unreachable often enough
+    # to fail CI's FlakeHub publish.
     nanopkgs = {
-      url = "git+https://git.theless.one/nanoyaki/nanopkgs.git";
+      url = "github:nanoyaki/nanopkgs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

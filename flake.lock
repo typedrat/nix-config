@@ -2468,15 +2468,15 @@
       "locked": {
         "lastModified": 1779233562,
         "narHash": "sha256-bCJVlg85L1mUQ4k998b3DrMPnxndW/ZN+OpDx3jGH38=",
-        "ref": "refs/heads/main",
+        "owner": "nanoyaki",
+        "repo": "nanopkgs",
         "rev": "a9baefa9e57850fcf0fc2a01e6f1fc2ccdb2914c",
-        "revCount": 723,
-        "type": "git",
-        "url": "https://git.theless.one/nanoyaki/nanopkgs.git"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.theless.one/nanoyaki/nanopkgs.git"
+        "owner": "nanoyaki",
+        "repo": "nanopkgs",
+        "type": "github"
       }
     },
     "nix": {
