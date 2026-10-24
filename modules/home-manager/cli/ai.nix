@@ -152,7 +152,6 @@ in {
             "/nix/store/**" = "allow";
             "/tmp/**" = "allow";
             "~/.claude/skills/**" = "allow";
-            "~/Development/gstack/**" = "allow";
             "~/.gstack/**" = "allow";
           };
         };
