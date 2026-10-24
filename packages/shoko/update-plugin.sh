@@ -44,7 +44,8 @@ done
 
 echo "$updated" >"$source_file"
 
-message="$(jq -r '.name' "$source_file") plugin: $old_version -> $new_version"
+# The package attribute is the plugin's directory name under packages/.
+message="$(basename "$(dirname "$source_file")"): $old_version -> $new_version"
 echo "$message" >&2
 if [[ -n "${COMMIT_MESSAGE_FILE:-}" ]]; then
   echo "$message" >"$COMMIT_MESSAGE_FILE"
