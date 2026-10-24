@@ -66,6 +66,7 @@ python3Packages.buildPythonApplication rec {
   # Upstream wants >=2.14.2 and nixpkgs is a couple of releases behind.
   # pythonImportsCheck covers whether that actually matters.
   pythonRelaxDeps = [
+    "pillow"
     "pydantic-settings"
   ];
 
