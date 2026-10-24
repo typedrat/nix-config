@@ -14,24 +14,27 @@
   mysqlSocket = "/run/mysqld/mysqld.sock";
   mkMysqlConnStr = db: "Server=${mysqlSocket};Database=${db};User Id=shoko;Password=;ConnectionProtocol=Unix;SslMode=None;AllowUserVariables=true;CharSet=utf8mb4";
 
-  defaultSettings = builtins.toJSON {
-    "$schema" = "file:///var/lib/shoko/settings-server.schema.json";
-    SettingsVersion = 12;
-    FirstRun = true;
-    Database = {
-      Type = "MySQL";
-      Host = "localhost";
-      Username = "shoko";
-      Password = "";
-      Schema = "shoko";
-      OverrideConnectionString = mkMysqlConnStr "shoko";
-      DatabaseBackupDirectory = "/var/lib/shoko/DatabaseBackup";
-      UseDatabaseLock = true;
-    };
-    Quartz = {
-      DatabaseType = "SQLite";
-      ConnectionString = "Data Source=/var/lib/shoko/SQLite/Quartz.db3;Mode=ReadWriteCreate;Pooling=True";
-    };
+  stateDir = "/var/lib/shoko";
+
+  # Settings Shoko reads from the environment at load. Unless a setting allows
+  # an override, a value given here also locks it against edits from the API
+  # and the web UI.
+  environment = {
+    DB_TYPE = "MySQL";
+    DB_HOST = "localhost";
+    DB_USER = "shoko";
+    DB_NAME = "shoko";
+    DB_CONNECTION_STRING = mkMysqlConnStr "shoko";
+    DB_BACKUP_DIRECTORY = "${stateDir}/DatabaseBackup";
+    DB_SQLITE_DIRECTORY = "${stateDir}/SQLite";
+
+    SHOKO_PORT = toString config.links.shoko.port;
+    SHOKO_FIRST_RUN = "false";
+
+    # The released plugins ship inside the package; letting Shoko upgrade them
+    # would install newer copies beside it in the data directory.
+    SHOKO_PLUGIN_AUTO_UPGRADE_ENABLED = "false";
+    SHOKO_PLUGIN_UPGRADE_ON_START_ENABLED = "false";
   };
 in {
   options.rat.services.shoko = {
@@ -53,31 +56,10 @@ in {
 
       systemd.services.shoko = {
         after = ["mysql.service"];
+        inherit environment;
         preStart = modules.mkAfter ''
           mkdir -p /var/lib/shoko/themes
           ln -sf ${inputs.catppuccin-shoko-webui}/themes/*/* /var/lib/shoko/themes/
-
-          # Seed MySQL database settings on first run
-          if [ ! -f "$STATE_DIRECTORY/settings-server.json" ] || \
-             ${pkgs.jq}/bin/jq -e '.Database.Type == "SQLite"' "$STATE_DIRECTORY/settings-server.json" > /dev/null 2>&1; then
-            if [ -f "$STATE_DIRECTORY/settings-server.json" ]; then
-              # Existing config but with SQLite — patch to MySQL, preserving other settings
-              ${pkgs.jq}/bin/jq '
-                .Database.Type = "MySQL" |
-                .Database.Host = "localhost" |
-                .Database.Username = "shoko" |
-                .Database.Password = "" |
-                .Database.Schema = "shoko" |
-                .Database.OverrideConnectionString = ${builtins.toJSON (mkMysqlConnStr "shoko")} |
-                .Quartz.DatabaseType = "SQLite" |
-                .Quartz.ConnectionString = "Data Source=/var/lib/shoko/SQLite/Quartz.db3;Mode=ReadWriteCreate;Pooling=True"
-              ' "$STATE_DIRECTORY/settings-server.json" > "$STATE_DIRECTORY/settings-server.json.tmp"
-              mv "$STATE_DIRECTORY/settings-server.json.tmp" "$STATE_DIRECTORY/settings-server.json"
-            else
-              # No config yet — write default settings
-              cat ${pkgs.writeText "shoko-default-settings.json" defaultSettings} > "$STATE_DIRECTORY/settings-server.json"
-            fi
-          fi
 
           # Update AniDB HTTP cache on each start without overwriting existing files
           echo "Updating AniDB HTTP cache..."
