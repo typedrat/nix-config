@@ -73,6 +73,12 @@
       zfs.enable = true;
     };
 
+    # CI builds the systems here and queues each result for upload.
+    nix-cache.push = {
+      enable = true;
+      queueGroup = "github-runner";
+    };
+
     security = {
       fail2ban.enable = true;
 

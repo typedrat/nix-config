@@ -2,7 +2,7 @@
 
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
 jobs:
   build:
     name: Build ${{ matrix.host }}
@@ -18,7 +18,17 @@ jobs:
       - uses: DeterminateSystems/flakehub-cache-action@main
       - id: build
         name: Build ${{ matrix.host }}
-        run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel
+        run: |
+          out=$(nix build --keep-going --no-link --print-out-paths .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel)
+          echo "path=$out" >> "$GITHUB_OUTPUT"
+      - if: success() && github.ref == 'refs/heads/master' && runner.environment == 'self-hosted'
+        name: Queue for the binary cache
+        run: |
+          if [ -d /var/lib/nix-cache/queue ]; then
+            name="${{ matrix.host }}.${{ github.run_id }}"
+            echo "${{ steps.build.outputs.path }}" > "/var/lib/nix-cache/incoming/$name"
+            mv "/var/lib/nix-cache/incoming/$name" /var/lib/nix-cache/queue/
+          fi
       - if: failure() && steps.build.outcome == 'failure' && github.event_name == 'pull_request'
         name: Fix hash mismatches
         run: |

@@ -7,8 +7,11 @@
     workflowDispatch = {};
   };
 
+  # A newer push supersedes a PR build, but master builds run to the end: each
+  # one is what feeds the binary cache. Giving every master run its own group
+  # is how to exempt them, since cancel-in-progress can't be conditional here.
   concurrency = {
-    group = "\${{ github.workflow }}-\${{ github.ref }}";
+    group = "\${{ github.workflow }}-\${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}";
     cancelInProgress = true;
   };
 
@@ -40,7 +43,26 @@
         {
           id = "build";
           name = "Build \${{ matrix.host }}";
-          run = "nix build .#nixosConfigurations.\${{ matrix.host }}.config.system.build.toplevel";
+          # --keep-going so one broken fetch doesn't stop everything else
+          # from being built.
+          run = ''
+            out=$(nix build --keep-going --no-link --print-out-paths .#nixosConfigurations.''${{ matrix.host }}.config.system.build.toplevel)
+            echo "path=$out" >> "$GITHUB_OUTPUT"
+          '';
+        }
+        {
+          # The host's root-owned push service picks this up; the job itself
+          # never holds cache credentials. The rename makes the file appear
+          # whole.
+          name = "Queue for the binary cache";
+          if_ = "success() && github.ref == 'refs/heads/master' && runner.environment == 'self-hosted'";
+          run = ''
+            if [ -d /var/lib/nix-cache/queue ]; then
+              name="''${{ matrix.host }}.''${{ github.run_id }}"
+              echo "''${{ steps.build.outputs.path }}" > "/var/lib/nix-cache/incoming/$name"
+              mv "/var/lib/nix-cache/incoming/$name" /var/lib/nix-cache/queue/
+            fi
+          '';
         }
         {
           name = "Fix hash mismatches";

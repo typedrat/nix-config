@@ -149,6 +149,12 @@ in {
         lib.mapAttrs' (
           name: _runnerCfg:
             lib.nameValuePair "github-runner-${name}" {
+              # The runner's ProtectSystem=strict leaves the binary-cache
+              # queue read-only unless it is listed here.
+              serviceConfig.ReadWritePaths = lib.mkIf config.rat.nix-cache.push.enable [
+                "/var/lib/nix-cache/incoming"
+                "/var/lib/nix-cache/queue"
+              ];
               serviceConfig.ExecStopPost = [
                 "-+${lib.getExe' inputs'.determinate.packages.default "determinate-nixd"} auth login token --token-file ${config.sops.secrets.flakehub_token.path}"
               ];

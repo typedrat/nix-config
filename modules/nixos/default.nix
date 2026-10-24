@@ -21,6 +21,7 @@
     ./impermanence.nix
     ./java.nix
     ./nix.nix
+    ./nix-cache
     ./packages.nix
     ./polkit.nix
     ./sops.nix

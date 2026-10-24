@@ -161,6 +161,6 @@
       };
     };
 
-    systemd.services.nix-daemon.serviceConfig.EnvironmentFile = config.sops.templates.nix-daemon-env.path;
+    systemd.services.nix-daemon.serviceConfig.EnvironmentFile = [config.sops.templates.nix-daemon-env.path];
   };
 }
