@@ -16,7 +16,8 @@
 #
 # Usage: claude-config-drift.sh [--hm GENERATION] [--system TOPLEVEL]
 #
-# Both default to what is active now. Pass a freshly built generation to see
+# Both default to what is active now; the home-manager generation comes from
+# the system generation's activation unit. Pass a freshly built one to see
 # what a switch would change, e.g.
 #   --hm "$(nix build --print-out-paths --no-link \
 #     .#nixosConfigurations.$(hostname).config.home-manager.users.$USER.home.activationPackage)"
@@ -25,7 +26,7 @@
 
 set -euo pipefail
 
-hm="${HOME:?HOME is not set}/.local/state/home-manager/gcroots/current-home"
+hm=
 system=/run/current-system
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -36,7 +37,13 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-config_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+config_dir="${CLAUDE_CONFIG_DIR:-${HOME:?HOME is not set}/.claude}"
+# home-manager's own gcroot isn't updated when it runs as a NixOS module; the
+# system generation's activation unit names the generation it activates.
+if [[ -z "$hm" ]]; then
+  hm=$(grep -o '/nix/store/[^ ]*-home-manager-generation' \
+    "$system/etc/systemd/system/home-manager-$USER.service" 2>/dev/null | head -1 || true)
+fi
 hm=$(readlink -f "$hm")
 [[ -d "$hm/home-files" ]] || { echo "not a home-manager generation: $hm" >&2; exit 2; }
 
