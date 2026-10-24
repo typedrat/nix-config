@@ -5,6 +5,7 @@
   pnpm_10,
   pnpmConfigHook,
   fetchPnpmDeps,
+  jq,
   shoko,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -19,9 +20,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     hash = "sha256-Dqoega+AWIsRZg6qREJMRXCq7DVGwYmMQ2eI1yhqlls=";
   };
 
-  # The build stamps the git commit into the bundle for the updater, which a
-  # declaratively managed web UI never uses, and the source has no .git.
   postPatch = ''
+    # The update prompt compares the newest release with package.json's
+    # version, which upstream's release builds stamp with the full tag. Left as
+    # the bare "2.6.0-dev" it is older than any dev release, so it always prompts.
+    jq --arg version ${finalAttrs.version} '.version = $version' package.json > package.json.new
+    mv package.json.new package.json
+
+    # The build stamps the git commit into the bundle for the updater, which a
+    # declaratively managed web UI never uses, and the source has no .git.
     substituteInPlace vite.config.mjs \
       --replace-fail \
         $'childProcess.execSync("git log --pretty=format:\'%h\' -n 1").toString().replace(/["\']/g, \'\')' \
@@ -29,6 +36,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   nativeBuildInputs = [
+    jq
     nodejs
     pnpmConfigHook
     pnpm_10
