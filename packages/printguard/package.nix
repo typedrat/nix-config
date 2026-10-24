@@ -46,6 +46,10 @@ python3Packages.buildPythonApplication rec {
       --replace-fail \
         'host="0.0.0.0"' \
         'host=os.environ.get("HOST", "0.0.0.0")'
+
+    # Upstream pins its build backend to an exact hatchling release, which
+    # nixpkgs rarely matches.
+    sed -i 's/"hatchling==[^"]*"/"hatchling"/' pyproject.toml
   '';
 
   build-system = with python3Packages; [
@@ -70,18 +74,24 @@ python3Packages.buildPythonApplication rec {
       ai-edge-litert
       aiomqtt
       av
+      cachetools
       fastapi
       fastmcp
+      httpcore
       httpx
+      idna
       ml-dtypes
       numpy
       packaging
       paho-mqtt
+      pillow
+      pydantic
       pydantic-settings
       pyprusalink
       starlette
       uvicorn
       wasmtime
+      websockets
     ]
     ++ [
       pycentauri
