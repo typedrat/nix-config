@@ -40,7 +40,6 @@ in {
         no-find-root = ./awilliams/claude/rules/no-find-root.md;
       };
       settings = {
-        theme = "auto";
         editorMode = "normal";
         verbose = true;
         permissions.defaultMode = "auto";

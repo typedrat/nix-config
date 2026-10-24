@@ -36,8 +36,16 @@ in {
       package = osConfig.rat.agentSlice.wrap pkgs.claude-code-patched;
       enableMcpIntegration = true;
 
+      plugins = modules.mkIf config.catppuccin.enable {
+        catppuccin = "${pkgs.claude-themes}/catppuccin";
+      };
+
       settings = lib.mkMerge [
         claudeCfg.settings
+        # A plugin theme is selected as custom:<plugin>:<file slug>.
+        (modules.mkIf config.catppuccin.enable {
+          theme = modules.mkDefault "custom:catppuccin:catppuccin-${config.catppuccin.flavor}";
+        })
         (modules.mkIf config.programs.peon-ping.enable {
           hooks = let
             peon = matcher: async: {
