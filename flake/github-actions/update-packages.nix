@@ -1,5 +1,5 @@
 let
-  reviewedPackages = "shoko shoko-webui";
+  reviewedPackages = "shoko shoko-webui shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom";
 
   mkUpdateJob = {
     env,
@@ -76,9 +76,9 @@ in {
       labels = "automerge";
     };
 
-    # Shoko tracks daily dev builds, and each one can run database migrations
-    # that a rollback won't undo, so its bumps wait for review instead of
-    # being automerged and auto-deployed.
+    # Shoko tracks daily dev builds, and each one (or a plugin release) can run
+    # database migrations that a rollback won't undo, so these bumps wait for
+    # review instead of being automerged and auto-deployed.
     update-shoko = mkUpdateJob {
       env.UPDATE_ONLY = reviewedPackages;
       branch = "update-shoko";

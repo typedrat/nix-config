@@ -1,0 +1,18 @@
+{
+  "repo": "Shoko.Plugin.OfflineImporter",
+  "id": "72a6ff39-2bff-534c-9216-d03cd38e7346",
+  "name": "Offline Importer",
+  "version": "1.2.1",
+  "url": "https://github.com/ShokoAnime/Shoko.Plugin.OfflineImporter/releases/download/v1.2.1/OfflineImporter-v1.2.1-any.zip",
+  "hash": "sha256-2R51hI7NzZ5kqSTHis+NzOQodkr4PPSV0CHFQcPJQm4=",
+  "images": {
+    "thumbnail": {
+      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/v1.2.1/source/Assets/thumbnail.svg",
+      "hash": "sha256-uJA+7uM2g7UFjiun96V0W0N45QUstXr43DuQ4slV408="
+    },
+    "icon": {
+      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.OfflineImporter/v1.2.1/source/Assets/icon.svg",
+      "hash": "sha256-fbi0O2wy1EqiC9S3RGDpv7gM/CswFvO1W3btejc3oq4="
+    }
+  }
+}

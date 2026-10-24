@@ -31,8 +31,8 @@
     SHOKO_PORT = toString config.links.shoko.port;
     SHOKO_FIRST_RUN = "false";
 
-    # The released plugins ship inside the package; letting Shoko upgrade them
-    # would install newer copies beside it in the data directory.
+    # Plugins come from Nix; letting Shoko upgrade them would install newer
+    # copies beside them in the data directory.
     SHOKO_PLUGIN_AUTO_UPGRADE_ENABLED = "false";
     SHOKO_PLUGIN_UPGRADE_ON_START_ENABLED = "false";
   };
@@ -45,6 +45,20 @@ in {
       type = types.str;
       default = "shoko";
       description = "The subdomain for Shoko";
+    };
+    plugins = options.mkOption {
+      type = types.listOf types.package;
+      default = with pkgs; [
+        shoko-plugin-tmdb
+        shoko-plugin-offlineimporter
+        shoko-plugin-webaom
+      ];
+      defaultText = lib.literalExpression "with pkgs; [shoko-plugin-tmdb shoko-plugin-offlineimporter shoko-plugin-webaom]";
+      description = ''
+        Plugins to install, beside the ones bundled with the server. These
+        replace Shoko's plugin directory, so plugins can't also be installed
+        from the web UI.
+      '';
     };
     adminUser = options.mkOption {
       type = types.str;
@@ -61,7 +75,10 @@ in {
 
       # The server and web UI come from packages/, which track the daily dev
       # builds and override nixpkgs' stable shoko and shoko-webui.
-      services.shoko.enable = true;
+      services.shoko = {
+        enable = true;
+        inherit (cfg) plugins;
+      };
 
       sops.secrets = {
         "shoko/anidb/username" = {

@@ -18,7 +18,7 @@ author="github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
 # nix-update can't handle packages built via external flake inputs or with
 # extra pinned sources beyond src, so these run their own update.sh directly.
-custom_update_packages=(bypass-paywalls-clean send-to-qui shoko shoko-webui ttv-lol-pro tweakcc-fixed)
+custom_update_packages=(bypass-paywalls-clean send-to-qui shoko shoko-plugin-offlineimporter shoko-plugin-tmdb shoko-plugin-webaom shoko-webui ttv-lol-pro tweakcc-fixed)
 
 is_custom() {
   local pkg=$1 custom
