@@ -115,8 +115,42 @@ in {
 
     catppuccin.opencode.enable = false;
 
+    # Shared by Claude Code and OpenCode.
+    programs.mcp = {
+      enable = true;
+      servers =
+        {
+          context7.url = "https://mcp.context7.com/mcp/oauth";
+          linear-server.url = "https://mcp.linear.app/mcp";
+        }
+        // lib.optionalAttrs hasChromium {
+          # https://github.com/ChromeDevTools/chrome-devtools-mcp
+          # Drives the user's real Chrome via --autoConnect: it attaches to an
+          # already-running Chrome (>= 144) using the default profile rather than
+          # launching its own. Requires a one-time opt-in in Chrome at
+          # chrome://inspect/#remote-debugging. If Chrome is not running, browser
+          # tool calls fail (the server will not spawn a browser on its own).
+          chrome-devtools = {
+            command = "npx";
+            args = [
+              "-y"
+              "chrome-devtools-mcp@latest"
+              "--autoConnect"
+              # No phoning home: disable CrUX field-data lookups and usage stats.
+              "--no-performance-crux"
+              "--no-usage-statistics"
+            ];
+            env = {
+              CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS = "1";
+              CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS = "1";
+            };
+          };
+        };
+    };
+
     programs.opencode = {
       enable = true;
+      enableMcpIntegration = true;
       package = osConfig.rat.agentSlice.wrap pkgs.opencode;
 
       # catppuccin/nix's opencode port still writes tui.json, which OpenCode 2
@@ -156,44 +190,14 @@ in {
           };
         };
 
-        mcp =
-          {
-            answeroverflow = {
-              type = "remote";
-              url = "https://www.answeroverflow.com/mcp";
-              headers = {
-                X-API-Key = "{env:ANSWER_OVERFLOW_KEY}";
-              };
-            };
-            context7 = {
-              type = "remote";
-              url = "https://mcp.context7.com/mcp/oauth";
-            };
-          }
-          // lib.optionalAttrs hasChromium {
-            # https://github.com/ChromeDevTools/chrome-devtools-mcp
-            # Drives the user's real Chrome via --autoConnect: it attaches to an
-            # already-running Chrome (>= 144) using the default profile rather than
-            # launching its own. Requires a one-time opt-in in Chrome at
-            # chrome://inspect/#remote-debugging. If Chrome is not running, browser
-            # tool calls fail (the server will not spawn a browser on its own).
-            chrome-devtools = {
-              type = "local";
-              command = [
-                "npx"
-                "-y"
-                "chrome-devtools-mcp@latest"
-                "--autoConnect"
-                # No phoning home: disable CrUX field-data lookups and usage stats.
-                "--no-performance-crux"
-                "--no-usage-statistics"
-              ];
-              environment = {
-                CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS = "1";
-                CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS = "1";
-              };
-            };
+        # The OpenCode-only server; the shared ones come from programs.mcp.
+        mcp.answeroverflow = {
+          type = "remote";
+          url = "https://www.answeroverflow.com/mcp";
+          headers = {
+            X-API-Key = "{env:ANSWER_OVERFLOW_KEY}";
           };
+        };
 
         agent = {
           build = {

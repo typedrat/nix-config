@@ -34,6 +34,7 @@ in {
       # reminder overrides applied via tweakcc-fixed at build time.
       # See packages/claude-code-patched.nix.
       package = osConfig.rat.agentSlice.wrap pkgs.claude-code-patched;
+      enableMcpIntegration = true;
 
       settings = lib.mkMerge [
         claudeCfg.settings
@@ -87,10 +88,6 @@ in {
     home.sessionPath = [
       "${homeDirectory}/.local/bin"
     ];
-
-    home.sessionVariables = {
-      "CLAUDE_CODE_NO_FLICKER" = 1;
-    };
 
     programs.git.ignores = [
       ".claude/settings.local.json"

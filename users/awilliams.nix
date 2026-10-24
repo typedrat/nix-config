@@ -109,6 +109,8 @@ in {
         default_pack = "glados";
         pack_rotation = ["glados" "ocarina_of_time" "bender" "moira"];
         pack_rotation_mode = "random";
+        # Claude Code posts its own notifications; peon-ping only plays sounds.
+        desktop_notifications = false;
       };
     };
     theming.enable = true;
