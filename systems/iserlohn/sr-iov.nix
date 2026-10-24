@@ -1,5 +1,11 @@
-{inputs, ...}: let
+{
+  config,
+  inputs,
+  lib,
+  ...
+}: let
   interface = "enp101s0np0";
+  kernelVersion = config.boot.kernelPackages.kernel.version;
   numOfVFs = 1;
 in {
   imports = [
@@ -12,7 +18,23 @@ in {
 
   hardware.mlnx-ofed = {
     enable = true;
-    nvme.enable = true;
+    nvme = {
+      enable = true;
+      # Linux 6.18.57 backported the sockaddr_unsized conversion for
+      # kernel_bind but not kernel_connect. OFED's HAVE_SOCKADDR_UNSIZED probe
+      # needs both, so it comes out false and the bind calls keep the old
+      # cast, which GCC rejects.
+      package = config.boot.kernelPackages.mlnx-nvme.overrideAttrs (old: {
+        postPatch =
+          old.postPatch
+          + lib.optionalString (lib.versionAtLeast kernelVersion "6.18.57" && lib.versionOlder kernelVersion "6.19") ''
+            substituteInPlace host/tcp.c --replace-fail \
+              $'\t\t\t(struct sockaddr *)&ctrl->src_addr,' $'\t\t\t(struct sockaddr_unsized *)&ctrl->src_addr,'
+            substituteInPlace target/tcp.c --replace-fail \
+              $'\t\t\t(struct sockaddr *)&port->addr,' $'\t\t\t(struct sockaddr_unsized *)&port->addr,'
+          '';
+      });
+    };
     nfsrdma.enable = true;
     kernel-mft.enable = true;
   };
