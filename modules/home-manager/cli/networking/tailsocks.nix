@@ -6,7 +6,7 @@
   ...
 }: let
   inherit (lib) attrsets lists modules strings;
-  inherit (config.home) username homeDirectory;
+  inherit (config.home) username;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
   proxies = cliCfg.networking.tailsocks or {};
@@ -15,36 +15,16 @@
 
   browserProxies = attrsets.filterAttrs (_name: proxy: proxy.browser.enable) proxies;
 
-  profileDir = name: ".config/google-chrome-tailsocks-${name}";
+  profileName = name: "tailsocks-${name}";
+  windowClass = name: "zen-tailsocks-${name}";
 
-  launcher = name: proxy:
+  launcher = name:
     pkgs.writeShellApplication {
-      name = "chrome-tailsocks-${name}";
-      runtimeInputs = [pkgs.jq];
+      name = "zen-tailsocks-${name}";
       text = ''
-        profile=${strings.escapeShellArg "${homeDirectory}/${profileDir name}"}
-
-        # Geolocation reports the real location whatever the proxy says, so
-        # block it for every site and drop any per-site exceptions. Chrome
-        # rewrites Preferences while it runs, so this is reapplied on each
-        # launch rather than seeded once.
-        prefs="$profile/Default/Preferences"
-        mkdir -p "$profile/Default"
-        [ -s "$prefs" ] || echo '{}' >"$prefs"
-        jq '.profile.default_content_setting_values.geolocation = 2
-          | .profile.content_settings.exceptions.geolocation = {}' \
-          "$prefs" >"$prefs.tmp"
-        mv "$prefs.tmp" "$prefs"
-
-        # Chrome resolves names through a SOCKS5 proxy already, but DNS
-        # prefetching and WebRTC's direct UDP paths bypass it and expose the
-        # real address. The resolver rule fails every local lookup outright.
-        exec ${lib.getExe config.programs.google-chrome.finalPackage} \
-          --user-data-dir="$profile" \
-          --class=chrome-tailsocks-${name} \
-          --proxy-server=socks5://127.0.0.1:${toString proxy.socksPort} \
-          --host-resolver-rules="MAP * ~NOTFOUND , EXCLUDE 127.0.0.1" \
-          --force-webrtc-ip-handling-policy=disable_non_proxied_udp \
+        exec ${lib.getExe config.programs.zen-browser.finalPackage} \
+          --profile ${strings.escapeShellArg "${config.programs.zen-browser.configPath}/${profileName name}"} \
+          --name ${windowClass name} \
           "$@"
       '';
     };
@@ -52,32 +32,63 @@ in {
   config = modules.mkIf (proxies != {}) {
     assertions = [
       {
-        assertion = browserProxies == {} || config.programs.google-chrome.enable;
-        message = "rat.users.${username}.cli.networking.tailsocks.*.browser needs Google Chrome enabled.";
+        assertion = browserProxies == {} || config.programs.zen-browser.enable;
+        message = "rat.users.${username}.cli.networking.tailsocks.*.browser needs Zen enabled.";
       }
     ];
 
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
       # The state directory holds the node key; losing it registers a new
       # device on the tailnet, which then needs logging in again.
-      directories =
-        [".local/state/tailsocks"]
-        ++ lists.map profileDir (attrsets.attrNames browserProxies);
+      directories = [".local/state/tailsocks"];
     };
 
-    home.packages = attrsets.mapAttrsToList launcher browserProxies;
+    # Profile ids must be unique across all Zen profiles; the default one is 0.
+    programs.zen-browser.profiles = attrsets.listToAttrs (lists.imap1 (i: name: let
+      proxy = browserProxies.${name};
+    in {
+      name = profileName name;
+      value = {
+        id = 100 + i;
+        name = profileName name;
+        settings = {
+          "network.proxy.type" = 1;
+          "network.proxy.socks" = "127.0.0.1";
+          "network.proxy.socks_port" = proxy.socksPort;
+          "network.proxy.socks_version" = 5;
+          "network.proxy.socks_remote_dns" = true;
+          "network.proxy.socks5_remote_dns" = true;
+          # Without these, a dead proxy silently falls back to a direct
+          # connection, and DNS-over-HTTPS and WebRTC's ICE candidates can
+          # reveal the real address.
+          "network.proxy.failover_direct" = false;
+          "network.trr.mode" = 5;
+          "media.peerconnection.ice.proxy_only" = true;
+
+          # Geolocation reports the real location whatever the proxy says.
+          "geo.enabled" = false;
+          "permissions.default.geolocation" = 2;
+
+          "media.eme.enabled" = true;
+          "media.gmp-widevinecdm.enabled" = true;
+          "browser.shell.checkDefaultBrowser" = false;
+        };
+      };
+    }) (attrsets.attrNames browserProxies));
+
+    home.packages = lists.map launcher (attrsets.attrNames browserProxies);
 
     xdg.desktopEntries =
       attrsets.mapAttrs' (name: proxy: {
-        name = "chrome-tailsocks-${name}";
+        name = "zen-tailsocks-${name}";
         value = {
-          name = "Google Chrome (${name})";
+          name = "Zen Browser (${name})";
           genericName = "Web Browser";
           comment = "Browse through the ${proxy.exitNode} exit node";
-          exec = "${lib.getExe (launcher name proxy)} %U";
-          icon = "google-chrome";
+          exec = "${lib.getExe (launcher name)} %U";
+          icon = "zen-browser";
           categories = ["Network" "WebBrowser"];
-          settings.StartupWMClass = "chrome-tailsocks-${name}";
+          settings.StartupWMClass = windowClass name;
         };
       })
       browserProxies;

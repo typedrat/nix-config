@@ -28,8 +28,8 @@
       };
 
       browser.enable = options.mkEnableOption ''
-        a Google Chrome launcher with its own profile that sends all traffic,
-        DNS and WebRTC included, through this proxy
+        a Zen launcher with its own profile that sends all traffic, DNS and
+        WebRTC included, through this proxy and never reveals its location
       '';
     };
   };
