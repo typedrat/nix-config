@@ -2,16 +2,16 @@
   "repo": "Shoko.Plugin.Tmdb",
   "id": "85d0c34f-240f-4da3-8512-d0b45118a9f4",
   "name": "TMDB",
-  "version": "1.2.0",
-  "url": "https://github.com/ShokoAnime/Shoko.Plugin.Tmdb/releases/download/v1.2.0/TMDB-v1.2.0-any.zip",
-  "hash": "sha256-na6+DhWhesrsSlsZvnSPmRMRr5y60ZG8CNXrJ3it9Gw=",
+  "version": "1.2.1",
+  "url": "https://github.com/ShokoAnime/Shoko.Plugin.Tmdb/releases/download/v1.2.1/TMDB-v1.2.1-any.zip",
+  "hash": "sha256-ZOz1haFD6+5x2PeCRiPTzjav02JbKrogmb4FG+gGHJQ=",
   "images": {
     "thumbnail": {
-      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.Tmdb/v1.2.0/source/Assets/thumbnail.svg",
+      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.Tmdb/v1.2.1/source/Assets/thumbnail.svg",
       "hash": "sha256-xdGhO5XaDY5Sy1OP44jzpsWT8KIb0FWD4JDLICRzU0o="
     },
     "icon": {
-      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.Tmdb/v1.2.0/source/Assets/icon.svg",
+      "url": "https://raw.githubusercontent.com/ShokoAnime/Shoko.Plugin.Tmdb/v1.2.1/source/Assets/icon.svg",
       "hash": "sha256-Hy76HvMl3PTu59C6iCFKqvJTnMfI9tNAhKREPJkDOxo="
     }
   }
