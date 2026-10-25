@@ -84,7 +84,6 @@ in {
     })
 
     (mkIf (cfg.enable && cfg.zfs.enable) {
-      boot.initrd.systemd.enable = true;
       boot.initrd.systemd.services.rollback = {
         description = "Rollback root filesystem to a pristine state";
         wantedBy = ["initrd.target"];

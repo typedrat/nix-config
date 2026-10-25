@@ -30,10 +30,6 @@ in {
         };
 
         consoleLogLevel = 0;
-        initrd = {
-          verbose = false;
-          systemd.enable = true;
-        };
         kernelParams = [
           "quiet"
           "boot.shell_on_fail"

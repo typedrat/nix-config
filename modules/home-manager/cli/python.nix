@@ -23,7 +23,6 @@
         bokeh
         click
         fastapi
-        gradio
         ipython
         lxml
         manifold3d

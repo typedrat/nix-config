@@ -25,29 +25,17 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
+    # Build ha-mcp against mcp 1.x, since mcp 2 marks fastmcp-slim broken (NixOS/nixpkgs#578535)
+    nixpkgs-patch-578535 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/578535.diff";
+      flake = false;
+    };
+
     # Set skyscraper's XDG define via qmake instead of uncommenting it in
     # skyscraper.pro, whose spacing upstream changed in 3.20.3 — the exact
     # --replace-fail has failed every enableXdg build since (NixOS/nixpkgs#555827)
     nixpkgs-patch-555827 = {
       url = "https://github.com/NixOS/nixpkgs/pull/555827.diff";
-      flake = false;
-    };
-
-    # claude-code 2.1.303 -> 2.1.304 (NixOS/nixpkgs#576249)
-    nixpkgs-patch-576249 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/576249.diff";
-      flake = false;
-    };
-
-    # Trust only the system CA store in claude-code (NixOS/nixpkgs#576509)
-    nixpkgs-patch-576509 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/576509.diff";
-      flake = false;
-    };
-
-    # claude-code 2.1.304 -> 2.1.308 (NixOS/nixpkgs#577193)
-    nixpkgs-patch-577193 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/577193.diff";
       flake = false;
     };
 

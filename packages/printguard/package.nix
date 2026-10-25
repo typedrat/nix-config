@@ -10,124 +10,128 @@
   # would silently bind to that unrelated package instead of the Python one.
   printguardOnnxruntime ? python3Packages.onnxruntime,
   nix-update-script,
-}:
-python3Packages.buildPythonApplication rec {
-  pname = "printguard";
-  version = "2.6.3";
-  pyproject = true;
+}: let
+  # nixpkgs marks fastmcp-slim broken against mcp 2, its new default, so the
+  # closure is built on mcp 1.
+  pythonPkgs = python3Packages.overrideScope (final: _prev: {mcp = final.mcp_1;});
+in
+  pythonPkgs.buildPythonApplication rec {
+    pname = "printguard";
+    version = "2.6.3";
+    pyproject = true;
 
-  src = fetchFromGitHub {
-    owner = "oliverbravery";
-    repo = "PrintGuard";
-    tag = "v${version}";
-    hash = "sha256-wm+7Ndzp5FE6bG7+vH9lusnfmwuv0yk/sxu+AIPK/L0=";
-  };
+    src = fetchFromGitHub {
+      owner = "oliverbravery";
+      repo = "PrintGuard";
+      tag = "v${version}";
+      hash = "sha256-wm+7Ndzp5FE6bG7+vH9lusnfmwuv0yk/sxu+AIPK/L0=";
+    };
 
-  frontend = buildNpmPackage {
-    pname = "printguard-web";
-    inherit version src;
+    frontend = buildNpmPackage {
+      pname = "printguard-web";
+      inherit version src;
 
-    sourceRoot = "${src.name}/web";
+      sourceRoot = "${src.name}/web";
 
-    npmDepsHash = "sha256-Un3Wn2LgUJoZM9iH+xvjNrsXg9s4qbk8MDGyg2+sVc0=";
+      npmDepsHash = "sha256-Un3Wn2LgUJoZM9iH+xvjNrsXg9s4qbk8MDGyg2+sVc0=";
 
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out
-      cp -r dist/* $out/
-      runHook postInstall
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out
+        cp -r dist/* $out/
+        runHook postInstall
+      '';
+    };
+
+    # The hub binds every interface unconditionally. Honouring HOST lets the
+    # service listen on loopback and be reached only through Traefik.
+    postPatch = ''
+      substituteInPlace printguard/server/app.py \
+        --replace-fail \
+          'host="0.0.0.0"' \
+          'host=os.environ.get("HOST", "0.0.0.0")'
+
+      # Upstream pins its build backend to an exact hatchling release, which
+      # nixpkgs rarely matches.
+      sed -i 's/"hatchling==[^"]*"/"hatchling"/' pyproject.toml
     '';
-  };
 
-  # The hub binds every interface unconditionally. Honouring HOST lets the
-  # service listen on loopback and be reached only through Traefik.
-  postPatch = ''
-    substituteInPlace printguard/server/app.py \
-      --replace-fail \
-        'host="0.0.0.0"' \
-        'host=os.environ.get("HOST", "0.0.0.0")'
-
-    # Upstream pins its build backend to an exact hatchling release, which
-    # nixpkgs rarely matches.
-    sed -i 's/"hatchling==[^"]*"/"hatchling"/' pyproject.toml
-  '';
-
-  build-system = with python3Packages; [
-    hatchling
-  ];
-
-  # onnxruntime-ep-openvino is an optional ONNX execution provider that is not
-  # in nixpkgs; inference.py loads it opportunistically and falls back without
-  # it.
-  pythonRemoveDeps = [
-    "onnxruntime-ep-openvino"
-  ];
-
-  # Upstream wants >=2.14.2 and nixpkgs is a couple of releases behind.
-  # pythonImportsCheck covers whether that actually matters.
-  pythonRelaxDeps = [
-    "pillow"
-    "pydantic-settings"
-  ];
-
-  dependencies = with python3Packages;
-    [
-      ai-edge-litert
-      aiomqtt
-      av
-      cachetools
-      fastapi
-      fastmcp
-      httpcore
-      httpx
-      idna
-      ml-dtypes
-      numpy
-      packaging
-      paho-mqtt
-      pillow
-      pydantic
-      pydantic-settings
-      pyprusalink
-      starlette
-      uvicorn
-      wasmtime
-      websockets
-    ]
-    ++ [
-      pycentauri
-      printguardOnnxruntime
+    build-system = with pythonPkgs; [
+      hatchling
     ];
 
-  # models/ is committed upstream but excluded from the wheel, which only ships
-  # the printguard package directory.
-  postInstall = ''
-    mkdir -p $out/share/printguard
-    cp -r ${frontend} $out/share/printguard/web
-    cp -r models $out/share/printguard/models
+    # onnxruntime-ep-openvino is an optional ONNX execution provider that is not
+    # in nixpkgs; inference.py loads it opportunistically and falls back without
+    # it.
+    pythonRemoveDeps = [
+      "onnxruntime-ep-openvino"
+    ];
 
-    # The desktop entry point needs the pywebview/pystray extra, which is not
-    # installed here.
-    rm -f $out/bin/printguard-desktop
-  '';
+    # Upstream wants >=2.14.2 and nixpkgs is a couple of releases behind.
+    # pythonImportsCheck covers whether that actually matters.
+    pythonRelaxDeps = [
+      "pillow"
+      "pydantic-settings"
+    ];
 
-  pythonImportsCheck = [
-    "printguard"
-    "printguard.server.app"
-    "printguard.server.inference"
-  ];
+    dependencies = with pythonPkgs;
+      [
+        ai-edge-litert
+        aiomqtt
+        av
+        cachetools
+        fastapi
+        fastmcp
+        httpcore
+        httpx
+        idna
+        ml-dtypes
+        numpy
+        packaging
+        paho-mqtt
+        pillow
+        pydantic
+        pydantic-settings
+        pyprusalink
+        starlette
+        uvicorn
+        wasmtime
+        websockets
+      ]
+      ++ [
+        pycentauri
+        printguardOnnxruntime
+      ];
 
-  # Without --flake, nix-update resolves this file to its store path and then
-  # fails to `git diff` it against the working tree.
-  passthru.updateScript = nix-update-script {
-    extraArgs = ["--flake" "--subpackage" "frontend"];
-  };
+    # models/ is committed upstream but excluded from the wheel, which only ships
+    # the printguard package directory.
+    postInstall = ''
+      mkdir -p $out/share/printguard
+      cp -r ${frontend} $out/share/printguard/web
+      cp -r models $out/share/printguard/models
 
-  meta = {
-    description = "Real-time 3D print failure detection";
-    homepage = "https://github.com/oliverbravery/PrintGuard";
-    license = lib.licenses.gpl2Only;
-    mainProgram = "printguard";
-    platforms = lib.platforms.linux;
-  };
-}
+      # The desktop entry point needs the pywebview/pystray extra, which is not
+      # installed here.
+      rm -f $out/bin/printguard-desktop
+    '';
+
+    pythonImportsCheck = [
+      "printguard"
+      "printguard.server.app"
+      "printguard.server.inference"
+    ];
+
+    # Without --flake, nix-update resolves this file to its store path and then
+    # fails to `git diff` it against the working tree.
+    passthru.updateScript = nix-update-script {
+      extraArgs = ["--flake" "--subpackage" "frontend"];
+    };
+
+    meta = {
+      description = "Real-time 3D print failure detection";
+      homepage = "https://github.com/oliverbravery/PrintGuard";
+      license = lib.licenses.gpl2Only;
+      mainProgram = "printguard";
+      platforms = lib.platforms.linux;
+    };
+  }

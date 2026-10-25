@@ -9,27 +9,6 @@
       inherit (inputs.nixpkgs) lib;
     };
 
-    overlays.nix-output-monitor = _final: prev: {
-      # Determinate Nix 3.23 emits activity type 10113, which nom rejects as a
-      # JSON parse error (maralorn/nix-output-monitor#320)
-      nix-output-monitor = prev.nix-output-monitor.overrideAttrs (old: {
-        # The diff is rooted at the repo, but the package builds from its
-        # nix-output-monitor/ subdirectory.
-        patchFlags = ["-p2"];
-        patches =
-          (old.patches or [])
-          ++ [
-            # maralorn/nix-output-monitor#321 as merged, unreleased as of
-            # 2.2.0. Pinned by commit range: GitHub re-renders a PR's .diff
-            # when it merges, which changes the hash.
-            (prev.fetchurl {
-              url = "https://github.com/maralorn/nix-output-monitor/compare/c40cb120262d9e9b1b988898708b124f6ffc0913...d48ff7935da72a5a5764ee8c5358d38417b0f337.diff";
-              hash = "sha256-fOS80YxNS7gewc+CIcMtnHddqio4phlRLii5f1OShlQ=";
-            })
-          ];
-      });
-    };
-
     nixosModules = {
       ensure-pcr = {imports = [../modules/extra/nixos/ensure-pcr.nix];};
       port-magic = {imports = [../modules/extra/nixos/port-magic];};
