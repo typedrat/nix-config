@@ -3756,12 +3756,12 @@
         "terranix": "terranix"
       },
       "locked": {
-        "lastModified": 1792912207,
-        "narHash": "sha256-Yk/E+1gh0OADTuf30KHUVykRroB+XeWjoUx8CDEsCcU=",
-        "rev": "f0a922db6ec731068cbdbbbb6119d6782b33441a",
-        "revCount": 17711,
+        "lastModified": 1792955881,
+        "narHash": "sha256-fvxnhrEn013ghevh7MqIQ66X001IsyUCgqee9nw6L2c=",
+        "rev": "0a5241691782f43a89fe68cf6984b22a611b0d88",
+        "revCount": 17741,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/synapdeck/synapdeck/0.1.17711%2Brev-f0a922db6ec731068cbdbbbb6119d6782b33441a/01a17219-4421-7741-ba14-b74c88688c61/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/synapdeck/synapdeck/0.1.17741%2Brev-0a5241691782f43a89fe68cf6984b22a611b0d88/01a174bd-7933-7780-add2-27149bd7a159/source.tar.gz"
       },
       "original": {
         "type": "tarball",
@@ -4421,11 +4421,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792595242,
-        "narHash": "sha256-kH/E0uJDslOgYcnmU+c0cm6HrUjsEtvZQKZtuQ1+uvo=",
+        "lastModified": 1792963762,
+        "narHash": "sha256-ThRNX0+T2Gb3ZD0Xf+/R3wJdL93/mW80ubMnLjZelTY=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "f19490ac889eabb05bdb7e8dcb85225ee75bd87b",
+        "rev": "ed68d814d6cf2e221ba43d84f1e32429f5e2786f",
         "type": "github"
       },
       "original": {
