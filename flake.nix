@@ -39,6 +39,18 @@
       flake = false;
     };
 
+    # claude-code 2.1.308 -> 2.1.309 (NixOS/nixpkgs#577680)
+    nixpkgs-patch-577680 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/577680.diff";
+      flake = false;
+    };
+
+    # claude-code 2.1.309 -> 2.1.310, the newest version tweakcc-fixed supports (NixOS/nixpkgs#578205)
+    nixpkgs-patch-578205 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/578205.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches

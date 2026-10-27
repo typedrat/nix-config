@@ -2825,6 +2825,30 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/555827.diff"
       }
     },
+    "nixpkgs-patch-577680": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-q0XlMTa0buxkh7cPK1rFV4S9hvyEH9yOvIb/ATQNjQ8=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/577680.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/577680.diff"
+      }
+    },
+    "nixpkgs-patch-578205": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-CwERzsjbG6kVT0R5xi0m/+uQgSaGZcyvbYnu8wjsErA=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/578205.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/578205.diff"
+      }
+    },
     "nixpkgs-patch-578535": {
       "flake": false,
       "locked": {
@@ -3429,6 +3453,8 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_10",
         "nixpkgs-patch-555827": "nixpkgs-patch-555827",
+        "nixpkgs-patch-577680": "nixpkgs-patch-577680",
+        "nixpkgs-patch-578205": "nixpkgs-patch-578205",
         "nixpkgs-patch-578535": "nixpkgs-patch-578535",
         "nixvirt": "nixvirt",
         "orca-slicer-nanashi": "orca-slicer-nanashi",
