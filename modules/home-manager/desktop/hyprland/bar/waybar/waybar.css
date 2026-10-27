@@ -29,6 +29,12 @@ label.module {
     padding: 0 7px;
 }
 
+/* spotify launcher: the glyph is wider than the default label box */
+#custom-spotify {
+    min-width: 24px;
+    padding: 0 10px;
+}
+
 /* idle inhibitor */
 #idle_inhibitor {
     min-width: 20px;
@@ -37,12 +43,6 @@ label.module {
 /* system tray */
 #tray {
     padding: 0 9px;
-
-    -gtk-icon-shadow:
-        -1px 0 @base,
-        0 1px @base,
-        1px 0 @base,
-        0 -1px @base;
 }
 
 #tray image {
@@ -62,6 +62,7 @@ label.module {
 
 /* right-side */
 .modules-right {
+    padding-right: 10px;
     color: white;
 }
 
