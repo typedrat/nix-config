@@ -66,15 +66,13 @@
     options zfs zfs_arc_max=${toString (gib 32)} zfs_arc_sys_free=${toString (gib 8)}
   '';
 
-  # --- Session variables ---
-
-  # Force GLVND to use the NVIDIA EGL vendor library. Without this, applications
-  # may pick up a non-NVIDIA EGL implementation when multiple are present.
-  environment.sessionVariables = {
-    __EGL_VENDOR_LIBRARY_FILENAMES = "/run/opengl-driver/share/glvnd/egl_vendor.d/10_nvidia.json";
-  };
-
   # --- Hardware ---
+
+  # Don't pin __EGL_VENDOR_LIBRARY_FILENAMES to NVIDIA's vendor library: the
+  # monitors on the iGPU's outputs need Hyprland to blit across GPUs, and that
+  # renderer is found through Mesa's EGL. Without it every frame retries and
+  # fails, dragging the whole session down to a few FPS. GLVND's default order
+  # still puts NVIDIA's vendor first.
 
   hardware.facter.reportPath = ./facter.json;
   # Don't load amdgpu in initrd - it changes monitor enumeration order
@@ -304,7 +302,7 @@
       kde.enable = true;
       hyprland = {
         primaryMonitor = "DP-1";
-        tvMonitor = "HDMI-A-1";
+        tvMonitor = "DP-4";
         monitors = [
           # vrr=2: VRR only for fullscreen windows. The S2725QS (48-120Hz
           # VRR range) flickers and shows black frames under always-on VRR
@@ -312,7 +310,7 @@
           # rate. Games wanting VRR in a window should run under gamescope
           # with --adaptive-sync instead.
           "DP-1,3840x2160@120.0,0x1080,1.0,vrr,2"
-          "HDMI-A-1,1920x1080@60.0,960x0,1.0"
+          "DP-4,1920x1080@60.0,960x0,1.0"
         ];
         workspaces = [
           "1, monitor:DP-1, persistent=true"
@@ -321,7 +319,7 @@
           "4, monitor:DP-1, persistent=true"
           "5, monitor:DP-1, persistent=true"
           "6, monitor:DP-1, persistent=true"
-          "name:tv, monitor:HDMI-A-1, persistent=true"
+          "name:tv, monitor:DP-4, persistent=true"
         ];
       };
     };
