@@ -23,12 +23,7 @@
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
-  # Also blacklist amdgpu - this system uses NVIDIA exclusively, and amdgpu being loaded
-  # affects monitor enumeration order.
-  boot.blacklistedKernelModules = [
-    "battery"
-    "amdgpu"
-  ];
+  boot.blacklistedKernelModules = ["battery"];
 
   # Stop the NVMe layer parking drives in deep autonomous power states.
   #
