@@ -302,7 +302,7 @@
       kde.enable = true;
       hyprland = {
         primaryMonitor = "DP-1";
-        tvMonitor = "DP-4";
+        tvMonitor = "HDMI-A-1";
         monitors = [
           # vrr=2: VRR only for fullscreen windows. The S2725QS (48-120Hz
           # VRR range) flickers and shows black frames under always-on VRR
@@ -310,7 +310,7 @@
           # rate. Games wanting VRR in a window should run under gamescope
           # with --adaptive-sync instead.
           "DP-1,3840x2160@120.0,0x1080,1.0,vrr,2"
-          "DP-4,1920x1080@60.0,960x0,1.0"
+          "HDMI-A-1,1920x1080@60.0,960x0,1.0"
         ];
         workspaces = [
           "1, monitor:DP-1, persistent=true"
@@ -319,7 +319,7 @@
           "4, monitor:DP-1, persistent=true"
           "5, monitor:DP-1, persistent=true"
           "6, monitor:DP-1, persistent=true"
-          "name:tv, monitor:DP-4, persistent=true"
+          "name:tv, monitor:HDMI-A-1, persistent=true"
         ];
       };
     };
