@@ -25,12 +25,6 @@
     #region nixpkgs patches
     # Add patches by creating inputs prefixed with "nixpkgs-patch-"
 
-    # Build ha-mcp against mcp 1.x, since mcp 2 marks fastmcp-slim broken (NixOS/nixpkgs#578535)
-    nixpkgs-patch-578535 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/578535.diff";
-      flake = false;
-    };
-
     # Set skyscraper's XDG define via qmake instead of uncommenting it in
     # skyscraper.pro, whose spacing upstream changed in 3.20.3 — the exact
     # --replace-fail has failed every enableXdg build since (NixOS/nixpkgs#555827)
@@ -39,15 +33,23 @@
       flake = false;
     };
 
-    # claude-code 2.1.308 -> 2.1.309 (NixOS/nixpkgs#577680)
-    nixpkgs-patch-577680 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/577680.diff";
+    # Move sunshine's Avahi publishing onto services.avahi.settings.publish,
+    # silencing the obsolete-option warnings it triggers (NixOS/nixpkgs#576824)
+    nixpkgs-patch-576824 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/576824.diff";
       flake = false;
     };
 
-    # claude-code 2.1.309 -> 2.1.310, the newest version tweakcc-fixed supports (NixOS/nixpkgs#578205)
-    nixpkgs-patch-578205 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/578205.diff";
+    # Move music-assistant's Avahi publishing onto services.avahi.settings.publish,
+    # silencing the obsolete-option warnings it triggers (NixOS/nixpkgs#580111)
+    nixpkgs-patch-580111 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/580111.diff";
+      flake = false;
+    };
+
+    # claude-code 2.1.311 -> 2.1.312, the newest version tweakcc-fixed supports (NixOS/nixpkgs#579943)
+    nixpkgs-patch-579943 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/579943.diff";
       flake = false;
     };
 

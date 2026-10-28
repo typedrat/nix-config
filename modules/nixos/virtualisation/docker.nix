@@ -31,11 +31,11 @@ in {
           "ghcr.io"
         ];
 
-        storage.settings = {
-          storage = rec {
+        storage = {
+          settings.storage.driver = "zfs";
+          rootful.settings.storage = rec {
             runroot = "/var/lib/containers";
             graphroot = "${runroot}/storage";
-            driver = "zfs";
           };
         };
       };
