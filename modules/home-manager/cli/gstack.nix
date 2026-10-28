@@ -67,9 +67,10 @@ in {
         links)}
 
       # Updates arrive through the flake; gstack's own updater would try to
-      # git-pull the read-only store path.
-      run ${pkgs.gstack}/share/gstack/bin/gstack-config set auto_upgrade false
-      run ${pkgs.gstack}/share/gstack/bin/gstack-config set update_check false
+      # git-pull the read-only store path. The activation PATH has no awk,
+      # which gstack-config needs.
+      PATH=${lib.makeBinPath [pkgs.gawk]}:$PATH run ${pkgs.gstack}/share/gstack/bin/gstack-config set auto_upgrade false
+      PATH=${lib.makeBinPath [pkgs.gawk]}:$PATH run ${pkgs.gstack}/share/gstack/bin/gstack-config set update_check false
     '';
   };
 }
