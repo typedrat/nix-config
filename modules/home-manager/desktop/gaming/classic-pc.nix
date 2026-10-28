@@ -1,7 +1,6 @@
 {
   config,
   osConfig,
-  pkgs,
   lib,
   ...
 }: let
@@ -18,38 +17,26 @@
     if impermanenceCfg.tank.enable
     then impermanenceCfg.tankDir
     else persistDir;
-
-  # The sound samples for floppy and hard disk audio ship in a separate asset
-  # pack, which 86Box looks for in share/86Box/assets alongside the ROMs.
-  # Fetched by tag, so the hash is only right for one release: a stale hash
-  # would silently reuse the old pack rather than fail.
-  _86box = let
-    base = pkgs._86box.override {
-      unfreeEnableDiscord = true;
-      unfreeEnableRoms = true;
-    };
-  in
-    assert lib.assertMsg (base.version == "6.0")
-    "86box is now ${base.version}; update the asset pack tag hash in classic-pc.nix";
-      base.overrideAttrs (old: {
-        postInstall =
-          old.postInstall
-          + ''
-            ln -s ${pkgs.fetchFromGitHub {
-              owner = "86Box";
-              repo = "assets";
-              tag = "v${old.version}";
-              hash = "sha256-7Fl0o48HT6XAYVQEsGUG6TbJlHFHLIKn7OcOrhkeGI8=";
-            }} $out/share/86Box/assets
-          '';
-      });
 in {
   config = modules.mkIf (guiCfg.enable && classicPCCfg.enable) {
     home.packages = [
       # The ROMs and assets land under share/86Box, which 86Box finds through
       # XDG_DATA_DIRS, so a persisted $XDG_DATA_HOME/86Box doesn't shadow them.
-      _86box
+      osConfig.rat.gaming.classicPC.package
     ];
+
+    # Replaces the package's own entry so launching from the desktop goes
+    # through the capability wrapper, which TAP networking needs.
+    xdg.desktopEntries."net.86box.86Box" = {
+      name = "86Box";
+      genericName = "Classic PC emulator";
+      comment = "An emulator for classic IBM PC clones";
+      exec = "${osConfig.security.wrapperDir}/86Box";
+      icon = "net.86box.86Box";
+      categories = ["System" "Emulator"];
+      terminal = false;
+      type = "Application";
+    };
 
     home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
       {

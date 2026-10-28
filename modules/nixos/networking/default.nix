@@ -2,6 +2,7 @@
   inherit (lib) options types;
 in {
   imports = [
+    ./bridge.nix
     ./networkmanager.nix
     ./scoped-ports.nix
     ./tailscale.nix

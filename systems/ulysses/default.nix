@@ -197,6 +197,13 @@
     # Networking
     networking = {
       networkManager.enable = true;
+      # For 86Box's TAP networking. The MAC is enp5s0's own, so the router
+      # keeps handing out the same addresses.
+      bridge = {
+        enable = true;
+        interface = "enp5s0";
+        macAddress = "fc:9d:05:24:df:fd";
+      };
       tailscale = {
         enable = true;
         operator = "awilliams";

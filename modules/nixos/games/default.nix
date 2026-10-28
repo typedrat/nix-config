@@ -8,6 +8,7 @@
 in {
   imports = [
     ./aagl.nix
+    ./classic-pc.nix
     ./steam.nix
     ./sunshine.nix
   ];
