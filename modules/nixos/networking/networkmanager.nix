@@ -12,5 +12,10 @@ in {
 
   config = modules.mkIf cfg.enable {
     networking.networkmanager.enable = true;
+
+    # Facter marks every detected NIC useDHCP, which starts dhcpcd on it
+    # alongside NetworkManager. On a bridge port that puts the host's address
+    # on the port as well as the bridge.
+    hardware.facter.detected.dhcp.enable = modules.mkDefault false;
   };
 }
