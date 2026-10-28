@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib) modules options types;
@@ -128,6 +129,34 @@
       })
       provCfg.folderRoleMapping;
   };
+
+  # jellyfin-web with a script in index.html that sends logins to the provider.
+  # The files are copied, not symlinked: Jellyfin serves a symlinked file
+  # truncated to the length of the link itself.
+  webWithLoginRedirect = pkgs.runCommand "jellyfin-web-${pkgs.jellyfin-web.version}-sso-redirect" {} ''
+    web=${pkgs.jellyfin-web}/share/jellyfin-web
+    mkdir -p $out/share
+    cp -r --no-preserve=mode $web $out/share/jellyfin-web
+    substitute $web/index.html $out/share/jellyfin-web/index.html \
+      --replace-fail '</title>' '</title><script src="sso-login-redirect.js"></script>'
+    cp ${pkgs.replaceVars ./sso-login-redirect.js {provider = cfg.loginRedirect;}} \
+      $out/share/jellyfin-web/sso-login-redirect.js
+  '';
+
+  # Jellyfin's launcher is a wrapper script that passes jellyfin-web's path as
+  # `--webdir`. Pointing a copy of it at the patched web client avoids
+  # rebuilding the server, which `jellyfin.override { jellyfin-web = ...; }`
+  # would do.
+  jellyfinWithLoginRedirect =
+    pkgs.runCommand "jellyfin-${pkgs.jellyfin.version}-sso-redirect" {
+      inherit (pkgs.jellyfin) meta passthru version;
+    } ''
+      mkdir -p $out/bin
+      ln -s ${pkgs.jellyfin}/lib $out/lib
+      substitute ${pkgs.jellyfin}/bin/jellyfin $out/bin/jellyfin \
+        --replace-fail ${pkgs.jellyfin-web} ${webWithLoginRedirect}
+      chmod +x $out/bin/jellyfin
+    '';
 in {
   options.rat.services.jellarr.plugins.sso = {
     enable = options.mkEnableOption "Jellyfin SSO/OIDC Authentication plugin";
@@ -140,39 +169,70 @@ in {
         the identifier in the SSO login URL path (e.g. /sso/OID/start/<name>).
       '';
     };
+
+    loginRedirect = options.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      example = "authentik";
+      description = ''
+        Provider that the web client's login page redirects to. Native apps,
+        `#/login?local`, and the login page reached by logging out still show
+        the password form, which also gets a button for this provider.
+      '';
+    };
   };
 
-  config = modules.mkIf (jellarrCfg.enable && cfg.enable) {
-    sops.secrets."jellarr/sso/clientId" = {
-      sopsFile = ../../../../../secrets/jellyfin.yaml;
-      key = "clientId";
-      owner = "jellarr";
-      mode = "0400";
-    };
+  config = modules.mkIf (jellarrCfg.enable && cfg.enable) (modules.mkMerge [
+    {
+      sops.secrets."jellarr/sso/clientId" = {
+        sopsFile = ../../../../../secrets/jellyfin.yaml;
+        key = "clientId";
+        owner = "jellarr";
+        mode = "0400";
+      };
 
-    sops.secrets."jellarr/sso/clientSecret" = {
-      sopsFile = ../../../../../secrets/jellyfin.yaml;
-      key = "clientSecret";
-      owner = "jellarr";
-      mode = "0400";
-    };
+      sops.secrets."jellarr/sso/clientSecret" = {
+        sopsFile = ../../../../../secrets/jellyfin.yaml;
+        key = "clientSecret";
+        owner = "jellarr";
+        mode = "0400";
+      };
 
-    rat.services.jellarr._jellarrPluginRepos = [
-      {
-        name = "SSO Authentication";
-        url = "https://raw.githubusercontent.com/9p4/jellyfin-plugin-sso/manifest-release/manifest.json";
-        enabled = true;
-      }
-    ];
+      rat.services.jellarr._jellarrPluginRepos = [
+        {
+          name = "SSO Authentication";
+          url = "https://raw.githubusercontent.com/K0lin/jellyfin-plugin-sso/manifest-release/manifest.json";
+          enabled = true;
+        }
+      ];
 
-    rat.services.jellarr._jellarrPlugins = [
-      {
-        name = "SSO Authentication";
-        configuration = {
-          SamlConfigs = {};
-          OidConfigs = lib.mapAttrs mkProviderConfig cfg.providers;
-        };
-      }
-    ];
-  };
+      rat.services.jellarr._jellarrPlugins = [
+        {
+          name = "SSO Authentication";
+          configuration = {
+            SamlConfigs = {};
+            OidConfigs = lib.mapAttrs mkProviderConfig cfg.providers;
+          };
+        }
+      ];
+    }
+    (modules.mkIf (cfg.loginRedirect != null) {
+      assertions = [
+        {
+          assertion = builtins.hasAttr cfg.loginRedirect cfg.providers;
+          message = "rat.services.jellarr.plugins.sso.loginRedirect names a provider that isn't configured.";
+        }
+      ];
+
+      services.jellyfin.package = jellyfinWithLoginRedirect;
+
+      rat.services.jellarr.branding.loginDisclaimer = modules.mkDefault ''
+        <form action="/sso/OID/start/${cfg.loginRedirect}" method="get">
+          <button is="emby-button" type="submit" class="raised block button-submit">
+            Sign in with ${cfg.loginRedirect}
+          </button>
+        </form>
+      '';
+    })
+  ]);
 }

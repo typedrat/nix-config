@@ -2226,15 +2226,15 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1786759225,
-        "narHash": "sha256-hSwb4Jg0JGkrQeEck7spTPBtvIfiIPMkIgBPO0dgqJs=",
-        "owner": "venkyr77",
+        "lastModified": 1793228323,
+        "narHash": "sha256-ceMa/sBsg9hXyjdWJ29uBUE/hxcKh4Y+2snBYtDVEs8=",
+        "owner": "typedrat",
         "repo": "jellarr",
-        "rev": "de530bc0117eb4018598a67245e748623a6ce6dc",
+        "rev": "96b70da2379e40b07faa708b50cca2e7f4e8699f",
         "type": "github"
       },
       "original": {
-        "owner": "venkyr77",
+        "owner": "typedrat",
         "repo": "jellarr",
         "type": "github"
       }

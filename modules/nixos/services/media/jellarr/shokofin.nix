@@ -969,10 +969,12 @@ in {
       fi
     '';
 
+    # Shoko Server is packaged from its dev channel, and Shokofin's stable
+    # releases don't support a dev server.
     rat.services.jellarr._jellarrPluginRepos = [
       {
         name = "Shokofin";
-        url = "https://raw.githubusercontent.com/ShokoAnime/Shokofin/metadata/stable/manifest.json";
+        url = "https://raw.githubusercontent.com/ShokoAnime/Shokofin/metadata/dev/manifest.json";
         enabled = true;
       }
     ];

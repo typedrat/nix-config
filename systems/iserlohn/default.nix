@@ -202,6 +202,7 @@
               oidEndpoint = "https://auth.thisratis.gay/application/o/jellyfin/.well-known/openid-configuration";
               adminRoles = ["Discord Sysops"];
             };
+            loginRedirect = "authentik";
           };
           shokofin.enable = true;
         };

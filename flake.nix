@@ -270,7 +270,7 @@
     };
 
     jellarr = {
-      url = "github:venkyr77/jellarr";
+      url = "github:typedrat/jellarr";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
