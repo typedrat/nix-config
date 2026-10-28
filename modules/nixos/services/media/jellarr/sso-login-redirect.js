@@ -26,7 +26,27 @@
     }
   }
 
+  function local(hash) {
+    return new URLSearchParams(hash.split("?")[1] || "").has("local");
+  }
+
   var wasSignedIn = signedIn();
+
+  // A browser with no stored session is bound for the login page, so it can
+  // leave before the client has even loaded. Embedded web views are the
+  // exception: Android's app only defines NativeShell later, so they're
+  // recognised by user agent and left to the checks below.
+  var embedded = /; wv\)|QtWebEngine|JellyfinMediaPlayer/.test(
+    navigator.userAgent,
+  );
+  var signedOutRoute =
+    /^#\/(forgotpassword|selectserver|addserver|wizard)/.test(
+      window.location.hash,
+    ) || local(window.location.hash);
+  if (!wasSignedIn && !embedded && !window.NativeShell && !signedOutRoute) {
+    window.location.replace(target);
+    return;
+  }
 
   function check() {
     if (signedIn()) {
@@ -36,8 +56,7 @@
 
     var hash = window.location.hash;
     if (!/^#\/login(\?|$)/.test(hash)) return;
-    if (window.NativeShell || wasSignedIn) return;
-    if (new URLSearchParams(hash.split("?")[1] || "").has("local")) return;
+    if (window.NativeShell || wasSignedIn || local(hash)) return;
 
     window.location.replace(target);
   }
