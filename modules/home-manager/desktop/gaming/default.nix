@@ -21,6 +21,7 @@ in {
   imports = [
     ./anime-game-launchers.nix
     ./classic-mac.nix
+    ./classic-pc.nix
     ./dosbox-x.nix
     ./eden.nix
     ./retroarch.nix

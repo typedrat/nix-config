@@ -149,6 +149,7 @@
         eden.enable = options.mkEnableOption "Eden Switch emulator";
         classicMac.enable = options.mkEnableOption "BasiliskII and SheepShaver classic Mac OS emulators";
         dosboxX.enable = options.mkEnableOption "DOSBox-X DOS and PC-98 emulator";
+        classicPC.enable = options.mkEnableOption "86Box IBM PC emulator";
         retroarch = {
           enable = options.mkEnableOption "RetroArch emulator frontend";
           cores = options.mkOption {
