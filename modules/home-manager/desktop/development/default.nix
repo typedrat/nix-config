@@ -15,6 +15,7 @@ in {
     ./ghidra.nix
     ./imhex.nix
     ./vscode.nix
+    ./wireshark.nix
     ./zed.nix
   ];
 

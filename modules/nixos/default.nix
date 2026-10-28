@@ -28,6 +28,7 @@
     ./sops.nix
     ./ssh.nix
     ./users.nix
+    ./wireshark.nix
     ./zfs.nix
   ];
 

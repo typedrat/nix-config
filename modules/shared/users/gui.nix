@@ -140,6 +140,7 @@
         vscode.enable = options.mkEnableOption "VS Code" // {default = true;};
         zed.enable = options.mkEnableOption "Zed editor" // {default = true;};
         imhex.enable = options.mkEnableOption "ImHex" // {default = true;};
+        wireshark.enable = options.mkEnableOption "Wireshark, with packet capture rights";
       };
 
       gaming = {
