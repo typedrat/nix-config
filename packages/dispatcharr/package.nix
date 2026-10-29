@@ -16,8 +16,7 @@ python3Packages.buildPythonApplication rec {
     owner = "Dispatcharr";
     repo = "Dispatcharr";
     tag = "v${version}";
-    hash = "sha256-sdfDoVw0kbRNayy/s6pCZPcevD5W3RiLezRdHYRj4gU=";
-    leaveDotGit = true;
+    hash = "sha256-4tixInQULynDaRYJrAqBrOJJTjGHTOTSo1KnXj5uW2w=";
   };
 
   frontend = buildNpmPackage {
@@ -124,10 +123,13 @@ python3Packages.buildPythonApplication rec {
   ];
 
   makeWrapperArgs = [
-    "--prefix PATH : ${lib.makeBinPath [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
       ffmpeg
       streamlink
-    ]}"
+    ])
   ];
 
   postInstall = ''
