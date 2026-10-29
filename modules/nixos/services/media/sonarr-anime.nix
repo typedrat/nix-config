@@ -52,6 +52,9 @@ in {
 
       systemd.services.sonarr-anime = {
         after = ["postgresql.service"];
+        # Library folders are shared with qBittorrent and the other arrs
+        # through the media group, which needs to replace files in them.
+        serviceConfig.UMask = "0002";
       };
 
       users.users.sonarr-anime.extraGroups = ["media"];
