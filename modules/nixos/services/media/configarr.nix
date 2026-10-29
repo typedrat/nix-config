@@ -24,6 +24,26 @@
     trashGuideUrl: https://github.com/TRaSH-Guides/Guides
     recyclarrConfigUrl: https://github.com/recyclarr/config-templates
 
+    customFormatDefinitions:
+      - trash_id: rat-1080p-or-higher
+        trash_scores:
+          default: 0
+        name: 1080p or Higher
+        includeCustomFormatWhenRenaming: false
+        specifications:
+          - name: 1080p
+            implementation: ResolutionSpecification
+            negate: false
+            required: false
+            fields:
+              value: 1080
+          - name: 2160p
+            implementation: ResolutionSpecification
+            negate: false
+            required: false
+            fields:
+              value: 2160
+
     sonarr:
       western:
         base_url: ${config.links.sonarr.url}
@@ -246,6 +266,31 @@
             assign_scores_to:
               - name: Remux-1080p - Anime
                 score: 0
+
+          # Lifts every acceptable 1080p release over the delay profile's
+          # bypass score while staying under the profile's upgrade cutoff
+          # (10000). Quality rank still orders releases, so this changes
+          # only which ones wait.
+          - trash_ids:
+              - rat-1080p-or-higher
+            assign_scores_to:
+              - name: Remux-1080p - Anime
+                score: 2000
+
+        # Anything below 1080p waits until it is three days old, so a 720p
+        # that SubsPlease posts minutes ahead of its 1080p is never grabbed.
+        # The delay counts from the release's publish date, so 720p releases
+        # of older shows that never got a 1080p go through at once.
+        delay_profiles:
+          default:
+            enableUsenet: true
+            enableTorrent: true
+            preferredProtocol: torrent
+            usenetDelay: 4320
+            torrentDelay: 4320
+            bypassIfHighestQuality: true
+            bypassIfAboveCustomFormatScore: true
+            minimumCustomFormatScore: 2100
 
     radarr:
       western:
