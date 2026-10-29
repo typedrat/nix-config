@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: let
   inherit (lib) modules options types;
@@ -129,34 +128,6 @@
       })
       provCfg.folderRoleMapping;
   };
-
-  # jellyfin-web with a script in index.html that sends logins to the provider.
-  # The files are copied, not symlinked: Jellyfin serves a symlinked file
-  # truncated to the length of the link itself.
-  webWithLoginRedirect = pkgs.runCommand "jellyfin-web-${pkgs.jellyfin-web.version}-sso-redirect" {} ''
-    web=${pkgs.jellyfin-web}/share/jellyfin-web
-    mkdir -p $out/share
-    cp -r --no-preserve=mode $web $out/share/jellyfin-web
-    substitute $web/index.html $out/share/jellyfin-web/index.html \
-      --replace-fail '</title>' '</title><script src="sso-login-redirect.js"></script>'
-    cp ${pkgs.replaceVars ./sso-login-redirect.js {provider = cfg.loginRedirect;}} \
-      $out/share/jellyfin-web/sso-login-redirect.js
-  '';
-
-  # Jellyfin's launcher is a wrapper script that passes jellyfin-web's path as
-  # `--webdir`. Pointing a copy of it at the patched web client avoids
-  # rebuilding the server, which `jellyfin.override { jellyfin-web = ...; }`
-  # would do.
-  jellyfinWithLoginRedirect =
-    pkgs.runCommand "jellyfin-${pkgs.jellyfin.version}-sso-redirect" {
-      inherit (pkgs.jellyfin) meta passthru version;
-    } ''
-      mkdir -p $out/bin
-      ln -s ${pkgs.jellyfin}/lib $out/lib
-      substitute ${pkgs.jellyfin}/bin/jellyfin $out/bin/jellyfin \
-        --replace-fail ${pkgs.jellyfin-web} ${webWithLoginRedirect}
-      chmod +x $out/bin/jellyfin
-    '';
 in {
   options.rat.services.jellarr.plugins.sso = {
     enable = options.mkEnableOption "Jellyfin SSO/OIDC Authentication plugin";
@@ -170,15 +141,11 @@ in {
       '';
     };
 
-    loginRedirect = options.mkOption {
+    loginButton = options.mkOption {
       type = types.nullOr types.str;
       default = null;
       example = "authentik";
-      description = ''
-        Provider that the web client's login page redirects to. Native apps,
-        `#/login?local`, and the login page reached by logging out still show
-        the password form, which also gets a button for this provider.
-      '';
+      description = "Provider to offer a sign-in button for on the web client's login page.";
     };
   };
 
@@ -216,20 +183,18 @@ in {
         }
       ];
     }
-    (modules.mkIf (cfg.loginRedirect != null) {
+    (modules.mkIf (cfg.loginButton != null) {
       assertions = [
         {
-          assertion = builtins.hasAttr cfg.loginRedirect cfg.providers;
-          message = "rat.services.jellarr.plugins.sso.loginRedirect names a provider that isn't configured.";
+          assertion = builtins.hasAttr cfg.loginButton cfg.providers;
+          message = "rat.services.jellarr.plugins.sso.loginButton names a provider that isn't configured.";
         }
       ];
 
-      services.jellyfin.package = jellyfinWithLoginRedirect;
-
       rat.services.jellarr.branding.loginDisclaimer = modules.mkDefault ''
-        <form action="/sso/OID/start/${cfg.loginRedirect}" method="get">
+        <form action="/sso/OID/start/${cfg.loginButton}" method="get">
           <button is="emby-button" type="submit" class="raised block button-submit">
-            Sign in with ${cfg.loginRedirect}
+            Sign in with ${cfg.loginButton}
           </button>
         </form>
       '';
