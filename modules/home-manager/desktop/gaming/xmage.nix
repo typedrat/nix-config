@@ -8,6 +8,14 @@
   inherit (lib.modules) mkIf;
   impermanenceCfg = osConfig.rat.impermanence;
   inherit (impermanenceCfg) persistDir;
+
+  # xmage ships its window icon only inside the client jar, so the desktop
+  # entry's themed icon name has nothing to resolve to without this.
+  xmageIcon = pkgs.runCommand "xmage-icon" {nativeBuildInputs = [pkgs.unzip];} ''
+    mkdir -p $out/share/icons/hicolor/48x48/apps
+    unzip -p ${pkgs.xmage}/xmage/mage-client/lib/mage-client-*.jar icon-mage.png \
+      > $out/share/icons/hicolor/48x48/apps/xmage.png
+  '';
 in {
   config = mkIf osConfig.rat.gaming.enable {
     home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
@@ -15,6 +23,7 @@ in {
     };
     home.packages = [
       pkgs.xmage
+      xmageIcon
     ];
 
     xdg.dataFile."xmage/.keep".text = "";
