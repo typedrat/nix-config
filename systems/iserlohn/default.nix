@@ -239,9 +239,9 @@
       shoko = {
         enable = true;
         adminUser = "typedrat";
-        # Sonarr and Radarr name files well enough to match from the path when
-        # AniDB doesn't know the hash, as with fresh releases and remuxes.
-        releaseProviders."Offline Importer".enable = true;
+        # Path-based matching guesses wrong often enough that it only runs
+        # when asked for, as a suggestion for files AniDB doesn't know.
+        releaseProviders."Offline Importer".enable = false;
       };
       sonarr.enable = true;
       #style-search.enable = true;
