@@ -6,13 +6,13 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "claude-themes";
-  version = "0-unstable-2026-10-22";
+  version = "0-unstable-2026-10-28";
 
   src = fetchFromGitHub {
     owner = "matcra587";
     repo = "claude-themes";
-    rev = "d9de2d4e12ba27dde79979552e002566bf9194f1";
-    hash = "sha256-xktgRCmmLBqXKVmGPBHWEQ09h0Gohr7ePaxR82HeUkM=";
+    rev = "8c3b74f7ec1b3d55cdafc0b18c3d84c21f242745";
+    hash = "sha256-AW3brhuC0aI7LWfLXFcS9E+QTqS/IWFQqL2/briJtaM=";
   };
 
   dontConfigure = true;
