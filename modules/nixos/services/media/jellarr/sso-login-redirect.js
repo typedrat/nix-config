@@ -8,8 +8,14 @@
 // - A browser that was signed in earlier in this page's lifetime. Jellyfin
 //   lands on the login page after a logout, and redirecting then would sign
 //   the user straight back in through the provider's still-open session.
+// - Frames. The SSO plugin's callback page loads the client in a hidden
+//   iframe, with credentials cleared, to initialise localStorage before it
+//   finishes the login. Redirecting that iframe would start another login
+//   inside it, endlessly.
 (function () {
   "use strict";
+
+  if (window.self !== window.top) return;
 
   var target = "../sso/OID/start/@provider@";
 
