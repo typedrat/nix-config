@@ -18,6 +18,7 @@ in {
 
   config = modules.mkIf (guiCfg.enable && chatCfg.enable) {
     home.packages = with pkgs; [
+      halloy
       telegram-desktop
       signal-desktop
       slack
