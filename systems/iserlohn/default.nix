@@ -272,7 +272,63 @@
           software.savePath = "software";
         };
       };
-      qui.enable = true;
+      qui = {
+        enable = true;
+        instanceName = "Iserlohn";
+        instance = {
+          hasLocalFilesystemAccess = true;
+          useHardlinks = false;
+          useReflinks = true;
+          hardlinkBaseDir = "/mnt/media/cross-seed";
+          hardlinkDirPreset = "by-tracker";
+          fallbackToRegularMode = false;
+        };
+
+        indexers = {
+          AnimeBytes = {};
+          BroadcasTheNet = {};
+          PassThePopcorn = {};
+          Redacted = {};
+        };
+
+        crossSeed = {
+          indexers = ["AnimeBytes" "BroadcasTheNet" "PassThePopcorn" "Redacted"];
+          settings = {
+            enabled = true;
+            # Out of Sonarr's categories, so it never tries to import them.
+            # qui allows only one category mode at a time.
+            useCategoryFromIndexer = false;
+            useCrossCategoryAffix = false;
+            useCustomCategory = true;
+            customCategory = "cross-seed";
+            # AnimeBytes replaces a finished seasonal's episodes with a batch;
+            # this builds the batch from the episodes already here.
+            seasonPackAutomationEnabled = true;
+            seasonPackCategory = "cross-seed";
+          };
+        };
+
+        # Dry run: AnimeBytes unregisters a seasonal's episodes as the batch
+        # goes up, and deleting them before qui assembles the batch from
+        # them would mean downloading it whole.
+        automations."Remove unregistered AnimeBytes torrents" = {
+          trackerPattern = "tracker.animebytes.tv";
+          enabled = true;
+          dryRun = true;
+          conditions = {
+            schemaVersion = "1";
+            delete = {
+              enabled = true;
+              mode = "delete";
+              condition = {
+                field = "IS_UNREGISTERED";
+                operator = "EQUAL";
+                value = "true";
+              };
+            };
+          };
+        };
+      };
 
       matrix-synapse.enable = true;
       element.enable = true;

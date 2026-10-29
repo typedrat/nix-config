@@ -11,6 +11,8 @@
 
   inherit (config.rat.services) domainName;
 in {
+  imports = [./reconcile.nix];
+
   options.rat.services.qui = {
     enable = options.mkEnableOption "qui";
     subdomain = options.mkOption {
@@ -49,14 +51,14 @@ in {
       };
 
       sops.secrets."qui/sessionSecret" = {
-        sopsFile = ../../../../secrets/qui.yaml;
+        sopsFile = ../../../../../secrets/qui.yaml;
         key = "sessionSecret";
         owner = config.services.qui.user;
         inherit (config.services.qui) group;
       };
 
       sops.secrets."qui/oidcClientSecret" = {
-        sopsFile = ../../../../secrets/qui.yaml;
+        sopsFile = ../../../../../secrets/qui.yaml;
         key = "oidcClientSecret";
         owner = config.services.qui.user;
         inherit (config.services.qui) group;
