@@ -8,16 +8,14 @@
 # IPC rejects, so clicking a workspace button does nothing. Master detects the
 # Lua protocol and sends `hl.dsp.*` calls instead.
 let
-  # Must match subprojects/libcava.wrap, which names the directory meson
-  # looks for; the build sandbox can't download wraps.
-  libcava = rec {
-    version = "1.0.0";
-    src = fetchFromGitHub {
-      owner = "LukashonakV";
-      repo = "cava";
-      tag = version;
-      hash = "sha256-0r5aAmTs+FcmS501tNYKxG9H+Pq6i32BDRBEjWW6M74=";
-    };
+  # Must match the revision in subprojects/libcava.wrap; the build sandbox
+  # can't download wraps. A git wrap with no `directory` key is looked up
+  # under the wrap's own name.
+  libcava = fetchFromGitHub {
+    owner = "LukashonakV";
+    repo = "cava";
+    rev = "8d6e963db9cd29c2b3b5a5df1e46bb65c410f9cc";
+    hash = "sha256-tWY3D3sEVFDHJjO/enCu0lEobM1CF4vupavOHgIslnA=";
   };
 in
   waybar.overrideAttrs (prev: {
@@ -38,7 +36,7 @@ in
 
     postUnpack = ''
       pushd "$sourceRoot"
-      cp -R --no-preserve=mode,ownership ${libcava.src} subprojects/cava-${libcava.version}
+      cp -R --no-preserve=mode,ownership ${libcava} subprojects/libcava
       patchShebangs .
       popd
     '';
