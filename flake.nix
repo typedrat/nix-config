@@ -20,6 +20,12 @@
 
     nix-std.url = "github:chessai/nix-std";
 
+    # qBittorrent comes from here, not from nixpkgs, because private trackers
+    # only accept client versions they have approved; AnimeBytes rejected
+    # 5.3.0 on release. Move the revision forward by hand once they approve
+    # a newer one.
+    nixpkgs-qbittorrent.url = "github:NixOS/nixpkgs/02c087f3fe673c9e317f206a627cb6b910336dbe";
+
     #endregion
 
     #region nixpkgs patches

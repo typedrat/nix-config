@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   pkgs,
   lib,
   ...
@@ -110,6 +111,8 @@ in {
         services.qbittorrent = {
           enable = true;
           group = "media";
+          # Pinned to a tracker-approved release; see the input in flake.nix.
+          package = inputs.nixpkgs-qbittorrent.legacyPackages.${pkgs.stdenv.hostPlatform.system}.qbittorrent-nox;
 
           torrentingPort = config.links.qbittorrent.port;
           webuiPort = config.links.qbittorrent-webui.port;
