@@ -1071,8 +1071,8 @@
   },
   {
     "pname": "Shoko.BuildTools.Targets",
-    "version": "0.5.0",
-    "hash": "sha256-VpC8o5hOIN9UmqA1wLuYlshQNbLEIQM59foEsrUv2KA="
+    "version": "0.6.0",
+    "hash": "sha256-hB8dsnlakFAMcG8qAXZga9TKSEt821zxTrITbR/p0Is="
   },
   {
     "pname": "SQLite",
