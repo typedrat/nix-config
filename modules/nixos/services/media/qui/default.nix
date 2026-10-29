@@ -78,6 +78,10 @@ in {
         after = ["qbittorrent.service"];
 
         serviceConfig = {
+          # Season packs that qui links are finished by qBittorrent, a
+          # different user in the media group, which has to create the
+          # missing files in the directories qui makes.
+          UMask = "0002";
           LoadCredential = [
             "oidcClientSecret:${config.sops.secrets."qui/oidcClientSecret".path}"
           ];

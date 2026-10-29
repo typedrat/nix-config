@@ -165,6 +165,10 @@ in {
 
         systemd.services.qbittorrent = {
           restartTriggers = [categoriesFile];
+          # Reflinked cross-seeds keep the mode of the file they were cloned
+          # from, and qBittorrent writes into them where a pack's pieces
+          # straddle a file it still has to fetch.
+          serviceConfig.UMask = "0002";
           serviceConfig.ExecStartPre = modules.mkIf (cfg.categories != {}) (
             modules.mkAfter [
               "${pkgs.coreutils}/bin/install -Dm600 ${categoriesFile} ${config.services.qbittorrent.profileDir}/qBittorrent/config/categories.json"
