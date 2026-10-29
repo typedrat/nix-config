@@ -10,6 +10,7 @@
   stateDir = "/var/lib/shoko-reconcile";
   api = "${config.links.shoko.url}/api";
   passwordFile = config.sops.secrets."shoko/admin/password".path;
+  releaseProvidersFile = pkgs.writeText "shoko-release-providers.json" (builtins.toJSON cfg.releaseProviders);
 
   # Secrets reach curl only through files: the request body is written by jq
   # straight from the sops file, and nothing secret is ever an argument.
@@ -62,6 +63,27 @@
           install -m 0640 -g ${lib.escapeShellArg key.group} "$tmp/${name}.key" ${lib.escapeShellArg "${stateDir}/${name}.key"}
         '')
         cfg.apiKeys)}
+      ${lib.optionalString (cfg.releaseProviders != {}) ''
+        token=$(sign_in shoko-reconcile)
+        printf 'apikey: %s\n' "$token" >"$tmp/auth"
+        curl -sf -H @"$tmp/auth" ${lib.escapeShellArg "${api}/v3/ReleaseInfo/Provider"} >"$tmp/providers"
+        # Providers are configured by name; their IDs are opaque.
+        jq --slurpfile want ${releaseProvidersFile} '
+          . as $have | $want[0] | to_entries | map(
+            .key as $name
+            | ($have | map(select(.Name == $name)) | first
+                // error("Shoko has no release provider named \($name)")) as $p
+            | {ID: $p.ID, IsEnabled: .value.enable}
+              + (if .value.priority == null then {} else {Priority: .value.priority} end))
+        ' "$tmp/providers" >"$tmp/request"
+        code=$(curl -s -o "$tmp/response" -w '%{http_code}' -H @"$tmp/auth" \
+          -H 'Content-Type: application/json' --data-binary @"$tmp/request" \
+          ${lib.escapeShellArg "${api}/v3/ReleaseInfo/Provider"})
+        if [[ $code != 2* ]]; then
+          echo "updating Shoko's release providers failed with HTTP $code: $(head -c 500 "$tmp/response")" >&2
+          exit 1
+        fi
+      ''}
       echo "Shoko reconciled"
     '';
   };
@@ -85,6 +107,28 @@ in {
       API keys issued to the admin user and written to
       ${stateDir}/<name>.key, for services that talk to Shoko. Each key is
       created on first use and stays the same from then on.
+    '';
+  };
+
+  options.rat.services.shoko.releaseProviders = options.mkOption {
+    type = types.attrsOf (types.submodule {
+      options = {
+        enable = options.mkOption {
+          type = types.bool;
+          description = "Whether Shoko asks this provider for release information.";
+        };
+        priority = options.mkOption {
+          type = types.nullOr types.int;
+          default = null;
+          description = "Order among enabled providers, lowest first; null leaves Shoko's order alone.";
+        };
+      };
+    });
+    default = {};
+    example = {"Offline Importer".enable = true;};
+    description = ''
+      Release providers to switch on or off, by the name Shoko lists them
+      under. Providers not named here keep whatever state Shoko has.
     '';
   };
 
