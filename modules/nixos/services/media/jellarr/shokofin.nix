@@ -344,6 +344,25 @@
     defaultOverrideAttrs = defaultImageOverride;
   };
 in {
+  # Shokofin only takes over a library whose type options list Shoko as a
+  # metadata fetcher. In VFS mode it then swaps the library's paths for its
+  # virtual file system, so Jellarr must stop reasserting them.
+  options.rat.services.jellarr.libraries = options.mkOption {
+    type = types.listOf (types.submodule ({config, ...}: {
+      options.shokofin = options.mkEnableOption "Shokofin management of this library";
+      config = modules.mkIf config.shokofin {
+        typeOptions =
+          map (type: {
+            inherit type;
+            metadataFetchers = ["Shoko"];
+            imageFetchers = ["Shoko"];
+          })
+          ["Series" "Season" "Episode" "Movie"];
+        ignoreChanges = ["pathInfos"];
+      };
+    }));
+  };
+
   options.rat.services.jellarr.plugins.shokofin = {
     enable = options.mkEnableOption "Shokofin Jellyfin plugin";
 
@@ -989,7 +1008,9 @@ in {
           WebPrefix = cfg.webPrefix;
           Username = cfg.username;
           ApiKey = "@JELLARR_RUNTIME_SECRET_shokofin@";
-          HasPluginsExposed = false;
+          # HasPluginsExposed is left to Shokofin, which detects it from the
+          # server version. It picks ManagedFolder over the ImportFolder
+          # endpoints, which Shoko 6 removed, so pinning it empties the VFS.
 
           # Third-party IDs
           ThirdPartyIdProviderList = cfg.thirdPartyIdProviderList;

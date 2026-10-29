@@ -183,6 +183,7 @@
               "/mnt/media/anime"
               "/mnt/media/anime-movies"
             ];
+            shokofin = true;
           }
           {
             name = "Music";
@@ -204,7 +205,11 @@
             };
             loginRedirect = "authentik";
           };
-          shokofin.enable = true;
+          shokofin = {
+            enable = true;
+            # Shoko's file events are how new downloads reach the VFS.
+            signalR.autoConnectEnabled = true;
+          };
         };
       };
       cross-seed.enable = false;

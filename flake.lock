@@ -2226,11 +2226,11 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1793231562,
-        "narHash": "sha256-OCupEWh9Bp37SJPGXHOLc1pFDKBOI9Su/zj59CgtipQ=",
+        "lastModified": 1793233614,
+        "narHash": "sha256-tAc4vNP7BFZ9SHFf14fmgBhtq4qUmT5BxHw3zy4GdZ4=",
         "owner": "typedrat",
         "repo": "jellarr",
-        "rev": "b3d59540532538e23e504003dc2c1896b7c867d2",
+        "rev": "603a5a68320f94dacd0cff4e9a8b76e6ecc778a8",
         "type": "github"
       },
       "original": {

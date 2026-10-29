@@ -46,12 +46,15 @@
       };
     }
     // {
-      library.virtualFolders =
-        map (l: {
+      library.virtualFolders = map (l:
+        {
           inherit (l) name collectionType;
-          libraryOptions.pathInfos = map (p: {path = p;}) l.paths;
-        })
-        cfg.libraries;
+          libraryOptions =
+            {pathInfos = map (p: {path = p;}) l.paths;}
+            // lib.optionalAttrs (l.typeOptions != []) {inherit (l) typeOptions;};
+        }
+        // lib.optionalAttrs (l.ignoreChanges != []) {inherit (l) ignoreChanges;})
+      cfg.libraries;
       branding =
         {inherit (cfg.branding) splashscreenEnabled;}
         // lib.optionalAttrs (cfg.branding.loginDisclaimer != null) {inherit (cfg.branding) loginDisclaimer;}
@@ -158,6 +161,20 @@ in {
             type = types.listOf types.str;
             default = [];
             description = "Filesystem paths for this library.";
+          };
+          typeOptions = options.mkOption {
+            type = types.listOf types.attrs;
+            default = [];
+            description = "Per-item-type metadata and image fetchers, in Jellarr's `typeOptions` form.";
+          };
+          ignoreChanges = options.mkOption {
+            type = types.listOf types.str;
+            default = [];
+            example = ["pathInfos"];
+            description = ''
+              Library options Jellarr only sets when it creates the library,
+              for options something else manages afterwards.
+            '';
           };
         };
       });
