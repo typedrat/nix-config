@@ -21,13 +21,13 @@ let
   };
 in
   waybar.overrideAttrs (prev: {
-    version = "0.15.0-unstable-2026-10-19";
+    version = "0.15.0-unstable-2026-10-28";
 
     src = fetchFromGitHub {
       owner = "Alexays";
       repo = "Waybar";
-      rev = "c15ec02ede4343592a59eb5c2ff4443c9c045f7c";
-      hash = "sha256-mBDWjeeIuFfDZQuBxHu+EpbJ+GMbbSxpRz0WVM2N+ZI=";
+      rev = "f6f73c81818b0a6753c1efb68e0fae2149eac028";
+      hash = "sha256-CZR26099bnlOWgLpMOPwdpmocSAGetbepjkP661qml4=";
     };
 
     versionCheckProgramArg = "--version";
