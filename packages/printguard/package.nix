@@ -69,7 +69,10 @@ in
 
     # Upstream wants >=2.14.2 and nixpkgs is a couple of releases behind.
     # pythonImportsCheck covers whether that actually matters.
+    # fastmcp's floor only moved to clear security advisories, so nixpkgs'
+    # older release still works but carries them until nixpkgs catches up.
     pythonRelaxDeps = [
+      "fastmcp"
       "pillow"
       "pydantic-settings"
     ];
