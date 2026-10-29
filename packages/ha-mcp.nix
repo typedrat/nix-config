@@ -11,8 +11,10 @@
 # resources/skills-vendor/**/* as package data, so the tree ships as-is.
 let
   # This package shadows pkgs.ha-mcp, so the nixpkgs expression is imported
-  # from the source tree rather than looked up by name.
-  upstream = callPackage "${path}/pkgs/by-name/ha/ha-mcp/package.nix" {};
+  # from the source tree rather than looked up by name. Path concatenation, not
+  # string interpolation: "${path}" would copy the whole nixpkgs tree into the
+  # store a second time, and nix-update's evaluator can't import from that copy.
+  upstream = callPackage (path + "/pkgs/by-name/ha/ha-mcp/package.nix") {};
 
   # Tied to the submodule commit this tag pins, so it only stays valid for the
   # version nixpkgs is on. Reprefetch after a nixpkgs bump changes `version`.
