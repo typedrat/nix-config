@@ -53,9 +53,9 @@
       flake = false;
     };
 
-    # claude-code 2.1.311 -> 2.1.312, the newest version tweakcc-fixed supports (NixOS/nixpkgs#579943)
-    nixpkgs-patch-579943 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/579943.diff";
+    # claude-code 2.1.312 -> 2.1.314, the newest version tweakcc-fixed supports (NixOS/nixpkgs#580818)
+    nixpkgs-patch-580818 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/580818.diff";
       flake = false;
     };
 
