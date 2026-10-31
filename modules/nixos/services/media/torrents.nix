@@ -176,6 +176,15 @@ in {
           );
         };
 
+        # qBittorrent only creates a category's folder on its first download,
+        # and the arrs fail their download-client health check until it exists.
+        systemd.tmpfiles.rules = lib.unique (
+          lib.mapAttrsToList (
+            _: cat: "d ${toString cfg.downloadDir}/${cat.savePath} 2775 media media -"
+          )
+          cfg.categories
+        );
+
         links = {
           qbittorrent = {
             protocol = "tcp";

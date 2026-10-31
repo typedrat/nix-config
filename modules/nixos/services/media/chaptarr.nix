@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   inherit (lib) modules options types;
@@ -53,6 +54,11 @@ in {
 
       systemd.services.readarr-default = {
         after = ["postgresql.service"];
+        # Chaptarr looks for ffmpeg and ffprobe on PATH rather than bundling them.
+        path = [pkgs.ffmpeg-headless];
+        # Library folders are shared with qBittorrent and the other arrs
+        # through the media group, which needs to replace files in them.
+        serviceConfig.UMask = "0002";
       };
 
       users.users.readarr-default.extraGroups = ["media"];
