@@ -11,13 +11,13 @@
   build123d,
   nix-update-script,
 }: let
-  version = "0.12.1";
+  version = "0.12.2";
 
   src = fetchFromGitHub {
     owner = "yeicor-3d";
     repo = "yet-another-cad-viewer";
     tag = "v${version}";
-    hash = "sha256-/oQs5MU/zk9r9MQfSKmZ/7re+up+q8zgH0w6FAFlWpk=";
+    hash = "sha256-QYv3ZpFh7lhJP0vVYtFAlPqKkEmOg1znsCwFDb47t+0=";
   };
 
   # three-orientation-gizmo is locked to a branch tarball rather than a release.
