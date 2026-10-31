@@ -56,7 +56,7 @@ in
   "nemo-speech: ggml is built with a single GPU backend; pick cudaSupport or vulkanSupport";
     effectiveStdenv.mkDerivation (finalAttrs: {
       pname = "nemo-speech";
-      version = "0.2.0";
+      version = "0.3.0";
 
       src = fetchFromGitHub {
         owner = "NVIDIA";
@@ -66,7 +66,7 @@ in
         # vendored per component. The Mandarin G2P data live in Git LFS.
         fetchSubmodules = true;
         fetchLFS = true;
-        hash = "sha256-EE0V240b031y6PJYdekVs1R+IAtVrSI957KY6W1oOpI=";
+        hash = "sha256-jTS4JFCHk4HANW6SA65Xw41Mo8i2pbql8ERwfW9diy8=";
       };
 
       strictDeps = true;
