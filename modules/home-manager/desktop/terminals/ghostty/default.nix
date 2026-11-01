@@ -40,6 +40,10 @@ in {
         window-padding-x = 8;
         window-padding-y = 8;
         background-opacity = 0.625;
+        # Ghostty requests its blur over ext-background-effect-v1, which
+        # Hyprland honours: leaving this off asks Hyprland not to blur the
+        # window at all, overriding the compositor's own blur settings.
+        background-blur = true;
         keybind = "shift+enter=text:\\x1b\\r";
       };
     };
