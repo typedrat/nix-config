@@ -39,23 +39,10 @@
       flake = false;
     };
 
-    # Move sunshine's Avahi publishing onto services.avahi.settings.publish,
-    # silencing the obsolete-option warnings it triggers (NixOS/nixpkgs#576824)
-    nixpkgs-patch-576824 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/576824.diff";
-      flake = false;
-    };
-
     # Move music-assistant's Avahi publishing onto services.avahi.settings.publish,
     # silencing the obsolete-option warnings it triggers (NixOS/nixpkgs#580111)
     nixpkgs-patch-580111 = {
       url = "https://github.com/NixOS/nixpkgs/pull/580111.diff";
-      flake = false;
-    };
-
-    # claude-code 2.1.312 -> 2.1.314, the newest version tweakcc-fixed supports (NixOS/nixpkgs#580818)
-    nixpkgs-patch-580818 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/580818.diff";
       flake = false;
     };
 
