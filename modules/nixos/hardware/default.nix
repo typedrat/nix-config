@@ -4,6 +4,7 @@ in {
   imports = [
     ./audio.nix
     ./bluetooth.nix
+    ./cec.nix
     ./denon-avr.nix
     ./esp32-dev.nix
     ./midi.nix

@@ -261,6 +261,7 @@
         alsaDevice = "alsa_card.pci-0000_01_00.1";
         pcInput = "BD";
       };
+      cec.enable = true;
       securityKey.enable = true;
       usbmuxd.enable = true;
       nintendoSwitch.rcm.enable = true;
