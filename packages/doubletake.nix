@@ -4,6 +4,8 @@
   fetchFromGitHub,
   makeBinaryWrapper,
   installShellFiles,
+  pkg-config,
+  fdk_aac,
   gst_all_1,
   pipewire,
   pulseaudio,
@@ -41,14 +43,20 @@ in
       "cmd/doubletake-test-receiver"
     ];
 
+    # AAC-ELD is only used for receivers that do not advertise ALAC.
+    tags = ["fdk_aac"];
+
     ldflags = [
       "-s"
       "-w"
     ];
 
+    buildInputs = [fdk_aac];
+
     nativeBuildInputs = [
       makeBinaryWrapper
       installShellFiles
+      pkg-config
     ];
 
     postInstall = ''
