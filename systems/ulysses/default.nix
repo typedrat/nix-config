@@ -407,6 +407,7 @@
           pyprland.enable = true;
           smartGaps.enable = true;
         };
+        media.doubletake.enable = true;
         productivity.handy.enable = true;
         productivity.krita = {
           enable = true;

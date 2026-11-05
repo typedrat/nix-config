@@ -177,6 +177,24 @@
         spotify.enable = options.mkEnableOption "Spotify" // {default = true;};
         tauon.enable = options.mkEnableOption "Tauon Music Box" // {default = true;};
         mpv.enable = options.mkEnableOption "MPV" // {default = true;};
+        doubletake = {
+          enable = options.mkEnableOption "doubletake AirPlay screen mirroring";
+          portRange = {
+            from = options.mkOption {
+              type = types.port;
+              default = 60000;
+              description = "First local UDP port doubletake binds for receiver traffic.";
+            };
+            to = options.mkOption {
+              type = types.port;
+              default = 60010;
+              description = ''
+                Last local UDP port doubletake binds for receiver traffic. Each
+                simultaneous receiver takes three ports.
+              '';
+            };
+          };
+        };
       };
 
       productivity = {

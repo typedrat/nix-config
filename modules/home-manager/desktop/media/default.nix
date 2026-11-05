@@ -14,6 +14,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   imports = [
+    ./doubletake.nix
     ./easyeffects
     ./mpv.nix
     ./obs.nix

@@ -17,6 +17,7 @@
     ./appimage.nix
     ./avahi.nix
     ./codex-computer-use.nix
+    ./doubletake.nix
     ./flatpak.nix
     ./handy.nix
     ./impermanence.nix
