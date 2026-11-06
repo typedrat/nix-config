@@ -12,13 +12,13 @@ buildDotnetModule (finalAttrs: {
   pname = "shoko";
   # The daily dev builds, not the stable releases: the database has been
   # migrated to the 6.0 dev schema, and Shoko can't migrate back down.
-  version = "6.0.0-dev.584";
+  version = "6.0.0-dev.588";
 
   src = fetchFromGitHub {
     owner = "ShokoAnime";
     repo = "ShokoServer";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-AwVM4bnKQzEHubUBBuZ2NoFkiMiKyF03dIusG6dHtSg=";
+    hash = "sha256-fRDw2nB6kwv3RCDRMl239DtGzxyrkxQDyPPwXoQOm1g=";
   };
 
   # Shoko downloads AVDump into its working directory and runs it through
