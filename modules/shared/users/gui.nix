@@ -133,6 +133,7 @@
         enable = options.mkEnableOption "chat clients" // {default = true;};
         discord.enable = options.mkEnableOption "Discord" // {default = true;};
         element.enable = options.mkEnableOption "Element (Matrix)" // {default = true;};
+        halloy.enable = options.mkEnableOption "Halloy (IRC)" // {default = true;};
       };
 
       development = {
