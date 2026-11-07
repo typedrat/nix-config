@@ -38,6 +38,20 @@
     gradleBuildTask = "zip";
     gradleFlags = ["-Pghidra.dir=${ghidra}/lib/ghidra"];
 
+    # Ghidra 12.2 passes an AddressFactoryService to custom option editors, so
+    # the no-argument override no longer overrides anything and javac rejects
+    # its @Override.
+    postPatch = ''
+      substituteInPlace src/main/java/fi/gekkio/ghidraboy/GameBoyKindOption.java \
+        --replace-fail \
+          'import ghidra.app.util.Option;' \
+          'import ghidra.app.util.AddressFactoryService;
+      import ghidra.app.util.Option;' \
+        --replace-fail \
+          'public Component getCustomEditorComponent() {' \
+          'public Component getCustomEditorComponent(AddressFactoryService addressFactoryService) {'
+    '';
+
     # The build helper's preBuild writes a stray settings.gradle next to the
     # project's settings.gradle.kts, which Gradle 9 refuses to load. Drop it and
     # let settings.gradle.kts (which already names the project "GhidraBoy") win.
