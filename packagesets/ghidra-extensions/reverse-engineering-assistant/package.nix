@@ -5,13 +5,16 @@
   gradle,
   python3Packages,
 }: let
-  version = "7.3.1";
+  # 7.3.1 doesn't build against Ghidra 12.2; master has the port but no
+  # release yet.
+  release = "7.3.1";
+  version = "${release}-unstable-2026-11-03";
 
   src = fetchFromGitHub {
     owner = "cyberkaida";
     repo = "reverse-engineering-assistant";
-    rev = "v${version}";
-    hash = "sha256-eYZeyhXlGwLVa/k77Y5x2OeGo/m9fh3VauzAqB+obxw=";
+    rev = "4d2fc5b4c5f4ce00d95f0bd6bdf0c64b67e65fc2";
+    hash = "sha256-rCLaC2VZyKpgFsAgY9gxWmHCMccyRsoRncynur4zvhs=";
   };
 
   self = buildGhidraExtension {
@@ -48,7 +51,7 @@
         httpx-sse
       ];
 
-      env.SETUPTOOLS_SCM_PRETEND_VERSION = version;
+      env.SETUPTOOLS_SCM_PRETEND_VERSION = release;
 
       meta = {
         description = "Python CLI wrapper for ReVa (Ghidra MCP server)";
