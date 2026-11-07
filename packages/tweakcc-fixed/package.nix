@@ -12,7 +12,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tweakcc-fixed";
-  version = "2.9.25";
+  version = "2.9.26";
 
   # Tracks skrabe/tweakcc-fixed upstream. We previously pinned a typedrat fork
   # carrying a \uXXXX-escape fix for injected non-ASCII glyphs (raw multibyte
@@ -24,7 +24,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "skrabe";
     repo = "tweakcc-fixed";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-dbvl2KIWSypE/rLYKj2s5gmXD7gsKcNn7NZHMFoCtwQ=";
+    hash = "sha256-i/GJR0OkUGVPrPCtEjelGJPLy+3rHFQ1dxQeXCX57lw=";
   };
 
   # Repacking a Bun single-file executable appends the rebuilt .bun after the
@@ -134,8 +134,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     promptOverrides = fetchFromGitHub {
       owner = "skrabe";
       repo = "lobotomized-claude-code";
-      rev = "1fbf92ac844fb129449b13790b095193ea877e55";
-      hash = "sha256-9yumTjDGgIeGMwD7bYVN6he9dmSxAHMDmBQ/AZFBEPI=";
+      rev = "80ed98ba83e862337d2cabe077fe671c7e8a2d00";
+      hash = "sha256-9XbjK6byVbZBNg+jolExvAlzedXyDSFYHrIEQ7AE2gw=";
     };
 
     updateScript = ./update.sh;

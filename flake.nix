@@ -46,6 +46,13 @@
       flake = false;
     };
 
+    # claude-code and its VS Code extension 2.1.318 -> 2.1.319, the release
+    # tweakcc-fixed 2.9.26 targets (NixOS/nixpkgs#584504)
+    nixpkgs-patch-584504 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/584504.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches

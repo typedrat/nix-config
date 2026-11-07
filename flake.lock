@@ -2837,6 +2837,18 @@
         "url": "https://github.com/NixOS/nixpkgs/pull/580326.diff"
       }
     },
+    "nixpkgs-patch-584504": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-GydcbjojPNIfzQ+pMZrSqpBCcP5Iwk0lH/Vv3tukgSM=",
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/584504.diff"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/NixOS/nixpkgs/pull/584504.diff"
+      }
+    },
     "nixpkgs-qbittorrent": {
       "locked": {
         "lastModified": 1792502884,
@@ -3446,6 +3458,7 @@
         "nixpkgs": "nixpkgs_10",
         "nixpkgs-patch-555827": "nixpkgs-patch-555827",
         "nixpkgs-patch-580326": "nixpkgs-patch-580326",
+        "nixpkgs-patch-584504": "nixpkgs-patch-584504",
         "nixpkgs-qbittorrent": "nixpkgs-qbittorrent",
         "nixvirt": "nixvirt",
         "orca-slicer-nanashi": "orca-slicer-nanashi",
