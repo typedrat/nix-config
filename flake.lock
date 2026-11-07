@@ -3787,12 +3787,12 @@
         "terranix": "terranix"
       },
       "locked": {
-        "lastModified": 1794031222,
-        "narHash": "sha256-ovujNeEWmlq9BezacUgKrErks80Wn0FeZzhEo0d2n4Q=",
-        "rev": "2d5ce7c4f0f75ba135669d9883f08d628dd77d4b",
-        "revCount": 19014,
+        "lastModified": 1794089426,
+        "narHash": "sha256-KNJNzlD0Caowkrrc3WmNFOO9kW6bzNGRu8LDtekbZNM=",
+        "rev": "955b262a9035727ad00b12049da574e522086c02",
+        "revCount": 19015,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/synapdeck/synapdeck/0.1.19014%2Brev-2d5ce7c4f0f75ba135669d9883f08d628dd77d4b/01a1b4c4-bd44-7ce3-810c-f8be07e5c99b/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/synapdeck/synapdeck/0.1.19015%2Brev-955b262a9035727ad00b12049da574e522086c02/01a1b83e-6330-7bd0-94ca-89cd67f7b151/source.tar.gz"
       },
       "original": {
         "type": "tarball",
