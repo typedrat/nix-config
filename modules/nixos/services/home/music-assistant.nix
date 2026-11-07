@@ -154,6 +154,21 @@ in {
       services.music-assistant = {
         enable = true;
         inherit (cfg) providers;
+        # Choosing providers makes this a local build, so the test suite runs
+        # here. The sendspin DSP-alignment tests give the producer a fixed
+        # number of event-loop turns rather than a deadline, and on a loaded
+        # builder it misses them ("playback loop stalled"). The upstream module
+        # applies `providers` through `.override`, which overridePythonAttrs
+        # drops, hence makeOverridable.
+        package =
+          lib.makeOverridable
+          (args:
+            (pkgs.music-assistant.override args).overridePythonAttrs (old: {
+              disabledTestPaths =
+                (old.disabledTestPaths or [])
+                ++ ["tests/providers/sendspin/test_dsp_channel_alignment.py"];
+            }))
+          {};
         # The upstream flag opens every player port on every address the host
         # answers on, including the routable IPv6 prefix. AirPlay's share of
         # that is the whole ephemeral UDP range.
