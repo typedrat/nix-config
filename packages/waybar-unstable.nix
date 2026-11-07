@@ -9,12 +9,13 @@
 # Lua protocol and sends `hl.dsp.*` calls instead.
 let
   # Must match the revision in subprojects/libcava.wrap; the build sandbox
-  # can't download wraps. A git wrap with no `directory` key is looked up
-  # under the wrap's own name.
+  # can't download wraps, so the source goes where the wrap's `directory`
+  # points.
+  libcavaRev = "8d6e963db9cd29c2b3b5a5df1e46bb65c410f9cc";
   libcava = fetchFromGitHub {
     owner = "LukashonakV";
     repo = "cava";
-    rev = "8d6e963db9cd29c2b3b5a5df1e46bb65c410f9cc";
+    rev = libcavaRev;
     hash = "sha256-tWY3D3sEVFDHJjO/enCu0lEobM1CF4vupavOHgIslnA=";
   };
 in
@@ -29,14 +30,14 @@ in
     };
 
     versionCheckProgramArg = "--version";
-    # The binary reports meson.build's version, which master hasn't bumped.
+    # The binary reports meson.build's version, without the unstable suffix.
     preVersionCheck = ''
-      version=0.15.0
+      version=0.16.0
     '';
 
     postUnpack = ''
       pushd "$sourceRoot"
-      cp -R --no-preserve=mode,ownership ${libcava} subprojects/libcava
+      cp -R --no-preserve=mode,ownership ${libcava} subprojects/cava-${libcavaRev}
       patchShebangs .
       popd
     '';
