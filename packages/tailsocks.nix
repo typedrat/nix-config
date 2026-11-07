@@ -7,16 +7,16 @@
 # go.mod requires a newer toolchain than the default buildGoModule's.
 buildGoLatestModule rec {
   pname = "tailsocks";
-  version = "1.6.4";
+  version = "1.6.5";
 
   src = fetchFromGitHub {
     owner = "ItalyPaleAle";
     repo = "tailsocks";
     rev = "v${version}";
-    hash = "sha256-M5R4DCcvGWnSIZJ7gRqKp+QvNihEXidTb9TxsuGPH24=";
+    hash = "sha256-BQLYdpct1XrF3gbgL8Y94S7RYkVWARR0AMImbAjh27o=";
   };
 
-  vendorHash = "sha256-2k0Pi6vFA3fbKxuJj+eesEkehw1u/w/tW0OxraON6KQ=";
+  vendorHash = "sha256-nrnCP+lZMUOjKRRENTbwuLiLsEpaiKzPctW+1qbB93k=";
 
   ldflags = [
     "-s"
