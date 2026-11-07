@@ -16,14 +16,14 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "gstack";
-  version = "1.91.342.0";
+  version = "1.97.0.0";
 
   # Upstream publishes no tags; VERSION at the pinned commit is the version.
   src = fetchFromGitHub {
     owner = "garrytan";
     repo = "gstack";
-    rev = "53522b1bbc60b3dc820842371f80ebc9db7911ec";
-    hash = "sha256-sz25qKul066ZURWsRQ85ZB2Homc8YE3KJNeILGWmfR8=";
+    rev = "e4b1e3455230a958cc53667e920994a9747d440c";
+    hash = "sha256-oOAFVFo3qh6niFw0Qh5p3mNO1ss59SuJ/qWlKmc2t0k=";
   };
 
   # bun only installs the optional native packages (sharp, onnxruntime, ngrok)
@@ -56,7 +56,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     dontFixup = true;
 
-    outputHash = "sha256-rIBfkFQayaWaawhGUix8drSdMSbaVYri2d7DD0xvlpw=";
+    outputHash = "sha256-e/xOSDSmXmKO9AhLKYTvd9JVyQoLG/dftBsc87nGRR8=";
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
   };
