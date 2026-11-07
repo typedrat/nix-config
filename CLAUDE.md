@@ -50,7 +50,7 @@ The server (`iserlohn`) runs a comprehensive media, development, and home automa
 - **Monitoring**: Grafana, Prometheus, Loki with custom exporters (exportarr, authentik, traefik, qbittorrent, ipmi, postgres, node, zfs)
 - **Communication**:
   - Matrix (Synapse) with Element web client
-  - Heisenbridge IRC bridge
+  - soju IRC bouncer
   - SillyTavern AI chat interface
 - **Home Automation**: Home Assistant with MQTT support (Mosquitto)
 

@@ -332,10 +332,7 @@
 
       matrix-synapse.enable = true;
       element.enable = true;
-      heisenbridge = {
-        enable = true;
-        owner = "@typedrat:thisratis.gay";
-      };
+      soju.enable = true;
     };
 
     zfs = {
