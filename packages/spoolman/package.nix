@@ -30,6 +30,7 @@ in
     ];
 
     pythonRelaxDeps = [
+      "cbor2"
       "setuptools"
       "websockets"
     ];
@@ -56,6 +57,7 @@ in
       aiomysql
       anysqlite
       asyncpg
+      cbor2
       fastapi
       hishel_0_1
       httptools
