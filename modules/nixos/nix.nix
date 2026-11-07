@@ -45,6 +45,31 @@
             ];
         })
 
+        # PyTables' ThreadingTestCase reads one array from ten threads at once,
+        # locking only open and close, against an HDF5 built without thread
+        # safety. On many-core hosts the race corrupts HDF5 state: the test
+        # fails and the interpreter segfaults closing the leaked file at exit.
+        # The suite runs under unittest, so disabledTests can't reach it.
+        (_final: prev: {
+          pythonPackagesExtensions =
+            prev.pythonPackagesExtensions
+            ++ [
+              (_python-final: python-prev: {
+                tables = python-prev.tables.overridePythonAttrs (oldAttrs: {
+                  postPatch =
+                    (oldAttrs.postPatch or "")
+                    + ''
+                      substituteInPlace tables/tests/test_basics.py \
+                        --replace-fail \
+                          'class ThreadingTestCase(' \
+                          '@common.unittest.skip("races a non-thread-safe HDF5")
+                      class ThreadingTestCase('
+                    '';
+                });
+              })
+            ];
+        })
+
         # gradio's streaming-video tests assert on timings ffmpeg doesn't hold to:
         # the lead-tolerance test on audio padding, which comes out longer than
         # its bound with the ffmpeg in nixpkgs (0.1587 s vs 0.128 s at 16 kHz),
