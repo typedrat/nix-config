@@ -10,6 +10,8 @@
   userCfg = osConfig.rat.users.${username} or {};
   guiCfg = userCfg.gui or {};
   chatCfg = guiCfg.chat or {};
+  impermanenceCfg = osConfig.rat.impermanence;
+  inherit (impermanenceCfg) persistDir;
 in {
   imports = [
     ./discord.nix
@@ -23,5 +25,9 @@ in {
       signal-desktop
       slack
     ];
+
+    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
+      directories = [".config/halloy"];
+    };
   };
 }
