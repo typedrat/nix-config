@@ -1,7 +1,4 @@
-{
-  inputs,
-  ...
-}: let
+{inputs, ...}: let
   interface = "enp101s0np0";
   numOfVFs = 1;
 in {
