@@ -54,7 +54,7 @@ in {
     programs.gh = {
       enable = true;
       gitCredentialHelper.enable = true;
-      extensions = [pkgs.gh-stack-latest];
+      extensions = [pkgs.gh-stack];
     };
 
     # mise - polyglot runtime manager
