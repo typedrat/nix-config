@@ -53,12 +53,6 @@
       flake = false;
     };
 
-    # gh-stack 0.2.1 -> 0.3.0 (NixOS/nixpkgs#582219)
-    nixpkgs-patch-582219 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/582219.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
