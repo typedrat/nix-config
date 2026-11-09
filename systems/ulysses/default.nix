@@ -3,7 +3,34 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  zfsModule = config.rat.zfs.package.kernelModuleAttribute;
+
+  # The MT7927 needs 7.2 or newer, which rules out xanmod's LTS line, and no
+  # ZFS release supports 7.3 yet. These are Ubuntu's backports of the 7.3
+  # compat commits on OpenZFS master to 2.4.4 (openzfs/zfs#19032), taken from
+  # zfs-linux 2.4.4-1ubuntu4. META's Linux-Maximum is left alone because the
+  # nixpkgs build asserts it; --enable-linux-experimental lifts the cap instead.
+  # The guard drops the override once nixpkgs moves past 2.4.4.
+  zfsLinux73Compat = _: prev: {
+    ${zfsModule} =
+      if prev.${zfsModule}.version == "2.4.4" && lib.versions.majorMinor prev.kernel.version == "7.3"
+      then
+        prev.${zfsModule}.overrideAttrs (old: {
+          patches =
+            old.patches
+            ++ [
+              ./zfs-linux-7.3/linux-7.3-iops-create-no-flag.patch
+              ./zfs-linux-7.3/linux-7.3-bvec-iter-bi-offset.patch
+              ./zfs-linux-7.3/linux-cpu-feature-enabled.patch
+              ./zfs-linux-7.3/linux-7.3-kthread-init-fs.patch
+            ];
+          configureFlags = old.configureFlags ++ ["--enable-linux-experimental"];
+          meta = old.meta // {broken = false;};
+        })
+      else prev.${zfsModule};
+  };
+in {
   imports = [
     ./dell-no-audio
     ./disko-config.nix
@@ -19,7 +46,18 @@
 
   # --- Boot ---
 
-  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  boot.kernelPackages = let
+    # 7.3 already carries the 128-bit integer types patch, so applying it
+    # again fails, but nixpkgs still lists it for xanmod's main line.
+    alreadyApplied = p:
+      p.name
+      == "tools-add-128-bit-integer-types-for-aarch64"
+      && lib.versionAtLeast pkgs.linux_xanmod_latest.version "7.3";
+    kernel = pkgs.linux_xanmod_latest.override {
+      kernelPatches = lib.filter (p: !alreadyApplied p) pkgs.linux_xanmod_latest.kernelPatches;
+    };
+  in
+    (pkgs.linuxPackagesFor kernel).extend zfsLinux73Compat;
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
