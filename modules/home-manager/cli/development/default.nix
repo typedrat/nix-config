@@ -32,6 +32,7 @@ in {
       automake
 
       # Development utilities
+      android-tools
       devpod
       process-compose
       tokei
