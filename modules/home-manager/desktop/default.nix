@@ -9,7 +9,7 @@
     ./media
     ./productivity
     ./terminals
-    ./ai.nix
+    ./ai
     ./flatpak.nix
     ./security.nix
     ./utilities.nix

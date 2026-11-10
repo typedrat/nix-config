@@ -169,7 +169,7 @@ The terranix wrapper automatically:
 - Home Manager modules are organized in `modules/home-manager/` by domain:
   - `core/` - Foundational modules (accounts, impermanence, SOPS, XDG, MIME)
   - `cli/` - CLI tools and shell config (`development/`, `networking/`, `shell/`, `tools/`, `ai.nix`)
-  - `desktop/` - GUI applications (`browsers/`, `chat/`, `development/`, `gaming/`, `hyprland/`, `media/`, `productivity/`, `terminals/`)
+  - `desktop/` - GUI applications (`ai/`, `browsers/`, `chat/`, `development/`, `gaming/`, `hyprland/`, `media/`, `productivity/`, `terminals/`)
   - `hardware/` - Hardware-specific config (security keys, OpenRGB, CoolerControl)
   - `theming/` - Visual theming (Catppuccin, KDE colors, cursors, Steam)
 - Home Manager modules use three-level cascading enable options:
