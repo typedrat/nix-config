@@ -38,8 +38,12 @@
   # flake.nix leaves it out of buildInputs (that branch builds via Flatpak, not
   # this flake), so linking fails with `cannot find -lxkbcommon`. Add it back.
   # Drop this override once the fork's flake — or upstream — lists it.
+  #
+  # nixpkgs' cargo setup hook would also stop libsqlite3-sys from building its
+  # bundled SQLite, which the flake doesn't supply a system copy of.
   handyPackage = inputs.handy.packages.${system}.handy.overrideAttrs (old: {
     buildInputs = (old.buildInputs or []) ++ [pkgs.libxkbcommon];
+    dontCargoUseSystemLibs = true;
   });
 in {
   imports = [

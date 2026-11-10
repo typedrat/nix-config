@@ -17,6 +17,28 @@
           nix = inputs'.nix.packages.default;
         })
 
+        # nixpkgs' cargo setup hook stops -sys crates from building their
+        # bundled C libraries, and these packages don't provide system copies
+        # (zstd for codex, SQLite for rainfrog), so they no longer build.
+        (_final: prev:
+          lib.genAttrs ["codex" "rainfrog" "samply"] (name:
+            prev.${name}.overrideAttrs {dontCargoUseSystemLibs = true;}))
+
+        # pandas-stubs' only pyiceberg test is disabled, but pyiceberg stays in
+        # its check inputs and drags in geopandas, whose tests fail against
+        # nixpkgs' Shapely.
+        (_final: prev: {
+          pythonPackagesExtensions =
+            prev.pythonPackagesExtensions
+            ++ [
+              (_python-final: python-prev: {
+                pandas-stubs = python-prev.pandas-stubs.overridePythonAttrs (oldAttrs: {
+                  nativeCheckInputs = lib.remove python-prev.pyiceberg oldAttrs.nativeCheckInputs;
+                });
+              })
+            ];
+        })
+
         # Disable openldap tests on i686
         (_final: prev: {
           openldap = prev.openldap.overrideAttrs {
