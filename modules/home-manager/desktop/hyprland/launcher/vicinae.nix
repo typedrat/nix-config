@@ -2,6 +2,7 @@
   config,
   osConfig,
   lib,
+  pkgs,
   hlLib,
   ...
 }: let
@@ -23,6 +24,17 @@ in {
     ) {
       programs.vicinae = {
         enable = true;
+        # The audio-control service looks pactl up on PATH, which the systemd
+        # user unit doesn't provide.
+        package = pkgs.symlinkJoin {
+          inherit (pkgs.vicinae) name pname version meta;
+          paths = [pkgs.vicinae];
+          nativeBuildInputs = [pkgs.makeWrapper];
+          postBuild = ''
+            wrapProgram $out/bin/vicinae \
+              --suffix PATH : ${lib.makeBinPath [pkgs.pulseaudio]}
+          '';
+        };
         systemd = {
           enable = true;
           autoStart = true;
@@ -47,7 +59,14 @@ in {
       };
 
       home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-        directories = [".local/share/vicinae"];
+        # The state dir records onboarding completion; losing it brings the
+        # welcome window back on every boot. The cache holds the file index,
+        # which otherwise gets rebuilt from scratch at each login.
+        directories = [
+          ".cache/vicinae"
+          ".local/share/vicinae"
+          ".local/state/vicinae"
+        ];
       };
 
       wayland.windowManager.hyprland.settings = {
