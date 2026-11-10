@@ -140,7 +140,12 @@ in {
       };
     };
 
-    gui.productivity.anki.sync.enable = true;
+    # TODO: re-enable once anki builds again; nixpkgs' anki can't find tomlkit
+    # for hatchling.
+    gui.productivity.anki = {
+      enable = false;
+      sync.enable = true;
+    };
 
     # Email accounts
     email.accounts = {
