@@ -9,10 +9,8 @@
 }: let
   inherit (lib.modules) mkIf;
 
-  # The pet-overlay patch injects this.* calls into getLayoutForDisplay; since
-  # 26.1103.60933 that method returns a plain-function IIFE, so they run with
-  # an undefined receiver and every display change throws in the main process.
-  # The installer reads its patch scripts from `src`, hence patching that.
+  # The installer reads its patch scripts from `src`, so feature fixes have to
+  # be applied there rather than through `patches`.
   codexDesktop = let
     selection = import "${inputs.codex-desktop-linux}/nix/package-selection.nix" {
       cfg = config.programs.codexDesktopLinux // {package = null;};
@@ -24,7 +22,18 @@
       src = pkgs.applyPatches {
         name = "codex-desktop-linux-source";
         inherit (old) src;
-        patches = [./pet-overlay-bind-layout.patch];
+        patches = [
+          # TODO(ilysenko/codex-desktop-linux#1683): pet-overlay calls its
+          # KWin layout helpers with an undefined `this` on 26.1103 bundles,
+          # crashing the main process on every display change; the PR also
+          # adds compositor-driven Mini placement for Lua-config Hyprland.
+          # Unpinned on purpose: a hash mismatch means the PR changed.
+          (pkgs.fetchpatch {
+            name = "pet-overlay-lua-hyprland.patch";
+            url = "https://github.com/ilysenko/codex-desktop-linux/pull/1683.diff";
+            hash = "sha256-q7Z6tTABdeI6x4sZIMfdLBTZLs/SbonRCciIH4udIwY=";
+          })
+        ];
       };
     });
 
