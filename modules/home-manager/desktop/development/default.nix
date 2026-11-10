@@ -21,6 +21,7 @@ in {
 
   config = modules.mkIf (guiCfg.enable && developmentCfg.enable) {
     home.packages = with pkgs; [
+      qtscrcpy
       virt-manager
 
       # Its launcher appends a plain perf to PATH, which would record without
