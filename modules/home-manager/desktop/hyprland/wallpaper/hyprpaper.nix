@@ -26,9 +26,13 @@ in {
             splash = false;
           }
           // lib.optionalAttrs (wallpaperImage != null) {
-            preload = [wallpaperImage];
-            # Empty monitor field applies the wallpaper to every output.
-            wallpaper = [",${wallpaperImage}"];
+            wallpaper = [
+              {
+                monitor = "*";
+                path = wallpaperImage;
+                fit_mode = "cover";
+              }
+            ];
           };
       };
     };

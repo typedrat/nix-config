@@ -192,11 +192,7 @@ in {
         # package already ships with `NotShowIn=KDE;GNOME;COSMIC;`, which
         # systemd-xdg-autostart-generator honors. Result: one instance under
         # Hyprland, zero under Plasma (where the native nm widget replaces it).
-        on =
-          [
-            (execOnce "uwsm app -- waytrogen --restore")
-          ]
-          ++ lib.optional (tvMonitor != null) (execOnce "tv-power on");
+        on = lib.optional (tvMonitor != null) (execOnce "tv-power on");
 
         window_rule =
           [
