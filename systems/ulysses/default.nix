@@ -58,6 +58,15 @@ in {
     };
   in
     (pkgs.linuxPackagesFor kernel).extend zfsLinux73Compat;
+  # The VMM7100 in the USB-C to HDMI adapter feeding the AVR reports CEC
+  # events without ever setting DP_CEC_IRQ, so without this every CEC
+  # transmit times out and no logical address is ever claimed.
+  boot.kernelPatches = [
+    {
+      name = "dp-cec-irq-without-esi1";
+      patch = ./kernel/dp-cec-irq-without-esi1.patch;
+    }
+  ];
   boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.supportedFilesystems = ["ntfs"];
   # Prevent hwinfo/nixos-facter from misdetecting as laptop (battery module loaded = laptop heuristic)
