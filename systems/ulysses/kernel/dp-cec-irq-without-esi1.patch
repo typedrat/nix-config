@@ -1,0 +1,79 @@
+From 62ac185a802d63ff4c0cfafdcaa458b15d7f0843 Mon Sep 17 00:00:00 2001
+From: Alexis Williams <alexis@typedr.at>
+Date: Wed, 11 Nov 2026 14:24:16 -0800
+Subject: [PATCH] drm/display: dp-cec: handle CEC events when DP_CEC_IRQ is not
+ set
+
+The Synaptics VMM7100 (OUI 90-cc-24, device ID "SYNAq", firmware 7.1),
+used in the Club3D CAC-2505 USB-C to HDMI 2.1 adapter, advertises
+CEC-Tunneling-over-AUX and carries CEC traffic: after a transmit it
+latches DP_CEC_TX_MESSAGE_SENT or a NACK in DP_CEC_TUNNELING_IRQ_FLAGS
+and pulses IRQ_HPD. It never sets DP_CEC_IRQ in
+DP_DEVICE_SERVICE_IRQ_VECTOR_ESI1, though, so drm_dp_cec_irq() returns
+before it reads the flags. Every transmit then times out, logical
+address allocation fails, and the CEC adapter is unusable even though
+the bus works.
+
+Tracing on amdgpu shows handle_hpd_rx_irq() and drm_dp_cec_irq()
+running about 40 ms after each transmit, with ESI1 reading 0x00 while
+DP_CEC_TUNNELING_IRQ_FLAGS holds 0x10 (TX_MESSAGE_SENT).
+
+Read DP_CEC_TUNNELING_IRQ_FLAGS on every IRQ_HPD instead of only when
+DP_CEC_IRQ is set, and only acknowledge DP_CEC_IRQ when it was raised.
+On compliant devices the flags read as zero when nothing is pending, in
+which case nothing is written back, so the cost is one AUX read per
+IRQ_HPD on connectors that have a CEC adapter.
+
+Assisted-by: LLM
+---
+ drivers/gpu/drm/display/drm_dp_cec.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/display/drm_dp_cec.c b/drivers/gpu/drm/display/drm_dp_cec.c
+index 436bfe9..68dc6b0 100644
+--- a/drivers/gpu/drm/display/drm_dp_cec.c
++++ b/drivers/gpu/drm/display/drm_dp_cec.c
+@@ -215,7 +215,8 @@ static void drm_dp_cec_handle_irq(struct drm_dp_aux *aux)
+ 	struct cec_adapter *adap = aux->cec.adap;
+ 	u8 flags;
+ 
+-	if (drm_dp_dpcd_read_byte(aux, DP_CEC_TUNNELING_IRQ_FLAGS, &flags) < 0)
++	if (drm_dp_dpcd_read_byte(aux, DP_CEC_TUNNELING_IRQ_FLAGS, &flags) < 0 ||
++	    !flags)
+ 		return;
+ 
+ 	if (flags & DP_CEC_RX_MESSAGE_INFO_VALID)
+@@ -238,7 +239,7 @@ static void drm_dp_cec_handle_irq(struct drm_dp_aux *aux)
+  * @aux: DisplayPort AUX channel
+  *
+  * Should be called when handling an IRQ_HPD request. If CEC-tunneling-over-AUX
+- * is present, then it will check for a CEC_IRQ and handle it accordingly.
++ * is present, then it will check for pending CEC events and handle them.
+  */
+ void drm_dp_cec_irq(struct drm_dp_aux *aux)
+ {
+@@ -255,11 +256,19 @@ void drm_dp_cec_irq(struct drm_dp_aux *aux)
+ 
+ 	ret = drm_dp_dpcd_read_byte(aux, DP_DEVICE_SERVICE_IRQ_VECTOR_ESI1,
+ 				    &cec_irq);
+-	if (ret < 0 || !(cec_irq & DP_CEC_IRQ))
++	if (ret < 0)
+ 		goto unlock;
+ 
++	/*
++	 * Some branch devices, such as the Synaptics VMM7100, latch CEC events
++	 * in DP_CEC_TUNNELING_IRQ_FLAGS and pulse IRQ_HPD but never set
++	 * DP_CEC_IRQ. Check the flags regardless; they read as zero when no
++	 * CEC event is pending.
++	 */
+ 	drm_dp_cec_handle_irq(aux);
+-	drm_dp_dpcd_write_byte(aux, DP_DEVICE_SERVICE_IRQ_VECTOR_ESI1, DP_CEC_IRQ);
++	if (cec_irq & DP_CEC_IRQ)
++		drm_dp_dpcd_write_byte(aux, DP_DEVICE_SERVICE_IRQ_VECTOR_ESI1,
++				       DP_CEC_IRQ);
+ unlock:
+ 	mutex_unlock(&aux->cec.lock);
+ }
+-- 
+2.56.0
+

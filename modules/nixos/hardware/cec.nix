@@ -32,11 +32,13 @@ in {
     # rather than once at boot.
     #
     # uaccess only takes effect when set before 73-seat-late.rules, which is
-    # why these can't live in extraRules (99-local.rules).
+    # why these can't live in extraRules (99-local.rules). The systemd tag
+    # has to be on every event: a change event without it makes systemd
+    # treat the device as gone and stop the service bound to it.
     services.udev.packages = [
       (pkgs.writeTextDir "lib/udev/rules.d/70-cec.rules" ''
-        SUBSYSTEM=="cec", KERNEL=="cec[0-9]*", TAG+="uaccess"
-        ACTION=="add", SUBSYSTEM=="cec", KERNEL=="cec[0-9]*", TAG+="systemd", ENV{SYSTEMD_WANTS}+="cec-configure@%k.service"
+        SUBSYSTEM=="cec", KERNEL=="cec[0-9]*", TAG+="uaccess", TAG+="systemd"
+        ACTION=="add", SUBSYSTEM=="cec", KERNEL=="cec[0-9]*", ENV{SYSTEMD_WANTS}+="cec-configure@%k.service"
       '')
     ];
 
