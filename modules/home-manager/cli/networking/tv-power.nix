@@ -11,10 +11,11 @@
   cliCfg = userCfg.cli or {};
 
   # CEC acts within a second where SmartCast takes around thirty, and it can
-  # also switch the TV's input, so hosts with CEC never touch the network.
+  # also switch the TV's input, so it handles `on` wherever it exists. The
+  # Vizio ignores <Standby> from source devices, whether sent to it or
+  # broadcast, so `off` goes through SmartCast whenever credentials exist.
   hasCec = osConfig.rat.hardware.cec.enable or false;
   hasSecrets = builtins.pathExists (config.rat.userSecretsDir + "/vizio.yaml");
-  useVizio = !hasCec && hasSecrets;
 
   checkUsage = ''
     if [ "$#" -ne 1 ] || { [ "$1" != "on" ] && [ "$1" != "off" ]; }; then
@@ -52,50 +53,55 @@
           send --active-source "phys-addr=$addr"
           ;;
         off)
-          send --to 0 --standby
+          ${
+        if hasSecrets
+        then "exec ${lib.getExe (vizioPower "tv-power-vizio")} off"
+        else "send --to 0 --standby"
+      }
           ;;
       esac
     '';
   };
 
-  vizioPower = pkgs.writeShellApplication {
-    name = "tv-power";
-    # nixpkgs keeps the CLI's dependencies behind the `cli` extra, so the
-    # bare package's `vizaio` entry point refuses to start.
-    runtimeInputs = [
-      (pkgs.python3.withPackages (ps: [ps.vizaio] ++ ps.vizaio.optional-dependencies.cli))
-    ];
-    text = ''
-      ${checkUsage}
+  vizioPower = name:
+    pkgs.writeShellApplication {
+      inherit name;
+      # nixpkgs keeps the CLI's dependencies behind the `cli` extra, so the
+      # bare package's `vizaio` entry point refuses to start.
+      runtimeInputs = [
+        (pkgs.python3.withPackages (ps: [ps.vizaio] ++ ps.vizaio.optional-dependencies.cli))
+      ];
+      text = ''
+        ${checkUsage}
 
-      host=$(cat ${config.sops.secrets."vizio/ip".path})
-      # vizaio never assumes a port, so a bare IP would be dialled on 443
-      # and time out. SmartCast TVs from 2016 on listen on 7345.
-      case "$host" in
-        *:*) ;;
-        *) host="$host:7345" ;;
-      esac
+        host=$(cat ${config.sops.secrets."vizio/ip".path})
+        # vizaio never assumes a port, so a bare IP would be dialled on 443
+        # and time out. SmartCast TVs from 2016 on listen on 7345.
+        case "$host" in
+          *:*) ;;
+          *) host="$host:7345" ;;
+        esac
 
-      # The auth token goes through a config file rather than --auth so it
-      # never appears in this process's argv.
-      tmp=$(mktemp -d)
-      trap 'rm -rf -- "$tmp"' EXIT
-      export VIZAIO_CONFIG="$tmp/config.toml"
-      cat >"$VIZAIO_CONFIG" <<EOF
-      default_device = "tv"
+        # The auth token goes through a config file rather than --auth so it
+        # never appears in this process's argv.
+        tmp=$(mktemp -d)
+        trap 'rm -rf -- "$tmp"' EXIT
+        export VIZAIO_CONFIG="$tmp/config.toml"
+        cat >"$VIZAIO_CONFIG" <<EOF
+        default_device = "tv"
 
-      [devices.tv]
-      host = "$host"
-      device_type = "tv"
-      auth_token = "$(cat ${config.sops.secrets."vizio/auth".path})"
-      EOF
+        [devices.tv]
+        host = "$host"
+        device_type = "tv"
+        auth_token = "$(cat ${config.sops.secrets."vizio/auth".path})"
+        EOF
 
-      vizaio power "$1"
-    '';
-  };
+        vizaio power "$1"
+      '';
+    };
 in {
   config = modules.mkIf (cliCfg.enable && cliCfg.networking.enable && (hasCec || hasSecrets)) {
-    rat.userSecrets.vizio = modules.mkIf useVizio {
+    rat.userSecrets.vizio = modules.mkIf hasSecrets {
       auth = {};
       ip = {};
     };
@@ -104,7 +110,7 @@ in {
       (
         if hasCec
         then cecPower
-        else vizioPower
+        else vizioPower "tv-power"
       )
     ];
   };
