@@ -31,7 +31,7 @@
           (pkgs.fetchpatch {
             name = "pet-overlay-lua-hyprland.patch";
             url = "https://github.com/ilysenko/codex-desktop-linux/pull/1683.diff";
-            hash = "sha256-q7Z6tTABdeI6x4sZIMfdLBTZLs/SbonRCciIH4udIwY=";
+            hash = "sha256-nEM0cm9BP4/nafyKJD4SkKeoAqq104lzNi1V3T7YOlg=";
           })
         ];
       };
