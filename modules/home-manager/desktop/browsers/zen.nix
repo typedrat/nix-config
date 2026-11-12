@@ -57,6 +57,22 @@
           "font.name.sans-serif.ja" = "M PLUS 1";
           "font.name.serif.ja" = "IPAexMincho";
           "font.name.monospace.ja" = "M Plus 1 Code";
+          "font.name.sans-serif.zh-CN" = "Noto Sans CJK SC";
+          "font.name.serif.zh-CN" = "Noto Serif CJK SC";
+          "font.name.monospace.zh-CN" = "Noto Sans Mono CJK SC";
+          "font.name.sans-serif.zh-TW" = "Noto Sans CJK TC";
+          "font.name.serif.zh-TW" = "Noto Serif CJK TC";
+          "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";
+          "font.name.sans-serif.zh-HK" = "Noto Sans CJK HK";
+          "font.name.serif.zh-HK" = "Noto Serif CJK HK";
+          "font.name.monospace.zh-HK" = "Noto Sans Mono CJK HK";
+          "font.name.sans-serif.ko" = "Noto Sans CJK KR";
+          "font.name.serif.ko" = "Noto Serif CJK KR";
+          "font.name.monospace.ko" = "Noto Sans Mono CJK KR";
+          # Firefox keeps only the first few fonts of a fontconfig generic
+          # (default 3), which the leading SF families in sans-serif use up,
+          # so fallback never reaches the CJK fonts later in that list.
+          "gfx.font_rendering.fontconfig.max_generic_substitutions" = 127;
 
           "app.shield.optoutstudies" = false;
           "browser.discovery.enabled" = false;

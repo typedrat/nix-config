@@ -58,6 +58,8 @@ in {
           pkgs.opensiddur-hebrew-fonts
           ipaexfont
           mplus-outline-fonts.githubRelease
+          noto-fonts-cjk-sans
+          noto-fonts-cjk-serif
         ];
 
         fontconfig = {
@@ -93,6 +95,24 @@ in {
           };
 
           cache32Bit = true;
+
+          # opensiddur-hebrew-fonts ships these as test fonts. Both claim every
+          # codepoint, so a fallback search that reaches them draws blanks or
+          # placeholder boxes instead of trying a font that has the glyph.
+          confPackages = [
+            (pkgs.writeTextDir "etc/fonts/conf.d/60-reject-catch-all-fonts.conf" ''
+              <?xml version="1.0"?>
+              <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+              <fontconfig>
+                <selectfont>
+                  <rejectfont>
+                    <pattern><patelt name="family"><string>Adobe Blank</string></patelt></pattern>
+                    <pattern><patelt name="family"><string>LastResort</string></patelt></pattern>
+                  </rejectfont>
+                </selectfont>
+              </fontconfig>
+            '')
+          ];
         };
       };
     }
