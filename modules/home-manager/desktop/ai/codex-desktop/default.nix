@@ -9,8 +9,6 @@
 }: let
   inherit (lib.modules) mkIf;
 
-  # The installer reads its patch scripts from `src`, so feature fixes have to
-  # be applied there rather than through `patches`.
   codexDesktop = let
     selection = import "${inputs.codex-desktop-linux}/nix/package-selection.nix" {
       cfg = config.programs.codexDesktopLinux // {package = null;};
@@ -18,24 +16,7 @@
       flakePackages = inputs'.codex-desktop-linux.packages;
     };
   in
-    selection.package.overrideAttrs (old: {
-      src = pkgs.applyPatches {
-        name = "codex-desktop-linux-source";
-        inherit (old) src;
-        patches = [
-          # TODO(ilysenko/codex-desktop-linux#1683): pet-overlay calls its
-          # KWin layout helpers with an undefined `this` on 26.1103 bundles,
-          # crashing the main process on every display change; the PR also
-          # adds compositor-driven Mini placement for Lua-config Hyprland.
-          # Unpinned on purpose: a hash mismatch means the PR changed.
-          (pkgs.fetchpatch {
-            name = "pet-overlay-lua-hyprland.patch";
-            url = "https://github.com/ilysenko/codex-desktop-linux/pull/1683.diff";
-            hash = "sha256-nEM0cm9BP4/nafyKJD4SkKeoAqq104lzNi1V3T7YOlg=";
-          })
-        ];
-      };
-    });
+    selection.package;
 
   # The CLI inside the configured Desktop build. The remote-control service
   # runs this same binary, so Desktop and the service share a protocol version.

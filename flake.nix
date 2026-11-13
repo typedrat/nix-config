@@ -39,20 +39,6 @@
       flake = false;
     };
 
-    # xmage 1.4.60-dev_2026-06-28_13-19 -> 1.4.62-dev_2026-10-03_20-47, fetched from
-    # GitHub releases with an updateScript (NixOS/nixpkgs#580326)
-    nixpkgs-patch-580326 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/580326.diff";
-      flake = false;
-    };
-
-    # claude-code and its VS Code extension 2.1.318 -> 2.1.319, the release
-    # tweakcc-fixed 2.9.26 targets (NixOS/nixpkgs#584504)
-    nixpkgs-patch-584504 = {
-      url = "https://github.com/NixOS/nixpkgs/pull/584504.diff";
-      flake = false;
-    };
-
     #endregion
 
     #region home-manager patches
