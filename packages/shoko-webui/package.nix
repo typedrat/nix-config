@@ -11,13 +11,13 @@
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "shoko-webui";
   # The dev line, which is what the server's dev channel pairs with.
-  version = "2.6.0-dev.160";
+  version = "2.6.0-dev.161";
 
   src = fetchFromGitHub {
     owner = "ShokoAnime";
     repo = "Shoko-WebUI";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-hkGtPBaUXA92eszO/BuqWUMKk8pKOv7ZjES7DOHn7YM=";
+    hash = "sha256-Sa0KyXtBhaUBZikuneQM7MFER8I6oa+d/4DSu2VDaP0=";
   };
 
   postPatch = ''
