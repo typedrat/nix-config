@@ -5,7 +5,13 @@
 }: {
   rat.services.ha-mcp.enable = true;
 
-  rat.services.matter-server.enable = true;
+  rat.services.matter-server = {
+    enable = true;
+    bluetoothAdapter = 0;
+  };
+
+  # BlueZ for the Matter server's BLE commissioning.
+  rat.bluetooth.enable = true;
 
   rat.services.zwave-js = {
     enable = true;

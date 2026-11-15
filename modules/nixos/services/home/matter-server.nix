@@ -22,6 +22,16 @@ in {
       default = "info";
       description = "Verbosity of logs from the Matter server.";
     };
+
+    bluetoothAdapter = options.mkOption {
+      type = types.nullOr types.ints.unsigned;
+      default = null;
+      example = 0;
+      description = ''
+        Index of the BlueZ adapter (`hciN`) to commission devices over BLE
+        with, letting the server pair new devices without a phone.
+      '';
+    };
   };
 
   config = modules.mkMerge [
@@ -35,6 +45,9 @@ in {
         enable = true;
         inherit (config.links.matter-server) port;
         inherit (cfg) logLevel;
+        extraArgs = modules.mkIf (cfg.bluetoothAdapter != null) {
+          bluetooth-adapter = cfg.bluetoothAdapter;
+        };
 
         # A malformed PAA root certificate in the production DCL (NXP's)
         # otherwise raises ValueError during the startup fetch, killing the
