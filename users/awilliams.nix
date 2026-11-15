@@ -67,6 +67,7 @@ in {
           "cloudflare@cloudflare" = true;
           "cc-plugin-you-should-know@builtin" = true;
           "posthog@anthropic-plugin-directory" = true;
+          "modern-web-guidance@googlechrome" = true;
           "frontend-design@claude-plugins-official" = false;
           "context7@claude-plugins-official" = false;
           "code-review@claude-plugins-official" = false;
@@ -84,6 +85,7 @@ in {
             superpowers-marketplace = "obra/superpowers-marketplace";
             comfyui-mcp = "artokun/comfyui-mcp";
             cloudflare = "cloudflare/skills";
+            googlechrome = "GoogleChrome/modern-web-guidance";
             reva = "cyberkaida/reverse-engineering-assistant";
           };
       };
