@@ -1,6 +1,22 @@
-{inputs, ...}: let
+{
+  config,
+  inputs,
+  lib,
+  ...
+}: let
   interface = "enp101s0np0";
   numOfVFs = 1;
+
+  # The input applies its sockaddr_unsized kernel_bind() patch to every 6.18
+  # from .57 on, but 6.18.61 reverted that backport and the patch now breaks
+  # the build. The assert trips once upstream narrows its range.
+  mlnx-nvme = config.boot.kernelPackages.mlnx-nvme.overrideAttrs (prev: let
+    lines = lib.splitString "\n" prev.postPatch;
+    isBindPatch = lib.hasInfix "kernel-bind-sockaddr-unsized.patch";
+  in {
+    postPatch = assert lib.any isBindPatch lines;
+      lib.concatStringsSep "\n" (lib.filter (l: !isBindPatch l) lines);
+  });
 in {
   imports = [
     inputs.mlnx-ofed-nixos.nixosModules.default
@@ -12,7 +28,10 @@ in {
 
   hardware.mlnx-ofed = {
     enable = true;
-    nvme.enable = true;
+    nvme = {
+      enable = true;
+      package = mlnx-nvme;
+    };
     nfsrdma.enable = true;
     kernel-mft.enable = true;
   };
