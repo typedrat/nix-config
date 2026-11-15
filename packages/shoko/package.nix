@@ -39,9 +39,9 @@ buildDotnetModule (finalAttrs: {
     # the package version, and in the default bin/ they overwrite the ones
     # the server was compiled against; give them a bin of their own. The
     # call also inherits the install hook's NoBuild=true, which is an error
-    # when building.
+    # when building, and BuildProjectReferences=false.
     substituteInPlace BundledPlugins.targets \
-      --replace-fail 'RemoveProperties="RuntimeIdentifier;' 'RemoveProperties="NoBuild;RuntimeIdentifier;' \
+      --replace-fail 'RemoveProperties="RuntimeIdentifier;' 'RemoveProperties="NoBuild;BuildProjectReferences;RuntimeIdentifier;' \
       --replace-fail 'Platform=$(Platform)"' 'Platform=$(Platform);BaseOutputPath=bin-bundled/"'
   '';
 
@@ -51,6 +51,10 @@ buildDotnetModule (finalAttrs: {
   nugetDeps = ./deps.json;
   projectFile = "Shoko.CLI/Shoko.CLI.csproj";
   dotnetBuildFlags = "/p:InformationalVersion=\"channel=dev,tag=v${finalAttrs.version}\"";
+  # The server's third-party-notices targets hook AssignTargetPaths and resolve
+  # project references, which the no-build publish would otherwise answer by
+  # building them.
+  dotnetInstallFlags = ["-p:BuildProjectReferences=false"];
 
   executables = ["Shoko.CLI"];
   makeWrapperArgs = [
