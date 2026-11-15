@@ -17,14 +17,14 @@
 in
   pythonPkgs.buildPythonApplication rec {
     pname = "printguard";
-    version = "2.6.6";
+    version = "2.6.7";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "oliverbravery";
       repo = "PrintGuard";
       tag = "v${version}";
-      hash = "sha256-BvbX1cRbjbCXlb5hsdx8fBvl+UcAtc1XV+r1W2PJ9QY=";
+      hash = "sha256-2xM8cnxsCBMP8/Nfrq8Tyg+u0wyilfb1CIHgQZkTbLE=";
     };
 
     frontend = buildNpmPackage {
