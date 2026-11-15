@@ -1,7 +1,7 @@
 {
-  "ccVersion": "2.1.207",
+  "ccVersion": "2.1.325",
   "ccInstallationPath": null,
-  "lastModified": "2026-06-28T00:36:30.337Z",
+  "lastModified": "2026-11-15T01:43:48.174Z",
   "changesApplied": false,
   "settings": {
     "themes": [
@@ -691,11 +691,13 @@
       "fitBoxToContent": false
     },
     "inputBox": {
-      "removeBorder": false
+      "removeBorder": false,
+      "chevronIdleThemeColor": null,
+      "cursorColor": null
     },
     "misc": {
       "showTweakccVersion": true,
-      "showPatchesApplied": false,
+      "showPatchesApplied": true,
       "expandThinkingBlocks": true,
       "enableConversationTitle": true,
       "hideStartupBanner": false,
@@ -727,12 +729,36 @@
       "enableModelCustomizations": true,
       "enableVoiceMode": false,
       "enableVoiceConciseOutput": true,
-      "enableChannelsMode": false,
+      "enableChannelsMode": true,
       "maxEffortDefault": false,
       "suppressDeferredTools": false,
       "claudemdContextOncePerConversation": true,
       "swapRipgrepForFff": false,
-      "autonomousOperationAllModels": false
+      "autonomousOperationAllModels": false,
+      "disableAgentSummaries": false,
+      "suppressRateLimitWarning": false,
+      "sessionColor": false,
+      "modelAtEffort": true,
+      "unlockResponsiveMode": false,
+      "fffLearnFromBashReads": true,
+      "attachedBackgroundInteractive": false,
+      "enableProposeGoal": false,
+      "compactionHighEffort": true,
+      "refusalFallbackModel": false,
+      "refusalFallbackRoutes": {},
+      "refusalFallbackMaxReturns": 1,
+      "outputStyleTurnReminder": false,
+      "autoModeClassifierModel": "default",
+      "keybindingCustomization": true,
+      "tmuxGraphicsPassthrough": false,
+      "disableCtrlZSuspend": false,
+      "skipSkillShellValidation": false,
+      "shimmer": {
+        "enabled": true,
+        "stepMs": null,
+        "width": null
+      },
+      "webFetchUserAgent": null
     },
     "toolsets": [],
     "defaultToolset": null,
@@ -754,6 +780,11 @@
       "copilot-instructions.md"
     ],
     "complexityRouter": {
+      "provider": "haiku",
+      "jevModel": "jev-1.13.0",
+      "jevTimeoutMs": 2000,
+      "contextBudgetBytes": 24000,
+      "summaryMaxChars": 6000,
       "enabled": false,
       "pinPerTask": true,
       "messageCap": 100000,
@@ -786,6 +817,13 @@
           "effort": "max"
         }
       ]
+    },
+    "acceptEditsToolset": null,
+    "fablePlan": {
+      "enabled": false,
+      "planModel": "fable",
+      "execModel": "opus",
+      "offerClearContextOnPlanAccept": true
     }
   }
 }
