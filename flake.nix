@@ -39,6 +39,24 @@
       flake = false;
     };
 
+    # claude-code: 2.1.321 -> 2.1.322 (NixOS/nixpkgs#586581)
+    nixpkgs-patch-586581 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/586581.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.322 -> 2.1.323 (NixOS/nixpkgs#587540)
+    nixpkgs-patch-587540 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/587540.diff";
+      flake = false;
+    };
+
+    # claude-code: 2.1.323 -> 2.1.325 (NixOS/nixpkgs#588066)
+    nixpkgs-patch-588066 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/588066.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
