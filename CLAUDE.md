@@ -24,6 +24,7 @@ This is a NixOS configuration flake using `flake-parts` with a custom `nixos-hos
   - `flake/rebuild.nix` - `nix run .#switch` and `.#boot` apps
   - `flake/systems.nix` - NixOS host configurations and home-manager
   - `flake/terranix.nix` - Terraform/terranix configuration
+  - `flake/tweakcc.nix` - `nix run .#tweakcc`: the tweakcc-fixed configurator, editing `packages/claude-code-patched/config.json` in place
 - **Module System**: Organized into multiple categories:
   - `modules/nixos/` - NixOS system modules (boot, games, gui, hardware, security, services, theming, virtualisation)
   - `modules/home-manager/` - Home Manager user modules

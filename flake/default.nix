@@ -10,5 +10,6 @@
     ./rebuild.nix
     ./systems.nix
     ./terranix.nix
+    ./tweakcc.nix
   ];
 }
