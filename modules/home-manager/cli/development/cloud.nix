@@ -53,6 +53,26 @@
     fi
     EOF
   '';
+
+  zenCfg = config.programs.zen-browser or {};
+  grantedConfig = (pkgs.formats.toml {}).generate "granted-config" (
+    {
+      DisableShellConfigWizard = true;
+      Keyring = {
+        Backend = "secret-service";
+        LibSecretCollectionName = "login";
+      };
+    }
+    // (
+      if zenCfg.enable or false
+      then {
+        DefaultBrowser = "ZEN";
+        CustomBrowserPath = lib.getExe zenCfg.finalPackage;
+      }
+      else {DefaultBrowser = "STDOUT";}
+    )
+  );
+  grantedDir = "${config.xdg.configHome}/granted";
 in {
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
     home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
@@ -104,6 +124,19 @@ in {
     };
 
     programs.granted.enable = true;
+
+    # Granted opens its config O_RDWR even just to read it, so a store symlink
+    # breaks every command; install a writable copy on each activation instead.
+    # Anything set through `granted browser set` and friends lasts until the
+    # next switch.
+    home.activation.grantedConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      run install -D -m 600 ${grantedConfig} ${lib.escapeShellArg "${grantedDir}/config"}
+    '';
+
+    # Granted uses ~/.granted over the XDG directory whenever it exists, and
+    # any process started without XDG_CONFIG_HOME creates it. Pointing it at
+    # the XDG directory keeps both lookups on the same, persisted files.
+    home.file.".granted".source = config.lib.file.mkOutOfStoreSymlink grantedDir;
 
     programs.zsh.plugins = [
       {
