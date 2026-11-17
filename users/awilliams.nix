@@ -50,6 +50,8 @@ in {
         agentPushNotifEnabled = true;
         inputNeededNotifEnabled = true;
         preferredNotifChannel = "ghostty";
+        # Only read from the user's settings.json, not managed settings.
+        env.CLAUDE_CODE_EXPERIMENTAL_CODE_MODE = "1";
         statusLine = {
           type = "command";
           command = lib.getExe (pkgs.writeShellApplication {
