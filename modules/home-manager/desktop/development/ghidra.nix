@@ -26,7 +26,7 @@
 
   withExtensions =
     pkgs.callPackage
-    (pkgs.path + "/pkgs/tools/security/ghidra/with-extensions.nix")
+    (pkgs.path + "/pkgs/by-name/gh/ghidra/with-extensions.nix")
     {inherit ghidra;};
 
   ghidraWithExtensions = withExtensions (_: [
