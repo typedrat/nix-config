@@ -11,13 +11,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "configarr";
-  version = "1.39.1";
+  version = "1.39.2";
 
   src = fetchFromGitHub {
     owner = "raydak-labs";
     repo = "configarr";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-aGuGUQMv2waFQe0x+Z+wCoi6qGsaNL6ELT0DVHI28RQ=";
+    hash = "sha256-CFYwVgk50IAH2eJAKpAi4hss1NhlPASkaQnBM7NhNq0=";
   };
 
   nativeBuildInputs = [
@@ -31,7 +31,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     pnpm = pnpm_10;
     fetcherVersion = 3;
-    hash = "sha256-ZV6qMCzK5GyysnZekyWj89RpsYETlMtyfiyqLbqmRh0=";
+    hash = "sha256-hx2FLggy/dlsqm2Lzpp+9UkZ4oV0WGeDb6DYvLau9cU=";
   };
 
   buildPhase = ''
