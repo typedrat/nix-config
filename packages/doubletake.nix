@@ -26,13 +26,13 @@
 in
   buildGoModule (finalAttrs: {
     pname = "doubletake";
-    version = "0.5.0";
+    version = "0.6.0";
 
     src = fetchFromGitHub {
       owner = "omarroth";
       repo = "doubletake";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-rsxZ/UL4Pv32+timlohcue0GZcZOrAIrUkR1FX6CyTI=";
+      hash = "sha256-GPR+6r1yMNvLOaGPBm6msz5NTUGyxn6JqhC6YsAfboE=";
     };
 
     vendorHash = "sha256-cgvY9MVGe8I3g3Ni2sGucTY6YCyPJ2YnoxxUaYfl1E4=";
