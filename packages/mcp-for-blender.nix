@@ -9,15 +9,15 @@
 in
   pythonPkgs.buildPythonApplication {
     pname = "mcp-for-blender";
-    version = "0-unstable-2026-11-13";
+    version = "0-unstable-2026-11-15";
     pyproject = true;
 
     # Upstream publishes no tags.
     src = fetchFromGitHub {
       owner = "ahujasid";
       repo = "blender-mcp";
-      rev = "8f40787fbde8e6d8fe51c5a3553e5635fff40d2b";
-      hash = "sha256-doryItAqd8uGY4oG1DsQ5yxQp7+G0hY776nqYiB0iiU=";
+      rev = "b6a2ce30c14636a562b5549684d9db6fc01f29ab";
+      hash = "sha256-dLzJ7l6xTDUv4DRdr6yWvpn+ucUDQidQ1Pa4s+wbDuw=";
     };
 
     # telemetry.py imports blender_mcp.config, which upstream gitignores because
