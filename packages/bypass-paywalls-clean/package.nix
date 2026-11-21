@@ -5,10 +5,10 @@
 }:
 (inputs.firefox-addons.lib.${stdenv.hostPlatform.system}.buildFirefoxXpiAddon {
   pname = "bypass-paywalls-clean";
-  version = "4.4.9.6";
+  version = "4.4.9.8";
   addonId = "magnolia@12.34";
-  url = "https://gitflic.ru/project/magnolia1234/bpc_uploads/blob/raw?file=bypass_paywalls_clean-4.4.9.6.xpi";
-  sha256 = "sha256-DQucYn61CFwWomP2FBXFcGQoznuiWVZtDVDErH4Jbaw=";
+  url = "https://gitflic.ru/project/magnolia1234/bpc_uploads/blob/raw?file=bypass_paywalls_clean-4.4.9.8.xpi";
+  sha256 = "sha256-i5ZoPZlHdMd/d7zAttJkRiOetb5zeV/dUFudFDvbCYE=";
 
   meta = {
     homepage = "https://twitter.com/Magnolia1234B";
