@@ -192,7 +192,16 @@ in {
         # package already ships with `NotShowIn=KDE;GNOME;COSMIC;`, which
         # systemd-xdg-autostart-generator honors. Result: one instance under
         # Hyprland, zero under Plasma (where the native nm widget replaces it).
-        on = lib.optional (tvMonitor != null) (execOnce "tv-power on");
+        #
+        # Hyprland skips exporting WAYLAND_DISPLAY/HYPRLAND_INSTANCE_SIGNATURE
+        # to the activation environment when it runs as a systemd unit
+        # (MANAGERPID set), which is how uwsm runs it. uwsm waits for those
+        # variables and kills the compositor at its timeout, leaving a grey
+        # screen, unless the session calls `uwsm finalize`. Outside uwsm the
+        # command just fails.
+        on =
+          [(execOnce "uwsm finalize")]
+          ++ lib.optional (tvMonitor != null) (execOnce "tv-power on");
 
         window_rule =
           [
