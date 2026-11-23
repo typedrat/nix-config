@@ -1,7 +1,7 @@
 {
   "ccVersion": "2.1.330",
   "ccInstallationPath": null,
-  "lastModified": "2026-11-22T02:34:42.433Z",
+  "lastModified": "2026-11-23T20:36:32.508Z",
   "changesApplied": false,
   "settings": {
     "themes": [
@@ -697,7 +697,7 @@
     },
     "misc": {
       "showTweakccVersion": true,
-      "showPatchesApplied": true,
+      "showPatchesApplied": false,
       "expandThinkingBlocks": true,
       "enableConversationTitle": true,
       "hideStartupBanner": false,
@@ -758,7 +758,7 @@
         "stepMs": null,
         "width": null
       },
-      "webFetchUserAgent": null
+      "webFetchUserAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) Gecko/20100101 Firefox/160.0"
     },
     "toolsets": [],
     "defaultToolset": null,
