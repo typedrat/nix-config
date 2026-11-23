@@ -354,6 +354,13 @@ in {
       systemd.tmpfiles.settings."10-romm".${libraryDir} = lib.mkForce {};
     })
 
+    # RomM reads a local LaunchBox tree (Data/Platforms/*.xml, Images, Manuals)
+    # from ${dataDir}/launchbox. It is kept in the library, beside the ROMs it
+    # describes; a missing target just leaves the local source disabled.
+    (modules.mkIf cfg.enable {
+      systemd.tmpfiles.rules = ["L+ ${cfg.dataDir}/launchbox - - - - ${libraryDir}/launchbox"];
+    })
+
     # The module's romm-worker only listens on high/default/low. RomM sends
     # library scans to a "scans" queue and streaming teardowns to "streaming",
     # each meant for a worker of its own, and refuses to queue a scan while no
