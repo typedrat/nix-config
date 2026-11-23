@@ -22,8 +22,8 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "garrytan";
     repo = "gstack";
-    rev = "d8abe59096b6205b84fa80162083c702f6ff4703";
-    hash = "sha256-eCZOV8fUAwvJlSk9DaINTh5M9SfIVUythHAn/EBgsaI=";
+    rev = "ccd80de8ebdd7ca3384cc54bc138b53cd311a732";
+    hash = "sha256-GuNGncnAWM6wJQIRW9ITmWm2l++YEu+4megeKN3Fpko=";
   };
 
   # bun only installs the optional native packages (sharp, onnxruntime, ngrok)

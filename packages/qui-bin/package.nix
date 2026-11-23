@@ -11,24 +11,24 @@
   gnugrep,
   coreutils,
 }: let
-  version = "1.36.0";
+  version = "1.36.1";
 
   sources = {
     x86_64-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_x86_64.tar.gz";
-      hash = "sha256-cPzeJCnlR0XLbpV6pGxnufehVsgY1cSgVAAY0h1Tbqc=";
+      hash = "sha256-pWJ7SM9Il43xqPJNJ0Sp4nB2d6hWXs8J9JGmsZWr9xE=";
     };
     aarch64-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_arm64.tar.gz";
-      hash = "sha256-Y0GVM4HD1xwq/KByjLm3TlMY0zkoHd/IzHwP50Hu6oY=";
+      hash = "sha256-m52H1+04/xoDsaHwJlM/+khcxmLYo5pj/AxQRy4As+w=";
     };
     armv7l-linux = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_linux_arm.tar.gz";
-      hash = "sha256-U9q2zO/X/iUm6o3c3jatTm7rUYA4CH+J52KZIYd6lL0=";
+      hash = "sha256-qtizYtZ+otFkYym1mrmaqfwqtmmx2pD3flTgsslgyBw=";
     };
     aarch64-darwin = fetchurl {
       url = "https://github.com/autobrr/qui/releases/download/v${version}/qui_${version}_darwin_arm64.tar.gz";
-      hash = "sha256-G8PyJ2IV9+VMtnJdHfAAoHUQNy1KiAKQeofL1N8n8/o=";
+      hash = "sha256-8wTFixumBMJbT7yeEEh/7bcSgpVcUXGh0w9eXoim018=";
     };
   };
 in
