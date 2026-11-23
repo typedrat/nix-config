@@ -149,6 +149,7 @@
         xmage.enable = options.mkEnableOption "XMage" // {default = true;};
         sgdboop.enable = options.mkEnableOption "SGDBoop" // {default = true;};
         eden.enable = options.mkEnableOption "Eden Switch emulator";
+        lichii.enable = options.mkEnableOption "Lichii Switch and Switch 2 emulator";
         classicMac.enable = options.mkEnableOption "BasiliskII and SheepShaver classic Mac OS emulators";
         dosboxX.enable = options.mkEnableOption "DOSBox-X DOS and PC-98 emulator";
         classicPC.enable = options.mkEnableOption "86Box IBM PC emulator";

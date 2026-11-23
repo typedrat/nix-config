@@ -24,6 +24,7 @@ in {
     ./classic-pc.nix
     ./dosbox-x.nix
     ./eden.nix
+    ./lichii.nix
     ./retroarch.nix
     ./sgdboop.nix
     ./skyscraper.nix

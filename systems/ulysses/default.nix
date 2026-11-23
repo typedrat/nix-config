@@ -439,6 +439,7 @@ in {
       gui = {
         enable = true;
         gaming.eden.enable = true;
+        gaming.lichii.enable = true;
         gaming.classicMac.enable = true;
         gaming.classicPC.enable = true;
         development.wireshark.enable = true;
