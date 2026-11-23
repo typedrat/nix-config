@@ -700,6 +700,22 @@
         "url": "https://flakehub.com/f/nix-community/disko/%2A"
       }
     },
+    "exa-mcp-server": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795220080,
+        "narHash": "sha256-G/CXdPW2YNXq3ovc9oRH6OpMUqpjCIwGDMIX3OR3Io8=",
+        "owner": "exa-labs",
+        "repo": "exa-mcp-server",
+        "rev": "81d687e7669b3769007ad46b4fd6839f7c2b6414",
+        "type": "github"
+      },
+      "original": {
+        "owner": "exa-labs",
+        "repo": "exa-mcp-server",
+        "type": "github"
+      }
+    },
     "fenix": {
       "inputs": {
         "nixpkgs": [
@@ -3425,6 +3441,7 @@
         "denon-pipewire-audio-control": "denon-pipewire-audio-control",
         "determinate": "determinate",
         "disko": "disko",
+        "exa-mcp-server": "exa-mcp-server",
         "fenix": "fenix",
         "files": "files",
         "firefox-addons": "firefox-addons",

@@ -264,11 +264,12 @@ one session, so make lasting changes in the user's Nix config. Permission
 approvals are unaffected; Claude Code saves them to each project's
 `.claude/settings.local.json`.
 
-gstack is built by `packages/gstack` (its own `./setup` runs inside the build)
-and linked into each AI user's Claude Code, Codex and OpenCode skill
-directories by `modules/home-manager/cli/gstack.nix`. Its hooks come from the
-same build as the `20-gstack` drop-in. It updates through `update-packages`;
-gstack's in-session updater is turned off.
+gstack is off by default (`rat.ai.gstack.enable`; it conflicted with Claude
+Code's native tools). When enabled, `packages/gstack` (its own `./setup` runs
+inside the build) is linked into each AI user's Claude Code, Codex and OpenCode
+skill directories by `modules/home-manager/cli/gstack.nix`, and its hooks come
+from the same build as the `20-gstack` drop-in. With it off, the module's
+activation removes the symlinks an earlier run left behind.
 
 ### Custom Package Development
 

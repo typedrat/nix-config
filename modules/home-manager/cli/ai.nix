@@ -150,7 +150,10 @@ in {
       package = pkgs.comfy-cli;
     };
 
-    programs.claude-code.plugins.comfy-cli = comfySkillsPlugin;
+    programs.claude-code.plugins = {
+      comfy-cli = comfySkillsPlugin;
+      exa = inputs.exa-mcp-server;
+    };
 
     home.file.".config/opencode/plugins/peon-ping.ts" = modules.mkIf config.programs.peon-ping.enable {
       source = "${config.programs.peon-ping.package}/share/peon-ping/adapters/opencode/peon-ping.ts";

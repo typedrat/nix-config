@@ -20,57 +20,80 @@
     "opencode/skills" = ".config/opencode/skills";
     "opencode/commands" = ".config/opencode/commands";
   };
+  enabled = cliCfg.enable && cliCfg.ai.enable && osConfig.rat.ai.gstack.enable;
 in {
-  config = modules.mkIf (cliCfg.enable && cliCfg.ai.enable && osConfig.rat.ai.gstack.enable) {
-    # The skill directories share their parents with skills from other
-    # sources and their names come from the build, so they are linked one by
-    # one here instead of through home.file. Each set of links is recorded in
-    # a manifest so that skills dropped upstream are unlinked on the next
-    # activation. A real file or directory in the way (an install from
-    # gstack's own ./setup) is moved aside, never deleted.
-    home.activation.gstack = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      manifests=${lib.escapeShellArg stateDir}/nix-links
-      backups=${lib.escapeShellArg stateDir}/backups/pre-nix-$(date +%Y%m%d%H%M%S)
-      run mkdir -p "$manifests"
+  config = modules.mkMerge [
+    # Links from an earlier activation outlive the option and would dangle
+    # once their store path is collected. Only symlinks into a gstack store
+    # path are removed; the manifests mark what this module created.
+    (modules.mkIf (cliCfg.enable && cliCfg.ai.enable && !enabled) {
+      home.activation.gstack = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        manifests=${lib.escapeShellArg stateDir}/nix-links
+        ${lib.concatStrings (lib.mapAttrsToList (tree: dest: ''
+            manifest="$manifests/${lib.replaceStrings ["/"] ["-"] tree}"
+            if [ -f "$manifest" ]; then
+              while IFS= read -r name; do
+                [ -n "$name" ] || continue
+                target=$(readlink ${lib.escapeShellArg "${homeDirectory}/${dest}"}/"$name" 2>/dev/null) || continue
+                case "$target" in /nix/store/*-gstack-*) run rm -f ${lib.escapeShellArg "${homeDirectory}/${dest}"}/"$name" ;; esac
+              done < "$manifest"
+              run rm -f "$manifest"
+            fi
+          '')
+          links)}
+      '';
+    })
+    (modules.mkIf enabled {
+      # The skill directories share their parents with skills from other
+      # sources and their names come from the build, so they are linked one by
+      # one here instead of through home.file. Each set of links is recorded in
+      # a manifest so that skills dropped upstream are unlinked on the next
+      # activation. A real file or directory in the way (an install from
+      # gstack's own ./setup) is moved aside, never deleted.
+      home.activation.gstack = lib.hm.dag.entryAfter ["writeBoundary"] ''
+        manifests=${lib.escapeShellArg stateDir}/nix-links
+        backups=${lib.escapeShellArg stateDir}/backups/pre-nix-$(date +%Y%m%d%H%M%S)
+        run mkdir -p "$manifests"
 
-      gstackLink() {
-        local src=$1 dest=$2 manifest=$3 entry name target
-        [ -d "$src" ] || return 0
-        run mkdir -p "$dest"
+        gstackLink() {
+          local src=$1 dest=$2 manifest=$3 entry name target
+          [ -d "$src" ] || return 0
+          run mkdir -p "$dest"
 
-        if [ -f "$manifest" ]; then
-          while IFS= read -r name; do
-            [ -n "$name" ] && [ ! -e "$src/$name" ] && [ ! -L "$src/$name" ] || continue
-            target=$(readlink "$dest/$name" 2>/dev/null) || continue
-            case "$target" in /nix/store/*) run rm -f "$dest/$name" ;; esac
-          done < "$manifest"
-        fi
-
-        for entry in "$src"/*; do
-          [ -e "$entry" ] || continue
-          name=''${entry##*/}
-          if [ -e "$dest/$name" ] && [ ! -L "$dest/$name" ]; then
-            run mkdir -p "$backups/''${dest#"$HOME"/}"
-            run mv "$dest/$name" "$backups/''${dest#"$HOME"/}/$name"
+          if [ -f "$manifest" ]; then
+            while IFS= read -r name; do
+              [ -n "$name" ] && [ ! -e "$src/$name" ] && [ ! -L "$src/$name" ] || continue
+              target=$(readlink "$dest/$name" 2>/dev/null) || continue
+              case "$target" in /nix/store/*) run rm -f "$dest/$name" ;; esac
+            done < "$manifest"
           fi
-          run ln -sfn "$(readlink -f "$entry")" "$dest/$name"
-        done
 
-        if [ -z "''${DRY_RUN:-}" ]; then
-          (cd "$src" && ls -A) > "$manifest"
-        fi
-      }
+          for entry in "$src"/*; do
+            [ -e "$entry" ] || continue
+            name=''${entry##*/}
+            if [ -e "$dest/$name" ] && [ ! -L "$dest/$name" ]; then
+              run mkdir -p "$backups/''${dest#"$HOME"/}"
+              run mv "$dest/$name" "$backups/''${dest#"$HOME"/}/$name"
+            fi
+            run ln -sfn "$(readlink -f "$entry")" "$dest/$name"
+          done
 
-      ${lib.concatStrings (lib.mapAttrsToList (tree: dest: ''
-          gstackLink ${hosts}/${tree} ${lib.escapeShellArg "${homeDirectory}/${dest}"} "$manifests/${lib.replaceStrings ["/"] ["-"] tree}"
-        '')
-        links)}
+          if [ -z "''${DRY_RUN:-}" ]; then
+            (cd "$src" && ls -A) > "$manifest"
+          fi
+        }
 
-      # Updates arrive through the flake; gstack's own updater would try to
-      # git-pull the read-only store path. The activation PATH has no awk,
-      # which gstack-config needs.
-      PATH=${lib.makeBinPath [pkgs.gawk]}:$PATH run ${pkgs.gstack}/share/gstack/bin/gstack-config set auto_upgrade false
-      PATH=${lib.makeBinPath [pkgs.gawk]}:$PATH run ${pkgs.gstack}/share/gstack/bin/gstack-config set update_check false
-    '';
-  };
+        ${lib.concatStrings (lib.mapAttrsToList (tree: dest: ''
+            gstackLink ${hosts}/${tree} ${lib.escapeShellArg "${homeDirectory}/${dest}"} "$manifests/${lib.replaceStrings ["/"] ["-"] tree}"
+          '')
+          links)}
+
+        # Updates arrive through the flake; gstack's own updater would try to
+        # git-pull the read-only store path. The activation PATH has no awk,
+        # which gstack-config needs.
+        PATH=${lib.makeBinPath [pkgs.gawk]}:$PATH run ${pkgs.gstack}/share/gstack/bin/gstack-config set auto_upgrade false
+        PATH=${lib.makeBinPath [pkgs.gawk]}:$PATH run ${pkgs.gstack}/share/gstack/bin/gstack-config set update_check false
+      '';
+    })
+  ];
 }

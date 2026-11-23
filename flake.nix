@@ -334,6 +334,13 @@
       url = "github:typedrat/wallpapers";
       flake = false;
     };
+
+    # Exa's Claude Code plugin (web search/fetch MCP plus skills); the repo
+    # root is the plugin.
+    exa-mcp-server = {
+      url = "github:exa-labs/exa-mcp-server";
+      flake = false;
+    };
     #endregion
 
     #region Extension Repositories

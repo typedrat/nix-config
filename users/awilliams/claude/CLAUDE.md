@@ -1,21 +1,5 @@
 # Global config
 
-## gstack
-
-gstack is built and installed by nix-config, not from a checkout.
-`~/.claude/skills/gstack` and every gstack skill directory link into a
-read-only Nix store path, for Claude Code, Codex and OpenCode alike.
-
-- Updates arrive through nix-config's package updates. gstack's own update
-  check and auto-upgrade are off and `/gstack-upgrade` isn't installed: never
-  `git pull`, run `./setup`, or edit files under the install.
-- Binaries: `~/.claude/skills/gstack/bin/` (e.g. `gstack-config`). Runtime
-  state and `config.yaml` live in `~/.gstack`.
-- Upstream source: https://github.com/garrytan/gstack.
-
-When a skill references `~/.kiro/skills/gstack/...` (legacy Kiro path), use
-`~/.claude/skills/gstack/...` instead.
-
 ## GitHub identity
 
 GitHub username is `typedrat`. Branch prefix for stacked branches is

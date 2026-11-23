@@ -44,9 +44,7 @@ in {
       mkEnableOption "machine-wide coding agent configuration"
       // {default = aiUsers != {};};
 
-    gstack.enable =
-      mkEnableOption "gstack skills and hooks"
-      // {default = lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.gstack;};
+    gstack.enable = mkEnableOption "gstack skills and hooks";
 
     claude-code.settings = mkOption {
       type = types.attrsOf (pkgs.formats.json {}).type;
