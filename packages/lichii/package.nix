@@ -168,6 +168,13 @@ in
       ++ bundledSource "xxhash" xxhash.src
       ++ bundledSource "reshade" reshade;
 
+    # The CLI and room server keep Eden's binary names, which collide with
+    # Eden's own when both are installed.
+    postInstall = ''
+      mv $out/bin/eden-cli $out/bin/lichii-cli
+      mv $out/bin/eden-room $out/bin/lichii-room
+    '';
+
     preFixup = ''
       qtWrapperArgs+=(--prefix LD_LIBRARY_PATH : ${
         lib.makeLibraryPath [
