@@ -25,6 +25,7 @@ in {
     ./dosbox-x.nix
     ./eden.nix
     ./lichii.nix
+    ./longshot.nix
     ./retroarch.nix
     ./sgdboop.nix
     ./skyscraper.nix
