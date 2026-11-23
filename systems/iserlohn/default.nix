@@ -227,6 +227,7 @@
         metadataProviders = {
           hasheous.enable = true;
           igdb.enable = true;
+          mobygames.enable = true;
           screenscraper.enable = true;
           steamgriddb.enable = true;
           retroachievements.enable = true;

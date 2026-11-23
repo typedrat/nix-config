@@ -230,6 +230,8 @@ in {
           ${lib.optionalString cfg.metadataProviders.screenscraper.enable ''
             SCREENSCRAPER_USER=${config.sops.placeholder."romm/screenscraper/username"}
             SCREENSCRAPER_PASSWORD=${config.sops.placeholder."romm/screenscraper/password"}
+            SCREENSCRAPER_DEV_ID=${config.sops.placeholder."romm/screenscraper/dev_id"}
+            SCREENSCRAPER_DEV_PASSWORD=${config.sops.placeholder."romm/screenscraper/dev_password"}
           ''}
           ${lib.optionalString cfg.metadataProviders.mobygames.enable ''
             MOBYGAMES_API_KEY=${config.sops.placeholder."romm/mobygames/api_key"}
@@ -290,6 +292,18 @@ in {
       sops.secrets."romm/screenscraper/password" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "screenscraper/password";
+        restartUnits = rommUnits;
+      };
+      # RomM's own developer credentials, which upstream bakes into its
+      # container image at build time; ScreenScraper rejects requests without them.
+      sops.secrets."romm/screenscraper/dev_id" = {
+        sopsFile = ../../../../secrets/romm.yaml;
+        key = "screenscraper/dev_id";
+        restartUnits = rommUnits;
+      };
+      sops.secrets."romm/screenscraper/dev_password" = {
+        sopsFile = ../../../../secrets/romm.yaml;
+        key = "screenscraper/dev_password";
         restartUnits = rommUnits;
       };
     })
