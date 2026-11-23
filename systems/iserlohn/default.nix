@@ -227,6 +227,7 @@
         metadataProviders = {
           hasheous.enable = true;
           igdb.enable = true;
+          launchbox.enable = true;
           mobygames.enable = true;
           screenscraper.enable = true;
           steamgriddb.enable = true;

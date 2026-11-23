@@ -244,6 +244,9 @@ in {
           ''}
           ${lib.optionalString cfg.metadataProviders.launchbox.enable ''
             LAUNCHBOX_API_ENABLED=true
+            # LaunchBox matches against a local copy of its metadata dump,
+            # which only this task downloads; without it the provider is empty.
+            ENABLE_SCHEDULED_UPDATE_LAUNCHBOX_METADATA=true
           ''}
           ${lib.optionalString cfg.metadataProviders.playmatch.enable ''
             PLAYMATCH_API_ENABLED=true
