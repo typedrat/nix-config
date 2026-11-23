@@ -7,6 +7,16 @@
   inherit (lib) modules options types;
   cfg = config.rat.services.romm;
   impermanenceCfg = config.rat.impermanence;
+
+  rommUnits = [
+    "romm.service"
+    "romm-worker.service"
+    "romm-scheduler.service"
+    "romm-watcher.service"
+  ];
+
+  libraryDir = "${cfg.dataDir}/library";
+  separateStorage = cfg.storageDir != libraryDir;
 in {
   options.rat.services.romm = {
     enable = options.mkEnableOption "RomM";
@@ -23,11 +33,12 @@ in {
 
     storageDir = options.mkOption {
       type = types.str;
-      default = cfg.dataDir;
-      defaultText = lib.literalExpression "config.rat.services.romm.dataDir";
+      default = libraryDir;
+      defaultText = lib.literalExpression ''"''${config.rat.services.romm.dataDir}/library"'';
       description = ''
-        The storage directory for ROM library and igir-related directories.
-        This can be set to a separate location (e.g., on a ZFS array) from the main data directory.
+        The RomM library root, also holding the igir-related directories.
+        RomM only reads its library from `''${dataDir}/library`, so any other
+        location (e.g. on a ZFS array) is bind-mounted there.
       '';
     };
 
@@ -104,57 +115,59 @@ in {
         skyscraper
       ];
 
-      users.users.romm = {
-        isSystemUser = true;
-        group = "romm";
-        description = "RomM service user";
+      users.users.romm.extraGroups = ["media"];
 
-        extraGroups = ["media" "podman"];
-        home = cfg.dataDir;
-        linger = false;
+      services.romm = {
+        enable = true;
+        inherit (cfg) dataDir;
+        port = config.links.romm-api.port;
+
+        database = {
+          createLocally = false;
+          host = "localhost";
+          port = config.links.postgres.port;
+        };
+
+        redis.port = config.links.romm-redis.port;
+
+        nginx.virtualHost = "${cfg.subdomain}.${config.rat.services.domainName}";
+
+        environmentFile = config.sops.templates."romm.env".path;
+
+        extraEnvironment = {
+          # nginx only sees plain HTTP from Traefik, so the module would derive
+          # an http:// base URL and leave session cookies insecure.
+          ROMM_BASE_URL = "https://${cfg.subdomain}.${config.rat.services.domainName}";
+          ROMM_SESSION_SECURE_COOKIE = "true";
+          TZ = "UTC";
+          LOGLEVEL = "INFO";
+        };
       };
 
-      users.groups.romm = {};
-
-      virtualisation.oci-containers.backend = "docker";
-      virtualisation.oci-containers.containers.romm = {
-        image = "rommapp/romm:latest";
-        volumes = [
-          "${cfg.dataDir}/resources:/romm/resources"
-          "${cfg.storageDir}:/romm/library"
-          "${cfg.dataDir}/assets:/romm/assets"
-          "${cfg.dataDir}/config:/romm/config"
-        ];
-        environmentFiles = [
-          config.sops.templates."romm.env".path
-        ];
-        extraOptions = ["--network=host"];
+      # The module only orders itself after PostgreSQL when it creates the
+      # database itself.
+      systemd.services.romm = {
+        after = ["postgresql.target"];
+        requires = ["postgresql.target"];
       };
 
-      systemd.services.docker-romm = {
-        after = ["postgresql.service" "redis-romm.service"];
-        requires = ["postgresql.service" "redis-romm.service"];
-      };
-
-      systemd.tmpfiles.rules = [
-        "d ${cfg.dataDir} 0775 romm romm -"
-        "d ${cfg.dataDir}/resources 0775 romm romm -"
-        "d ${cfg.storageDir}/library 0775 romm media -"
-        "d ${cfg.dataDir}/assets 0775 romm romm -"
-        "d ${cfg.dataDir}/config 0775 romm romm -"
+      services.nginx.virtualHosts.${config.services.romm.nginx.virtualHost}.listen = [
+        {
+          addr = config.links.romm.ipv4;
+          inherit (config.links.romm) port;
+        }
       ];
 
       links.romm = {
         protocol = "http";
       };
 
-      links.romm-redis = {
-        protocol = "redis";
+      links.romm-api = {
+        protocol = "http";
       };
 
-      services.redis.servers.romm = {
-        enable = true;
-        port = lib.mkForce config.links.romm-redis.port;
+      links.romm-redis = {
+        protocol = "redis";
       };
 
       rat.services.postgres = {
@@ -171,44 +184,31 @@ in {
       sops.secrets."romm/db/password" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "db/password";
-        restartUnits = ["postgresql.service" "docker-romm.service"];
+        restartUnits = ["postgresql.service"] ++ rommUnits;
         owner = "postgres";
       };
 
       sops.secrets."romm/auth/secret_key" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "auth/secret_key";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
 
       sops.secrets."romm/oidc/client_id" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "oidc/client_id";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
 
       sops.secrets."romm/oidc/client_secret" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "oidc/client_secret";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
 
       sops.templates."romm.env" = {
         content = ''
-          # Database Configuration
-          DB_HOST=localhost
-          DB_PORT=${toString config.links.postgres.port}
-          DB_NAME=romm
-          DB_USER=romm
           DB_PASSWD=${config.sops.placeholder."romm/db/password"}
-          ROMM_DB_DRIVER=postgresql
-
-          # Redis Configuration
-          REDIS_HOST=localhost
-          REDIS_PORT=${toString config.links.romm-redis.port}
-
-          # RomM Configuration
-          ROMM_PORT=${toString config.links.romm.port}
 
           # Authentication
           ROMM_AUTH_SECRET_KEY=${config.sops.placeholder."romm/auth/secret_key"}
@@ -255,14 +255,9 @@ in {
           ${lib.optionalString cfg.metadataProviders.hltb.enable ''
             HLTB_API_ENABLED=true
           ''}
-
-          # Application Configuration
-          ROMM_BASE_PATH=/romm
-          TZ=UTC
-          LOGLEVEL=INFO
         '';
 
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
 
       rat.services.traefik.routes.romm = {
@@ -276,12 +271,12 @@ in {
       sops.secrets."romm/igdb/client_id" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "igdb/client_id";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
       sops.secrets."romm/igdb/client_secret" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "igdb/client_secret";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
     })
 
@@ -290,12 +285,12 @@ in {
       sops.secrets."romm/screenscraper/username" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "screenscraper/username";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
       sops.secrets."romm/screenscraper/password" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "screenscraper/password";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
     })
 
@@ -304,7 +299,7 @@ in {
       sops.secrets."romm/mobygames/api_key" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "mobygames/api_key";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
     })
 
@@ -313,7 +308,7 @@ in {
       sops.secrets."romm/steamgriddb/api_key" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "steamgriddb/api_key";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
     })
 
@@ -322,8 +317,24 @@ in {
       sops.secrets."romm/retroachievements/api_key" = {
         sopsFile = ../../../../secrets/romm.yaml;
         key = "retroachievements/api_key";
-        restartUnits = ["docker-romm.service"];
+        restartUnits = rommUnits;
       };
+    })
+
+    (modules.mkIf (cfg.enable && separateStorage) {
+      fileSystems.${libraryDir} = {
+        device = cfg.storageDir;
+        fsType = "none";
+        options =
+          ["bind"]
+          # Datasets with a non-legacy mountpoint have no mount unit to order
+          # against, so a bind made before zfs-mount would cover an empty dir.
+          ++ lib.optional config.boot.zfs.enabled "x-systemd.after=zfs-mount.service";
+      };
+
+      # The module would chown the mountpoint to romm:romm 0750, which lands on
+      # the shared storage root once the bind is in place.
+      systemd.tmpfiles.settings."10-romm".${libraryDir} = lib.mkForce {};
     })
 
     # Impermanence support
@@ -334,7 +345,7 @@ in {
           directory = cfg.dataDir;
           user = "romm";
           group = "romm";
-          mode = "0775";
+          mode = "0750";
         }
       ];
     })
@@ -542,6 +553,7 @@ in {
 
       systemd.tmpfiles.rules =
         [
+          "d ${cfg.igir.outputDir} 0775 romm media -"
           "d ${cfg.igir.datsDir} 0775 romm media -"
           "d ${cfg.igir.inputDir} 0775 romm media -"
         ]
