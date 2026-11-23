@@ -45,6 +45,13 @@
       flake = false;
     };
 
+    # zwave-js-server: 3.11.0 -> 3.12.0, for the schema 52 that Home
+    # Assistant 2026.11's zwave_js integration requires (NixOS/nixpkgs#586071)
+    nixpkgs-patch-586071 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/586071.diff";
+      flake = false;
+    };
+
     #endregion
 
     #region home-manager patches
