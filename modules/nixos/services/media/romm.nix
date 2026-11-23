@@ -337,6 +337,29 @@ in {
       systemd.tmpfiles.settings."10-romm".${libraryDir} = lib.mkForce {};
     })
 
+    # The module's romm-worker only listens on high/default/low. RomM sends
+    # library scans to a "scans" queue and streaming teardowns to "streaming",
+    # each meant for a worker of its own, and refuses to queue a scan while no
+    # worker listens on "scans".
+    (modules.mkIf cfg.enable (let
+      worker = config.systemd.services.romm-worker;
+      mkWorker = workerClass: queue: let
+        exe = pkgs.runCommand "romm-${queue}-worker" {} ''
+          substitute ${config.services.romm.package}/bin/romm-worker $out \
+            --replace-fail "RomMWorker high default low" "${workerClass} ${queue}"
+          chmod +x $out
+        '';
+      in {
+        description = "RomM RQ worker (${queue})";
+        wantedBy = ["multi-user.target"];
+        inherit (worker) after requires environment;
+        serviceConfig = worker.serviceConfig // {ExecStart = "${exe}";};
+      };
+    in {
+      systemd.services.romm-scan-worker = mkWorker "RomMWorker" "scans";
+      systemd.services.romm-streaming-worker = mkWorker "PreloadingWorker" "streaming";
+    }))
+
     # Impermanence support
     # Note: storageDir is assumed to be on a persistent mount if set separately from dataDir
     (modules.mkIf (cfg.enable && impermanenceCfg.enable) {
