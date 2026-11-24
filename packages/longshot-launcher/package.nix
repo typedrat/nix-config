@@ -41,7 +41,9 @@
 
   # Starts an already-built game without the launcher, in the same FHS
   # environment, so it can be a Steam shortcut or a menu entry of its own. The
-  # game folder defaults to the launcher's default install location.
+  # argument is a game folder or the launcher's install root (default
+  # ~/Games/Longshot), which holds builds as <channel>/<version>/; given a
+  # root, the most recently built game runs.
   play = buildFHSEnv (appimageTools.defaultFhsEnvArgs
     // {
       pname = "longshot";
@@ -49,6 +51,10 @@
       targetPkgs = pkgs: appimageTools.defaultFhsEnvArgs.targetPkgs pkgs ++ extraPkgs pkgs;
       runScript = writeShellScript "longshot-play" ''
         folder=''${1:-$HOME/Games/Longshot}
+        if ! [ -x "$folder/bin/longshot" ]; then
+          newest=$(ls -td "$folder"/*/*/bin/longshot 2>/dev/null | head -n 1)
+          [ -n "$newest" ] && folder=''${newest%/bin/longshot}
+        fi
         if ! [ -x "$folder/bin/longshot" ]; then
           echo "longshot: no built game in $folder; build one with longshot-launcher first" >&2
           exit 1
