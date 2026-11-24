@@ -10,14 +10,14 @@
 in
   pythonPkgs.buildPythonApplication rec {
     pname = "comfy-cli";
-    version = "1.28.0";
+    version = "1.29.0";
     pyproject = true;
 
     src = fetchFromGitHub {
       owner = "Comfy-Org";
       repo = "comfy-cli";
       rev = "v${version}";
-      hash = "sha256-SwYtAqcky3QwVi0BlDQKsSbO5tTDITngogREKZV1pkA=";
+      hash = "sha256-C0zTZpXEy8cgeDlzVpc1Vu3vRNrJI9qopatdmJmfwF4=";
     };
 
     nativeBuildInputs = with pythonPkgs; [
