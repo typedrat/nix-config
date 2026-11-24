@@ -45,6 +45,12 @@
       flake = false;
     };
 
+    # claude-code: 2.1.330 -> 2.1.331 (NixOS/nixpkgs#592448)
+    nixpkgs-patch-592448 = {
+      url = "https://github.com/NixOS/nixpkgs/pull/592448.diff";
+      flake = false;
+    };
+
     # zwave-js-server: 3.11.0 -> 3.12.0, for the schema 52 that Home
     # Assistant 2026.11's zwave_js integration requires (NixOS/nixpkgs#586071)
     nixpkgs-patch-586071 = {
