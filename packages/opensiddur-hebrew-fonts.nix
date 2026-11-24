@@ -7,13 +7,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "opensiddur-hebrew-fonts";
-  version = "0-unstable-2026-05-04";
+  version = "0-unstable-2026-11-24";
 
   src = fetchFromGitHub {
     owner = "aharonium";
     repo = "fonts";
-    rev = "2b5e366ffaa89d42159092fcccd6d027b50a9ef9";
-    sha256 = "sha256-om+iq8TgpAj/pIOowccOY9ajRCUKnLlPlwTx8SHW2To=";
+    rev = "3b8e4836eb4199a6f2d1ca09362bed76b7cb19d8";
+    sha256 = "sha256-BmzeueJ5dKg6FR79TYmYr5ag9mlocEDbx1QNE/D9n5s=";
   };
 
   nativeBuildInputs = [unzip];
