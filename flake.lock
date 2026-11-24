@@ -2829,18 +2829,6 @@
         "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst"
       }
     },
-    "nixpkgs-patch-555827": {
-      "flake": false,
-      "locked": {
-        "narHash": "sha256-CNqpoSuAuJVMrZUc35InOklNZtZhvBhJB5l+tO0O5Lc=",
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/555827.diff"
-      },
-      "original": {
-        "type": "file",
-        "url": "https://github.com/NixOS/nixpkgs/pull/555827.diff"
-      }
-    },
     "nixpkgs-patch-586071": {
       "flake": false,
       "locked": {
@@ -3485,7 +3473,6 @@
         "nixcord": "nixcord",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_10",
-        "nixpkgs-patch-555827": "nixpkgs-patch-555827",
         "nixpkgs-patch-586071": "nixpkgs-patch-586071",
         "nixpkgs-patch-591339": "nixpkgs-patch-591339",
         "nixpkgs-patch-592448": "nixpkgs-patch-592448",

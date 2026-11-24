@@ -143,8 +143,15 @@ in {
     # Install the package
     home.packages = [
       (
+        # The package's own enableXdg uncomments `#DEFINES+=XDG` in
+        # skyscraper.pro with --replace-fail, and upstream respaced that
+        # comment in 3.20.3, so it fails to build. Setting the define on the
+        # qmake command line works whatever the comment looks like.
         if cfg.enableXdg
-        then cfg.package.override {enableXdg = true;}
+        then
+          cfg.package.overrideAttrs (prev: {
+            qmakeFlags = (prev.qmakeFlags or []) ++ ["DEFINES+=XDG"];
+          })
         else cfg.package
       )
     ];
