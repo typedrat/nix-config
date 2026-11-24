@@ -43,6 +43,8 @@
     {
       context7.url = "https://mcp.context7.com/mcp/oauth";
       linear-server.url = "https://mcp.linear.app/mcp";
+      # OAuth in the browser on first use; billed to Pangram API credits.
+      pangram.url = "https://www.pangram.com/mcp";
     }
     // lib.optionalAttrs hasChromium {
       # https://github.com/ChromeDevTools/chrome-devtools-mcp
@@ -162,12 +164,12 @@ in {
     catppuccin.opencode.enable = false;
 
     # OpenCode gets every server. Claude Code reaches Linear and Context7
-    # through claude.ai's connectors, so it only takes the local ones.
+    # through claude.ai's connectors, so it takes everything else.
     programs.mcp = {
       enable = true;
       servers = mcpServers;
     };
-    programs.claude-code.mcpServers = lib.filterAttrs (_: server: server ? command) mcpServers;
+    programs.claude-code.mcpServers = removeAttrs mcpServers ["context7" "linear-server"];
 
     programs.opencode = {
       enable = true;
