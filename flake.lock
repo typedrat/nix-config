@@ -497,11 +497,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1795446970,
-        "narHash": "sha256-K3gJ7LnNQiNhEDBRaPxEQdIRCzMiSBYHL3kVDOvaRD4=",
+        "lastModified": 1795566933,
+        "narHash": "sha256-9CsgL/Kjz2FnCN+HFRu3yMq5PIp8brosACJkerguI1w=",
         "owner": "ilysenko",
         "repo": "codex-desktop-linux",
-        "rev": "1727b00a30201cfa6b4ae673178506ccb39b1d4a",
+        "rev": "bda8c7e36f9a1313a7facf35832f00998a2c9f06",
         "type": "github"
       },
       "original": {
@@ -2502,11 +2502,11 @@
         "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
-        "lastModified": 1795537996,
-        "narHash": "sha256-KT6yKUgJGXjLEZr8FYu6vQ8Dj5Ihb+JwA3QVl0P5Cgo=",
+        "lastModified": 1795568598,
+        "narHash": "sha256-/xiVYUABaEKCbAcObbfTQ6zEIG1k5cLYCbkiLa6z1tI=",
         "owner": "FlameFlag",
         "repo": "nixcord",
-        "rev": "5d97cb99ebb458e985b69996b90c78e3ca1270b2",
+        "rev": "acc90616dbd6bf39878a6f0d82a9c0fae376ef37",
         "type": "github"
       },
       "original": {
@@ -3804,12 +3804,12 @@
         "terranix": "terranix"
       },
       "locked": {
-        "lastModified": 1795547412,
-        "narHash": "sha256-9bWP7GC1ZixPRZRvLfTtHV3uZP7AJOZUfpt6m5wBs8k=",
-        "rev": "9b8d0ee5fafc83313cefa1a904cf311ae884001a",
-        "revCount": 20025,
+        "lastModified": 1795568682,
+        "narHash": "sha256-uZO85ztOUUh+vV9seXjf3kjIqxopmncR442d7R3PYV0=",
+        "rev": "25cb18eb5f1a6684c26eec07ef3c41f0b02d2ce9",
+        "revCount": 20041,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/synapdeck/synapdeck/0.1.20025%2Brev-9b8d0ee5fafc83313cefa1a904cf311ae884001a/01a20f47-cdec-7db3-9bdf-b74e43dde63a/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/synapdeck/synapdeck/0.1.20041%2Brev-25cb18eb5f1a6684c26eec07ef3c41f0b02d2ce9/01a2108a-7646-7920-bb8b-e2bebc879499/source.tar.gz"
       },
       "original": {
         "type": "tarball",
