@@ -13,6 +13,12 @@
   api = "${config.links.qui.url}/api";
   prowlarrApiKeyFile = config.sops.secrets."prowlarr/apiKey".path;
 
+  # Every area of qui's API the script below changes.
+  apiKeyPermissions = builtins.toJSON (map (area: {
+    inherit area;
+    level = "write";
+  }) ["instances" "arr" "indexers" "crossSeed" "automations"]);
+
   # Everything the script needs from Nix, with secrets as file paths so their
   # contents only ever reach curl through request files.
   desiredFile = json.generate "qui-desired.json" {
@@ -42,8 +48,10 @@
 
       # qui only accepts API keys it has stored, and with OIDC as the only
       # login there is no session to create one through. The key is generated
-      # here once and its hash written straight into qui's table, which is
-      # all qui checks a key against.
+      # here once and its hash and permissions written straight into qui's
+      # table, which is all qui checks a key against. A row inserted without
+      # permissions can reach nothing, and no instance limit is needed because
+      # qui's cross-seed routes refuse keys that have one.
       until [ -s ${database} ] && curl -s -o /dev/null ${lib.escapeShellArg "${config.links.qui.url}/health"}; do
         sleep 2
       done
@@ -59,6 +67,8 @@
           AND key_hash != '$hash';
       INSERT OR IGNORE INTO api_keys (key_hash, name_id)
         SELECT '$hash', id FROM string_pool WHERE value = 'qui-reconcile';
+      UPDATE api_keys SET permissions = '${apiKeyPermissions}', instance_ids = '[]'
+        WHERE key_hash = '$hash';
       EOF
       printf 'X-API-Key: %s\n' "$(cat ${stateDir}/api.key)" >"$tmp/auth"
 
