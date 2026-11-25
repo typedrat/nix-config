@@ -41,6 +41,7 @@ in {
       };
       skills.doc-artifact = ./awilliams/claude/skills/doc-artifact;
       settings = {
+        env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
         editorMode = "normal";
         verbose = true;
         alwaysThinkingEnabled = true;
