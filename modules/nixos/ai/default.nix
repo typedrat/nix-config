@@ -68,6 +68,7 @@ in {
         cleanupPeriodDays = 3650;
         # In settings rather than the shell so IDE and desktop sessions get it.
         env.CLAUDE_CODE_NO_FLICKER = "1";
+        env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
       };
 
       "10-guards".hooks.PreToolUse = [
