@@ -43,6 +43,8 @@ in {
       settings = {
         editorMode = "normal";
         verbose = true;
+        alwaysThinkingEnabled = true;
+        showThinkingSummaries = true;
         permissions.defaultMode = "auto";
         skipAutoPermissionPrompt = true;
         skipWorkflowUsageWarning = true;
