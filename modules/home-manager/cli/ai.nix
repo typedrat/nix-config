@@ -252,6 +252,15 @@ in {
           You are a coding assistant powered by OpenAI GPT-6.2 Sol.
           Leverage your strengths in code generation, reasoning, and problem-solving.
         '';
+        codex-astra = ''
+          ---
+          description: OpenAI agent using GPT-6.2 Astra
+          mode: subagent
+          model: openai/gpt-6.2-astra
+          ---
+          You are a coding assistant powered by OpenAI GPT-6.2 Astra.
+          Leverage your strengths in code generation, reasoning, and problem-solving.
+        '';
       };
     };
 
