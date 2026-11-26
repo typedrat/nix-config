@@ -204,13 +204,13 @@ in {
 
         agent = {
           build = {
-            model = "openai/gpt-6.1-sol";
+            model = "anthropic/claude-opus-5-5";
           };
           plan = {
-            model = "openai/gpt-6.1-sol";
+            model = "anthropic/claude-opus-5-5";
           };
           explore = {
-            model = "openai/gpt-6-luna";
+            model = "anthropic/claude-haiku-5-5";
           };
         };
       };
