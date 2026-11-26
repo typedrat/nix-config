@@ -25,6 +25,8 @@ in {
       directories = [
         ".local/share/bloodborne-pc"
         ".config/bloodborne-pc"
+        # The launcher's own settings, including the SuperMedo sign-in
+        ".config/bbport-launcher"
       ];
     };
   };

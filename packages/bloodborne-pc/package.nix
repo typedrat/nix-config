@@ -6,7 +6,11 @@
   cmake,
   ninja,
   pkg-config,
-  makeWrapper,
+  makeShellWrapper,
+  wrapGAppsHook4,
+  gobject-introspection,
+  copyDesktopItems,
+  makeDesktopItem,
   git,
   writeShellApplication,
   perl,
@@ -20,6 +24,12 @@
   nix-prefetch-git,
   python3,
   bash,
+  util-linux,
+  gtk4,
+  libadwaita,
+  adwaita-icon-theme,
+  librsvg,
+  mangohud,
   vulkan-headers,
   vulkan-loader,
   sdl3,
@@ -85,7 +95,9 @@
     '';
   };
 
-  pythonEnv = python3.withPackages (ps: [ps.pillow]);
+  # Pillow turns the game's trophy pictures into the pop-up's; PyGObject runs
+  # the GTK launcher.
+  pythonEnv = python3.withPackages (ps: [ps.pillow ps.pygobject3]);
 
   rtFlags = lib.optionalString pathTracing (lib.concatMapStringsSep " " (var: "--set-default ${var} 1") [
     "BB_RT"
@@ -94,6 +106,24 @@
     "BB_RT_REFLECT"
     "BB_RT_SHADOWS"
   ]);
+
+  # Shared by the game and the launcher, which starts run.sh itself. run.sh
+  # puts saves, mods and patches under BB_DATA_DIR on its own.
+  gameWrapperArgs = ''
+    --prefix PATH : ${lib.makeBinPath [bash coreutils pythonEnv]} \
+    --set BB_PREBUILT 1 \
+    --set PYTHON ${lib.getExe pythonEnv} \
+    ${rtFlags} \
+    --run '
+      data="''${XDG_DATA_HOME:-$HOME/.local/share}/bloodborne-pc"
+      config="''${XDG_CONFIG_HOME:-$HOME/.config}/bloodborne-pc"
+      mkdir -p "$data" "$config"
+      export BB_DATA_DIR="$data"
+      export BB_CONFIG="''${BB_CONFIG:-$config/bbport.ini}"
+      export BB_GAME_DIR="''${BB_GAME_DIR:-$HOME/Games/Bloodborne}"
+      export BB_RT_SKY_CACHE="''${BB_RT_SKY_CACHE:-$data/rt_sky}"
+    '
+  '';
 in
   stdenv.mkDerivation {
     inherit pname version src;
@@ -102,7 +132,10 @@ in
       cmake
       ninja
       pkg-config
-      makeWrapper
+      makeShellWrapper
+      wrapGAppsHook4
+      gobject-introspection
+      copyDesktopItems
       git
       perl
       pythonEnv
@@ -135,6 +168,10 @@ in
       zlib
       nlohmann_json
       miniupnpc
+      gtk4
+      libadwaita
+      adwaita-icon-theme
+      librsvg
     ];
 
     # Three Linux build fixes: newer Vulkan headers, a missing uint32_t alias,
@@ -145,6 +182,8 @@ in
     # patchelf's RPATH shrinking corrupts the non-PIE bb-probe's symbol
     # versions; upstream packaging/default.nix disables it for the same reason.
     dontPatchELF = true;
+    # Only the launcher needs the GApps environment; postFixup wraps it.
+    dontWrapGApps = true;
 
     postPatch = ''
       if ! grep -qx 'commit=${fsr4Commit}' tools/fetch_fsr4_assets.sh; then
@@ -159,6 +198,10 @@ in
       # store paths the ld wrapper adds, so nothing has to rewrite it afterwards.
       substituteInPlace build.sh \
         --replace-fail ' -Wl,-rpath,"$PWD/out/gpu"' ""
+
+      # A packaged launcher starts with no game folder; take the wrapper's.
+      substituteInPlace launcher/bbport_launcher.py \
+        --replace-fail '"game_dir": "" if PACKAGED' '"game_dir": os.environ.get("BB_GAME_DIR", "") if PACKAGED'
     '';
 
     buildPhase = ''
@@ -187,24 +230,33 @@ in
       # run.py imports the trophy pop-up's names and icons from launcher/.
       cp -r scripts patches launcher fsr4_shaders $d/
 
-      makeWrapper $d/run.sh $out/bin/bloodborne-pc \
-        --prefix PATH : ${lib.makeBinPath [bash coreutils pythonEnv]} \
-        --set BB_PREBUILT 1 \
-        ${rtFlags} \
-        --run '
-          data="''${XDG_DATA_HOME:-$HOME/.local/share}/bloodborne-pc"
-          config="''${XDG_CONFIG_HOME:-$HOME/.config}/bloodborne-pc"
-          mkdir -p "$data" "$config"
-          export BB_DATA_DIR="$data"
-          export BB_USER_DIR="''${BB_USER_DIR:-$data/user}"
-          export BB_CONFIG="''${BB_CONFIG:-$config/bbport.ini}"
-          export BB_MODS_DIR="''${BB_MODS_DIR:-$data/mods}"
-          export BB_MODS_CONFIG="''${BB_MODS_CONFIG:-$config/mods.json}"
-          export BB_GAME_DIR="''${BB_GAME_DIR:-$HOME/Games/Bloodborne}"
-          export BB_RT_SKY_CACHE="''${BB_RT_SKY_CACHE:-$data/rt_sky}"
-        '
+      install -Dm644 launcher/bloodborne.png $out/share/icons/hicolor/128x128/apps/bloodborne-pc.png
+
+      makeShellWrapper $d/run.sh $out/bin/bloodborne-pc \
+        ${gameWrapperArgs}
       runHook postInstall
     '';
+
+    # gappsWrapperArgs is only filled in during preFixup.
+    postFixup = ''
+      makeShellWrapper ${lib.getExe pythonEnv} $out/bin/bloodborne-pc-launcher \
+        --add-flags $out/libexec/bloodborne-pc/launcher/bbport_launcher.py \
+        "''${gappsWrapperArgs[@]}" \
+        --prefix PATH : ${lib.makeBinPath [util-linux]} \
+        --prefix XDG_DATA_DIRS : ${mangohud}/share \
+        ${gameWrapperArgs}
+    '';
+
+    desktopItems = [
+      (makeDesktopItem {
+        name = "bloodborne-pc";
+        desktopName = "Bloodborne";
+        comment = "Native Linux port of Bloodborne";
+        exec = "bloodborne-pc-launcher";
+        icon = "bloodborne-pc";
+        categories = ["Game"];
+      })
+    ];
 
     passthru.updateScript = lib.getExe (writeShellApplication {
       name = "bloodborne-pc-update";
