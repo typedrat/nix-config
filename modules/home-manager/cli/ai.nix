@@ -214,6 +214,45 @@ in {
           };
         };
       };
+
+      agents = {
+        haiku = ''
+          ---
+          description: Fast, lightweight agent using Claude Haiku 5.5
+          mode: subagent
+          model: anthropic/claude-haiku-5-5
+          ---
+          You are a fast, efficient coding assistant powered by Claude Haiku.
+          Prioritize speed and conciseness. Good for quick lookups, simple edits, and routine tasks.
+        '';
+        sonnet = ''
+          ---
+          description: Balanced agent using Claude Sonnet 5.5
+          mode: subagent
+          model: anthropic/claude-sonnet-5-5
+          ---
+          You are a capable coding assistant powered by Claude Sonnet.
+          Balance thoroughness with efficiency. Good for most development tasks.
+        '';
+        opus = ''
+          ---
+          description: Most capable agent using Claude Opus 5.5
+          mode: subagent
+          model: anthropic/claude-opus-5-5
+          ---
+          You are an expert coding assistant powered by Claude Opus.
+          Prioritize depth, correctness, and thorough analysis. Good for complex tasks, architecture decisions, and difficult debugging.
+        '';
+        codex = ''
+          ---
+          description: OpenAI agent using GPT-6.2 Sol
+          mode: subagent
+          model: openai/gpt-6.2-sol
+          ---
+          You are a coding assistant powered by OpenAI GPT-6.2 Sol.
+          Leverage your strengths in code generation, reasoning, and problem-solving.
+        '';
+      };
     };
 
     programs.peon-ping = modules.mkIf peonPingCfg.enable {
