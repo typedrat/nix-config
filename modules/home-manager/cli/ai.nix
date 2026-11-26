@@ -180,6 +180,7 @@ in {
 
       settings = {
         plugin = [
+          "@ex-machina/opencode-anthropic-auth@next"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
 
