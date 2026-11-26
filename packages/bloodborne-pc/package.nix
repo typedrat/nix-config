@@ -53,9 +53,6 @@
   zlib,
   nlohmann_json,
   miniupnpc,
-  # Path tracing (direct light, GI, reflections, shadows) by default. Upstream
-  # leaves it off; BB_RT and BB_RT_* in the environment still override it.
-  pathTracing ? false,
 }: let
   pname = "bloodborne-pc";
   version = "unstable-2026-11-20";
@@ -99,21 +96,12 @@
   # the GTK launcher.
   pythonEnv = python3.withPackages (ps: [ps.pillow ps.pygobject3]);
 
-  rtFlags = lib.optionalString pathTracing (lib.concatMapStringsSep " " (var: "--set-default ${var} 1") [
-    "BB_RT"
-    "BB_RT_DIRECT"
-    "BB_RT_GI"
-    "BB_RT_REFLECT"
-    "BB_RT_SHADOWS"
-  ]);
-
   # Shared by the game and the launcher, which starts run.sh itself. run.sh
   # puts saves, mods and patches under BB_DATA_DIR on its own.
   gameWrapperArgs = ''
     --prefix PATH : ${lib.makeBinPath [bash coreutils pythonEnv]} \
     --set BB_PREBUILT 1 \
     --set PYTHON ${lib.getExe pythonEnv} \
-    ${rtFlags} \
     --run '
       data="''${XDG_DATA_HOME:-$HOME/.local/share}/bloodborne-pc"
       config="''${XDG_CONFIG_HOME:-$HOME/.config}/bloodborne-pc"
@@ -122,6 +110,7 @@
       export BB_CONFIG="''${BB_CONFIG:-$config/bbport.ini}"
       export BB_GAME_DIR="''${BB_GAME_DIR:-$HOME/Games/Bloodborne}"
       export BB_RT_SKY_CACHE="''${BB_RT_SKY_CACHE:-$data/rt_sky}"
+      export BB_RT_CFG="''${BB_RT_CFG:-$data/rt.cfg}"
     '
   '';
 in
@@ -174,9 +163,14 @@ in
       librsvg
     ];
 
-    # Three Linux build fixes: newer Vulkan headers, a missing uint32_t alias,
-    # and rt_map_files.cpp for the geometry test target.
-    patches = [./linux-build-fixes.patch];
+    patches = [
+      # Three Linux build fixes: newer Vulkan headers, a missing uint32_t alias,
+      # and rt_map_files.cpp for the geometry test target.
+      ./linux-build-fixes.patch
+      # Path tracing switches in the launcher. The live ones are written to
+      # BB_RT_CFG, which the running game re-reads.
+      ./launcher-path-tracing.patch
+    ];
 
     dontConfigure = true;
     # patchelf's RPATH shrinking corrupts the non-PIE bb-probe's symbol

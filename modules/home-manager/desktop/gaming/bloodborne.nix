@@ -15,9 +15,7 @@
   inherit (impermanenceCfg) persistDir;
 in {
   config = modules.mkIf (guiCfg.enable && bloodborneCfg.enable) {
-    home.packages = [
-      (pkgs.bloodborne-pc.override {pathTracing = bloodborneCfg.pathTracing.enable;})
-    ];
+    home.packages = [pkgs.bloodborne-pc];
 
     # Saves, DLC entitlement, shader/RT caches and settings. The 30 GB game
     # dump stays in ~/Games/Bloodborne (persisted by the gaming module).

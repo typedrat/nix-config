@@ -442,7 +442,6 @@ in {
         gaming.lichii.enable = true;
         gaming.longshot.enable = true;
         gaming.bloodborne.enable = true;
-        gaming.bloodborne.pathTracing.enable = true;
         gaming.classicMac.enable = true;
         gaming.classicPC.enable = true;
         development.wireshark.enable = true;

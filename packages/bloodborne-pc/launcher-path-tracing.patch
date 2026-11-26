@@ -1,0 +1,144 @@
+--- a/launcher/bbport_launcher.py
++++ b/launcher/bbport_launcher.py
+@@ -24,7 +24,7 @@
+ 
+ gi.require_version("Gtk", "4.0")
+ gi.require_version("Adw", "1")
+-from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
++from gi.repository import Adw, Gio, GLib, GObject, Gtk  # noqa: E402
+ 
+ PORT_DIR = Path(__file__).resolve().parent.parent  # native_probe (or the package's copy)
+ sys.path.insert(0, str(PORT_DIR / 'scripts'))
+@@ -79,6 +79,23 @@
+ HUD_POSITIONS = [("У краёв экрана", "100"), ("75%", "75"), ("Посередине", "50"), ("25%", "25"),
+                  ("По центру (16:9)", "0")]
+ 
++# Path tracing (docs/PATH_TRACING.md). BB_RT and the start-up switches are read once, from the
++# environment; the live switches go to BB_RT_CFG, which the game re-reads while it runs.
++# (setting, variable, title, subtitle, default)
++RT_STARTUP = [
++    ("rt_shadows", "BB_RT_SHADOWS", "Ray-traced shadows", "Applies at the next start", True),
++]
++RT_LIVE = [
++    ("rt_direct", "BB_RT_DIRECT", "Direct lighting", None, True),
++    ("rt_gi", "BB_RT_GI", "Global illumination", None, True),
++    ("rt_reflect", "BB_RT_REFLECT", "Reflections", "Needs global illumination", True),
++    ("rt_ao", "BB_RT_AO", "Ambient occlusion", "Needs direct lighting", False),
++    ("rt_fog", "BB_RT_FX_FOG", "Volumetric fog", None, True),
++    ("rt_restir_gi", "BB_RT_RESTIR_GI", "ReSTIR global illumination", "Needs global illumination", True),
++    ("rt_restir_di", "BB_RT_RESTIR", "ReSTIR direct lighting", "Needs direct lighting", False),
++    ("rt_rr", "BB_RT_DLSS_RR", "DLSS Ray Reconstruction", "NVIDIA RTX only", False),
++]
++
+ DEFAULTS = {
+     "ui_language": "",
+     "game_dir": "" if PACKAGED else str(PORT_DIR.parent / "CUSA03173"),
+@@ -102,6 +119,8 @@
+     "gpu_profile": False,
+     "vk_validation": False,
+     "extra_env": "",
++    "rt": False,
++    **{key: default for key, _var, _title, _subtitle, default in RT_STARTUP + RT_LIVE},
+     **online.DEFAULTS,
+ }
+ 
+@@ -181,6 +200,35 @@
+     ini_path().write_text("\n".join(out) + "\n", encoding='utf-8')
+ 
+ 
++def rt_cfg_path():
++    return Path(os.environ.get("BB_RT_CFG") or DATA_DIR / "rt.cfg")
++
++
++def save_rt_cfg(s):
++    """Rewrites the live switches in BB_RT_CFG in place, keeping every other line (per-map keys,
++    hand tuning). Replaced in one step: the game polls the file and must never see half of it."""
++    values = {var: "1" if s[key] else "0" for key, var, *_ in RT_LIVE}
++    path = rt_cfg_path()
++    try:
++        lines = path.read_text(encoding='utf-8').splitlines()
++    except OSError:
++        lines = []
++    out, written = [], set()
++    for line in lines:
++        stripped = line.strip()
++        key = stripped.split("=", 1)[0].strip() if "=" in stripped and stripped[0] not in "#;" else None
++        if key in values:
++            out.append(f"{key}={values[key]}")
++            written.add(key)
++        else:
++            out.append(line)
++    out += [f"{key}={value}" for key, value in values.items() if key not in written]
++    path.parent.mkdir(parents=True, exist_ok=True)
++    temp = path.with_name(path.name + ".tmp")
++    temp.write_text("\n".join(out) + "\n", encoding='utf-8')
++    os.replace(temp, path)
++
++
+ def patches_dir(settings):
+     return Path(settings.get("patches_dir") or DATA_DIR / "patches").expanduser()
+ 
+@@ -226,6 +274,12 @@
+     if s["vk_validation"]:
+         env["BB_VK_VALIDATION"] = "1"
+     env.update(online.environment(s, user_folder(s), log))
++    env["BB_RT_CFG"] = str(rt_cfg_path())
++    save_rt_cfg(s)
++    # Written either way, so that an off switch here wins over the caller's environment.
++    env["BB_RT"] = "1" if s["rt"] else "0"
++    for key, var, *_ in RT_STARTUP:
++        env[var] = "1" if s["rt"] and s[key] else "0"
+     for item in s["extra_env"].split():
+         if "=" in item:
+             key, value = item.split("=", 1)
+@@ -532,6 +586,23 @@
+         perf.add(self.latency_row)
+         page.add(perf)
+ 
++        rt = Adw.PreferencesGroup(title=tr("Path tracing"), description=tr(
++            "Lighting, reflection and fog switches apply while the game runs"))
++        self.rt_row = Adw.SwitchRow(title=tr("Path tracing"), subtitle=tr("Applies at the next start"),
++                                    active=self.settings["rt"])
++        rt.add(self.rt_row)
++        self.rt_rows = {}
++        for key, _var, title, subtitle, _default in RT_STARTUP + RT_LIVE:
++            row = Adw.SwitchRow(title=tr(title), active=self.settings[key])
++            if subtitle:
++                row.set_subtitle(tr(subtitle))
++            self.rt_row.bind_property("active", row, "sensitive", GObject.BindingFlags.SYNC_CREATE)
++            rt.add(row)
++            self.rt_rows[key] = row
++        for key, *_ in RT_LIVE:
++            self.rt_rows[key].connect("notify::active", self.on_rt_live)
++        page.add(rt)
++
+         saves = Adw.PreferencesGroup(title=tr("Сохранения"))
+         self.backups_row = Adw.SwitchRow(title=tr("Копия сохранений при запуске"), subtitle=tr(
+             "В папке save-backups рядом с сохранениями; хранятся последние 10"),
+@@ -577,6 +648,16 @@
+         # After this handler returns: the row that emitted the signal is replaced.
+         GLib.idle_add(lambda: self.build() and False)
+ 
++    def on_rt_live(self, _row, _param):
++        """A running game picks the change up from BB_RT_CFG within 30 frames."""
++        for key, *_ in RT_LIVE:
++            self.settings[key] = self.rt_rows[key].get_active()
++        save_settings(self.settings)
++        try:
++            save_rt_cfg(self.settings)
++        except OSError as error:
++            self.toasts.add_toast(Adw.Toast(title=str(error)))
++
+     def game_dir(self):
+         return Path(self.settings["game_dir"]).expanduser()
+ 
+@@ -678,6 +759,9 @@
+         s["gpu_profile"] = self.profile_row.get_active()
+         s["vk_validation"] = self.validation_row.get_active()
+         s["extra_env"] = self.extra_row.get_text().strip()
++        s["rt"] = self.rt_row.get_active()
++        for key, row in self.rt_rows.items():
++            s[key] = row.get_active()
+         s["mods_enabled"] = self.mods_enabled_row.get_active()
+         s["online"] = self.online_row.get_active()
+         s["online_upnp"] = self.upnp_row.get_active()
