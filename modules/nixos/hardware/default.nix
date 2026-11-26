@@ -9,7 +9,7 @@ in {
     ./esp32-dev.nix
     ./midi.nix
     ./mt7927.nix
-    ./nintendo-switch.nix
+    ./omnircm.nix
     ./nvidia.nix
     ./openrgb.nix
     ./printing.nix

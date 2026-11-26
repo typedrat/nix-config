@@ -311,7 +311,7 @@ in {
       cec.enable = true;
       securityKey.enable = true;
       usbmuxd.enable = true;
-      nintendoSwitch.rcm.enable = true;
+      omnircm.enable = true;
       esp32Dev.enable = true;
       sigrok.enable = true;
     };
