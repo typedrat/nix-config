@@ -14,7 +14,7 @@
   hyprlandCfg = guiCfg.hyprland or {};
   launcherCfg = hyprlandCfg.launcher or {};
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 in {
   config =
     modules.mkIf (
@@ -58,16 +58,20 @@ in {
         };
       };
 
-      home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-        # The state dir records onboarding completion; losing it brings the
-        # welcome window back on every boot. The cache holds the file index,
-        # which otherwise gets rebuilt from scratch at each login.
-        directories = [
-          ".cache/vicinae"
-          ".local/share/vicinae"
-          ".local/state/vicinae"
-        ];
-      };
+      home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+        {
+          ${persistDir} = {
+            # The state dir records onboarding completion; losing it brings the
+            # welcome window back on every boot. The cache holds the file index,
+            # which otherwise gets rebuilt from scratch at each login.
+            directories = [
+              ".local/share/vicinae"
+              ".local/state/vicinae"
+            ];
+          };
+        }
+        {${cacheRoot}.directories = [".cache/vicinae"];}
+      ]);
 
       wayland.windowManager.hyprland.settings = {
         bind = [

@@ -3,44 +3,54 @@
   lib,
   ...
 }: let
-  inherit (lib.modules) mkIf;
+  inherit (lib.modules) mkIf mkMerge;
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 in {
   config = mkIf impermanenceCfg.home.enable {
-    home.persistence.${persistDir} = {
-      hideMounts = true;
+    home.persistence = mkMerge [
+      {
+        ${persistDir} = {
+          hideMounts = true;
 
-      directories = [
-        # --- SSH ---
-        {
-          directory = ".ssh";
-          mode = "0700";
-        }
+          directories = [
+            # --- SSH ---
+            {
+              directory = ".ssh";
+              mode = "0700";
+            }
 
-        # --- XDG user directories ---
-        "Desktop"
-        "Documents"
-        "Downloads"
-        "Music"
-        "Pictures"
-        "Public"
-        "Templates"
-        "Videos"
+            # --- XDG user directories ---
+            "Desktop"
+            "Documents"
+            "Downloads"
+            "Music"
+            "Pictures"
+            "Public"
+            "Templates"
+            "Videos"
 
-        # --- Nix / Home Manager state ---
-        ".local/state/nix/profiles"
-        ".local/state/home-manager"
+            # --- Nix / Home Manager state ---
+            ".local/state/nix/profiles"
+            ".local/state/home-manager"
 
-        # --- Nix caches ---
-        ".cache/nix"
+            # --- Trash (XDG freedesktop spec) ---
+            ".local/share/Trash"
+          ];
 
-        # --- Trash (XDG freedesktop spec) ---
-        ".local/share/Trash"
-      ];
-
-      files = [
-      ];
-    };
+          files = [
+          ];
+        };
+      }
+      {
+        ${cacheRoot} = {
+          hideMounts = true;
+          directories = [
+            # --- Nix caches ---
+            ".cache/nix"
+          ];
+        };
+      }
+    ];
   };
 }

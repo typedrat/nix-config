@@ -328,6 +328,7 @@ in {
     impermanence = {
       enable = true;
       home.enable = true;
+      cache.enable = true;
       zfs.enable = true;
       zfs.homeDataset = "local/home";
     };

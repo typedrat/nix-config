@@ -34,6 +34,25 @@ in {
       description = "Mount root for the bulk (tank) persistence pool.";
     };
 
+    cache.enable = mkEnableOption "a persistence root for regenerable data that is kept across reboots but not snapshotted or backed up";
+
+    cacheDir = mkOption {
+      type = types.str;
+      default = "/cache";
+      description = "Mount root for the cache persistence dataset.";
+    };
+
+    cacheRoot = mkOption {
+      type = types.str;
+      readOnly = true;
+      default =
+        if cfg.cache.enable
+        then cfg.cacheDir
+        else cfg.persistDir;
+      defaultText = lib.literalExpression ''if cache.enable then cacheDir else persistDir'';
+      description = "Persistence root for regenerable data: cacheDir when the cache root is enabled, persistDir otherwise.";
+    };
+
     zfs.enable = mkEnableOption "impermanence by ZFS snapshot";
     zfs.snapshotName = mkOption {
       type = types.str;

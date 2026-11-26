@@ -7,16 +7,21 @@
 }: let
   inherit (lib.modules) mkIf;
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 in {
   imports = [
     inputs.spicetify-nix.homeManagerModules.default
   ];
 
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.media.enable) {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
-      directories = [".config/spotify" ".cache/spotify"];
-    };
+    home.persistence = mkIf impermanenceCfg.home.enable (lib.modules.mkMerge [
+      {
+        ${persistDir} = {
+          directories = [".config/spotify"];
+        };
+      }
+      {${cacheRoot}.directories = [".cache/spotify"];}
+    ]);
 
     programs.spicetify = {
       enable = true;

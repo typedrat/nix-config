@@ -89,6 +89,13 @@
             type = "zfs_fs";
             mountpoint = "/home";
           };
+          # Persists across reboots like safe/persist, but sits under local/ so
+          # it's never snapshotted or replicated: for data that's cheap to
+          # regenerate and churns enough to bloat snapshots.
+          "local/cache" = {
+            type = "zfs_fs";
+            mountpoint = "/cache";
+          };
         };
       };
     };
@@ -96,4 +103,11 @@
 
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/home".neededForBoot = true;
+  # The dataset postdates this machine's install, so disko never created it
+  # here. nofail lets a missing or broken dataset degrade to empty caches on
+  # the rolled-back root instead of stopping boot.
+  fileSystems."/cache" = {
+    neededForBoot = true;
+    options = ["nofail"];
+  };
 }

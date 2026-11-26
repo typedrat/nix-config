@@ -11,7 +11,7 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 
   fenix = inputs'.fenix.packages;
 
@@ -135,17 +135,21 @@
   };
 in {
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".local/share/cargo"
-        ".local/share/rustup"
-        ".local/share/bun"
-        ".config/npm"
-        ".local/share/pnpm"
-        ".local/state/pnpm"
-        ".cache/ms-playwright"
-      ];
-    };
+    home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+      {
+        ${persistDir} = {
+          directories = [
+            ".local/share/cargo"
+            ".local/share/rustup"
+            ".local/share/bun"
+            ".config/npm"
+            ".local/share/pnpm"
+            ".local/state/pnpm"
+          ];
+        };
+      }
+      {${cacheRoot}.directories = [".cache/ms-playwright"];}
+    ]);
     home.packages = with pkgs; [
       # Rust: stable by default, `cargo +nightly`/`rustc +nightly` for nightly.
       # `lib.hiPrio` makes the shim win collisions against the stable toolchain

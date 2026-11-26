@@ -10,7 +10,7 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 
   # Granted's `granted completion --shell zsh` is interactive — it writes
   # `_granted` and `_assume` to a config dir and appends `fpath=(...)` lines
@@ -75,23 +75,27 @@
   grantedDir = "${config.xdg.configHome}/granted";
 in {
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        {
-          directory = ".aws";
-          mode = "0700";
-        }
-        {
-          directory = ".kube";
-          mode = "0700";
-        }
-        ".config/granted"
-        ".cloudflared"
-        ".config/gcloud"
-        ".config/terraform"
-        ".cache/terraform/plugins"
-      ];
-    };
+    home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+      {
+        ${persistDir} = {
+          directories = [
+            {
+              directory = ".aws";
+              mode = "0700";
+            }
+            {
+              directory = ".kube";
+              mode = "0700";
+            }
+            ".config/granted"
+            ".cloudflared"
+            ".config/gcloud"
+            ".config/terraform"
+          ];
+        };
+      }
+      {${cacheRoot}.directories = [".cache/terraform/plugins"];}
+    ]);
     home.packages = with pkgs; [
       # Cloud platforms
       google-cloud-sdk

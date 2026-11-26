@@ -10,7 +10,7 @@
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 
   # build123d is a local package (packages/build123d.nix) exposed as a
   # top-level pkgs.* attribute rather than merged into python3Packages, so
@@ -88,13 +88,17 @@ in {
   config = modules.mkIf (cliCfg.enable && cliCfg.development.enable) {
     rat.python.packages = basePackages;
 
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".config/ipython"
-        ".cache/uv"
-        ".local/share/uv"
-      ];
-    };
+    home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+      {
+        ${persistDir} = {
+          directories = [
+            ".config/ipython"
+            ".local/share/uv"
+          ];
+        };
+      }
+      {${cacheRoot}.directories = [".cache/uv"];}
+    ]);
 
     home.file.".python-packages.md".text = ''
       # System Python packages

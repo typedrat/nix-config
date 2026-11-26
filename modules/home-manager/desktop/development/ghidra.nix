@@ -6,7 +6,7 @@
 }: let
   inherit (lib.modules) mkIf;
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 
   # Ghidra resolves its install root and each manual's directory through
   # canonical paths, so the manuals can't be layered on with symlinks; it
@@ -106,12 +106,16 @@
   };
 in {
   config = mkIf (osConfig.rat.gui.enable && osConfig.rat.gui.development.enable) {
-    home.persistence.${persistDir} = mkIf impermanenceCfg.home.enable {
-      directories = [
-        ".cache/ghidra"
-        ".config/ghidra"
-      ];
-    };
+    home.persistence = mkIf impermanenceCfg.home.enable (lib.modules.mkMerge [
+      {
+        ${persistDir} = {
+          directories = [
+            ".config/ghidra"
+          ];
+        };
+      }
+      {${cacheRoot}.directories = [".cache/ghidra"];}
+    ]);
 
     # Wins over the scripting Python's own bin/pyghidra, which lacks the env.
     home.packages = [(lib.hiPrio ghidraWrapped)];

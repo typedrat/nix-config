@@ -13,7 +13,7 @@
   guiCfg = userCfg.gui or {};
   browsersCfg = guiCfg.browsers or {};
   impermanenceCfg = osConfig.rat.impermanence;
-  inherit (impermanenceCfg) persistDir;
+  inherit (impermanenceCfg) persistDir cacheRoot;
 
   capitalizeFirst = str:
     (lib.strings.toUpper (builtins.substring 0 1 str))
@@ -233,9 +233,14 @@ in {
   ];
 
   config = modules.mkIf (guiCfg.enable && browsersCfg.zen.enable) {
-    home.persistence.${persistDir} = modules.mkIf impermanenceCfg.home.enable {
-      directories = [".config/zen" ".cache/zen" ".mozilla" ".pki"];
-    };
+    home.persistence = modules.mkIf impermanenceCfg.home.enable (modules.mkMerge [
+      {
+        ${persistDir} = {
+          directories = [".config/zen" ".mozilla" ".pki"];
+        };
+      }
+      {${cacheRoot}.directories = [".cache/zen"];}
+    ]);
 
     programs.zen-browser = lib.attrsets.recursiveUpdate zenFirefoxConfig {
       enable = true;
