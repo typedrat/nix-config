@@ -11,12 +11,6 @@ in {
               default = true;
             };
 
-          morphCompactTokenLimit = options.mkOption {
-            type = types.ints.positive;
-            default = 300000;
-            description = "Token threshold for Morph compaction (MORPH_COMPACT_TOKEN_LIMIT)";
-          };
-
           claude-code = {
             context = options.mkOption {
               type = types.either types.lines types.path;

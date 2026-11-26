@@ -111,7 +111,6 @@ in {
 
     rat.userSecrets = lib.mkIf hasUserSecrets {
       ai = {
-        morphApiKey = {};
         openrouterApiKey = {};
         answerOverflowKey = {};
         homeAssistantToken = {};
@@ -140,7 +139,6 @@ in {
     home.sessionVariables =
       {
         HF_XET_HIGH_PERFORMANCE = "1";
-        MORPH_COMPACT_TOKEN_LIMIT = toString cliCfg.ai.morphCompactTokenLimit;
         OPENCODE_EXPERIMENTAL = "1";
       }
       // lib.optionalAttrs hasChromium {
@@ -178,29 +176,10 @@ in {
 
       # catppuccin/nix's opencode port still writes tui.json, which OpenCode 2
       # ignores, so the theme is set here and the port is disabled below.
-      cli = {
-        theme.name = "catppuccin-frappe";
-        plugins = [
-          {
-            package = "oc-plugin-rainbow";
-            options = {
-              enabled = true;
-              fg = true;
-              bg = true;
-              speed = 0.008;
-              turns = 3;
-              glow = 0.05;
-              keybinds = {
-                logo_splash = "ctrl+shift+r";
-              };
-            };
-          }
-        ];
-      };
+      cli.theme.name = "catppuccin-frappe";
 
       settings = {
         plugin = [
-          "opencode-pty"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
 
@@ -249,7 +228,6 @@ in {
         export HF_TOKEN=$(cat ${config.sops.secrets.hfToken.path})
       ''
       + lib.optionalString hasUserSecrets ''
-        export MORPH_API_KEY=$(cat ${config.sops.secrets."ai/morphApiKey".path})
         export OPENROUTER_API_KEY=$(cat ${config.sops.secrets."ai/openrouterApiKey".path})
         export ANSWER_OVERFLOW_KEY=$(cat ${config.sops.secrets."ai/answerOverflowKey".path})
         export HOME_ASSISTANT_TOKEN=$(cat ${config.sops.secrets."ai/homeAssistantToken".path})
