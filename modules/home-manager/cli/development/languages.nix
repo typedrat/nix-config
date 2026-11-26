@@ -148,8 +148,16 @@ in {
           ];
         };
       }
-      {${cacheRoot}.directories = [".cache/ms-playwright"];}
+      {${cacheRoot}.directories = [".cache/ms-playwright" ".cache/cargo" ".cache/turbo"];}
     ]);
+
+    # Build caches otherwise land inside each checkout, where they churn the
+    # snapshots of whatever holds the source. Only cargo's intermediates move;
+    # final artifacts stay in each project's target/.
+    home.sessionVariables = {
+      CARGO_BUILD_BUILD_DIR = "${config.xdg.cacheHome}/cargo/build/{workspace-path-hash}";
+      TURBO_CACHE_DIR = "${config.xdg.cacheHome}/turbo";
+    };
     home.packages = with pkgs; [
       # Rust: stable by default, `cargo +nightly`/`rustc +nightly` for nightly.
       # `lib.hiPrio` makes the shim win collisions against the stable toolchain
