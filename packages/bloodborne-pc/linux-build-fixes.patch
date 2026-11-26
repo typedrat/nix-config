@@ -1,0 +1,44 @@
+diff --git a/gpu/CMakeLists.txt b/gpu/CMakeLists.txt
+index 3583df4..de765b2 100644
+--- a/gpu/CMakeLists.txt
++++ b/gpu/CMakeLists.txt
+@@ -499,9 +499,12 @@ target_include_directories(motion-history-test PRIVATE ..)
+ add_executable(rt-ptlas-test EXCLUDE_FROM_ALL ../tests/test_rt_ptlas.cpp)
+ target_compile_options(rt-ptlas-test PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+ target_include_directories(rt-ptlas-test PRIVATE ..)
+-add_executable(rt-geometry-test EXCLUDE_FROM_ALL ../tests/test_rt_geometry.cpp)
++add_executable(rt-geometry-test EXCLUDE_FROM_ALL ../tests/test_rt_geometry.cpp
++    shadps4/video_core/renderer_vulkan/rt/rt_map_files.cpp)
+ target_compile_options(rt-geometry-test PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+ target_include_directories(rt-geometry-test PRIVATE ..)
++# GeoMap::GameSoup lives in rt_map_files.cpp, which Windows gets through the static bbgpu.
++target_link_libraries(rt-geometry-test PRIVATE miniz::miniz)
+ add_executable(rt-live-test EXCLUDE_FROM_ALL ../tests/test_rt_live.cpp)
+ target_compile_options(rt-live-test PRIVATE -UNDEBUG -Wall -Wextra -Werror)
+ target_include_directories(rt-live-test PRIVATE ..)
+diff --git a/gpu/shadps4/video_core/renderer_vulkan/rt/rt_fx.h b/gpu/shadps4/video_core/renderer_vulkan/rt/rt_fx.h
+index 1426ff1..8291d92 100644
+--- a/gpu/shadps4/video_core/renderer_vulkan/rt/rt_fx.h
++++ b/gpu/shadps4/video_core/renderer_vulkan/rt/rt_fx.h
+@@ -60,7 +60,7 @@ struct FxParticle {
+     std::array<float, 3> centre{};
+     float size{};
+     float alpha{1.0f};
+-    u32 rgb{0xFFFFFFu};
++    uint32_t rgb{0xFFFFFFu};
+ };
+ 
+ constexpr uint32_t FxSmokeMaxDraws = 4;
+diff --git a/gpu/shadps4/video_core/renderer_vulkan/rt/vk_ray_tracing.cpp b/gpu/shadps4/video_core/renderer_vulkan/rt/vk_ray_tracing.cpp
+index ce534cb..353edfc 100644
+--- a/gpu/shadps4/video_core/renderer_vulkan/rt/vk_ray_tracing.cpp
++++ b/gpu/shadps4/video_core/renderer_vulkan/rt/vk_ray_tracing.cpp
+@@ -8721,7 +8721,7 @@ void RayTracing::RecordDirect(const SceneInputs& inputs) {
+     if (g3_valid) {
+         gpu_sets = ObtainGpuLightSets(0);
+         if (gpu_sets.buffer) {
+-            sets_info = {gpu_sets.buffer, gpu_sets.offset, gpu_sets.bytes};
++            sets_info = vk::DescriptorBufferInfo{gpu_sets.buffer, gpu_sets.offset, gpu_sets.bytes};
+             direct_set_count = gpu_sets.bytes / Rt::DirLightSetStride;
+             sets_gpu = true;
+             ++direct_sets_gpu_frames;

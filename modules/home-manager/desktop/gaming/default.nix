@@ -20,6 +20,7 @@
 in {
   imports = [
     ./anime-game-launchers.nix
+    ./bloodborne.nix
     ./classic-mac.nix
     ./classic-pc.nix
     ./dosbox-x.nix

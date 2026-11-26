@@ -151,6 +151,10 @@
         eden.enable = options.mkEnableOption "Eden Switch emulator";
         lichii.enable = options.mkEnableOption "Lichii Switch and Switch 2 emulator";
         longshot.enable = options.mkEnableOption "Longshot Launcher, a native recompilation of a Switch game";
+        bloodborne = {
+          enable = options.mkEnableOption "Bloodborne PC, a native Linux port with path tracing";
+          pathTracing.enable = options.mkEnableOption "path tracing by default (BB_RT and BB_RT_* still override it)";
+        };
         classicMac.enable = options.mkEnableOption "BasiliskII and SheepShaver classic Mac OS emulators";
         dosboxX.enable = options.mkEnableOption "DOSBox-X DOS and PC-98 emulator";
         classicPC.enable = options.mkEnableOption "86Box IBM PC emulator";
