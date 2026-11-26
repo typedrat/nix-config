@@ -35,12 +35,15 @@ in {
     environment.systemPackages = [pkgs.mbuffer pkgs.lzop];
 
     # Snapshot the irreplaceable datasets; tank and local/* are excluded.
+    # Local retention is short because iserlohn holds the long history. It
+    # only prunes what it receives, so each period it keeps must still be
+    # snapshotted here: monthly can't drop to 0 without starving its monthlies.
     services.sanoid = {
       enable = true;
       templates.irreplaceable = {
         hourly = 24;
-        daily = 30;
-        monthly = 3;
+        daily = 7;
+        monthly = 1;
         autosnap = true;
         autoprune = true;
       };
