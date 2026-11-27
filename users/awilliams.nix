@@ -261,6 +261,8 @@ in {
     mime = {
       enable = true;
       defaultApplications = {
+        "inode/directory" = "org.kde.dolphin.desktop";
+
         # Document formats
         "application/pdf" = "org.kde.okular.desktop";
         "application/postscript" = "org.kde.okular.desktop";
@@ -284,6 +286,10 @@ in {
         "x-scheme-handler/https" = "zen-beta.desktop";
         "x-scheme-handler/about" = "zen-beta.desktop";
         "x-scheme-handler/unknown" = "zen-beta.desktop";
+
+        # Claude Code writes this desktop entry itself on startup, but can't
+        # register it here while mimeapps.list is a read-only Nix store link.
+        "x-scheme-handler/claude-cli" = "claude-code-url-handler.desktop";
 
         # Web languages
         "text/css" = "dev.zed.Zed.desktop";
@@ -326,6 +332,7 @@ in {
         # Configuration files
         "application/xml" = "dev.zed.Zed.desktop";
         "text/xml" = "dev.zed.Zed.desktop";
+        "application/yaml" = "dev.zed.Zed.desktop";
         "application/x-yaml" = "dev.zed.Zed.desktop";
         "text/yaml" = "dev.zed.Zed.desktop";
         "text/x-yaml" = "dev.zed.Zed.desktop";

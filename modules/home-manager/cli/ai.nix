@@ -176,7 +176,17 @@ in {
 
       # catppuccin/nix's opencode port still writes tui.json, which OpenCode 2
       # ignores, so the theme is set here and the port is disabled below.
-      cli.theme.name = "catppuccin-frappe";
+      cli = {
+        theme.name = "catppuccin-frappe";
+        animations = true;
+        diffs.wrap = "word";
+        prompt.editor = false;
+        session = {
+          sidebar = "auto";
+          scrollbar = true;
+          thinking = "show";
+        };
+      };
 
       settings = {
         plugin = [
