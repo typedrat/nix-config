@@ -33,12 +33,13 @@ in {
     ];
 
     cli.enable = true;
+    cli.ai.context = ./awilliams/ai/context.md;
+    cli.ai.rules = {
+      context7 = ./awilliams/ai/rules/context7.md;
+      no-find-root = ./awilliams/ai/rules/no-find-root.md;
+    };
     cli.ai.claude-code = {
-      context = ./awilliams/claude/CLAUDE.md;
-      rules = {
-        context7 = ./awilliams/claude/rules/context7.md;
-        no-find-root = ./awilliams/claude/rules/no-find-root.md;
-      };
+      # Renders for Claude's Artifact tool, which OpenCode doesn't have.
       skills.doc-artifact = ./awilliams/claude/skills/doc-artifact;
       settings = {
         env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";

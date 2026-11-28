@@ -9,12 +9,8 @@
   inherit (config.home) username homeDirectory;
   userCfg = osConfig.rat.users.${username} or {};
   cliCfg = userCfg.cli or {};
-  claudeCfg =
-    cliCfg.ai.claude-code or {
-      context = "";
-      rules = {};
-      settings = {};
-    };
+  claudeCfg = cliCfg.ai.claude-code;
+  effective = (import ../ai-layering.nix {inherit lib;}).mergeHarness cliCfg.ai claudeCfg;
 
   hasUserSecrets = builtins.pathExists (config.rat.userSecretsDir + "/github.yaml");
   impermanenceCfg = osConfig.rat.impermanence;
@@ -86,7 +82,7 @@ in {
         })
       ];
 
-      inherit (claudeCfg) context rules skills;
+      inherit (effective) context rules skills;
     };
 
     # These replace files that predate home-manager owning them. Changes made
@@ -95,13 +91,14 @@ in {
       (modules.mkIf (claudeCfg.settings != {}) {
         "${configDir}/settings.json".force = true;
       })
-      (modules.mkIf (claudeCfg.context != "") {
+      (modules.mkIf (effective.context != "") {
         "${configDir}/CLAUDE.md".force = true;
       })
-      (lib.mapAttrs' (name: _: lib.nameValuePair "${configDir}/rules/${name}.md" {force = true;}) claudeCfg.rules)
-      (lib.mapAttrs' (name: _: lib.nameValuePair "${configDir}/skills/${name}" {force = true;}) claudeCfg.skills)
+      (lib.mapAttrs' (name: _: lib.nameValuePair "${configDir}/rules/${name}.md" {force = true;}) effective.rules)
+      (lib.mapAttrs' (name: _: lib.nameValuePair "${configDir}/skills/${name}" {force = true;}) effective.skills)
       (modules.mkIf config.programs.peon-ping.enable {
-        ".claude/hooks/peon-ping/peon.sh".source = "${config.programs.peon-ping.package}/share/peon-ping/peon.sh";
+        # The wrapper, not share/peon-ping/peon.sh: it carries the runtime PATH.
+        ".claude/hooks/peon-ping/peon.sh".source = lib.getExe' config.programs.peon-ping.package "peon";
       })
     ];
 

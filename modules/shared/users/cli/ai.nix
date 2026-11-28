@@ -1,38 +1,75 @@
 {lib, ...}: let
   inherit (lib) options types;
+
+  # The same three options exist once for every coding agent and once per
+  # harness; a harness's values are layered over the shared ones.
+  layerOptions = scope: {
+    context = options.mkOption {
+      type = types.either types.lines types.path;
+      default = "";
+      description = ''
+        Global instructions ${scope}, as inline text or a path. When both the
+        shared and the harness value are set, the harness text follows the
+        shared text.
+      '';
+    };
+
+    rules = options.mkOption {
+      type = types.attrsOf (types.either types.lines types.path);
+      default = {};
+      description = ''
+        Rule files ${scope}, keyed by name without the .md suffix. A harness
+        rule replaces a shared rule of the same name.
+      '';
+    };
+
+    skills = options.mkOption {
+      type = types.attrsOf (types.either types.lines types.path);
+      default = {};
+      description = ''
+        Skills ${scope}, keyed by directory name: a SKILL.md as text or a
+        path, or a path to a whole skill directory. A harness skill replaces
+        a shared skill of the same name.
+      '';
+    };
+  };
 in {
   options.rat.users = options.mkOption {
     type = types.attrsOf (
       types.submodule {
-        options.cli.ai = {
+        options.cli.ai =
+          layerOptions "for every coding agent"
+          // {
           enable =
             options.mkEnableOption "AI tools and configuration"
             // {
               default = true;
             };
 
-          claude-code = {
-            context = options.mkOption {
-              type = types.either types.lines types.path;
-              default = "";
-              description = "Global CLAUDE.md, as inline text or a path.";
+          opencode =
+            layerOptions "for OpenCode only"
+            // {
+              settings = options.mkOption {
+                type = types.attrsOf types.anything;
+                default = {};
+                description = ''
+                  Additions to opencode.json. List settings (plugins,
+                  permissions, instructions, skills) are appended to the
+                  defaults, mcp and agents are merged recursively, and
+                  anything else replaces the default.
+                '';
+              };
+
+              cli = options.mkOption {
+                type = types.attrsOf types.anything;
+                default = {};
+                description = "Additions to cli.json, merged recursively over the defaults.";
+              };
             };
 
-            rules = options.mkOption {
-              type = types.attrsOf (types.either types.lines types.path);
-              default = {};
-              description = "Files for ~/.claude/rules, keyed by name without the .md suffix.";
-            };
-
-            skills = options.mkOption {
-              type = types.attrsOf (types.either types.lines types.path);
-              default = {};
-              description = ''
-                Skills for ~/.claude/skills, keyed by directory name: a SKILL.md
-                as text or a path, or a path to a whole skill directory.
-              '';
-            };
-
+          claude-code =
+            layerOptions "for Claude Code only"
+            // {
             settings = options.mkOption {
               type = types.attrsOf types.anything;
               default = {};

@@ -16,5 +16,5 @@ Instead:
 - If you don't know where something lives, narrow with `ls` on a few likely
   parents first, or ask.
 
-A `PreToolUse` hook (`block-find-root`) enforces the `find /` half of this and
+A tool hook (`block-find-root`) enforces the `find /` half of this and
 will deny the tool call. The rest is on you.
