@@ -255,14 +255,39 @@ such as `hooks` merge with the user's own; scalar keys set there can no longer
 be changed from Claude Code's UI, so keep preferences like `theme`, `model` and
 plugins out of it.
 
-Each user's own Claude Code configuration comes from
-`rat.users.<name>.cli.ai.claude-code` (`context` for the global CLAUDE.md,
-`rules`, `skills`, `settings`), which `modules/home-manager/cli/development/claude-code.nix`
-hands to home-manager's `programs.claude-code`. `settings.json` is read-only:
-anything changed from Claude Code's UI (theme, `/model`, plugin toggles) lasts
-one session, so make lasting changes in the user's Nix config. Permission
-approvals are unaffected; Claude Code saves them to each project's
+The same two shell guards (`modules/nixos/ai/hooks/`) also run in OpenCode:
+`modules/nixos/ai/plugins/rat-guards.ts` is installed as
+`/etc/opencode/plugins/rat-guards.ts`, a server plugin that loads for every
+user. It calls the guard binaries the `10-guards` drop-in uses, so a guard
+changes in one place for both agents.
+
+Each user's agent instructions are layered. `rat.users.<name>.cli.ai` holds
+what every coding agent gets: `context` (the global CLAUDE.md / AGENTS.md),
+`rules` and `skills`. `cli.ai.claude-code` and `cli.ai.opencode` take the same
+three options for one harness only. A harness's context is appended after the
+shared one, and a harness rule or skill replaces a shared one of the same name.
+`modules/home-manager/cli/ai-layering.nix` does the merge for both harnesses.
+Shared files live in `users/<name>/ai/`; Claude-only ones in
+`users/<name>/claude/`.
+
+Claude Code gets the merged values through
+`modules/home-manager/cli/development/claude-code.nix`, plus its own
+`cli.ai.claude-code.settings`. `settings.json` is read-only: anything changed
+from Claude Code's UI (theme, `/model`, plugin toggles) lasts one session, so
+make lasting changes in the user's Nix config. Permission approvals are
+unaffected; Claude Code saves them to each project's
 `.claude/settings.local.json`.
+
+OpenCode (2.x) gets them through `modules/home-manager/cli/ai.nix`: context
+becomes `~/.config/opencode/AGENTS.md`, rules go to
+`~/.config/opencode/rules/` and are listed in `instructions`. The module
+writes V2-native `opencode.json` (`plugins`, `permissions`, `agents`,
+`mcp.servers`) itself rather than using home-manager's `enableMcpIntegration`,
+which still emits OpenCode 1's flat `mcp.<name>`. `cli.ai.opencode.settings`
+and `cli.ai.opencode.cli` add to `opencode.json` and `cli.json`. List
+settings (`plugins`, `permissions`, `instructions`, `skills`) are appended,
+because the last matching permission wins. Both files are checked against the
+package's JSON schema at build time.
 
 gstack is off by default (`rat.ai.gstack.enable`; it conflicted with Claude
 Code's native tools). When enabled, `packages/gstack` (its own `./setup` runs

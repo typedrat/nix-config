@@ -219,73 +219,77 @@ in {
 
       # catppuccin/nix's opencode port still writes tui.json, which OpenCode 2
       # ignores, so the theme is set here and the port is disabled below.
-      cli = lib.recursiveUpdate {
-        theme.name =
-          if config.catppuccin.enable
-          then "catppuccin-${config.catppuccin.flavor}"
-          else "catppuccin-frappe";
-        animations = true;
-        diffs.wrap = "word";
-        prompt.editor = false;
-        session = {
-          sidebar = "auto";
-          scrollbar = true;
-          thinking = "show";
-        };
-        # peon-ping plays the sounds.
-        attention = {
-          notifications = true;
-          sound = false;
-        };
-      } opencodeCfg.cli;
+      cli =
+        lib.recursiveUpdate {
+          theme.name =
+            if config.catppuccin.enable
+            then "catppuccin-${config.catppuccin.flavor}"
+            else "catppuccin-frappe";
+          animations = true;
+          diffs.wrap = "word";
+          prompt.editor = false;
+          session = {
+            sidebar = "auto";
+            scrollbar = true;
+            thinking = "show";
+          };
+          # peon-ping plays the sounds.
+          attention = {
+            notifications = true;
+            sound = false;
+          };
+        }
+        opencodeCfg.cli;
 
-      settings = mergeSettings {
-        plugins = [
-          "@ex-machina/opencode-anthropic-auth@next"
-          "superpowers@git+https://github.com/obra/superpowers.git"
-        ];
-
-        # OpenCode 2 allows every outside directory unless told otherwise.
-        permissions =
-          [
-            {
-              action = "external_directory";
-              resource = "*";
-              effect = "ask";
-            }
-          ]
-          ++ map (resource: {
-            action = "external_directory";
-            inherit resource;
-            effect = "allow";
-          }) [
-            "/nix/store/*"
-            "/tmp/*"
-            "~/.claude/skills/*"
-            "~/.gstack/*"
+      settings =
+        mergeSettings {
+          plugins = [
+            "@ex-machina/opencode-anthropic-auth@next"
+            "superpowers@git+https://github.com/obra/superpowers.git"
           ];
 
-        # Claude Code reads its plugin's copy of Exa's server.
-        mcp.servers =
-          lib.mapAttrs (_: toOpencodeMcp) mcpServers
-          // {
-            exa = {
-              type = "remote";
-              url = "https://mcp.exa.ai/mcp?client=agent-plugin";
-              headers.x-exa-source = "agent-plugin";
+          # OpenCode 2 allows every outside directory unless told otherwise.
+          permissions =
+            [
+              {
+                action = "external_directory";
+                resource = "*";
+                effect = "ask";
+              }
+            ]
+            ++ map (resource: {
+              action = "external_directory";
+              inherit resource;
+              effect = "allow";
+            }) [
+              "/nix/store/*"
+              "/tmp/*"
+              "~/.claude/skills/*"
+              "~/.gstack/*"
+            ];
+
+          # Claude Code reads its plugin's copy of Exa's server.
+          mcp.servers =
+            lib.mapAttrs (_: toOpencodeMcp) mcpServers
+            // {
+              exa = {
+                type = "remote";
+                url = "https://mcp.exa.ai/mcp?client=agent-plugin";
+                headers.x-exa-source = "agent-plugin";
+              };
             };
+
+          instructions = map (name: "~/.config/opencode/rules/${name}.md") (lib.attrNames effective.rules);
+
+          skills = ["${inputs.modern-web-guidance}/skills"];
+
+          agents = {
+            build.model = "anthropic/claude-opus-5-5";
+            plan.model = "anthropic/claude-opus-5-5";
+            explore.model = "anthropic/claude-haiku-5-5";
           };
-
-        instructions = map (name: "~/.config/opencode/rules/${name}.md") (lib.attrNames effective.rules);
-
-        skills = ["${inputs.modern-web-guidance}/skills"];
-
-        agents = {
-          build.model = "anthropic/claude-opus-5-5";
-          plan.model = "anthropic/claude-opus-5-5";
-          explore.model = "anthropic/claude-haiku-5-5";
-        };
-      } opencodeCfg.settings;
+        }
+        opencodeCfg.settings;
 
       agents = {
         haiku = ''

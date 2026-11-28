@@ -1,24 +1,20 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "nixos": {
-      "type": "local",
-      "command": ["uvx", "mcp-nixos"]
-    },
-    "home-assistant": {
-      "type": "remote",
-      "url": "https://home.thisratis.gay/api/mcp",
-      "headers": {
-        "Authorization": "Bearer {env:HOME_ASSISTANT_TOKEN}"
+    "servers": {
+      "nixos": {
+        "type": "local",
+        "command": ["uvx", "mcp-nixos"]
       },
-      "oauth": false
+      "home-assistant": {
+        "type": "remote",
+        "url": "https://ha-mcp.thisratis.gay/mcp"
+      }
     }
   },
-  "permission": {
-    "external_directory": {
-      "~/Development/nixpkgs/**": "allow",
-      "~/Development/home-manager/**": "allow",
-      "/nix/store/**": "allow"
-    }
-  }
+  "permissions": [
+    { "action": "external_directory", "resource": "~/Development/nixpkgs/*", "effect": "allow" },
+    { "action": "external_directory", "resource": "~/Development/home-manager/*", "effect": "allow" },
+    { "action": "external_directory", "resource": "/nix/store/*", "effect": "allow" }
+  ]
 }
