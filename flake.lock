@@ -2375,6 +2375,22 @@
         "type": "github"
       }
     },
+    "modern-web-guidance": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795445662,
+        "narHash": "sha256-UfeLMKMpwfOvJgyuyiysQy+ExGnLEJLY1CG/y4uIJHw=",
+        "owner": "GoogleChrome",
+        "repo": "modern-web-guidance",
+        "rev": "2b4aa13a72dd47cd135b06ce5abfccd92e19b24f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "GoogleChrome",
+        "repo": "modern-web-guidance",
+        "type": "github"
+      }
+    },
     "nix": {
       "inputs": {
         "bdwgc": "bdwgc",
@@ -3464,6 +3480,7 @@
         "mediatek-mt7927-dkms": "mediatek-mt7927-dkms",
         "microvm": "microvm",
         "mlnx-ofed-nixos": "mlnx-ofed-nixos",
+        "modern-web-guidance": "modern-web-guidance",
         "nix": [
           "determinate",
           "nix"

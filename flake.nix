@@ -339,6 +339,13 @@
       url = "github:exa-labs/exa-mcp-server";
       flake = false;
     };
+
+    # Chrome's modern-web-guidance agent skills; its skills/ directory is
+    # handed to OpenCode as a skill source.
+    modern-web-guidance = {
+      url = "github:GoogleChrome/modern-web-guidance";
+      flake = false;
+    };
     #endregion
 
     #region Extension Repositories

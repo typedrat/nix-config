@@ -31,6 +31,36 @@
   peonPingCfg = cliCfg.ai.peon-ping or {};
   peonSettings = peonPingCfg.settings or {};
 
+  opencodeCfg = cliCfg.ai.opencode;
+  effective = (import ./ai-layering.nix {inherit lib;}).mergeHarness cliCfg.ai opencodeCfg;
+
+  # home-manager's enableMcpIntegration still writes OpenCode 1's flat
+  # `mcp.<name>`; OpenCode 2 wants `mcp.servers.<name>`.
+  toOpencodeMcp = server:
+    if server ? url
+    then
+      {
+        type = "remote";
+        inherit (server) url;
+      }
+      // lib.optionalAttrs (server ? headers) {inherit (server) headers;}
+    else
+      {
+        type = "local";
+        command = [server.command] ++ (server.args or []);
+      }
+      // lib.optionalAttrs (server ? env) {environment = server.env;};
+
+  # Lists are ordered in OpenCode (the last matching permission wins), so a
+  # user's additions go after the defaults rather than replacing them.
+  listSettings = ["plugins" "permissions" "instructions" "skills"];
+  nestedSettings = ["mcp" "agents"];
+  mergeSettings = base: overlay:
+    base
+    // overlay
+    // lib.genAttrs (lib.filter (k: overlay ? ${k}) listSettings) (k: (base.${k} or []) ++ overlay.${k})
+    // lib.genAttrs (lib.filter (k: overlay ? ${k}) nestedSettings) (k: lib.recursiveUpdate (base.${k} or {}) overlay.${k});
+
   # comfy-cli ships Claude Code skills without a plugin manifest; wrapping its
   # skills directory as a plugin picks up whatever the installed version has.
   comfySkillsPlugin = pkgs.runCommand "comfy-cli-claude-plugin" {} ''
@@ -169,15 +199,32 @@ in {
     };
     programs.claude-code.mcpServers = removeAttrs mcpServers ["context7" "linear-server"];
 
+    xdg.configFile = lib.mapAttrs' (name: rule:
+      lib.nameValuePair "opencode/rules/${name}.md" (
+        if lib.isPath rule
+        then {source = rule;}
+        else {text = rule;}
+      ))
+    effective.rules;
+
     programs.opencode = {
       enable = true;
-      enableMcpIntegration = true;
       package = osConfig.rat.agentSlice.wrap pkgs.opencode;
+
+      validateFiles = {
+        config = true;
+        cli = true;
+      };
+
+      inherit (effective) context skills;
 
       # catppuccin/nix's opencode port still writes tui.json, which OpenCode 2
       # ignores, so the theme is set here and the port is disabled below.
-      cli = {
-        theme.name = "catppuccin-frappe";
+      cli = lib.recursiveUpdate {
+        theme.name =
+          if config.catppuccin.enable
+          then "catppuccin-${config.catppuccin.flavor}"
+          else "catppuccin-frappe";
         animations = true;
         diffs.wrap = "word";
         prompt.editor = false;
@@ -186,44 +233,60 @@ in {
           scrollbar = true;
           thinking = "show";
         };
-      };
+        # peon-ping plays the sounds.
+        attention = {
+          notifications = true;
+          sound = false;
+        };
+      } opencodeCfg.cli;
 
-      settings = {
-        plugin = [
+      settings = mergeSettings {
+        plugins = [
           "@ex-machina/opencode-anthropic-auth@next"
           "superpowers@git+https://github.com/obra/superpowers.git"
         ];
 
-        permission = {
-          external_directory = {
-            "/nix/store/**" = "allow";
-            "/tmp/**" = "allow";
-            "~/.claude/skills/**" = "allow";
-            "~/.gstack/**" = "allow";
-          };
-        };
+        # OpenCode 2 allows every outside directory unless told otherwise.
+        permissions =
+          [
+            {
+              action = "external_directory";
+              resource = "*";
+              effect = "ask";
+            }
+          ]
+          ++ map (resource: {
+            action = "external_directory";
+            inherit resource;
+            effect = "allow";
+          }) [
+            "/nix/store/*"
+            "/tmp/*"
+            "~/.claude/skills/*"
+            "~/.gstack/*"
+          ];
 
-        # The OpenCode-only server; the shared ones come from programs.mcp.
-        mcp.answeroverflow = {
-          type = "remote";
-          url = "https://www.answeroverflow.com/mcp";
-          headers = {
-            X-API-Key = "{env:ANSWER_OVERFLOW_KEY}";
+        # Claude Code reads its plugin's copy of Exa's server.
+        mcp.servers =
+          lib.mapAttrs (_: toOpencodeMcp) mcpServers
+          // {
+            exa = {
+              type = "remote";
+              url = "https://mcp.exa.ai/mcp?client=agent-plugin";
+              headers.x-exa-source = "agent-plugin";
+            };
           };
-        };
 
-        agent = {
-          build = {
-            model = "anthropic/claude-opus-5-5";
-          };
-          plan = {
-            model = "anthropic/claude-opus-5-5";
-          };
-          explore = {
-            model = "anthropic/claude-haiku-5-5";
-          };
+        instructions = map (name: "~/.config/opencode/rules/${name}.md") (lib.attrNames effective.rules);
+
+        skills = ["${inputs.modern-web-guidance}/skills"];
+
+        agents = {
+          build.model = "anthropic/claude-opus-5-5";
+          plan.model = "anthropic/claude-opus-5-5";
+          explore.model = "anthropic/claude-haiku-5-5";
         };
-      };
+      } opencodeCfg.settings;
 
       agents = {
         haiku = ''

@@ -38,6 +38,13 @@ in {
       context7 = ./awilliams/ai/rules/context7.md;
       no-find-root = ./awilliams/ai/rules/no-find-root.md;
     };
+    cli.ai.opencode.settings.permissions = [
+      {
+        action = "external_directory";
+        resource = "~/Development/vira/*";
+        effect = "allow";
+      }
+    ];
     cli.ai.claude-code = {
       # Renders for Claude's Artifact tool, which OpenCode doesn't have.
       skills.doc-artifact = ./awilliams/claude/skills/doc-artifact;
