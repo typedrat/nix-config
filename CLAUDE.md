@@ -289,6 +289,13 @@ settings (`plugins`, `permissions`, `instructions`, `skills`) are appended,
 because the last matching permission wins. Both files are checked against the
 package's JSON schema at build time.
 
+OpenCode also discovers everything under `~/.claude/skills`, which is how
+Claude Code's plugin skills (comfy-cli, Exa, claude.ai's synced skills) reach
+it. Skills declared only in `cli.ai.claude-code.skills` are hidden from
+OpenCode with a `skill` deny permission. When OpenCode has no context of its
+own, it falls back to `~/.claude/CLAUDE.md`, so Claude-only context is only
+kept out of OpenCode while shared or OpenCode context exists.
+
 gstack is off by default (`rat.ai.gstack.enable`; it conflicted with Claude
 Code's native tools). When enabled, `packages/gstack` (its own `./setup` runs
 inside the build) is linked into each AI user's Claude Code, Codex and OpenCode

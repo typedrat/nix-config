@@ -34,6 +34,11 @@
   opencodeCfg = cliCfg.ai.opencode;
   effective = (import ./ai-layering.nix {inherit lib;}).mergeHarness cliCfg.ai opencodeCfg;
 
+  # OpenCode also discovers everything in ~/.claude/skills. Claude Code's
+  # plugin skills (comfy-cli, Exa, claude.ai's synced ones) are wanted there,
+  # but skills declared for Claude Code alone are hidden from it.
+  claudeOnlySkills = lib.subtractLists (lib.attrNames effective.skills) (lib.attrNames cliCfg.ai.claude-code.skills);
+
   # home-manager's enableMcpIntegration still writes OpenCode 1's flat
   # `mcp.<name>`; OpenCode 2 wants `mcp.servers.<name>`.
   toOpencodeMcp = server:
@@ -266,7 +271,13 @@ in {
               "/tmp/*"
               "~/.claude/skills/*"
               "~/.gstack/*"
-            ];
+            ]
+            ++ map (resource: {
+              action = "skill";
+              inherit resource;
+              effect = "deny";
+            })
+            claudeOnlySkills;
 
           # Claude Code reads its plugin's copy of Exa's server.
           mcp.servers =
