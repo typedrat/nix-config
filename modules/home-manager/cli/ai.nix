@@ -142,7 +142,6 @@ in {
     rat.userSecrets = lib.mkIf hasUserSecrets {
       ai = {
         openrouterApiKey = {};
-        answerOverflowKey = {};
         homeAssistantToken = {};
         vastApiKey = {};
       };
@@ -351,7 +350,6 @@ in {
       ''
       + lib.optionalString hasUserSecrets ''
         export OPENROUTER_API_KEY=$(cat ${config.sops.secrets."ai/openrouterApiKey".path})
-        export ANSWER_OVERFLOW_KEY=$(cat ${config.sops.secrets."ai/answerOverflowKey".path})
         export HOME_ASSISTANT_TOKEN=$(cat ${config.sops.secrets."ai/homeAssistantToken".path})
         export VAST_API_KEY=$(cat ${config.sops.secrets."ai/vastApiKey".path})
       ''
