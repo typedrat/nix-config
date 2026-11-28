@@ -155,15 +155,15 @@ in {
     # snapshots of whatever holds the source. Only cargo's intermediates move;
     # final artifacts stay in each project's target/.
     #
-    # pnpm's global virtual store leaves only symlinks in each node_modules,
-    # with the package files under the store. An explicit store dir also stops
-    # pnpm from starting a separate .pnpm-store at the root of every
-    # impermanence bind mount it sees as its own filesystem.
+    # An explicit pnpm store dir stops pnpm from starting a separate
+    # .pnpm-store at the root of every impermanence bind mount it sees as its
+    # own filesystem. The virtual store stays per-project: the global one drops
+    # the hidden hoist directory and changes which packages declaration emit
+    # can name, which breaks repos that lean on either.
     home.sessionVariables = {
       CARGO_BUILD_BUILD_DIR = "${config.xdg.cacheHome}/cargo/build/{workspace-path-hash}";
       TURBO_CACHE_DIR = "${config.xdg.cacheHome}/turbo";
       PNPM_CONFIG_STORE_DIR = "${config.xdg.cacheHome}/pnpm/store";
-      PNPM_CONFIG_VIRTUAL_STORE_TYPE = "global";
     };
     home.packages = with pkgs; [
       # Rust: stable by default, `cargo +nightly`/`rustc +nightly` for nightly.
