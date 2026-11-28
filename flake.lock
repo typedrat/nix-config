@@ -3160,17 +3160,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1776605613,
-        "narHash": "sha256-5mU5e8IGnUTGU1RH48nshaNGdz5xwDSFNZB6k+M6Eug=",
+        "lastModified": 1794008656,
+        "narHash": "sha256-2pxmbGhW57it8mqRJqIfItcYuUR0fPu6VOm3mOHgPno=",
         "owner": "PeonPing",
         "repo": "peon-ping",
-        "rev": "7a16f0b1da9dc73b5ada2393ba36482a89b42913",
+        "rev": "c9e8dadaede5a303209d2ef7180f46f0e18ce5ac",
         "type": "github"
       },
       "original": {
         "owner": "PeonPing",
         "repo": "peon-ping",
-        "rev": "7a16f0b1da9dc73b5ada2393ba36482a89b42913",
         "type": "github"
       }
     },
